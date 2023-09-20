@@ -5,14 +5,14 @@
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id, time, treatment, params, ...){
+SEQuential <- function(data, id, time, treatment, params, elligible, ...){
   # Coercion ==================================================
   data <- as.data.table(data)
   opts <- buildParam(); dots <- list(...)
 
   # Error Throwing ============================================
   if(!missing(params)) errorParams(params, dots)
-  errorData(data, id, time, treatment)
+  errorData(data, id, time, treatment, elligible)
 
   # Parameter Space building ==================================
   if(!missing(params)) opts[names(params)] <- params
