@@ -5,7 +5,7 @@
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id, time, treatment, params, elligible, ...){
+SEQuential <- function(data, id, time, treatment, params, eligible, ...){
   # Coercion ==================================================
   data <- as.data.table(data)
   opts <- buildParam(); dots <- list(...)
@@ -18,6 +18,7 @@ SEQuential <- function(data, id, time, treatment, params, elligible, ...){
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
 
-
+  # Function Body =============================================
+  data <- SEQexpand(data, id, time, eligible, min = opts$min, max = opts$max)
 
 }
