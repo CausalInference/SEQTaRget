@@ -9,8 +9,9 @@
 #' @import data.table
 #'
 #' @export
-SEQexpand <- function(data, id.col, time.col, eligible.col) {
+SEQexpand <- function(data, id.col, time.col, eligible.col, min, max) {
   data <- as.data.table(data)
+  if(max < min) stop("The maximum is less than the minimum")
 
   DT1 <- data[, `:=`(rev_row = .N - seq_len(.N)), by = get(id.col)
               ][get(eligible.col) == 1
@@ -21,6 +22,9 @@ SEQexpand <- function(data, id.col, time.col, eligible.col) {
                     ][, setnames(.SD, old = "time", new = time.col)
                       ][, -c('rev_row')
                         ][, period := seq_len(.N) - 1, by = trial]
+
+  if(!missing(min)) DT1 <- DT1[get(time.col) >= min]
+  if(!missing(max)) DT1 <- DT1[get(time.col) <= max]
 
   DT2 <- DT1[data, on = c(id.col, time.col)
              ][, c('rev_row', eligible.col) := NULL]
