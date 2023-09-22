@@ -13,8 +13,10 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
   data <- as.data.table(data)
 
   if(!is.null(min) && !is.null(max)){
-    if(max < min) stop("The maximum is less than the minimum")
+    if(max < min) stop("The maximum is less than the minimum for expansion")
   }
+  if(!is.null(min)) data <- data[get(time.col) >= min]
+  if(!is.null(max)) data <- data[get(time.col) <= max]
 
   DT1 <- data[, `:=`(rev_row = .N - seq_len(.N)), by = get(id.col)
               ][get(eligible.col) == 1
@@ -25,9 +27,6 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
                     ][, setnames(.SD, old = "time", new = time.col)
                       ][, -c('rev_row')
                         ][, period := seq_len(.N) - 1, by = trial]
-
-  if(!is.null(min)) DT1 <- DT1[get(time.col) >= min]
-  if(!is.null(max)) DT1 <- DT1[get(time.col) <= max]
 
   DT2 <- DT1[data, on = c(id.col, time.col)
              ][, c('rev_row', eligible.col) := NULL]
@@ -47,4 +46,5 @@ data <- data.frame(
   Event = rep(0, 26)
 )
 
+library(data.table)
 test <- SEQexpand(data, "ID", "month", "eligible")
