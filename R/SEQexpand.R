@@ -9,6 +9,8 @@
 #' @import data.table
 #'
 #' @export
+
+id.col = "ID"; time.col = "month"; eligible.col = "eligible"
 SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL) {
   data <- as.data.table(data)
 
@@ -23,7 +25,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
                 ][, rev_row := sort(rev_row), by = get(id.col)
                   ][, .(time = seq.int(get(time.col), rev_row),
                         trial = rep(.GRP - 1, rev_row - get(time.col) + 1)),
-                    by = c(id.col, 'rev_row')
+                    by = c(id.col, rev_row)
                     ][, setnames(.SD, old = "time", new = time.col)
                       ][, -c('rev_row')
                         ][, period := seq_len(.N) - 1, by = trial]
@@ -34,17 +36,14 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
   return(DT2)
 }
 
-data <- data.frame(
-  ID = rep(1, 26),
-  eligible = c(rep(1, 3), rep(0, 23)),
-  month = 0:25,
-  treat_initiation = c(0, 0, 1, rep(0, 23)),
-  sex = rep(1, 26),
-  L_bas = rep(2.47, 26),
-  L = c(rep(2.47, 2), 2.77, rep(2.77, 2), rep(seq(from = 2.78, to = 2.83, length.out = 20), each = 1), 2.84),
-  censor = c(rep(0, 25), 1),
-  Event = rep(0, 26)
-)
+data[, `:=`(rev_row = .N - seq_len(.N)), by = get(id.col)
+  ][get(eligible.col) == 1
+  ][, rev_row := sort(rev_row), by = get(id.col)
+    ][, trial := .I - 1L
+      ][, .(time = seq.int(get(time.col), rev_row),
+            trial = trial),
+          by = .(get(id.col), rev_row)
+    ][, setnames(.SD, old = "time", new = time.col)
+      ][, -c('rev_row')
+        ][, period := seq_len(.N) - 1, by = trial]
 
-library(data.table)
-test <- SEQexpand(data, "ID", "month", "eligible")
