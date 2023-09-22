@@ -9,25 +9,24 @@
 #' @import data.table
 #'
 #' @export
-SEQexpand <- function(data, id_col, time_col, max = NULL, min = NULL){
+SEQexpand <- function(data, id.col, time.col, eligible.col) {
   data <- as.data.table(data)
-  original_data <- copy(data)
 
-  if (!is.null(min)) data <- data[get(time_col) >= min, ]
-  if (!is.null(max)) data <- data[get(time_col) <= max, ]
+  DT1 <- data[, `:=`(rev_row = .N - seq_len(.N)), by = get(id.col)
+              ][get(eligible.col) == 1
+                ][, rev_row := sort(rev_row), by = get(id.col)
+                  ][, .(time = seq.int(get(time.col), rev_row),
+                        trial = rep(.GRP - 1, rev_row - get(time.col) + 1)),
+                    by = c(id.col, 'rev_row')
+                    ][, setnames(.SD, old = "time", new = time.col)
+                      ][, -c('rev_row')
+                        ][, period := seq_len(.N) - 1, by = trial]
 
-  expanded_data <- data[rep(1:.N, get(time_col)), .SD]
-  expanded_data[, period := get(time_col) - seq_len(.N), by = .(time = get(time_col), id = get(id_col))]
+  DT2 <- DT1[data, on = c(id.col, time.col)
+             ][, c('rev_row', eligible.col) := NULL]
 
-  excluded_rows <- original_data[!get(time_col) %in% expanded_data$time | !get(id_col) %in% expanded_data$id, .SD]
-  excluded_rows[, period := get(time_col) - 1]
-
-  rbind(excluded_rows, expanded_data)
+  return(DT2)
 }
-
-
-
-
 
 data <- data.frame(
   ID = rep(1, 26),
@@ -40,45 +39,3 @@ data <- data.frame(
   censor = c(rep(0, 25), 1),
   Event = rep(0, 26)
 )
-
-library(dtplyr)
-library(tidyverse)
-values <- data %>% select(ID, month, L)
-max_time <- data %>% group_by(ID) %>% mutate(rev_row = n() - row_number()) %>% filter(eligible == 1)
-max_time$rev_row <- sort(max_time$rev_row)
-DT <- max_time %>% select(ID, month, rev_row)
-result <- data.table::as.data.table(DT)[, .(month = seq.int(month, rev_row), increment = rep(.I - 1, rev_row - month + 1)), by = .(ID, rev_row)]
-output <- as.data.frame(left_join(result, values, by = c("ID", "month")))
-
-library(data.table)
-
-SEQ.expand <- function(data, id_col, time_col, eligible_col) {
-
-  # Convert data to data.table
-  data <- as.data.table(data)
-
-  # Compute the reverse row number and filter by the eligible column in one step
-  max_time <- data[data[[eligible_col]] == 1, .(rev_row = .N - .I), by = id_col]
-
-  # Sort rev_row within each group
-  max_time <- max_time[, .(rev_row = sort(rev_row)), by = id_col]
-
-  # Generate a sequence from the time column to rev_row and compute the increment
-  result <- max_time[, .({
-    time_col_val = .SD[[time_col]][1]
-    rev_row_val = rev_row[1]
-    .(
-      seq = seq.int(time_col_val, rev_row_val),
-      increment = rep(.I - 1, rev_row_val - time_col_val + 1)
-    )
-  }, by = .(id_col, rev_row)
-  ]
-
-  # Perform a left join with the original data table
-  output <- result[data, on = c(id_col, time_col)]
-
-  return(output)
-}
-
-
-SEQ.expand(data, "ID", "month", "eligible")
