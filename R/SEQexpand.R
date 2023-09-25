@@ -5,11 +5,13 @@
 #' @param time_col String: columname of the time column
 #' @param max Integer: maximum in \code{time_col} to expand about
 #' @param min Integer: minimum in \code{time_col} to expand about
+#' @param parallel Logical; default is TRUE
+#' @param cores Integer: number of cores for parallelization
 #'
 #' @import data.table foreach doParallel
 #'
 #' @export
-SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL, parallel, cores) {
+SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL, parallel = TRUE, cores = parallel::detectCores()) {
   data <- as.data.table(data)
   unique_ids <- unique(data[[id.col]])
 

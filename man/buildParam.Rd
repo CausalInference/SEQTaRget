@@ -9,3 +9,4 @@ buildParam()
 \description{
 Internal Parameter Builder - passing defaults to \code{SEQuential}
 }
+\keyword{internal}
