@@ -40,7 +40,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
     return(DT2_sub)
   }
 
-  resultDT <- foreach(id = unique_id, .combine = 'rbind', .packages = 'data.table') %dopar% {
+  resultDT <- foreach(id = unique_ids, .combine = 'rbind', .packages = 'data.table') %dopar% {
     process_id(id)
   }
 
