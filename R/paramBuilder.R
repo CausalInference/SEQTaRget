@@ -40,8 +40,13 @@ SEQopts.expansion <- function(x = NULL, min = NULL, max = NULL){
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
 
+#' User facing helper function to create a parameter list for \code{SEQuential}
+#' @param x List: list of other parameters to concatenate
+#' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
+
 SEQopts.covariates <- function(x = NULL, covariates = NA){
   params <- list(covariates = covariates)
+
 
   if(!is.null(x)) return(c(x, params)) else return(params)
 }

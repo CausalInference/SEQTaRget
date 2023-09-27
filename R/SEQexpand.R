@@ -6,22 +6,35 @@
 #' @param max Integer: maximum in \code{time_col} to expand about
 #' @param min Integer: minimum in \code{time_col} to expand about
 #' @param parallel Logical; default is TRUE
-#' @param cores Integer: number of cores for parallelization
+#' @param ncores Integer: number of cores for parallelization
+#' @param memory String: String to translate to bytes, eg. "6kb", "10mb", "3gb"
 #'
 #' @import data.table foreach doParallel
 #'
 #' @export
-SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL, parallel = TRUE, cores = parallel::detectCores()) {
+
+SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL, parallel = TRUE, ncores = parallel::detectCores(), memory = "1gb") {
+  # Data manip ====
   data <- as.data.table(data)
+  memory <- translate_memory(memory)
   unique_ids <- unique(data[[id.col]])
 
+  #Spark Setting ====
+  sc <- spark_connect(master = "local")
+  sdf <- copy(sc, data.frame(), "SEQexpanded_data", overwrite = TRUE)
+
+  #Parallelization ====
+  if(parallel == FALSE) ncores = 1
+  cl <- makeCluster(ncores); registerDoParallel(cl)
+
+  #Immediate error checking ====
   if(!is.null(min) && !is.null(max)){
     if(max < min) stop("The maximum is less than the minimum for expansion")
   }
   if(!is.null(min)) data <- data[get(time.col) >= min]
   if(!is.null(max)) data <- data[get(time.col) <= max]
-  if(parallel == TRUE){cl <- makeCluster(cores); registerDoParallel(cl)}
 
+  #Function to Parallelize ====
   process_id <- function(id) {
     DT_sub <- data[get(id.col) == id]
 
@@ -40,11 +53,27 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NU
     return(DT2_sub)
   }
 
-  resultDT <- foreach(id = unique_ids, .combine = 'rbind', .packages = 'data.table') %dopar% {
-    process_id(id)
+  #Bind Results to Spark table when they reach the memory limit ====
+  aggregated <- data.table()
+  resultDT <- foreach(id = unique_ids, .combine = 'rbind', .packages = c('data.table', 'sparklyr')) %dopar% {
+    DT <- process_id(id)
+    aggregated <- rbind(aggregated, DT)
+
+    if(object.size(aggregated) >= memory){
+      sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
+      aggregated <- data.table()
+      invisible(sdf_temp)
+    }
+  }
+  #Bind any leftovers ====
+  if(nrow(aggregated) > 0){
+    sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
+    invisible(sdf_temp)
   }
 
+  #Close the connection and stop the clusters ====
   stopCluster(cl)
+  spark_disconnect(sc)
 
   return(resultDT)
 }

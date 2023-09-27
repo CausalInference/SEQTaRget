@@ -19,6 +19,8 @@ SEQuential <- function(data, id, time, treatment, params, eligible, ...){
   if(length(dots > 0)) opts[names(dots)] <- dots
 
   # Function Body =============================================
-  data <- SEQexpand(data, id, time, eligible, min = opts$min, max = opts$max)
+  expanded <- SEQexpand(data, id, time, eligible,
+                        min = opts$min, max = opts$max,
+                        parallel = opts$parallel, ncores = opts$ncores)
 
 }
