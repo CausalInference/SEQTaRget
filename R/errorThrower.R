@@ -18,3 +18,24 @@ errorData <- function(data, id, time, treatment, eligible){
   if(missing(treatment)) stop("Treatment column name is missing")  else if(!treatment %in% names(data)) stop(sprintf("The 'treatment' argument '%s' is not found in the data column names"))
   if(missing(eligible)) stop("Eligible column name is missing")  else if(!treatment %in% names(data)) stop(sprintf("The 'eligible' argument '%s' is not found in the data column names"))
 }
+
+#' Internal Error Thrower - when the expected bytes used for data expansion exceed given memory
+#' @keywords internal
+
+errorMemory <- function(data, id, eligible.col, time.col, opts){
+  bytes <- translate_memory(memory)
+
+  dt <- data[, .(
+    nrow_eligible = sum(get(eligible.col) == 1),
+    max_time = pmin(max(get(time.col)), max.time),
+    ncol = ncol(data)
+  ), by = id.col]
+
+
+  dt[, dim_id := nrow_eligible*max_time*ncol]
+  exp_memory <- sum(dt$dim_id)*8
+
+  if(exp_memory > bytes){
+    stop(paste("Expected result exceeds memory of", memory))
+  }
+}

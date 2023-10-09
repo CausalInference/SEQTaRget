@@ -32,7 +32,7 @@ test <- SEQexpand(data, "ID", "month", "eligible")
 
 
 
-data <- data.frame(
+data1 <- data.frame(
   ID = rep(1, 26),
   eligible = c(rep(1, 3), rep(0, 23)),
   month = 0:25,
@@ -44,14 +44,14 @@ data <- data.frame(
   Event = rep(0, 26)
 )
 data2 <- data.frame(
-  ID = rep(2, 26),
-  eligible = c(rep(1, 3), rep(0, 23)),
-  month = 0:25,
-  treat_initiation = c(0, 0, 1, rep(0, 23)),
-  sex = rep(1, 26),
-  L_bas = rep(2.47, 26),
-  L = c(rep(2.47, 2), 2.77, rep(2.77, 2), rep(seq(from = 2.78, to = 2.83, length.out = 20), each = 1), 2.84),
-  censor = c(rep(0, 25), 1),
-  Event = rep(0, 26)
+  ID = rep(2, 20),
+  eligible = c(rep(1, 3), rep(0, 17)),
+  month = 0:19,  # Fix here: changing 0:20 to 0:19
+  treat_initiation = c(0, 0, 1, rep(0, 17)),
+  sex = rep(1, 20),
+  L_bas = rep(2.47, 20),
+  L = c(rep(2.47, 2), 2.77, rep(2.77, 2), rep(seq(from = 2.78, to = 2.83, length.out = 14), each = 1), 2.84),
+  censor = c(rep(0, 19), 1),
+  Event = rep(0, 20)
 )
-data <- rbind(data, data2)
+data3 <- rbind(data1, data2)

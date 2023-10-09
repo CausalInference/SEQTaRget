@@ -1,62 +1,59 @@
 #' Internal handler for expanding the input dataset
 #'
-#' @param data Dataframe: data to expand
-#' @param id_col String: columnname of the ID
-#' @param time_col String: columname of the time column
-#' @param max Integer: maximum in \code{time_col} to expand about
-#' @param min Integer: minimum in \code{time_col} to expand about
-#' @param parallel Logical; default is TRUE
-#' @param ncores Integer: number of cores for parallelization
-#' @param memory String: String to translate to bytes, eg. "6kb", "10mb", "3gb"
+#' @param data Dataframe or DataTable: data to expand
+#' @param id String: column name of the id.col
+#' @param time String: colum name of the time column
+#' @param eligible String: column name of the eligibility column
+#' @param params List: optional list of parameters from \code{SEQOpts}
+#' @param ...
 #'
-#' @import data.table foreach doParallel
+#' @import data.table foreach doParallel sparklyr
 #'
 #' @export
+SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
+  # Coercion ==================================================
+  DT <- as.data.table(data)
+  opts <- buildParam(); dots <- list(...); errorParams(params, dots)
+  memory <- translate_memory(opts$memory)
 
-SEQexpand <- function(data, id.col, time.col, eligible.col, min = NULL, max = NULL, parallel = TRUE, ncores = parallel::detectCores(), memory = "1gb") {
-  # Data manip ====
-  data <- as.data.table(data)
-  memory <- translate_memory(memory)
+  #Parameter Space ============================================
+  if(!missing(params)) opts[names(params)] <- params
+  if(length(dots > 0)) opts[names(dots)] <- dots
+
+  #Parallelization and Spark Setup ============================
+  if(opts$parallel == TRUE){
+    cl <- makeCluster(opts$ncores)
+    registerDoParallel(cl)
+  }
+
+  if(opts$spark == TRUE){
+    sc <- spark_connect(master = opts$spark.connection)
+    sdf <- copy(sc, data.frame(), "SEQexpanded_data", overwrite = TRUE)
+  }
+
+  if(opts$parallel == FALSE){
+    if(opts$spark == TRUE) stop("SEQuential implementation of Spark requires parallelization")
+    out <- internal.expansion()
+    return(out)
+  }
+
+  if(opts$parallel == TRUE){
+    if(opts$spark == FALSE){
+      out <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {
+        DT <- DT[get(id.col) == unique_id]
+        out <- internal.expansion()
+      }
+    }
+  }
+
+
+
   unique_ids <- unique(data[[id.col]])
-
-  #Spark Setting ====
-  sc <- spark_connect(master = "local")
-  sdf <- copy(sc, data.frame(), "SEQexpanded_data", overwrite = TRUE)
-
-  #Parallelization ====
-  if(parallel == FALSE) ncores = 1
-  cl <- makeCluster(ncores); registerDoParallel(cl)
-
-  #Immediate error checking ====
-  if(!is.null(min) && !is.null(max)){
-    if(max < min) stop("The maximum is less than the minimum for expansion")
-  }
-  if(!is.null(min)) data <- data[get(time.col) >= min]
-  if(!is.null(max)) data <- data[get(time.col) <= max]
-
-  #Function to Parallelize ====
-  process_id <- function(id) {
-    DT_sub <- data[get(id.col) == id]
-
-    DT1_sub <- DT_sub[, `:=`(rev_row = .N - seq_len(.N)), by = get(id.col)
-                      ][get(eligible.col) == 1
-                        ][, rev_row := sort(rev_row), by = get(id.col)
-                          ][, .(time = seq.int(get(time.col), rev_row),
-                                trial = rep(.GRP - 1, rev_row - get(time.col) + 1)),
-                            by = c(id.col, 'rev_row')
-                            ][, setnames(.SD, old = "time", new = time.col)
-                              ][, -c('rev_row')
-                                ][, period := seq_len(.N) - 1, by = trial]
-    DT2_sub <- DT1_sub[DT_sub, on = c(id.col, time.col)
-                       ][, c('rev_row', eligible.col) := NULL]
-
-    return(DT2_sub)
-  }
 
   #Bind Results to Spark table when they reach the memory limit ====
   aggregated <- data.table()
-  resultDT <- foreach(id = unique_ids, .combine = 'rbind', .packages = c('data.table', 'sparklyr')) %dopar% {
-    DT <- process_id(id)
+  resultDT <- foreach(id.col = unique_id, .combine = 'rbind', .packages = c('data.table', 'sparklyr')) %dopar% {
+    DT <- process_id.col(id.col)
     aggregated <- rbind(aggregated, DT)
 
     if(object.size(aggregated) >= memory){

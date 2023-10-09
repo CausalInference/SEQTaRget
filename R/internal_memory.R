@@ -17,3 +17,25 @@ translate_memory <- function(size_str) {
          stop(paste("Invalid or unsupported unit:", unit))
   )
 }
+
+get_ram <- function() {
+  os <- .Platform$OS.type
+
+  if (os == 'windows') {
+    cmd <- "wmic OS get FreePhysicalMemory"
+    ram_in_kb <- system(cmd, intern = TRUE)
+    bytes <- as.numeric(gsub("[^0-9]", "", ram_in_kb[2])) * 1024
+  }
+
+  if (os == 'unix') {
+    cmd <- "free | awk 'NR==2{print $4}'"
+    bytes <- as.numeric(system(cmd, intern = TRUE)) * 1024
+  }
+
+  if (Sys.info()["sysname"] == "Darwin") {
+    cmd <- "vm_stat | grep 'Pages free' | awk '{print $3}'"
+    bytes <- as.numeric(gsub("[^0-9]", "", system(cmd, intern = TRUE))) * 4096
+  }
+
+  return(bytes)
+}
