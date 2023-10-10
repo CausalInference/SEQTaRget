@@ -42,7 +42,8 @@ data1 <- data.frame(
   L = c(rep(2.47, 2), 2.77, rep(2.77, 2), rep(seq(from = 2.78, to = 2.83, length.out = 20), each = 1), 2.84),
   censor = c(rep(0, 25), 1),
   Event = rep(0, 26)
-)
+) %>%
+  mutate(eligible = as.logical(eligible))
 data2 <- data.frame(
   ID = rep(2, 20),
   eligible = c(rep(1, 3), rep(0, 17)),
