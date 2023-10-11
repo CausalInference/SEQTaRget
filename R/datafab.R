@@ -30,8 +30,8 @@ library(data.table)
 test <- SEQexpand(data, "ID", "month", "eligible")
 
 
-
-
+library(tidyverse)
+library(data.table)
 data1 <- data.frame(
   ID = rep(1, 26),
   eligible = c(rep(1, 3), rep(0, 23)),
@@ -55,4 +55,68 @@ data2 <- data.frame(
   censor = c(rep(0, 19), 1),
   Event = rep(0, 20)
 )
+
 data3 <- rbind(data1, data2)
+
+library(data.table)
+
+N_PATIENTS <- 10000
+MAX_TIME <- 59
+
+# Create a data.table structure
+dt <- data.table()
+
+set.seed(123) # Setting seed for reproducibility
+
+for (patient_id in 1:N_PATIENTS) {
+  # Decide randomly when this patient "falls off"
+  drop_time <- sample(0:MAX_TIME, 1)
+
+  # Assign sexM for this patient
+  sexM <- rbinom(1, 1, 0.5)
+
+  # Initial value for L for this patient
+  L_value <- rpois(1, 5)
+
+  treat_init_flag <- FALSE
+
+  for (t in 0:MAX_TIME) {
+    if (t > drop_time) {
+      break
+    }
+
+    N_value <- max(rnorm(1, 10, 5), 0)
+
+    # Decide eligibility
+    if (t == drop_time || (t != 0 && eligible == 0)) {
+      eligible <- 0
+    } else {
+      eligible <- 1
+    }
+
+    # Determine treat_init
+    if (eligible == 1 && !treat_init_flag) {
+      treat_init <- 1
+      treat_init_flag <- TRUE
+    } else {
+      treat_init <- 0
+    }
+
+    # Determine L value
+    if (treat_init == 1) {
+      L_value <- L_value * 0.99
+    } else {
+      L_value <- L_value * 1.05
+    }
+
+    dt <- rbindlist(list(dt, data.table(id = patient_id, time = t, eligible = eligible,
+                                        treat_init = treat_init, censor = 0, sexM = sexM,
+                                        N = N_value, L = L_value)), use.names = TRUE)
+  }
+
+  # Mark censor for the last time point of this patient
+  dt[id == patient_id & time == max(time), censor := 1]
+}
+
+print(dt)
+
