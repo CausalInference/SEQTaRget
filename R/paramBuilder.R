@@ -17,8 +17,6 @@ buildParam <- function(){
 #' @param spark Logical: defines if spark should be used for out-of-memory processing
 #'
 #' @export
-#'
-library(furrr); library(purrr)
 SEQopts.computation <- function(x = NULL, parallel = TRUE,
                            ncores = parallel::detectCores() - 1,
                            bootstrap = FALSE,
@@ -49,6 +47,8 @@ SEQopts.expansion <- function(x = NULL, max = NULL){
 #' User facing helper function to create a parameter list for \code{SEQuential}
 #' @param x List: list of other parameters to concatenate
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
+#'
+#' @export
 SEQopts.covariates <- function(x = NULL, covariates = NA){
   params <- list(covariates = covariates)
 
@@ -56,6 +56,11 @@ SEQopts.covariates <- function(x = NULL, covariates = NA){
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
 
+#' User facing helper function to create a parameter list for \code{SEQuential}
+#' @param x List: list of other parameters to concatenate
+#' @param type String: type of analysis to preform
+#'
+#' @export
 SEQopts.analysis <- function(x = NULL, type = "unweighted"){
   if(!type %in% c("unweighted", "weighted", "p99")) stop("Analysis type is limited to 'unweighted', 'weighted', or 'p99'")
 }

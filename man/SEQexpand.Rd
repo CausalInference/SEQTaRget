@@ -4,31 +4,20 @@
 \alias{SEQexpand}
 \title{Internal handler for expanding the input dataset}
 \usage{
-SEQexpand(
-  data,
-  id.col,
-  time.col,
-  eligible.col,
-  min = NULL,
-  max = NULL,
-  parallel = TRUE,
-  cores = parallel::detectCores()
-)
+SEQexpand(data, id.col, time.col, eligible.col, params, ...)
 }
 \arguments{
-\item{data}{Dataframe: data to expand}
+\item{data}{Dataframe or DataTable: data to expand}
 
-\item{min}{Integer: minimum in \code{time_col} to expand about}
+\item{params}{List: optional list of parameters from \code{SEQOpts}}
 
-\item{max}{Integer: maximum in \code{time_col} to expand about}
+\item{...}{Other parameters, as passed to \code{SEQOpts.expansion}}
 
-\item{parallel}{Logical; default is TRUE}
+\item{id}{String: column name of the id.col}
 
-\item{cores}{Integer: number of cores for parallelization}
+\item{time}{String: colum name of the time column}
 
-\item{id_col}{String: columnname of the ID}
-
-\item{time_col}{String: columname of the time column}
+\item{eligible}{String: column name of the eligibility column}
 }
 \description{
 Internal handler for expanding the input dataset

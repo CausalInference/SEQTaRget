@@ -1,6 +1,5 @@
 #' Internal Error Thrower - when identical names are passed to \code{...} and \code{params} and their values differ
 #' @keywords internal
-
 errorParams <- function(params, dots){
   for (name in intersect(names(params), names(dots))){
     if(!identical(params[[name]], dots[[name]]))
@@ -21,7 +20,6 @@ errorData <- function(data, id, time, treatment, eligible){
 
 #' Internal Error Thrower - when the expected bytes used for data expansion exceed given memory
 #' @keywords internal
-
 errorMemory <- function(data, id, eligible.col, time.col, opts){
   bytes <- translate_memory(memory)
 

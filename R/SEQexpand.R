@@ -10,6 +10,7 @@
 #' @import data.table foreach doParallel sparklyr
 #'
 #' @export
+
 SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   # Coercion ==================================================
   DT <- as.data.table(data)
@@ -17,16 +18,17 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   opts <- buildParam(); dots <- list(...); errorParams(params, dots)
   memory <- translate_memory(opts$memory)
 
+  cols <- c(id.col, eligible.col)
+  eligible_ids <- unique(DT[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
+                     ][sum_elig != 0,
+                       ][[id.col]])
+  DT <- convert.to.bool(DT[DT[[id.col]] %in% eligible_ids, ])
+
   #Parameter Space ============================================
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
 
   #Parallelization and Spark Setup ============================
-  if(opts$parallel == TRUE){
-    cl <- makeCluster(opts$ncores)
-    registerDoParallel(cl)
-  }
-
   if(opts$parallel == FALSE){
     if(opts$spark == TRUE) stop("SEQuential implementation of Spark requires parallelization")
     result <- internal.expansion()
@@ -34,11 +36,12 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   }
 
   if(opts$parallel == TRUE){
+    cl <- makeCluster(opts$ncores)
+    registerDoParallel(cl)
+
     if(opts$spark == FALSE){
       result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {
-        DT <- DT[get(id.col) == unique_id]
-        outputDT <- internal.expansion()
-        return(outputDT)
+        outputDT <- internal.expansion(id)
       }
       return(result)
     }
@@ -48,8 +51,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
       aggregated <- data.table()
 
       result <- foreach(id = unique_id, .combine = "rbind", .packages = c("data.table", "sparklyr")) %dopar% {
-        DT <- DT[get(id.col) == unique_id]
-        outputDT <- internal.expansion()
+        outputDT <- internal.expansion(id)
 
         aggregated <- rbind(aggregated, outputDT)
 
@@ -68,6 +70,4 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
     print("Spark Data: SEQexpanded_data successfully created")
     parallel::stopCluster(cl)
   }
-
-  return(resultDT)
 }

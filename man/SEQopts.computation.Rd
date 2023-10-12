@@ -10,7 +10,10 @@ SEQopts.computation(
   ncores = parallel::detectCores() - 1,
   bootstrap = FALSE,
   nboot = 100,
-  seed = 1636
+  seed = 1636,
+  memory = get_ram() - 2^30,
+  spark = FALSE,
+  spark.connection = "local"
 )
 }
 \arguments{
@@ -25,6 +28,10 @@ SEQopts.computation(
 \item{nboot}{Integer: number of bootstrap}
 
 \item{seed}{Integer: starting seed}
+
+\item{memory}{Integer: number of bytes for in-memory use, default is 1GB less than system max}
+
+\item{spark}{Logical: defines if spark should be used for out-of-memory processing}
 }
 \description{
 User-facing helper function to create a parameter list for \code{SEQuential}
