@@ -17,6 +17,8 @@ buildParam <- function(){
 #' @param spark Logical: defines if spark should be used for out-of-memory processing
 #'
 #' @export
+#'
+library(furrr); library(purrr)
 SEQopts.computation <- function(x = NULL, parallel = TRUE,
                            ncores = parallel::detectCores() - 1,
                            bootstrap = FALSE,
@@ -39,7 +41,7 @@ SEQopts.computation <- function(x = NULL, parallel = TRUE,
 #'
 #' @export
 SEQopts.expansion <- function(x = NULL, max = NULL){
-  params <- list(min = min, max = max)
+  params <- list(max = max)
 
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
