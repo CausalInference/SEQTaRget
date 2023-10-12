@@ -45,32 +45,4 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
       }
     }
   }
-
-
-
-  unique_ids <- unique(data[[id.col]])
-
-  #Bind Results to Spark table when they reach the memory limit ====
-  aggregated <- data.table()
-  resultDT <- foreach(id.col = unique_id, .combine = 'rbind', .packages = c('data.table', 'sparklyr')) %dopar% {
-    DT <- process_id.col(id.col)
-    aggregated <- rbind(aggregated, DT)
-
-    if(object.size(aggregated) >= memory){
-      sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
-      aggregated <- data.table()
-      invisible(sdf_temp)
-    }
-  }
-  #Bind any leftovers ====
-  if(nrow(aggregated) > 0){
-    sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
-    invisible(sdf_temp)
-  }
-
-  #Close the connection and stop the clusters ====
-  stopCluster(cl)
-  spark_disconnect(sc)
-
-  return(resultDT)
 }
