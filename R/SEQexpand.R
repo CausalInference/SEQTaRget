@@ -18,12 +18,6 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   opts <- buildParam(); dots <- list(...); errorParams(params, dots)
   memory <- translate_memory(opts$memory)
 
-  cols <- c(id.col, eligible.col)
-  eligible_ids <- unique(DT[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
-                     ][sum_elig != 0,
-                       ][[id.col]])
-  DT <- convert.to.bool(DT[DT[[id.col]] %in% eligible_ids, ])
-
   #Parameter Space ============================================
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots

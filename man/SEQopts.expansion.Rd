@@ -4,7 +4,7 @@
 \alias{SEQopts.expansion}
 \title{User-facing helper function to create a parameter list for \code{SEQuential}}
 \usage{
-SEQopts.expansion(x = NULL, max = NULL)
+SEQopts.expansion(x = NULL, max = Inf)
 }
 \arguments{
 \item{x}{List: list of other parameters to concatenate}

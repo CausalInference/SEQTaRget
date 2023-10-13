@@ -38,7 +38,7 @@ SEQopts.computation <- function(x = NULL, parallel = TRUE,
 #' @param max Integer: maximum time to expand about
 #'
 #' @export
-SEQopts.expansion <- function(x = NULL, max = NULL){
+SEQopts.expansion <- function(x = NULL, max = Inf){
   params <- list(max = max)
 
   if(!is.null(x)) return(c(x, params)) else return(params)
