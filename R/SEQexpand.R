@@ -7,13 +7,13 @@
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... Other parameters, as passed to \code{SEQOpts.expansion}
 #'
-#' @import data.table foreach doParallel sparklyr
+#' @import data.table foreach doFuture future sparklyr
 #'
 #' @export
 
 SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   # Coercion ==================================================
-  DT <- as.data.table(data)
+  DT <- expansion.preprocess(as.data.table(data))
   unique_id <- unique(data[[id.col]])
   opts <- buildParam(); dots <- list(...); errorParams(params, dots)
   memory <- translate_memory(opts$memory)
@@ -30,8 +30,8 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   }
 
   if(opts$parallel == TRUE){
-    cl <- makeCluster(opts$ncores)
-    registerDoParallel(cl)
+    cl <- parallel::makeCluster(opts$ncores)
+    future::plan("cluster", workers = cl)
 
     if(opts$spark == FALSE){
       result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {

@@ -1,7 +1,7 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
+# if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
 
 gen_data <- function(){
-  n_patients <- 1e4; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  n_patients <- 1e5; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   tictoc::tic()
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dopar% {
     set.seed(1636+i)
