@@ -1,9 +1,9 @@
 #' Internal handler for expanding the input dataset
 #'
 #' @param data Dataframe or DataTable: data to expand
-#' @param id String: column name of the id.col
-#' @param time String: colum name of the time column
-#' @param eligible String: column name of the eligibility column
+#' @param id.col String: column name of the id column
+#' @param time.col String: colum name of the time column
+#' @param eligible.col String: column name of the eligibility column
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... Other parameters, as passed to \code{SEQOpts.expansion}
 #'

@@ -3,12 +3,12 @@
 \name{internal.expansion}
 \alias{internal.expansion}
 \title{Internal function that handles the expansion of a data.table (DT).
-If \code{ID} is specified, it subsets per ID to parallelize operations by ID.}
+If \code{ID} is specified, it subsets per ID (for use in parallelizing operations by ID)}
 \usage{
 internal.expansion(id)
 }
 \description{
 Internal function that handles the expansion of a data.table (DT).
-If \code{ID} is specified, it subsets per ID to parallelize operations by ID.
+If \code{ID} is specified, it subsets per ID (for use in parallelizing operations by ID)
 }
 \keyword{internal}

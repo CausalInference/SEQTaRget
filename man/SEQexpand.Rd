@@ -9,15 +9,15 @@ SEQexpand(data, id.col, time.col, eligible.col, params, ...)
 \arguments{
 \item{data}{Dataframe or DataTable: data to expand}
 
+\item{id.col}{String: column name of the id column}
+
+\item{time.col}{String: colum name of the time column}
+
+\item{eligible.col}{String: column name of the eligibility column}
+
 \item{params}{List: optional list of parameters from \code{SEQOpts}}
 
 \item{...}{Other parameters, as passed to \code{SEQOpts.expansion}}
-
-\item{id}{String: column name of the id.col}
-
-\item{time}{String: colum name of the time column}
-
-\item{eligible}{String: column name of the eligibility column}
 }
 \description{
 Internal handler for expanding the input dataset

@@ -34,5 +34,6 @@ internal.expansion <- function(id){
   out <- data[DT, on = c(id.col, "period" = time.col)
               ][, eval(eligible.col) := NULL]
 
+  attr(out, "SEQexpanded") <- TRUE
   return(out)
 }

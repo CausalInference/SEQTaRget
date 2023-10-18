@@ -1,15 +1,14 @@
-# if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
+if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
 
 gen_data <- function(){
-  n_patients <- 1e5; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   tictoc::tic()
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dopar% {
     set.seed(1636+i)
-    drop_time <- sample(0:max_time, 1)
-    eligible_time <- sample(0:drop_time, 1)
+    eligible_time <- sample(0:max_time, 1)
     sex <- rbinom(1, 1, 0.5)
 
-    ID <- data.table(ID = rep(i, drop_time+1),
+    ID <- data.table(ID = rep(i, max_time+1),
                      time = 0:drop_time,
                      eligible = c(rep(1, eligible_time), rep(0, drop_time-eligible_time+1)),
                      sex = rep(sex, drop_time+1),
@@ -31,3 +30,4 @@ gen_data <- function(){
 }
 # data <- gen_data()
 # id.col = "ID"; eligible.col = "eligible"; time.col = "time"
+

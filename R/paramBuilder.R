@@ -65,7 +65,9 @@ SEQopts.analysis <- function(x = NULL, type = "unweighted"){
   if(!type %in% c("unweighted", "weighted", "p99")) stop("Analysis type is limited to 'unweighted', 'weighted', or 'p99'")
 }
 
-SEQopts.weight <- function(x = NULL){
+SEQopts.weight <- function(x = NULL, weighted = FALSE){
+  params <- list(weighted = weighted)
 
+  if(!is.null(x)) return(c(x, params)) else return(params)
 }
 
