@@ -29,4 +29,4 @@ gen_data <- function(){
   return(output)
 }
 # data <- gen_data()
-#id.col = "ID"; eligible.col = "eligible"; time.col = "time"; outcome.col = "tx_init"
+# id.col = "ID"; eligible.col = "eligible"; time.col = "time"; outcome.col = "tx_init"

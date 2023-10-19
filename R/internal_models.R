@@ -4,7 +4,7 @@
 #'
 #' @keywords internal
 itt_model <- function(){
-  model <- speedglm::speedglm(tx_init ~ N + L + P,
+  model <- speedglm::speedglm(formula,
                               result,
                               family = binomial("logit"))
   return(model)

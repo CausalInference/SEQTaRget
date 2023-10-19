@@ -3,7 +3,8 @@
 buildParam <- function(){
   SEQopts.expansion() |>
     SEQopts.computation() |>
-    SEQopts.covariates()
+    SEQopts.covariates() |>
+    SEQopts.analysis()
 }
 
 #' User-facing helper function to create a parameter list for \code{SEQuential}
