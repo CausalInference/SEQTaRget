@@ -27,14 +27,14 @@ get_ram <- function() {
     bytes <- as.numeric(gsub("[^0-9]", "", ram_in_kb[2])) * 1024
   }
 
-  if (os == 'unix') {
+  if (os == 'unix' && Sys.info()["sysname"] != "Darwin") {
     cmd <- "free | awk 'NR==2{print $4}'"
     bytes <- as.numeric(system(cmd, intern = TRUE)) * 1024
   }
 
   if (Sys.info()["sysname"] == "Darwin") {
     cmd <- "vm_stat | grep 'Pages free' | awk '{print $3}'"
-    bytes <- as.numeric(gsub("[^0-9]", "", system(cmd, intern = TRUE))) * 4096
+    bytes <- as.numeric(gsub("[^0-9]", "", system(cmd, intern = TRUE))) * 1e6
   }
 
   return(bytes)

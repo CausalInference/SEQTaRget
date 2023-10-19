@@ -18,18 +18,17 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   if(length(dots > 0)) opts[names(dots)] <- dots
 
   # Error Throwing ============================================
-  if(!missing(params)) errorParams(params, dots)
-  errorData(data, id, time, treatment, eligible)
-  errorParallelSpark(opts)
+  if(!missing(params)) errorParams(); errorData()
 
   # Coercion ==================================================
   if(tryCatch(attr(data, "SEQexpanded"), error = function(e) NULL) == TRUE){
     data <- as.data.table(data)
-    data <- SEQexpand(data, id, time, eligible, params = opts)
+    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
   }
 
   if(is.na(opts$covariates)){
-    formula <- create.default.formula()}
+    formula <- create.default.formula()
+    }
   else {formula <- create.formula(outcome.col, opts$covariates)}
 
   #Model Dispersion ===========================================

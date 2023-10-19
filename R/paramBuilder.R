@@ -22,7 +22,7 @@ SEQopts.computation <- function(x = NULL, parallel = TRUE,
                            bootstrap = FALSE,
                            nboot = 100,
                            seed = 1636,
-                           memory = get_ram() - 2^30,
+                           memory = get_ram() - 2^20,
                            spark = FALSE,
                            spark.connection = "local"){
 

@@ -16,7 +16,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   DT <- expansion.preprocess(as.data.table(data))
   unique_id <- unique(data[[id.col]])
   opts <- buildParam(); dots <- list(...); errorParams(params, dots)
-  memory <- translate_memory(opts$memory)
+  memory <- if(is.character(opts$memory)) translate_memory(opts$memory) else opts$memory
 
   #Parameter Space ============================================
   if(!missing(params)) opts[names(params)] <- params
@@ -31,7 +31,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
 
   if(opts$parallel == TRUE){
     cl <- parallel::makeCluster(opts$ncores)
-    future::plan("cluster", workers = cl)
+    future::plan(cluster, workers = cl)
 
     if(opts$spark == FALSE){
       result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {

@@ -1,4 +1,4 @@
-if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
+# if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -9,10 +9,10 @@ gen_data <- function(){
     sex <- rbinom(1, 1, 0.5)
 
     ID <- data.table(ID = rep(i, max_time+1),
-                     time = 0:drop_time,
-                     eligible = c(rep(1, eligible_time), rep(0, drop_time-eligible_time+1)),
-                     sex = rep(sex, drop_time+1),
-                     N = rnorm(length(0:(drop_time)), 10, 5),
+                     time = 0:max_time,
+                     eligible = c(rep(1, eligible_time), rep(0, max_time-eligible_time+1)),
+                     sex = rep(sex, max_time+1),
+                     N = rnorm(length(0:max_time), 10, 5),
                      L = runif(1),
                      P = runif(1, 9, 10))
 
@@ -29,5 +29,4 @@ gen_data <- function(){
   return(output)
 }
 # data <- gen_data()
-# id.col = "ID"; eligible.col = "eligible"; time.col = "time"
-
+#id.col = "ID"; eligible.col = "eligible"; time.col = "time"; outcome.col = "tx_init"
