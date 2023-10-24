@@ -18,22 +18,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   if(length(dots > 0)) opts[names(dots)] <- dots
 
   # Error Throwing ============================================
-  if(!missing(params)) errorParams(); errorData()
+  if(!missing(params)) errorData();# errorParams()
 
   # Coercion ==================================================
-  if(tryCatch(attr(data, "SEQexpanded"), error = function(e) NULL) == TRUE){
-    data <- as.data.table(data)
-    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
+  if(is.null(attr(data, "SEQexpanded"))){
+    print("Expanding Data...")
+    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts, parallel = FALSE)
   }
 
-  if(is.na(opts$covariates)){
-    formula <- create.default.formula()
-    }
-  else {formula <- create.formula(outcome.col, opts$covariates)}
+  if(is.na(opts$covariates)) formula <- create.default.formula(data)
+  else formula <- create.formula(outcome.col, opts$covariates)
 
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
-    if(method == "ITT") model <- itt_model()
+    if(method == "ITT") model <- itt_model(formula, data)
   }
-
 }

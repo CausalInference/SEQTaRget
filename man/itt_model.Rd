@@ -4,7 +4,7 @@
 \alias{itt_model}
 \title{Internal function for fitting ITT model on in-memory data}
 \usage{
-itt_model()
+itt_model(formula, data)
 }
 \description{
 Internal function for fitting ITT model on in-memory data

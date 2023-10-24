@@ -8,8 +8,7 @@ create.formula <- function(y, x){
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
-create.default.formula <- function(){
-  cols <- paste(names(data[, eval(outcome.col) := NULL]), collapse = "+")
+create.default.formula <- function(data){
+  cols <- paste(names(data)[!names(data) %in% outcome.col], collapse = "+")
   return(as.formula(paste0(outcome.col, "~", cols)))
 }
-

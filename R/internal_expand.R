@@ -3,15 +3,15 @@
 #' @import data.table
 #'
 #' @keywords internal
-expansion.preprocess <- function(DT){
+expansion.preprocess <- function(data){
   cols <- c(id.col, eligible.col)
-  binary.cols <- names(DT)[sapply(DT, function(col) all(unique(col) %in% c(0, 1)))]
+  binary.cols <- names(data)[sapply(data, function(col) all(unique(col) %in% c(0, 1)))]
 
-  eligible_ids <- unique(DT[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
+  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
                                       ][sum_elig != 0,
                                         ][[id.col]])
 
-  DT <- DT[DT[[id.col]] %in% eligible_ids,
+  DT <- data[data[[id.col]] %in% eligible_ids,
            ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
 
   return(DT)
@@ -23,7 +23,7 @@ expansion.preprocess <- function(DT){
 #' @import data.table
 #'
 #' @keywords internal
-internal.expansion <- function(id){
+internal.expansion <- function(DT, opts, id){
   if(!missing(id)) DT[get(id.col) == id,]
 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)

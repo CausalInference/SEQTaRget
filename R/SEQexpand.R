@@ -7,25 +7,24 @@
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... Other parameters, as passed to \code{SEQOpts.expansion}
 #'
-#' @import data.table foreach doFuture future sparklyr
+#' @import data.table foreach doFuture future
 #'
 #' @export
 
 SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   # Coercion ==================================================
   DT <- expansion.preprocess(as.data.table(data))
-  unique_id <- unique(data[[id.col]])
-  opts <- buildParam(); dots <- list(...); errorParams(params, dots)
+  unique_id <- unique(DT[[id.col]])
+  opts <- buildParam(); dots <- list(...) #errorParams(params, dots)
   memory <- if(is.character(opts$memory)) translate_memory(opts$memory) else opts$memory
 
   #Parameter Space ============================================
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
 
-  #Parallelization and Spark Setup ============================
+  #Parallelization Setup ============================
   if(opts$parallel == FALSE){
-    if(opts$spark == TRUE) stop("SEQuential implementation of Spark requires parallelization")
-    result <- internal.expansion()
+    result <- internal.expansion(DT, opts)
     return(result)
   }
 
@@ -33,35 +32,9 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
     cl <- parallel::makeCluster(opts$ncores)
     future::plan(cluster, workers = cl)
 
-    if(opts$spark == FALSE){
-      result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {
-        outputDT <- internal.expansion(id)
-      }
-      return(result)
+    result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {
+      outputDT <- internal.expansion(DT, opts, id)
     }
-    if(opts$spark == TRUE){
-      sc <- spark_connect(master = opts$spark.connection)
-      sdf <- copy(sc, data.frame(), "SEQexpanded_data", overwrite = TRUE)
-      aggregated <- data.table()
-
-      result <- foreach(id = unique_id, .combine = "rbind", .packages = c("data.table", "sparklyr")) %dopar% {
-        outputDT <- internal.expansion(id)
-
-        aggregated <- rbind(aggregated, outputDT)
-
-        if(object.size(aggregated) >= memory){
-          sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
-          aggregated <- data.table()
-          invisible(sdf_temp)
-        }
-      }
-      if(nrow(aggregated) > 0){
-        sdf_temp <- copy_to(sdf$sc, aggregated, name = "SEQexpanded_data", overwrite = FALSE)
-        invisible(sdf_temp)
-        aggregated <- data.table()
-      }
-    }
-    print("Spark Data: SEQexpanded_data successfully created")
-    parallel::stopCluster(cl)
+    return(result)
   }
 }

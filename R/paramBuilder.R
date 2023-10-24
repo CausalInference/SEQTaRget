@@ -4,7 +4,7 @@ buildParam <- function(){
   SEQopts.expansion() |>
     SEQopts.computation() |>
     SEQopts.covariates() |>
-    SEQopts.analysis()
+    SEQopts.weight()
 }
 
 #' User-facing helper function to create a parameter list for \code{SEQuential}
@@ -15,7 +15,6 @@ buildParam <- function(){
 #' @param nboot Integer: number of bootstrap
 #' @param seed Integer: starting seed
 #' @param memory Integer: number of bytes for in-memory use, default is 1GB less than system max
-#' @param spark Logical: defines if spark should be used for out-of-memory processing
 #'
 #' @export
 SEQopts.computation <- function(x = NULL, parallel = TRUE,
@@ -23,13 +22,10 @@ SEQopts.computation <- function(x = NULL, parallel = TRUE,
                            bootstrap = FALSE,
                            nboot = 100,
                            seed = 1636,
-                           memory = get_ram() - 2^20,
-                           spark = FALSE,
-                           spark.connection = "local"){
+                           memory = get_ram() - 2^20){
 
   params <- list(parallel = parallel, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, memory = memory, spark = spark,
-                 spark.connection = spark.connection)
+                 nboot = nboot, seed = seed, memory = memory)
 
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
@@ -64,6 +60,8 @@ SEQopts.covariates <- function(x = NULL, covariates = NA){
 #' @export
 SEQopts.analysis <- function(x = NULL, type = "unweighted"){
   if(!type %in% c("unweighted", "weighted", "p99")) stop("Analysis type is limited to 'unweighted', 'weighted', or 'p99'")
+
+  if(!is.null(x)) return(c(x, params)) else return(params)
 }
 
 SEQopts.weight <- function(x = NULL, weighted = FALSE){

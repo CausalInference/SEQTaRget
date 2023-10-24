@@ -3,9 +3,16 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-itt_model <- function(){
+itt_model <- function(formula, data){
+  data <- as.data.frame(data)
   model <- speedglm::speedglm(formula,
-                              result,
+                              data,
                               family = binomial("logit"))
   return(model)
+}
+
+create.numerator <- function(DT, opts){
+  if(opts$weighted == 0){
+    DT[, numerator := 1]
+  }
 }
