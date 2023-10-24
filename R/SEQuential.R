@@ -23,7 +23,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
     print("Expanding Data...")
-    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts, parallel = FALSE)
+    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
   }
 
   if(is.na(opts$covariates)) formula <- create.default.formula(data)

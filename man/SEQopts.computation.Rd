@@ -6,7 +6,7 @@
 \usage{
 SEQopts.computation(
   x = NULL,
-  parallel = TRUE,
+  parallel = FALSE,
   ncores = parallel::detectCores() - 1,
   bootstrap = FALSE,
   nboot = 100,
@@ -17,7 +17,7 @@ SEQopts.computation(
 \arguments{
 \item{x}{List: list of other parameters to concatenate}
 
-\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is TRUE}
+\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
 
 \item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
 

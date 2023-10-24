@@ -30,6 +30,7 @@ gen_data <- function(){
 }
 # data <- gen_data()
 # id.col = "ID"; eligible.col = "eligible"; time.col = "time"; outcome.col = "tx_init"
-
-#test <- SEQexpand(data, "ID", "time", "eligible", parallel = FALSE)
-#test2 <- SEQuential(test, "ID", "time", "eligible", "tx_init", parallel = FALSE, method = "ITT")
+#tictoc::tic()
+#test <- SEQexpand(data, "ID", "time", "eligible")
+#test2 <- SEQuential(data, "ID", "time", "eligible", "tx_init", method = "ITT")
+#tictoc::toc()

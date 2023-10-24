@@ -9,7 +9,7 @@ buildParam <- function(){
 
 #' User-facing helper function to create a parameter list for \code{SEQuential}
 #' @param x List: list of other parameters to concatenate
-#' @param parallel Logical: define if the SEQuential process is run in parallel, default is TRUE
+#' @param parallel Logical: define if the SEQuential process is run in parallel, default is FALSE
 #' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max
 #' @param bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
 #' @param nboot Integer: number of bootstrap
@@ -17,7 +17,7 @@ buildParam <- function(){
 #' @param memory Integer: number of bytes for in-memory use, default is 1GB less than system max
 #'
 #' @export
-SEQopts.computation <- function(x = NULL, parallel = TRUE,
+SEQopts.computation <- function(x = NULL, parallel = FALSE,
                            ncores = parallel::detectCores() - 1,
                            bootstrap = FALSE,
                            nboot = 100,

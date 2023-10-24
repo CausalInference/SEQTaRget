@@ -23,7 +23,7 @@ expansion.preprocess <- function(data){
 #' @import data.table
 #'
 #' @keywords internal
-internal.expansion <- function(DT, opts, id){
+internal.expansion <- function(DT, id.col, time.col, eligible.col, opts, id){
   if(!missing(id)) DT[get(id.col) == id,]
 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)

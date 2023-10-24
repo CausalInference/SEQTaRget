@@ -24,16 +24,17 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
 
   #Parallelization Setup ============================
   if(opts$parallel == FALSE){
-    result <- internal.expansion(DT, opts)
+    result <- internal.expansion(DT, id.col, time.col, eligible.col, opts)
     return(result)
   }
-
+#I think parallelization through just data.table processes is probably not more efficient as it is already multithreaded
   if(opts$parallel == TRUE){
     cl <- parallel::makeCluster(opts$ncores)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
     future::plan(cluster, workers = cl)
 
-    result <- foreach(id = unique_id, .combine = "rbind", .packages = "data.table") %dopar% {
-      outputDT <- internal.expansion(DT, opts, id)
+    result <- foreach(id = unique_id, .combine = "rbind", .packages = c("data.table", "SEQuential")) %dopar% {
+      outputDT <- internal.expansion(DT, id.col, time.col, eligible.col, opts, id)
     }
     return(result)
   }
