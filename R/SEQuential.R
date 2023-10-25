@@ -18,12 +18,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   if(length(dots > 0)) opts[names(dots)] <- dots
 
   # Error Throwing ============================================
-  if(!missing(params)) errorData();# errorParams()
+  if(!missing(params)) errorParams(params, dots)
+  errorData(data, id.col, time.col, eligible.col, outcome.col, method)
 
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
-    print("Expanding Data...")
+    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'")
     data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
+    cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
+  } else if(attr(data, "SEQexpanded") == TRUE || opts$expansion == TRUE){
+    cat(paste("Previous expansion detected\nMoving forward with", method, "analysis"))
   }
 
   if(is.na(opts$covariates)) formula <- create.default.formula(data)

@@ -5,7 +5,7 @@
 \title{Internal Error Thrower - when \code{data}, \code{id}, \code{time}, \code{treatment} are missing.
 Or, in the case of the latter three, if they are not found in \code{names(data)}}
 \usage{
-errorData(data, id, time, treatment, eligible)
+errorData(data, id.col, time.col, eligible.col, outcome.col, method)
 }
 \description{
 Internal Error Thrower - when \code{data}, \code{id}, \code{time}, \code{treatment} are missing.

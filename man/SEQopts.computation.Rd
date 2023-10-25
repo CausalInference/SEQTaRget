@@ -27,7 +27,7 @@ SEQopts.computation(
 
 \item{seed}{Integer: starting seed}
 
-\item{memory}{Integer: number of bytes for in-memory use, default is 1GB less than system max}
+\item{memory}{Integer: number of bytes for in-memory use, default is 1GB less than free system max}
 }
 \description{
 User-facing helper function to create a parameter list for \code{SEQuential}

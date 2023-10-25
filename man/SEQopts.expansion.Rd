@@ -4,12 +4,14 @@
 \alias{SEQopts.expansion}
 \title{User-facing helper function to create a parameter list for \code{SEQuential}}
 \usage{
-SEQopts.expansion(x = NULL, max = Inf)
+SEQopts.expansion(x = NULL, max = Inf, expansion = FALSE)
 }
 \arguments{
 \item{x}{List: list of other parameters to concatenate}
 
 \item{max}{Integer: maximum time to expand about}
+
+\item{expansion}{Logical: defines if the data has already been expanded}
 }
 \description{
 User-facing helper function to create a parameter list for \code{SEQuential}

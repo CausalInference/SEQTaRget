@@ -14,7 +14,7 @@ buildParam <- function(){
 #' @param bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
 #' @param nboot Integer: number of bootstrap
 #' @param seed Integer: starting seed
-#' @param memory Integer: number of bytes for in-memory use, default is 1GB less than system max
+#' @param memory Integer: number of bytes for in-memory use, default is 1GB less than free system max
 #'
 #' @export
 SEQopts.computation <- function(x = NULL, parallel = FALSE,
@@ -33,10 +33,11 @@ SEQopts.computation <- function(x = NULL, parallel = FALSE,
 #' User-facing helper function to create a parameter list for \code{SEQuential}
 #' @param x List: list of other parameters to concatenate
 #' @param max Integer: maximum time to expand about
+#' @param expansion Logical: defines if the data has already been expanded
 #'
 #' @export
-SEQopts.expansion <- function(x = NULL, max = Inf){
-  params <- list(max = max)
+SEQopts.expansion <- function(x = NULL, max = Inf, expansion = FALSE){
+  params <- list(max = max, expansion = expansion)
 
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
