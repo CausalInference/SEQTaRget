@@ -11,7 +11,7 @@ SEQopts.expansion(x = NULL, max = Inf, expansion = FALSE)
 
 \item{max}{Integer: maximum time to expand about}
 
-\item{expansion}{Logical: defines if the data has already been expanded}
+\item{expansion}{Logical: defines if the data has already been expanded, default is FALSE}
 }
 \description{
 User-facing helper function to create a parameter list for \code{SEQuential}

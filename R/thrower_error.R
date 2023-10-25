@@ -21,7 +21,7 @@ errorData <- function(data, id.col, time.col, eligible.col, outcome.col, method)
 
 #' Internal Error Thrower - when the expected bytes used for data expansion exceed given memory
 #' @keywords internal
-errorMemory <- function(data, id, eligible.col, time.col, opts){
+errorMemory <- function(data, id.col, eligible.col, time.col, opts){
   bytes <- translate_memory(memory)
 
   dt <- data[, .(

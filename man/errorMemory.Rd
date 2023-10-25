@@ -4,7 +4,7 @@
 \alias{errorMemory}
 \title{Internal Error Thrower - when the expected bytes used for data expansion exceed given memory}
 \usage{
-errorMemory(data, id, eligible.col, time.col, opts)
+errorMemory(data, id.col, eligible.col, time.col, opts)
 }
 \description{
 Internal Error Thrower - when the expected bytes used for data expansion exceed given memory

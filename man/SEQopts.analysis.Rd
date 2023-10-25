@@ -4,12 +4,12 @@
 \alias{SEQopts.analysis}
 \title{User facing helper function to create a parameter list for \code{SEQuential}}
 \usage{
-SEQopts.analysis(x = NULL, type = "unweighted")
+SEQopts.analysis(x = NULL, method = "ITT")
 }
 \arguments{
 \item{x}{List: list of other parameters to concatenate}
 
-\item{type}{String: type of analysis to preform}
+\item{method}{String: type of analysis to preform}
 }
 \description{
 User facing helper function to create a parameter list for \code{SEQuential}

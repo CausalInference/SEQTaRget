@@ -33,7 +33,7 @@ SEQopts.computation <- function(x = NULL, parallel = FALSE,
 #' User-facing helper function to create a parameter list for \code{SEQuential}
 #' @param x List: list of other parameters to concatenate
 #' @param max Integer: maximum time to expand about
-#' @param expansion Logical: defines if the data has already been expanded
+#' @param expansion Logical: defines if the data has already been expanded, default is FALSE
 #'
 #' @export
 SEQopts.expansion <- function(x = NULL, max = Inf, expansion = FALSE){
@@ -50,17 +50,16 @@ SEQopts.expansion <- function(x = NULL, max = Inf, expansion = FALSE){
 SEQopts.covariates <- function(x = NULL, covariates = NA){
   params <- list(covariates = covariates)
 
-
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
 
 #' User facing helper function to create a parameter list for \code{SEQuential}
 #' @param x List: list of other parameters to concatenate
-#' @param type String: type of analysis to preform
+#' @param method String: type of analysis to preform
 #'
 #' @export
-SEQopts.analysis <- function(x = NULL, type = "unweighted"){
-  if(!type %in% c("unweighted", "weighted", "p99")) stop("Analysis type is limited to 'unweighted', 'weighted', or 'p99'")
+SEQopts.analysis <- function(x = NULL, method = "ITT"){
+  params <- list(method = method)
 
   if(!is.null(x)) return(c(x, params)) else return(params)
 }
