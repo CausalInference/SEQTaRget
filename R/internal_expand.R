@@ -31,7 +31,7 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, opts, id){
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][period <= opts$max, ]
 
-  out <- data[DT, on = c(id.col, "period" = time.col)
+  out <- data[DT, on = c(id.col, "period" = "trial")
               ][, eval(eligible.col) := NULL]
 
   attr(out, "SEQexpanded") <- TRUE
