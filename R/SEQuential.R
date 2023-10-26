@@ -13,7 +13,7 @@
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method, params, ...){
   # Parameter Space building ==================================
-  opts <- buildParam(); dots <- list(...)
+  opts <- SEQopts(); dots <- list(...)
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
 

@@ -14,7 +14,7 @@ errorData <- function(data, id.col, time.col, eligible.col, outcome.col, method)
   if(missing(data)) stop("Data is missing")
   if(missing(id.col)) stop("ID column name is missing") else if(!id.col %in% names(data)) stop(sprintf("The 'id' argument '%s' is not found in the data column names"))
   if(missing(time.col)) stop("Time column name is missing")  else if(!time.col %in% names(data)) stop(sprintf("The 'time' argument '%s' is not found in the data column names"))
-  if(missing(outcome.col)) stop("Treatment column name is missing")  else if(!outcome.col %in% names(data)) stop(sprintf("The 'treatment' argument '%s' is not found in the data column names"))
+  if(missing(outcome.col)) stop("Outcome column name is missing")  else if(!outcome.col %in% names(data)) stop(sprintf("The 'outomce' argument '%s' is not found in the data column names"))
   if(missing(eligible.col)) stop("Eligible column name is missing")  else if(!eligible.col %in% names(data)) stop(sprintf("The 'eligible' argument '%s' is not found in the data column names"))
   if(missing(method)) stop("Analysis method must be specified")
   }

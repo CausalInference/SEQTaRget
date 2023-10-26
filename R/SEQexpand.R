@@ -15,7 +15,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   # Coercion ==================================================
   DT <- expansion.preprocess(as.data.table(data))
   unique_id <- unique(DT[[id.col]])
-  opts <- buildParam(); dots <- list(...) #errorParams(params, dots)
+  opts <- SEQopts(); dots <- list(...) #errorParams(params, dots)
   memory <- if(is.character(opts$memory)) translate_memory(opts$memory) else opts$memory
 
   #Parameter Space ============================================
