@@ -9,6 +9,6 @@ create.formula <- function(y, x){
 #'
 #' @keywords internal
 create.default.formula <- function(data){
-  cols <- paste(names(data)[!names(data) %in% outcome.col], collapse = "+")
+  cols <- paste(names(data)[!names(data) %in% c(outcome.col, id.col, eligible.col)], collapse = "+")
   return(as.formula(paste0(outcome.col, "~", cols)))
 }
