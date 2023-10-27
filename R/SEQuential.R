@@ -12,29 +12,40 @@
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method, params, ...){
-  # Parameter Space building ==================================
-  opts <- SEQopts(); dots <- list(...)
-  if(!missing(params)) opts[names(params)] <- params
-  if(length(dots > 0)) opts[names(dots)] <- dots
-
   # Error Throwing ============================================
   if(!missing(params)) errorParams(params, dots)
   errorData(data, id.col, time.col, eligible.col, outcome.col, method)
 
-  # Coercion ==================================================
-  if(is.null(attr(data, "SEQexpanded"))){
-    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'")
-    data <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
-    cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
-  } else if(attr(data, "SEQexpanded") == TRUE || opts$expansion == TRUE){
-    cat(paste("Previous expansion detected\nMoving forward with", method, "analysis"))
-  }
+  # Parameter Space building ==================================
+  opts <- SEQopts(); dots <- list(...)
+  if(!missing(params)) opts[names(params)] <- params
+  if(length(dots > 0)) opts[names(dots)] <- dots
+  errorOpts()
 
   if(is.na(opts$covariates)) formula <- create.default.formula(data)
   else formula <- create.formula(outcome.col, opts$covariates)
 
+  # Coercion ==================================================
+  if(is.null(attr(data, "SEQexpanded"))){
+    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'")
+    DT <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
+    cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
+
+  } else if(attr(data, "SEQexpanded") == TRUE || opts$expanded == TRUE){
+    cat(paste("Previous expansion detected\nMoving forward with", method, "analysis"))
+  }
+
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
-    if(method == "ITT") model <- itt_model(formula, data)
+    if(method == "ITT") model <- itt.model(formula, DT)
+
+  } else if (opts$weighted == TRUE){
+    if(opts$stabilized == TRUE && opts$weight.time == "pre"){
+      if(opts$weight.time == "pre"){
+        weightModel <- 'MODEL USING WEIGHTS FIT PRE-EXPANSION'
+      }
+    } else if(opts$stabilized == FALSE || weight.time == "post"){
+      weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
+    }
   }
 }

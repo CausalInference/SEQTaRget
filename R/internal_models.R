@@ -3,7 +3,7 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-itt_model <- function(formula, data){
+itt.model <- function(formula, data){
   data <- as.data.frame(data)
   model <- speedglm::speedglm(formula,
                               data,

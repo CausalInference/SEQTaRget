@@ -38,3 +38,7 @@ errorMemory <- function(data, id.col, eligible.col, time.col, opts){
     stop(paste("Expected result exceeds memory of", memory))
   }
 }
+
+errorOpts <- function(){
+  if(opts$stabilized == FALSE && opts$weight.time == "pre") stop("Non-stabilized weights can only be fit post-expansion")
+}
