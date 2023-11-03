@@ -31,14 +31,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
     DT <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
 
-  } else if(attr(data, "SEQexpanded") == TRUE || opts$expanded == TRUE){
-    cat(paste("Previous expansion detected\nMoving forward with", method, "analysis"))
+  } else if(attr(data, "SEQexpanded") == TRUE || opts$expand == FALSE){
+    if(attr(data, "SEQexpanded") == TRUE) cat("Previous expansion detected")
+    else cat("Skipping expansion per 'expand = FALSE'")
+    cat(paste("Moving forward with", method, "analysis"))
+    DT <- as.data.table(data)
   }
 
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
-    if(method == "ITT") model <- itt.model(formula, DT)
-
+    model <- internal.model(DT, formula, method, opts)
   } else if (opts$weighted == TRUE){
     if(opts$stabilized == TRUE && opts$weight.time == "pre"){
       if(opts$weight.time == "pre"){

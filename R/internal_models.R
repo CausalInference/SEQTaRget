@@ -3,12 +3,14 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-itt.model <- function(formula, data){
+internal.model <- function(data, method, formula, opts){
   data <- as.data.frame(data)
-  model <- speedglm::speedglm(formula,
-                              data,
-                              family = binomial("logit"))
-  return(model)
+  if(method == "ITT"){
+    model <- speedglm::speedglm(formula,
+                                data,
+                                family = binomial("logit"))
+    return(model)
+  }
 }
 
 create.numerator <- function(DT, opts){
