@@ -15,11 +15,12 @@
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636, memory = get_ram() - 2^20,
-                    max = Inf, expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE){
+                    max = Inf, expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
+                    weight.time = "post"){
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, memory = memory, max = max, expansion = expansion, covariates = covariates,
-                 weighted = weighted, stabilized = stabilized)
+                 nboot = nboot, seed = seed, memory = memory, max = max, expand = expand, covariates = covariates,
+                 weighted = weighted, stabilized = stabilized, weight.time = weight.time)
 
   return(params)
 }

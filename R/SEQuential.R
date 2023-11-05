@@ -20,7 +20,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   opts <- SEQopts(); dots <- list(...)
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
-  errorOpts()
+  errorOpts(opts)
 
   if(is.na(opts$covariates)) formula <- create.default.formula(data)
   else formula <- create.formula(outcome.col, opts$covariates)
