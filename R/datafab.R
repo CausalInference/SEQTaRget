@@ -1,7 +1,7 @@
-# if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
 
 gen_data <- function(){
-  n_patients <- 1e4; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   tictoc::tic()
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dopar% {
     set.seed(1636+i)
@@ -28,9 +28,6 @@ gen_data <- function(){
   tictoc::toc()
   return(output)
 }
-# data <- gen_data()
-# id.col = "ID"; eligible.col = "eligible"; time.col = "time"; outcome.col = "tx_init"
-#tictoc::tic()
-#test <- SEQexpand(data, "ID", "time", "eligible")
-#test2 <- SEQuential(data, "ID", "time", "eligible", "tx_init", method = "ITT")
-#tictoc::toc()
+#data <- gen_data()
+#test.expand <- SEQuential::SEQexpand(data, "ID", "time", "eligible")
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", method = "ITT")
