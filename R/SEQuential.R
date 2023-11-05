@@ -27,13 +27,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
 
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
-    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'")
+    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'\n")
     DT <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
 
   } else if(attr(data, "SEQexpanded") == TRUE || opts$expand == FALSE){
-    if(attr(data, "SEQexpanded") == TRUE) cat("Previous expansion detected")
-    else cat("Skipping expansion per 'expand = FALSE'")
+    if(attr(data, "SEQexpanded") == TRUE) cat("Previous expansion detected\n")
+    else cat("Skipping expansion per 'expand = FALSE'\n")
     cat(paste("Moving forward with", method, "analysis"))
     DT <- as.data.table(data)
   }
