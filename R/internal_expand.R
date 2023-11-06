@@ -3,7 +3,7 @@
 #' @import data.table
 #'
 #' @keywords internal
-expansion.preprocess <- function(data){
+expansion.preprocess <- function(data, id.col, eligible.col){
   cols <- c(id.col, eligible.col)
   binary.cols <- names(data)[sapply(data, function(col) all(unique(col) %in% c(0, 1)))]
 

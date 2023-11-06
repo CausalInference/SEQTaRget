@@ -31,3 +31,5 @@ gen_data <- function(){
 #data <- gen_data()
 #test.expand <- SEQuential::SEQexpand(data, "ID", "time", "eligible")
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", method = "ITT")
+#print(test)
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "tx_init"

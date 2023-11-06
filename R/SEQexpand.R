@@ -13,7 +13,7 @@
 
 SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
   # Coercion ==================================================
-  DT <- expansion.preprocess(as.data.table(data))
+  DT <- expansion.preprocess(as.data.table(data), id.col, eligible.col)
   opts <- SEQopts(); dots <- list(...) #errorParams(params, dots)
   memory <- if(is.character(opts$memory)) translate_memory(opts$memory) else opts$memory
 

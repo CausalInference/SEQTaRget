@@ -22,9 +22,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
-  if(is.na(opts$covariates)) formula <- create.default.formula(data)
-  else formula <- create.formula(outcome.col, opts$covariates)
-
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
     cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'\n")
@@ -38,9 +35,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
     DT <- as.data.table(data)
   }
 
+  if(is.na(opts$covariates)) formula <- create.default.formula(DT, outcome.col, id.col, eligible.col)
+  else formula <- create.formula(outcome.col, opts$covariates)
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
-    model <- internal.model(DT, formula, method, opts)
+    model <- internal.model(DT, method, formula, opts)
   } else if (opts$weighted == TRUE){
     if(opts$stabilized == TRUE && opts$weight.time == "pre"){
       if(opts$weight.time == "pre"){
@@ -50,4 +49,5 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
       weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
     }
   }
+  return(model)
 }

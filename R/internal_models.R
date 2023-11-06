@@ -9,8 +9,8 @@ internal.model <- function(data, method, formula, opts){
     model <- speedglm::speedglm(formula,
                                 data,
                                 family = binomial("logit"))
-    return(model)
   }
+  return(model)
 }
 
 create.numerator <- function(DT, opts){
