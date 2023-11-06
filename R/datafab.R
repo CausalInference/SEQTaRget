@@ -1,31 +1,37 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG)
 
 gen_data <- function(){
-  n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
-  tictoc::tic()
-  output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dopar% {
+  n_patients <- 10; max_time <- 10; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dorng% {
     set.seed(1636+i)
-    eligible_time <- sample(0:max_time, 1)
-    sex <- rbinom(1, 1, 0.5)
+    sex <- as.integer(rbinom(1, 1, 0.5))
+    outcome <- as.integer(rbinom(1, 1, .5))
+    tx_time <- as.integer(sample(0:max_time, 1))
+
+    if(outcome == 1) outcome_time <- as.integer(sample(0:max_time, 1)) else outcome_time <- NA
+    if(is.na(outcome_time)) eligible_time <- tx_time else eligible_time <- outcome_time
+    if(is.na(outcome_time)){
+      outcome_vector <- rep(0, max_time+1)
+    } else {
+      outcome_vector <- c(rep(0, outcome_time), 1, rep(0, max_time-outcome_time))
+    }
 
     ID <- data.table(ID = rep(i, max_time+1),
                      time = 0:max_time,
-                     eligible = c(rep(1, eligible_time), rep(0, max_time-eligible_time+1)),
+                     eligible = c(rep(1, eligible_time+1), rep(0, max_time-eligible_time)),
+                     outcome = outcome_vector,
+                     tx_init = c(rep(0, tx_time), 1, rep(1, max_time-tx_time)),
                      sex = rep(sex, max_time+1),
                      N = rnorm(length(0:max_time), 10, 5),
                      L = runif(1),
                      P = runif(1, 9, 10))
 
     ID[, `:=`(L = L[1] * cumprod(c(1, rep(1.04, .N-1))),
-              P = P[1] * cumprod(c(1, rep(0.98, .N-1))),
-              tx_init = as.integer(eligible == 1 &
-                                     shift(eligible, type = "lag", fill = 1) == 1 &
-                                     shift(eligible, type = "lead", fill = 1) == 0))]
+              P = P[1] * cumprod(c(1, rep(0.98, .N-1))))]
 
     return(ID)
   }
   stopCluster(cl)
-  tictoc::toc()
   return(output)
 }
 #data <- gen_data()
