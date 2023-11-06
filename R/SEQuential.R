@@ -2,19 +2,22 @@
 #'
 #' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
-#' @param time.col String: colum name of the time column
+#' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
+#' @param treatment.col String: column name of the treatment column
+#' @param outcome.col String: column name of the outcome column
 #' @param method String: method of analysis to preform
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... another option for passing parameters from \code{SEQOpts}
 #'
 #' @import data.table
+#' @importFrom survival survfit Surv
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method, params, ...){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
   # Error Throwing ============================================
   if(!missing(params)) errorParams(params, dots)
-  errorData(data, id.col, time.col, eligible.col, outcome.col, method)
+  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
 
   # Parameter Space building ==================================
   opts <- SEQopts(); dots <- list(...)
@@ -24,7 +27,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
 
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
-    cat("Expanding Data...\nIf expansion has already occurred, please set 'expanded = TRUE'\n")
+    cat("Expanding Data...\nIf expansion has already occurred, please set 'expand = FALSE'\n")
     DT <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
 
@@ -49,5 +52,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, outcome.col, method
       weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
     }
   }
-  return(model)
+  surv <- internal.survival(DT, time.col, outcome.col, treatment.col, opts)
+  return(list(model, surv))
 }

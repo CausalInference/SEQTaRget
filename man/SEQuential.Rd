@@ -9,6 +9,7 @@ SEQuential(
   id.col,
   time.col,
   eligible.col,
+  treatment.col,
   outcome.col,
   method,
   params,
@@ -20,9 +21,13 @@ SEQuential(
 
 \item{id.col}{String: column name of the id column}
 
-\item{time.col}{String: colum name of the time column}
+\item{time.col}{String: column name of the time column}
 
 \item{eligible.col}{String: column name of the eligibility column}
+
+\item{treatment.col}{String: column name of the treatment column}
+
+\item{outcome.col}{String: column name of the outcome column}
 
 \item{method}{String: method of analysis to preform}
 

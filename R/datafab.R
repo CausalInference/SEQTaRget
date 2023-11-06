@@ -1,15 +1,15 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, survival, ggplot2, ggfortify)
 
 gen_data <- function(){
-  n_patients <- 10; max_time <- 10; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dorng% {
     set.seed(1636+i)
     sex <- as.integer(rbinom(1, 1, 0.5))
-    outcome <- as.integer(rbinom(1, 1, .5))
+    outcome <- as.integer(rbinom(1, 1, .07))
     tx_time <- as.integer(sample(0:max_time, 1))
 
     if(outcome == 1) outcome_time <- as.integer(sample(0:max_time, 1)) else outcome_time <- NA
-    if(is.na(outcome_time)) eligible_time <- tx_time else eligible_time <- outcome_time
+    if(is.na(outcome_time)) eligible_time <- tx_time else eligible_time <- min(outcome_time, tx_time)
     if(is.na(outcome_time)){
       outcome_vector <- rep(0, max_time+1)
     } else {
@@ -36,6 +36,6 @@ gen_data <- function(){
 }
 #data <- gen_data()
 #test.expand <- SEQuential::SEQexpand(data, "ID", "time", "eligible")
-#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", method = "ITT")
-#print(test)
-#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "tx_init"
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "outcome", "tx_init", method = "ITT")
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
+#autoplot(test$surv)
