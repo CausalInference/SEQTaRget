@@ -36,14 +36,39 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, covariates, o
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][period <= opts$max, ]
 
+  data_list <- list()
+
+  if(length(vars.base) > 0){
+    data.base <- data[DT, on = c(id.col, "trial" = time.col), .SDcols = vars.base]
+    lapply(vars.base, function(x) setnames(data.base), old = x, new = paste0(x, opts$baseline.indicator))
+    data_list[["base"]] <- data_base
+  }
+  if(length(vars.time) > 0){
+    data_time <- data[DT, on = c(id.col, "period" = time.col), .SDcols = vars.time]
+    data_list[["time"]] <- data_time
+  }
+  if(length(data_list) > 1){
+    out <- Reduce(function(x, y) merge(x, y, by = c(id.col, "trial", "period")))
+  } else if(length(data_list) == 1){
+    out <- data_list[[1]]
+  }
+  out <- out[, eval(eligible.col) := NULL]
+  attr(out, "SEQexpanded") <- TRUE
+
+return(out)
+}
+
+
   #idea - if length vars.base > 0, merge on trial = time.col
   # if length vars.time > 0, merge on period = time.col
   # how to merge back together after these two seperate joins? Merge again with _bas on 'period'?
   #non _bas vars should be "period = time.col" _bas vars should be "trial = time.col"
   #non _bas vars should be "period = time.col" _bas vars should be "trial = time.col"
-  out <- data[DT[..vars.base], on = c(id.col, "trial" = time.col)
-              ][, eval(eligible.col) := NULL]
+#  out <- data[DT[..vars.base], on = c(id.col, "trial" = time.col)
+#              ][, eval(eligible.col) := NULL]
 
-  attr(out, "SEQexpanded") <- TRUE
-  return(out)
-}
+#  out2 <- data[DT[..vars.time], on = c(id.col, "period" = time.col)
+#               ][, eval(eligible.col) := NULL]
+
+#  attr(out, "SEQexpanded") <- TRUE
+#}
