@@ -1,7 +1,7 @@
 #if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, survival, ggplot2, ggfortify)
 
 gen_data <- function(){
-  n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
+  n_patients <- 10; max_time <- 5; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dorng% {
     set.seed(1636+i)
     sex <- as.integer(rbinom(1, 1, 0.5))
@@ -38,4 +38,6 @@ gen_data <- function(){
 #test.expand <- SEQuential::SEQexpand(data, "ID", "time", "eligible")
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "outcome", "tx_init", method = "ITT")
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
+#opts <- SEQuential::SEQopts()
+#covariates = "L_bas+N_bas+P_bas+L"
 #autoplot(test$surv)

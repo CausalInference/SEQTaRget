@@ -27,32 +27,42 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, covariates, o
   if(!missing(id)) DT[get(id.col) == id,]
 
   vars <- unlist(strsplit(covariates, "\\+|\\*"))
-  vars.base <- sub(opts$baseline.indicator, "",
-                  vars[grep(opts$baseline.indicator), vars])
+  vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.time <- vars[!vars %in% vars.base]
+  vars.base <- sub(opts$baseline.indicator, "", vars.base)
+  vars.kept <- c(vars, id.col, "trial", "period")
 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
-                 ][period <= opts$max, ]
+                 ][period <= opts$max,
+                   ]
 
   data_list <- list()
-
   if(length(vars.base) > 0){
-    data.base <- data[DT, on = c(id.col, "trial" = time.col), .SDcols = vars.base]
-    lapply(vars.base, function(x) setnames(data.base), old = x, new = paste0(x, opts$baseline.indicator))
-    data_list[["base"]] <- data_base
+    data.base <- data[DT, on = c(id.col, "trial" = time.col), .SDcols = vars.base, nomatch = 0
+                      ][, eval(eligible.col) := NULL]
+
+    setnames(data.base, old = vars.base, new = paste0(vars.base, opts$baseline.indicator))
+    vars.found <- vars.kept[vars.kept %in% names(data.base)]
+
+    data_list[["base"]] <- data.base[, ..vars.found]
   }
   if(length(vars.time) > 0){
-    data_time <- data[DT, on = c(id.col, "period" = time.col), .SDcols = vars.time]
-    data_list[["time"]] <- data_time
+    data.time <- data[DT, on = c(id.col, "period" = time.col), .SDcols = vars.time
+                      ][, eval(eligible.col) := NULL]
+
+    vars.found <- vars.kept[vars.kept %in% names(data.time)]
+    data_list[["time"]] <- data.time
   }
   if(length(data_list) > 1){
-    out <- Reduce(function(x, y) merge(x, y, by = c(id.col, "trial", "period")))
+    out <- Reduce(function(x, y) merge(x, y, by = c(id.col, "trial", "period"), all = TRUE), data_list)
   } else if(length(data_list) == 1){
     out <- data_list[[1]]
   }
-  out <- out[, eval(eligible.col) := NULL]
+  vars <- c(vars, id.col, "period", "trial")
+  out <- out[, ..vars]
+
   attr(out, "SEQexpanded") <- TRUE
 
 return(out)
