@@ -23,16 +23,25 @@ expansion.preprocess <- function(data, id.col, eligible.col){
 #' @import data.table
 #'
 #' @keywords internal
-internal.expansion <- function(DT, id.col, time.col, eligible.col, opts, id){
+internal.expansion <- function(DT, id.col, time.col, eligible.col, covariates, opts, id){
   if(!missing(id)) DT[get(id.col) == id,]
+
+  vars <- unlist(strsplit(covariates, "\\+|\\*"))
+  vars.base <- sub(opts$baseline.indicator, "",
+                  vars[grep(opts$baseline.indicator), vars])
+  vars.time <- vars[!vars %in% vars.base]
 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][period <= opts$max, ]
 
+  #idea - if length vars.base > 0, merge on trial = time.col
+  # if length vars.time > 0, merge on period = time.col
+  # how to merge back together after these two seperate joins? Merge again with _bas on 'period'?
   #non _bas vars should be "period = time.col" _bas vars should be "trial = time.col"
-  out <- data[DT, on = c(id.col, "trial" = time.col)
+  #non _bas vars should be "period = time.col" _bas vars should be "trial = time.col"
+  out <- data[DT[..vars.base], on = c(id.col, "trial" = time.col)
               ][, eval(eligible.col) := NULL]
 
   attr(out, "SEQexpanded") <- TRUE

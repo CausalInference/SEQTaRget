@@ -9,7 +9,7 @@ gen_data <- function(){
     tx_time <- as.integer(sample(0:max_time, 1))
 
     if(outcome == 1) outcome_time <- as.integer(sample(0:max_time, 1)) else outcome_time <- NA
-    if(is.na(outcome_time)) eligible_time <- tx_time else eligible_time <- min(outcome_time, tx_time)
+    if(is.na(outcome_time)) eligible_time <- tx_time else eligible_time <- outcome_time
     if(is.na(outcome_time)){
       outcome_vector <- rep(0, max_time+1)
     } else {

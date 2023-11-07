@@ -16,11 +16,12 @@
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636, memory = get_ram() - 2^20,
                     max = Inf, expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
-                    weight.time = "post"){
+                    weight.time = "post", baseline.indicator = "_bas"){
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
                  nboot = nboot, seed = seed, memory = memory, max = max, expand = expand, covariates = covariates,
-                 weighted = weighted, stabilized = stabilized, weight.time = weight.time)
+                 weighted = weighted, stabilized = stabilized, weight.time = weight.time,
+                 baseline.indicator = baseline.indicator)
 
   return(params)
 }
