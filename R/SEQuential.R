@@ -34,7 +34,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else if(attr(data, "SEQexpanded") == TRUE || opts$expand == FALSE){
     if(attr(data, "SEQexpanded") == TRUE) cat("Previous expansion detected\n")
     else cat("Skipping expansion per 'expand = FALSE'\n")
-    cat(paste("Moving forward with", method, "analysis"))
+    cat(paste("Moving forward with", method, "analysis\n"))
     DT <- as.data.table(data)
   }
 
@@ -53,6 +53,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
     }
   }
+  cat(paste0(method, "successfully created\nCreating survival curves"))
 #  surv <- internal.survival(DT, time.col, outcome.col, treatment.col, opts)
   return(model)
 }
