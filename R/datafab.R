@@ -5,7 +5,7 @@ gen_data <- function(){
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dorng% {
     set.seed(1636+i)
     sex <- as.integer(rbinom(1, 1, 0.5))
-    outcome <- as.integer(rbinom(1, 1, .5))
+    outcome <- as.integer(rbinom(1, 1, .07))
     tx_time <- as.integer(sample(0:max_time, 1))
 
     if(outcome == 1) outcome_time <- as.integer(sample(0:max_time, 1)) else outcome_time <- NA
