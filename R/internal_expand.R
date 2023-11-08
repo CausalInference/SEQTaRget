@@ -33,13 +33,13 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
   vars.time <- vars[!vars %in% vars.base]
   vars.base <- unique(sub(opts$baseline.indicator, "", vars.base))
   vars.sq <- unique(sub(opts$sq.indicator, "", vars.sq))
-  vars.kept <- c(vars, id.col, "trial", "period")
+  vars.kept <- c(vars, id.col, "trial", "period", "followup")
 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][period <= opts$max,
-                   ]
+                   ][, followup := seq_len(.N), by = eval(id.col)]
 
   data_list <- list()
   if(length(c(vars.time, vars.sq)) > 0){

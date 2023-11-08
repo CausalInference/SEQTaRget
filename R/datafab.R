@@ -1,4 +1,4 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -36,7 +36,7 @@ gen_data <- function(){
   stopCluster(cl)
   return(output)
 }
-#myparams <- SEQopts(covariates = "tx_init_bas+ tx_init_bas*period + tx_init_bas*period_sq + period + period_sq + sex + N_bas + L_bas + P_bas")
+#myparams <- SEQopts(covariates = "tx_init_bas+tx_init_bas*followup+tx_init_bas*followup_sq + followup + followup_sq + sex + N_bas + L_bas + P_bas")
 #data <- gen_data()
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", myparams)
 #print(test$coefficients)
