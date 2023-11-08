@@ -11,16 +11,15 @@
 #'
 #' @export
 
-SEQexpand <- function(data, id.col, time.col, eligible.col, params, ...) {
+SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, params, ...) {
   # Coercion ==================================================
   DT <- expansion.preprocess(as.data.table(data), id.col, eligible.col)
-  opts <- SEQopts(); dots <- list(...) #errorParams(params, dots)
-  memory <- if(is.character(opts$memory)) translate_memory(opts$memory) else opts$memory
+  opts <- SEQopts(); dots <- list(...)
 
   #Parameter Space ============================================
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
 
-  result <- internal.expansion(DT, id.col, time.col, eligible.col, opts)
+  result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
   return(result)
 }

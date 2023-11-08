@@ -4,7 +4,7 @@
 \alias{expansion.preprocess}
 \title{Internal function to extract only IDs that are eligible and convert any binary columns to type logical}
 \usage{
-expansion.preprocess(data, id.col, eligible.col)
+expansion.preprocess(data, id.col, eligible.col, outcome.col)
 }
 \description{
 Internal function to extract only IDs that are eligible and convert any binary columns to type logical

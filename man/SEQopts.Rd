@@ -17,7 +17,8 @@ SEQopts(
   covariates = NA,
   weighted = FALSE,
   stabilized = FALSE,
-  weight.time = "post"
+  weight.time = "post",
+  baseline.indicator = "_bas"
 )
 }
 \arguments{

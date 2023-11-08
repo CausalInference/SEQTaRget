@@ -18,7 +18,7 @@ internal.survival <- function(data, time.col, outcome.col, treatment.col, opts){
   set(data, j = time.col, value = as.numeric(data[[time.col]]))
   data <- as.data.frame(data)
 
-  survformula <- as.formula(paste0("Surv(", time.col,", ", outcome.col, ") ~ ", treatment.col))
+  survformula <- as.formula(paste0("Surv(", time.col,",", outcome.col, ")~", treatment.col))
   surv <- survival::survfit(survformula, data)
   return(surv)
 }

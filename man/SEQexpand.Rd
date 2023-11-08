@@ -4,7 +4,7 @@
 \alias{SEQexpand}
 \title{Internal handler for expanding the input dataset}
 \usage{
-SEQexpand(data, id.col, time.col, eligible.col, params, ...)
+SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params, ...)
 }
 \arguments{
 \item{data}{Dataframe or DataTable: data to expand}

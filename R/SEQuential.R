@@ -16,11 +16,11 @@
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
   # Error Throwing ============================================
-  if(!missing(params)) errorParams(params, dots)
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
 
   # Parameter Space building ==================================
   opts <- SEQopts(); dots <- list(...)
+  if(!missing(params)) errorParams(params, dots)
   if(!missing(params)) opts[names(params)] <- params
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
@@ -28,7 +28,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Coercion ==================================================
   if(is.null(attr(data, "SEQexpanded"))){
     cat("Expanding Data...\nIf expansion has already occurred, please set 'expand = FALSE'\n")
-    DT <- SEQexpand(data, id.col, time.col, eligible.col, params = opts)
+    DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params = opts)
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
 
   } else if(attr(data, "SEQexpanded") == TRUE || opts$expand == FALSE){
@@ -38,8 +38,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     DT <- as.data.table(data)
   }
 
-  if(is.na(opts$covariates)) formula <- create.default.formula(DT, outcome.col, id.col, eligible.col)
-  else formula <- create.formula(outcome.col, opts$covariates)
+  if(is.na(opts$covariates)){
+    formula <- create.default.formula(DT, outcome.col, id.col, eligible.col)
+    } else formula <- create.formula(outcome.col, opts$covariates)
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
     model <- internal.model(DT, method, formula, opts)
@@ -52,6 +53,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
     }
   }
-  surv <- internal.survival(DT, time.col, outcome.col, treatment.col, opts)
-  return(list(model, surv))
+#  surv <- internal.survival(DT, time.col, outcome.col, treatment.col, opts)
+  return(model)
 }
