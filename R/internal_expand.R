@@ -39,7 +39,7 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][period <= opts$max,
-                   ][, followup := seq_len(.N), by = eval(id.col)]
+                   ][, followup := seq_len(.N), by = c(eval(id.col), "trial")]
 
   data_list <- list()
   if(length(c(vars.time, vars.sq)) > 0){
