@@ -11,14 +11,14 @@ SEQopts(
   bootstrap = FALSE,
   nboot = 100,
   seed = 1636,
-  memory = get_ram() - 2^20,
   max = Inf,
   expand = TRUE,
   covariates = NA,
   weighted = FALSE,
   stabilized = FALSE,
   weight.time = "post",
-  baseline.indicator = "_bas"
+  baseline.indicator = "_bas",
+  sq.indicator = "_sq"
 )
 }
 \arguments{
@@ -31,8 +31,6 @@ SEQopts(
 \item{nboot}{Integer: number of bootstraps}
 
 \item{seed}{Integer: starting seed}
-
-\item{memory}{Integer: number of bytes for in-memory use, default is 1GB less than free system max}
 
 \item{max}{Integer: maximum time to expand about}
 
