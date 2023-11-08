@@ -1,11 +1,11 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, survival, ggplot2, ggfortify, SEQuential)
+if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, survival, ggplot2, ggfortify, SEQuential)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
   output <- foreach(i = 1:n_patients, .combine = "rbind", .packages = c("data.table")) %dorng% {
     set.seed(1636+i)
     sex <- as.integer(rbinom(1, 1, 0.5))
-    outcome <- as.integer(rbinom(1, 1, .07))
+    outcome <- as.integer(rbinom(1, 1, .5))
     tx_time <- as.integer(sample(0:max_time, 1))
 
     if(outcome == 1) outcome_time <- as.integer(sample(0:max_time, 1)) else outcome_time <- NA
@@ -28,6 +28,8 @@ gen_data <- function(){
 
     ID[, `:=`(L = L[1] * cumprod(c(1, rep(1.04, .N-1))),
               P = P[1] * cumprod(c(1, rep(0.98, .N-1))))]
+
+    if(outcome == 1) ID <- ID[time <= outcome_time]
 
     return(ID)
   }
