@@ -11,7 +11,6 @@
 #' @param ... another option for passing parameters from \code{SEQOpts}
 #'
 #' @import data.table
-#' @importFrom survival survfit Surv
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){

@@ -1,4 +1,4 @@
-#' Internal handler for expanding the input dataset
+#' Creates an expanded dataset for use with \code{SEQuential}
 #'
 #' @param data Dataframe or DataTable: data to expand
 #' @param id.col String: column name of the id column
