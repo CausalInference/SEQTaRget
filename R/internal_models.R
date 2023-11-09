@@ -4,7 +4,6 @@
 #'
 #' @keywords internal
 internal.model <- function(data, method, formula, opts){
-  data <- as.data.frame(data)
   if(method == "ITT"){
     model <- speedglm::speedglm(formula,
                                 data,
@@ -13,13 +12,40 @@ internal.model <- function(data, method, formula, opts){
   return(model)
 }
 
-internal.survival <- function(data, time.col, outcome.col, treatment.col, opts){
-  if(opts$expand == TRUE) time.col <- "period"
-  set(data, j = time.col, value = as.numeric(data[[time.col]]))
-  data <- as.data.frame(data)
+#' Internal function for creating survival curves
+#'
+#' @import ggplot2 data.table
+#'
+#' @keywords internal
 
-  survformula <- as.formula(paste0("Surv(", time.col,",", outcome.col, ")~", treatment.col))
-  surv <- survival::survfit(survformula, data)
+internal.survival <- function(data, id.col, time.col, outcome.col, treatment.col, opts){
+  if(opts$expand == TRUE) time.col <- "period"
+  if(opts$max.survival == "max") opts$max.survival <- max(data[[time.col]])
+  tx.col <- names(data)[grep(treatment.col, names(data))]
+
+  surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
+                                   data = data,
+                                   family = binomial("logit"))
+  suppressWarnings(
+  data <- data[, eval(tx.col) := FALSE
+               ][, predFALSE := predict(surv.model, newdata = .SD)
+                 ][, eval(tx.col) := TRUE
+                   ][, predTRUE := predict(surv.model, newdata = .SD)
+                     ][, `:=` (surv0 = cumprod(1 - predFALSE),
+                               surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
+                       ][, `:=` (risk0 = 1 - surv0,
+                                 risk1 = 1 - surv1)]
+  )
+
+  surv <- melt(data[, .(txFALSE = mean(surv0),
+                        txTRUE = mean(surv1)), by = time.col],
+               id.vars = eval(time.col)) |>
+    ggplot(aes(x = get(time.col), y = value, col = variable)) +
+    geom_line() +
+    theme_classic() +
+    labs(x = "Time", y = "Survival", color = "") +
+    scale_color_discrete(labels = c("No Treatment", "Treatment"))
+
   return(surv)
 }
 

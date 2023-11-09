@@ -11,7 +11,8 @@ SEQopts(
   bootstrap = FALSE,
   nboot = 100,
   seed = 1636,
-  max = Inf,
+  max.period = Inf,
+  max.survival = "max",
   expand = TRUE,
   covariates = NA,
   weighted = FALSE,
@@ -32,8 +33,6 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
-\item{max}{Integer: maximum time to expand about}
-
 \item{expand}{Logical: defines if the data should be expanded, default is TRUE}
 
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
@@ -41,6 +40,8 @@ SEQopts(
 \item{weighted}{Logical:}
 
 \item{stabilized}{Logical: if the weights should be stabilized, default is FALSE}
+
+\item{max}{Integer: maximum time to expand about}
 }
 \description{
 Parameter Builder - passing defaults to \code{SEQuential}

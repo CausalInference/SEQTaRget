@@ -14,14 +14,15 @@
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636,
-                    max = Inf, expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
+                    max.period = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
                     weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, max = max, expand = expand, covariates = covariates,
+                 nboot = nboot, seed = seed, max.period = max.period, max.survival = max.survival,
+                 expand = expand, covariates = covariates,
                  weighted = weighted, stabilized = stabilized, weight.time = weight.time,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
 

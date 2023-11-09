@@ -39,10 +39,9 @@ gen_data <- function(){
 #myparams <- SEQopts(covariates = "tx_init_bas+tx_init_bas*followup+tx_init_bas*followup_sq + followup + followup_sq + sex + N_bas + L_bas + P_bas")
 #data <- gen_data()
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", myparams)
-#print(test$coefficients)
-
+#test.expand <- SEQexpand(data, "ID", "time", "eligible", "outcome", myparams)
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
 #opts <- SEQuential::SEQopts()
-#opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
+#opts$covariates = "tx_init_bas+tx_init_bas*followup+tx_init_bas*followup_sq+followup+followup_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)

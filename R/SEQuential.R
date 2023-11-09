@@ -53,7 +53,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
     }
   }
-  cat(paste0(method, "successfully created\nCreating survival curves"))
-#  surv <- internal.survival(DT, time.col, outcome.col, treatment.col, opts)
-  return(model)
+  cat(paste0("\n", method, " model successfully created\nCreating survival curves"))
+
+  surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts = opts)
+
+  return(list(model, surv))
 }
