@@ -24,22 +24,22 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
-  # Coercion ==================================================
-  if(is.null(attr(data, "SEQexpanded"))){
-    cat("Expanding Data...\nIf expansion has already occurred, please set 'expand = FALSE'\n")
+  if(is.na(opts$covariates)){
+    formula <- create.default.formula(DT, id.col, time.col, eligible.col, treatment.col, outcome.col, method,)
+  } else formula <- create.formula(outcome.col, opts$covariates)
+
+  # Expansion ==================================================
+  if(opts$expand == TRUE){
+    cat("Expanding Data...\n")
     DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params = opts)
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
-
-  } else if(attr(data, "SEQexpanded") == TRUE || opts$expand == FALSE){
-    if(attr(data, "SEQexpanded") == TRUE) cat("Previous expansion detected\n")
-    else cat("Skipping expansion per 'expand = FALSE'\n")
+  } else if(opts$expand == FALSE){
+    cat("Skipping expansion per 'expand = FALSE'\n")
     cat(paste("Moving forward with", method, "analysis\n"))
     DT <- as.data.table(data)
   }
+  if(method == "none") return(DT)
 
-  if(is.na(opts$covariates)){
-    formula <- create.default.formula(DT, outcome.col, id.col, eligible.col)
-    } else formula <- create.formula(outcome.col, opts$covariates)
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
     model <- internal.model(DT, method, formula, opts)
