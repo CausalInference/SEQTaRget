@@ -32,13 +32,18 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(opts$expand == TRUE){
     cat("Expanding Data...\n")
     DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params = opts)
+
+    if(method == "none"){
+      cat("Returning expanded data per 'method = none'")
+      return(DT)
+    }
+
     cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
   } else if(opts$expand == FALSE){
     cat("Skipping expansion per 'expand = FALSE'\n")
     cat(paste("Moving forward with", method, "analysis\n"))
     DT <- as.data.table(data)
   }
-  if(method == "none") return(DT)
 
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){

@@ -11,15 +11,18 @@
 #'
 #' @export
 
-SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, params, ...) {
-  # Coercion ==================================================
-  DT <- expansion.preprocess(as.data.table(data), id.col, eligible.col)
-  opts <- SEQopts(); dots <- list(...)
+SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
+  # Pre-Processing ==================================================
+  cols <- c(id.col, eligible.col)
+  binary.cols <- names(data)[sapply(data, function(col) all(unique(col) %in% c(0, 1)))]
+  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
+                                        ][sum_elig != 0,
+                                          ][[id.col]])
 
-  #Parameter Space ============================================
-  if(!missing(params)) opts[names(params)] <- params
-  if(length(dots > 0)) opts[names(dots)] <- dots
+  DT <- data[data[[id.col]] %in% eligible_ids,
+             ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
 
+  #Expansion =========================================================
   result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
   return(result)
 }

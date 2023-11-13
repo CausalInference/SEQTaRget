@@ -1,22 +1,3 @@
-#' Internal function to extract only IDs that are eligible and convert any binary columns to type logical
-#'
-#' @import data.table
-#'
-#' @keywords internal
-expansion.preprocess <- function(data, id.col, eligible.col, outcome.col){
-  cols <- c(id.col, eligible.col)
-  binary.cols <- names(data)[sapply(data, function(col) all(unique(col) %in% c(0, 1)))]
-
-  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
-                                      ][sum_elig != 0,
-                                        ][[id.col]])
-
-  DT <- data[data[[id.col]] %in% eligible_ids,
-           ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
-
-  return(DT)
-}
-
 #' Internal function that handles the expansion of a data.table (DT).
 #' If \code{ID} is specified, it subsets per ID (for use in parallelizing operations by ID)
 #'
@@ -63,8 +44,6 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
   } else if(length(data_list) == 1){
     out <- data_list[[1]]
   }
-
-  attr(out, "SEQexpanded") <- TRUE
 
 return(out)
 }
