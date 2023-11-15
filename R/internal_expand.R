@@ -12,7 +12,8 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
 
   vars.time <- vars[!vars %in% vars.base]
-  vars.base <- unique(sub(opts$baseline.indicator, "", vars.base))
+  vars.base <- unique(gsub(opts$baseline.indicator, "", vars.base))
+  vars.base <- vars.base[!vars.base %in% time.col]
   vars.sq <- unique(sub(opts$sq.indicator, "", vars.sq))
   vars.kept <- c(vars, id.col, "trial", "period", "followup")
 

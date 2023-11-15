@@ -2,9 +2,9 @@
 % Please edit documentation in R/SEQexpand.R
 \name{SEQexpand}
 \alias{SEQexpand}
-\title{Internal handler for expanding the input dataset}
+\title{Creates an expanded dataset for use with \code{SEQuential}}
 \usage{
-SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params, ...)
+SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
 }
 \arguments{
 \item{data}{Dataframe or DataTable: data to expand}
@@ -20,5 +20,5 @@ SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params, ...)
 \item{...}{Other parameters, as passed to \code{SEQOpts.expansion}}
 }
 \description{
-Internal handler for expanding the input dataset
+Creates an expanded dataset for use with \code{SEQuential}
 }

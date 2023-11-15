@@ -25,16 +25,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   errorOpts(opts)
 
   if(is.na(opts$covariates)){
-    formula <- create.default.formula(DT, id.col, time.col, eligible.col, treatment.col, outcome.col, method,)
-  } else formula <- create.formula(outcome.col, opts$covariates)
+    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
+  }
 
   # Expansion ==================================================
   if(opts$expand == TRUE){
     cat("Expanding Data...\n")
-    DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, params = opts)
+    DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
 
     if(method == "none"){
-      cat("Returning expanded data per 'method = none'")
+      cat("Returning expanded data per 'method = 'none''")
       return(DT)
     }
 
@@ -45,9 +45,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     DT <- as.data.table(data)
   }
 
+
   #Model Dispersion ===========================================
   if(opts$weighted == FALSE){
-    model <- internal.model(DT, method, formula, opts)
+    model <- internal.model(DT, method, outcome.col, opts$covariates, opts)
   } else if (opts$weighted == TRUE){
     if(opts$stabilized == TRUE && opts$weight.time == "pre"){
       if(opts$weight.time == "pre"){
@@ -59,7 +60,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   cat(paste0("\n", method, " model successfully created\nCreating survival curves"))
 
-  surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts = opts)
+  surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
   return(list(model, surv))
 }

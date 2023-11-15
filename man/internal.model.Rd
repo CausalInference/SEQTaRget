@@ -4,7 +4,7 @@
 \alias{internal.model}
 \title{Internal function for fitting ITT model on in-memory data}
 \usage{
-internal.model(data, method, formula, opts)
+internal.model(data, method, outcome.col, covariates, opts)
 }
 \description{
 Internal function for fitting ITT model on in-memory data

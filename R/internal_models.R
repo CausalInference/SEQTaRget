@@ -3,11 +3,13 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-internal.model <- function(data, method, formula, opts){
+internal.model <- function(data, method, outcome.col, covariates, opts){
+  formula <- as.formula(paste0(outcome.col, "~", covariates))
   if(method == "ITT"){
     model <- speedglm::speedglm(formula,
                                 data,
                                 family = binomial("logit"))
+    names(model$coefficients) <- gsub("_bas", "", names(model$coefficients))
   }
   return(model)
 }
@@ -19,7 +21,6 @@ internal.model <- function(data, method, formula, opts){
 #' @keywords internal
 
 internal.survival <- function(data, id.col, time.col, outcome.col, treatment.col, opts){
-  if(opts$expand == TRUE) time.col <- "period"
   if(opts$max.survival == "max") opts$max.survival <- max(data[[time.col]])
   tx.col <- names(data)[grep(treatment.col, names(data))]
 
