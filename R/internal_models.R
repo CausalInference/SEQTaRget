@@ -29,7 +29,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                                    data = DT,
                                    family = binomial("logit"))
   DT <- DT[get(time.col) == 0,
-           ][rep(1:.N, each = opts$max.survival)
+           ][rep(1:.N, each = opts$max.survival + 1)
              ][, `:=` (followup = seq(1:.N)-1,
                        followup_sq = (seq(1:.N)-1)^2), by = eval(id.col)
                ][, eval(tx.col) := FALSE
