@@ -4,9 +4,8 @@
 #'
 #' @keywords internal
 internal.model <- function(data, method, outcome.col, covariates, opts){
-  formula <- as.formula(paste0(outcome.col, "~", covariates))
   if(method == "ITT"){
-    model <- speedglm::speedglm(formula,
+    model <- speedglm::speedglm(formula = paste0(outcome.col, "~", covariates),
                                 data,
                                 family = binomial("logit"))
     names(model$coefficients) <- gsub("_bas", "", names(model$coefficients))
