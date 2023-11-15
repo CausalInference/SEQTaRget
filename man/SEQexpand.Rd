@@ -15,7 +15,9 @@ SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
 
 \item{eligible.col}{String: column name of the eligibility column}
 
-\item{params}{List: optional list of parameters from \code{SEQOpts}}
+\item{outcome.col}{String: column name of the outcome column}
+
+\item{opts}{List: optional list of parameters from \code{SEQOpts}}
 
 \item{...}{Other parameters, as passed to \code{SEQOpts.expansion}}
 }

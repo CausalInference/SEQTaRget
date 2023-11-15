@@ -25,6 +25,8 @@ SEQopts(
 \arguments{
 \item{parallel}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
 
+\item{nthreads}{Integer: number of threads to use for data.table processing}
+
 \item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
 
 \item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
@@ -33,15 +35,23 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
+\item{max.period}{Integer: maximum time to expand about}
+
+\item{max.survival}{Integer: maximum time for survival curves, default is "max"}
+
 \item{expand}{Logical: defines if the data should be expanded, default is TRUE}
 
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
-\item{weighted}{Logical:}
+\item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
 \item{stabilized}{Logical: if the weights should be stabilized, default is FALSE}
 
-\item{max}{Integer: maximum time to expand about}
+\item{weight.time}{String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded}
+
+\item{baseline.indicator}{String: identifier for baseline variables in \code{covariates} - intended as an override}
+
+\item{sq.indicator}{String: identifier for squared variables in \code{covariates} - intended as an override}
 }
 \description{
 Parameter Builder - passing defaults to \code{SEQuential}

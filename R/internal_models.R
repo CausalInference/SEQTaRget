@@ -20,28 +20,32 @@ internal.model <- function(data, method, outcome.col, covariates, opts){
 #'
 #' @keywords internal
 
-internal.survival <- function(data, id.col, time.col, outcome.col, treatment.col, opts){
-  if(opts$max.survival == "max") opts$max.survival <- max(data[[time.col]])
-  tx.col <- names(data)[grep(treatment.col, names(data))]
+internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
+  if(opts$expand == TRUE) time.col <- "period"
+  if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
+
+  tx.col <- names(DT)[grep(treatment.col, names(DT))]
 
   surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
-                                   data = data,
+                                   data = DT,
                                    family = binomial("logit"))
-  suppressWarnings(
-  data <- data[, eval(tx.col) := FALSE
-               ][, predFALSE := predict(surv.model, newdata = .SD)
-                 ][, eval(tx.col) := TRUE
-                   ][, predTRUE := predict(surv.model, newdata = .SD)
-                     ][, `:=` (surv0 = cumprod(1 - predFALSE),
-                               surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
-                       ][, `:=` (risk0 = 1 - surv0,
-                                 risk1 = 1 - surv1)]
-  )
+  DT <- DT[get(time.col) == 0,
+           ][rep(1:.N, each = opts$max.survival)
+             ][, `:=` (followup = seq(1:.N)-1,
+                       followup_sq = (seq(1:.N)-1)^2), by = eval(id.col)
+               ][, eval(tx.col) := FALSE
+                 ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
+                   ][, eval(tx.col) := TRUE
+                     ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
+                       ][, `:=` (surv0 = cumprod(1 - predFALSE),
+                                 surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
+                         ][, `:=` (risk0 = 1 - surv0,
+                                   risk1 = 1 - surv1)]
 
-  surv <- melt(data[, .(txFALSE = mean(surv0),
-                        txTRUE = mean(surv1)), by = time.col],
-               id.vars = eval(time.col)) |>
-    ggplot(aes(x = get(time.col), y = value, col = variable)) +
+  surv <- melt(DT[, .(txFALSE = mean(surv0),
+                      txTRUE = mean(surv1)), by = "followup"],
+               id.vars = "followup") |>
+    ggplot(aes(x = followup, y = value, col = variable)) +
     geom_line() +
     theme_classic() +
     labs(x = "Time", y = "Survival", color = "") +

@@ -4,7 +4,8 @@
 #' @param id.col String: column name of the id column
 #' @param time.col String: colum name of the time column
 #' @param eligible.col String: column name of the eligibility column
-#' @param params List: optional list of parameters from \code{SEQOpts}
+#' @param outcome.col String: column name of the outcome column
+#' @param opts List: optional list of parameters from \code{SEQOpts}
 #' @param ... Other parameters, as passed to \code{SEQOpts.expansion}
 #'
 #' @import data.table
