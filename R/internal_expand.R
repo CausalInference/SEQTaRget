@@ -5,7 +5,7 @@
 #'
 #' @keywords internal
 internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, opts, id){
-  if(!missing(id)) DT[get(id.col) == id,]
+  if(!missing(id)) DT[get(id.col) %in% id]
 
   vars <- unlist(strsplit(opts$covariates, "\\+|\\*"))
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
@@ -48,4 +48,3 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
 
 return(out)
 }
-

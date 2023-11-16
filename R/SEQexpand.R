@@ -24,6 +24,16 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
              ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
 
   #Expansion =========================================================
-  result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
+  if(parallel == FALSE){
+    result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
+  } else {
+    ID.unique <- unique(DT[[id.col]])
+    ID.split <- split(ID.unique, cut(ID.unique, opts$nthreads))
+
+    result.list <- mclapply(ID.split,
+                            function(x) internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts, x),
+                            mc.cores <- opts$ncores)
+    result <- rbindlist(result.list)
+  }
   return(result)
 }
