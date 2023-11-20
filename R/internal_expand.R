@@ -20,8 +20,9 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
-                 ][period <= opts$max.period,
-                   ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")]
+                 ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")
+                   ][followup <= opts$max.period,
+                     ]
 
   data_list <- list()
   if(length(c(vars.time, vars.sq)) > 0){

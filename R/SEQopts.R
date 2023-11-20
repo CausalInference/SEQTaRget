@@ -19,7 +19,7 @@
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636,
-                    max.period = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
+                    max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
                     weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
