@@ -79,7 +79,8 @@ internal.weights <- function(DT, data, id.col, time.col, outcome.col, treatment.
       out <- weight[tx_lag == 0, pred := predict(model0, newdata = .SD, type = "response")
                     ][tx_lag == 1, pred := predict(model1, newdata = .SD, type = "response")
                       ][, cmprd := cumprod(pred), keyby = eval(id.col)
-                        ][, wt := 1/cmprd]
+                        ][, wt := 1/cmprd
+                          ]
 
       percentile <- quantile(out$wt, probs = c(.25, .5, .75))
       stats <- list(min = min(out$wt),
