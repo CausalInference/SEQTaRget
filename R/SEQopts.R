@@ -20,7 +20,7 @@
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636,
                     max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
-                    weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
+                    pre_expansion = FALSE, baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
