@@ -72,10 +72,10 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                              time_sq = get(time.col)^2), keyby = eval(id.col)]
 
       model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
-                                   data = weight[tx_lag == 1, ],
+                                   data = weight[eval(treatment.col) == 1, ],
                                    family = binomial("logit"))
       model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
-                                   data = weight[tx_lag == 0, ],
+                                   data = weight[eval(treatment.col) == 0, ],
                                    family = binomial("logit"))
 
       out <- weight[tx_lag == 0, pred := predict(model0, newdata = .SD, type = "response")
