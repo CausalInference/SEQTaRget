@@ -60,19 +60,21 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 #'
 #' @keywords internal
 
-internal.weights <- function(DT, data, id.col, time.col, outcome.col, treatment.col, opts){
+internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
+  if(is.na(opts$weight.covariates)) {
+    opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
+  }
   if(!opts$stabilized_weights){
     if(opts$pre_expansion){
       data <- as.data.table(data)
 
-      weight <- data[, `:=` (tx_lag = lag(get(treatment.col)),
-                             time = get(time.col),
+      weight <- copy(data)[, `:=` (tx_lag = lag(get(treatment.col)),
                              time_sq = get(time.col)^2), keyby = eval(id.col)]
 
-      model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$covariates, "+time+time_sq"),
+      model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
                                    data = weight[tx_lag == 1, ],
                                    family = binomial("logit"))
-      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$covariates, "+time+time_sq")),
+      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
                                    data = weight[tx_lag == 0, ],
                                    family = binomial("logit"))
 

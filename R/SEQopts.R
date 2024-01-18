@@ -13,23 +13,26 @@
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param weight.time String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded
 #' @param stabilized Logical: if the weights should be stabilized, default is FALSE
+#' @param weight.covariates String: covariates to coerce into a formula object used in weight creation, eg. "A+B*C"
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates} - intended as an override
 #' @param sq.indicator String: identifier for squared variables in \code{covariates} - intended as an override
 #'
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636,
-                    max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
+                    max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE, weight.covariates = NA,
                     pre_expansion = FALSE, baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, max.period = max.period, max.survival = max.survival,
+                 nboot = nboot, seed = seed, max.followup = max.followup, max.survival = max.survival,
                  expand = expand, covariates = covariates,
-                 weighted = weighted, stabilized = stabilized, weight.time = weight.time,
+                 weighted = weighted, stabilized = stabilized, weight.covariates = weight.covariates, pre_expansion = pre_expansion,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
 
   return(params)
 }
+
+#add weight parameters to opts as an override

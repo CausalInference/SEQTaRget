@@ -8,12 +8,19 @@ create.formula <- function(y, x){
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
-create.default.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method){
-  if(method == "ITT"){
-    cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, outcome.col, time.col)], "_bas", collapse = "+")
+create.default.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast, opts){
+  if(causal_contrast == "ITT"){
+    cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, time.col)], "_bas", collapse = "+")
     interactions <- paste0(treatment.col, "_bas*", "followup", collapse = "+")
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
   }
+  return(string)
+}
+
+create.default.weight.covariates <- function(DT, data, id.col, time.col, eligible.col, treatment.col, opts){
+  cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col)])
+  string <- paste0(cols, collapse = "+")
+
   return(string)
 }

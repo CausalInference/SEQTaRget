@@ -25,7 +25,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   errorOpts(opts)
 
   if(is.na(opts$covariates)){
-    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast)
+    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast, opts)
   }
 
   # Expansion ==================================================
