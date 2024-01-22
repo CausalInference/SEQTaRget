@@ -21,7 +21,7 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")
-                   ][followup <= opts$max.period,
+                   ][followup <= opts$max.followup,
                      ]
 
   data_list <- list()

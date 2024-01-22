@@ -24,7 +24,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
              ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
 
   #Expansion =========================================================
-  if(parallel == FALSE){
+  if(!opts$parallel){
     result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
   } else {
     ID.unique <- unique(DT[[id.col]])

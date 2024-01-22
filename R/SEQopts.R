@@ -26,7 +26,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   covariates <- gsub("\\s", "", covariates)
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, max.period = max.period, max.survival = max.survival,
+                 nboot = nboot, seed = seed, max.followup = max.followup, max.survival = max.survival,
                  expand = expand, covariates = covariates,
                  weighted = weighted, stabilized = stabilized, weight.time = weight.time,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
