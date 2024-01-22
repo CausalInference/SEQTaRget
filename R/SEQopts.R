@@ -20,13 +20,8 @@
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, seed = 1636,
-<<<<<<< HEAD
                     max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE, weight.covariates = NA,
                     pre_expansion = FALSE, baseline.indicator = "_bas", sq.indicator = "_sq"){
-=======
-                    max.period = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
-                    weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
->>>>>>> parent of 876bf0f (max.period -> max.followup)
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
