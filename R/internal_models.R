@@ -3,14 +3,37 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-internal.model <- function(data, method, outcome.col, covariates, opts){
+internal.model <- function(DT, method, outcome.col, opts){
   if(method == "ITT"){
-    model <- speedglm::speedglm(formula = paste0(outcome.col, "~", covariates),
-                                data,
+    model <- speedglm::speedglm(formula = paste0(outcome.col, "~", opts$covariates),
+                                DT,
                                 family = binomial("logit"))
     names(model$coefficients) <- gsub("_bas", "", names(model$coefficients))
+
   }
+
+  names(model$coefficients) <- gsub("TRUE", "_01", names(model$coefficients))
   return(model)
+}
+
+#' Internal function for bootstrapping models
+#'
+#' @import data.table parallel dorng foreach
+internal.bootstrap <- function(DT, method, id.col, outcome.col, opts){
+  if(opts$parallel) cl <- makeCluster(opts$ncores); makeCluster(cl)
+  if(!opts$bootstrap) opts$nboot <- 1
+
+  coefs <- list()
+
+  foreach(i = 1:opts$nboot, .combine = "rbindlist", .packages = c("SEQuential", "data.table")) %dorng% {
+    set.seed(opts$seed + i)
+    id.sample <- sample(unique(DT[[id.col]]),
+                        opts$boot.sample*length(unique(DT[[id.col]])), replace = FALSE)
+
+    data <- DT[id.col %in% id.sample, ]
+
+    output[[i]] <- coef(internal.model(DT, method, outcome.col, opts))
+  }
 }
 
 #' Internal function for creating survival curves
