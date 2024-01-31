@@ -24,6 +24,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
+  if(opts$parallel) opts$sys.type <- Sys.info()['sysname']
+  if(opts$parallel && opts$sys.type == "Windows"){
+    cat("Starting parallel cluster with", opts$ncores, "cores\n")
+    cl <- makeCluster(opts$ncores)
+    registerDoParallel(cl)
+  }
+
   if(is.na(opts$covariates)){
     #Default covariates created, dependent on method selection
     opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
@@ -39,38 +46,22 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       return(DT)
     }
 
-    cat(paste("Expansion Successful\nMoving forward with", method, "analysis"))
+    cat("Expansion Successful\nMoving forward with", method, "analysis")
   } else if(opts$expand == FALSE){
     cat("Skipping expansion per 'expand = FALSE'\n")
-    cat(paste("Moving forward with", method, "analysis\n"))
+    cat("Moving forward with", method, "analysis\n")
     DT <- as.data.table(data)
   }
 
   #Model Dispersion ===========================================
-  if(!opts$weighted){
-    model <- internal.model(DT, method, outcome.col, opts)
-  } else if (opts$weighted){
-    if(opts$stabilized && opts$weight.time == "pre"){
-      WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-      if(!opts$expand){
-        #In the case of no expansion, weights bind to the original data on defined time.col and id.col
-        WT_data <- DT[WT$weighted_data, on = c(time.col, id.col)
-                      ][, wt := ifelse(get(time.col) == 0, 1, wt), by = id.col]
-      }
-      if(opts$expand){
-        #If expanded, time.col has been written to 'followup' and 'period'
-        WT_data <- DT[WT$weighted_data, on = c(id.col, "followup")
-                      ][, wt := ifelse(followup == 0, 1, wt)]
-      }
-      if(opts$weight.time == "pre"){
-        weightModel <- 'MODEL USING WEIGHTS FIT PRE-EXPANSION'
-      }
-    } else if(opts$stabilized == FALSE || weight.time == "post"){
-      weightModel <- 'MODEL USING WEIGHTS FIT POST-EXPANSION'
-    }
-  }
-  cat(paste0("\n", method, " model successfully created\nCreating survival curves"))
+  model <- internal.analysis(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+
+  cat(method, "model successfully created\nCreating survival curves")
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
+  if(opts$parallel && opts$sys.type == "Windows"){
+    cat("Stopping Cluster")
+    stopCluster(cl)
+  }
   return(list(model, surv))
 }

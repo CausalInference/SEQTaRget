@@ -6,9 +6,8 @@
 #' @param eligible.col String: column name of the eligibility column
 #' @param outcome.col String: column name of the outcome column
 #' @param opts List: optional list of parameters from \code{SEQOpts}
-#' @param ... Other parameters, as passed to \code{SEQOpts.expansion}
 #'
-#' @import data.table
+#' @import data.table parallel foreach doParallel
 #'
 #' @export
 
@@ -30,10 +29,17 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
     ID.unique <- unique(DT[[id.col]])
     ID.split <- split(ID.unique, cut(ID.unique, opts$nthreads))
 
-    result.list <- mclapply(ID.split,
-                            function(x) internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts, x),
-                            mc.cores <- opts$ncores)
-    result <- rbindlist(result.list)
+    if(opts$sys.type %in% c("Unix", "Darwin")){
+      result.list <- mclapply(ID.split,
+                              function(x) internal.expansion(DT[get(id.col) %in% x, ],
+                                                             id.col, time.col, eligible.col, outcome.col, opts),
+                              mc.cores = opts$ncores)
+      result <- rbindlist(result.list)
+    } else if(opts$sys.type == "Windows"){
+      result <- foreach(x = ID.split, .combine = "rbind", .packages = c("SEQuential", "data.table")) %dopar% {
+        out <- internal.expansion(DT[get(id.col) %in% x, ], id.col, time.col, eligible.col, outcome.col, opts)
+      }
+    }
   }
   return(result)
 }
