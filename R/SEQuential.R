@@ -46,21 +46,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     DT <- as.data.table(data)
   }
 
-
   #Model Dispersion ===========================================
-  if(!opts$bootstrap) opts$nboot <- 1; opts$boot.sample <- 1
-  if(!opts$parallel) opts$ncores <- 1;
-
-  ids <- unique(DT[[id.col]])
-  sample_lists <- mclapply(1:200, function(i) {
-    set.seed(123 + i)
-    sample_ids <- dt$unique_ids[sample(nrow(dt), 0.8 * nrow(dt))]
-    return(list(sample_ids))
-  }, mc.cores = num_cores)
-
-  id.sample <- sample(unique(DT[[id.col]]),
-                      opts$boot.sample*length(unique(DT[[id.col]])), replace = FALSE)
-
   if(!opts$weighted){
     model <- internal.model(DT, method, outcome.col, opts)
   } else if (opts$weighted){
