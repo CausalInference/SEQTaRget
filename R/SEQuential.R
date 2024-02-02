@@ -24,7 +24,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
-  if(opts$parallel) opts$sys.type <- Sys.info()['sysname']
+  if(opts$parallel) opts$sys.type <- Sys.info()['sysname'][1]
   if(opts$parallel && opts$sys.type == "Windows"){
     cat("Starting parallel cluster with", opts$ncores, "cores\n")
     cl <- makeCluster(opts$ncores)
@@ -54,9 +54,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   #Model Dispersion ===========================================
-  model <- internal.analysis(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+  model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
-  cat(method, "model successfully created\nCreating survival curves")
+  cat(method, "model successfully created\nCreating survival curves\n")
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
   if(opts$parallel && opts$sys.type == "Windows"){

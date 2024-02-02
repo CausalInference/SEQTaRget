@@ -2,7 +2,8 @@
 #'
 #'
 #' @import parallel doParallel foreach data.table
-internal.analysis <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
+#' @export
+internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
   if(opts$bootstrap){
 
     subsample <- lapply(1:opts$nboot, function(x){
@@ -13,12 +14,8 @@ internal.analysis <- function(DT, data, id.col, time.col, eligible.col, outcome.
     })
 
     if(opts$parallel){
-      if(opts$sys.type %in% c("Darwin", "Unix")){
 
-        result <- parallel::mclapply(subsample, function(x){
-
-          data <- data[get(id.col) %in% x, ]
-          DT <- DT[get(id.col) %in% x, ]
+      handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
 
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
@@ -40,16 +37,26 @@ internal.analysis <- function(DT, data, id.col, time.col, eligible.col, outcome.
 
             }
           }
-          #Weight models here
+        return(model)
+      }
+
+      if(opts$sys.type %in% c("Darwin", "Unix")){
+
+        result <- parallel::mclapply(subsample, function(x){
+
+          data <- data[get(id.col) %in% x, ]
+          DT <- DT[get(id.col) %in% x, ]
+
+          result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
         }, mc.cores = opts$ncores)
 
       } else if(opts$sys.type == "Windows"){
-        stop("Windows is sad right now")
+        result <- foreach(x = subsample, .combine = c, .packages = c("data.table", "SEQuential")) %dopar% {
+          data <- data[get(id.col) %in% x, ]
+          DT <- DT[get(id.col) %in% x, ]
 
-        winPar <- function(i){
-
+          output <- coef(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
         }
-
       }
     }
   }
