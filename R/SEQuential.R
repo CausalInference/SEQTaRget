@@ -52,6 +52,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     cat("Moving forward with", method, "analysis\n")
     DT <- as.data.table(data)
   }
+  opts$data.size <- object.size(DT)
 
   #Model Dispersion ===========================================
   model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)

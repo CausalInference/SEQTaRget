@@ -37,6 +37,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
             }
           }
+        gc()
         return(model)
       }
 
@@ -47,7 +48,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
           data <- data[get(id.col) %in% x, ]
           DT <- DT[get(id.col) %in% x, ]
 
-          result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+          result <- coef(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
         }, mc.cores = opts$ncores)
 
       } else if(opts$sys.type == "Windows"){

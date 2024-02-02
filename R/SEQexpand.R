@@ -27,7 +27,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
     result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
   } else {
     ID.unique <- unique(DT[[id.col]])
-    ID.split <- split(ID.unique, cut(ID.unique, opts$nthreads))
+    if(opts$nthreads > 1) ID.split <- split(ID.unique, cut(ID.unique, opts$nthreads)) else ID.split <- ID.unique
 
     if(opts$sys.type %in% c("Unix", "Darwin")){
       result.list <- mclapply(ID.split,
