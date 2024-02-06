@@ -4,9 +4,8 @@
 #' @import data.table
 #'
 #' @keywords internal
-internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, opts, id){
-  if(!missing(id)) DT[get(id.col) %in% id]
-
+#' @export
+internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, opts){
   vars <- unlist(strsplit(opts$covariates, "\\+|\\*"))
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
@@ -20,8 +19,9 @@ internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, 
   data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
-                 ][period <= opts$max.period,
-                   ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")]
+                 ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")
+                   ][followup <= opts$max.followup,
+                     ]
 
   data_list <- list()
   if(length(c(vars.time, vars.sq)) > 0){

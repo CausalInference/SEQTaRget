@@ -5,6 +5,7 @@
 #' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max
 #' @param bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
 #' @param nboot Integer: number of bootstraps
+#' @param boot.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @param seed Integer: starting seed
 #' @param max.period Integer: maximum time to expand about
 #' @param max.survival Integer: maximum time for survival curves, default is "max"
@@ -19,15 +20,15 @@
 #'
 #' @export
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
-                    bootstrap = FALSE, nboot = 100, seed = 1636,
-                    max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE, weight.covariates = NA,
-                    pre_expansion = FALSE, baseline.indicator = "_bas", sq.indicator = "_sq"){
+                    bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
+                    max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
+                    weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
-                 nboot = nboot, seed = seed, max.followup = max.followup, max.survival = max.survival,
+                 nboot = nboot, boot.sample = boot.sample, seed = seed, max.followup = max.followup, max.survival = max.survival,
                  expand = expand, covariates = covariates,
                  weighted = weighted, stabilized = stabilized, weight.covariates = weight.covariates, pre_expansion = pre_expansion,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)

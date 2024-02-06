@@ -3,12 +3,14 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-internal.model <- function(data, causal_contrast, outcome.col, opts){
-  if(causal_contrast == "ITT"){
+#' @export
+internal.model <- function(DT, method, outcome.col, opts){
+  if(method == "ITT"){
     model <- speedglm::speedglm(formula = paste0(outcome.col, "~", opts$covariates),
-                                data,
+                                DT,
                                 family = binomial("logit"))
     names(model$coefficients) <- gsub("_bas", "", names(model$coefficients))
+
   }
   return(model)
 }
@@ -18,7 +20,7 @@ internal.model <- function(data, causal_contrast, outcome.col, opts){
 #' @import ggplot2 data.table
 #'
 #' @keywords internal
-
+#' @export
 internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
   if(opts$expand == TRUE) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
@@ -54,12 +56,6 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
   return(surv)
 }
 
-#' Internal function for creating weights
-#' @import data.table
-#' @importFrom speedglm speedglm
-#'
-#' @keywords internal
-
 internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
   if(is.na(opts$weight.covariates)) {
     opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
@@ -68,21 +64,24 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     if(opts$pre_expansion){
       data <- as.data.table(data)
 
-      weight <- copy(data)[, `:=` (tx_lag = lag(get(treatment.col)),
-                             time_sq = get(time.col)^2), keyby = eval(id.col)]
+      weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col)),
+                                   time_sq = get(time.col)^2), by = id.col]
 
       model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
-                                   data = weight[eval(treatment.col) == 1, ],
-                                   family = binomial("logit"))
-      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
-                                   data = weight[eval(treatment.col) == 0, ],
+                                   data = weight[tx_lag == 1, ],
                                    family = binomial("logit"))
 
+      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
+                                   data = weight[tx_lag == 0],
+                                   family = binomial("logit"))
+
+      kept <- c("wt", time.col, id.col)
       out <- weight[tx_lag == 0, pred := predict(model0, newdata = .SD, type = "response")
                     ][tx_lag == 1, pred := predict(model1, newdata = .SD, type = "response")
-                      ][, cmprd := cumprod(pred), keyby = eval(id.col)
-                        ][, wt := 1/cmprd
-                          ]
+                      ][get(time.col) == 0, pred := 1
+                        ][, cmprd := cumprod(pred), by = eval(id.col)
+                          ][, wt := 1/cmprd
+                            ][, ..kept]
 
       percentile <- quantile(out$wt, probs = c(.25, .5, .75))
       stats <- list(min = min(out$wt),
@@ -91,17 +90,12 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                     p25 = percentile[[1]],
                     p50 = percentile[[2]],
                     p75 = percentile[[3]])
-      #weights merge to data on PERIOD, then the first of the ID is set to 1
 
     } else if(!opts$pre_expansion){
       # NON STABILIZED - POST EXPANSION
     }
   } else if(opts$stabilized_weights){
-    if(opts$pre_expansion){
-      #STABILIZED - PRE-EXPANSION
-    } else if(!opts$pre_expansion){
-      #STABILIZED - POST-EXPANSION
-    }
+
   }
   return(list(weighted_data = out,
               weighted_stats = stats))

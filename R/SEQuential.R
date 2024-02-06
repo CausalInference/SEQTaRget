@@ -24,8 +24,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
+  if(opts$parallel) opts$sys.type <- Sys.info()['sysname'][1]
+  if(opts$parallel && opts$sys.type == "Windows"){
+    cat("Starting parallel cluster with", opts$ncores, "cores\n")
+    cl <- makeCluster(opts$ncores)
+    registerDoParallel(cl)
+  }
+
   if(is.na(opts$covariates)){
-    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast, opts)
+    #Default covariates created, dependent on method selection
+    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
   }
 
   # Expansion ==================================================
@@ -37,27 +45,51 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       cat("Returning expanded data per 'causal_contrast = 'none''")
       return(DT)
     }
-
-    cat(paste("Expansion Successful\nMoving forward with", causal_contrast, "analysis"))
-  } else if(!opts$expand){
+    cat("Expansion Successful\nMoving forward with", method, "analysis\n")
+  } else if(opts$expand == FALSE){
     cat("Skipping expansion per 'expand = FALSE'\n")
-    cat(paste("Moving forward with", causal_contrast, "analysis\n"))
+    cat("Moving forward with", method, "analysis\n")
     DT <- as.data.table(data)
   }
 
-
   #Model Dispersion ===========================================
-  if(!opts$weighted){
-    model <- internal.model(DT, causal_contrast, outcome.col, opts)
-  } else if (opts$weighted){
-    cat("Weighting...")
-    WT <- internal.weights(DT, data, id.col, time.col, outcome.col, treatment.col, opts)
-    cat(paste0(ifelse(opts$stabilized, "Stabilized ", "Non-Stabilized "),
-               ifelse(opts$pre_expansion, "pre-expansion ", "post-expansion "),
-        "weight creation successful\nMoving to Modeling..."))
+  model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+  if(opts$bootstrap){
+    TDT <- rbindlist(lapply(model,
+                            function(x) as.list(coef(x))))
+    model_summary <- lapply(TDT, function(col){
+      stats <- list(
+        mean = mean(col, na.rm = TRUE),
+        sd = sd(col, na.rm = TRUE),
+        min = min(col, na.rm = TRUE),
+        max = max(col, na.rm = TRUE),
+        CI_95 = quantile(col, c(0.025, 0.975), na.rm = TRUE)
+      )
+      return(stats)
+    })
   }
-  cat(paste0("\n", causal_contrast, " model successfully created\nCreating survival curves"))
+
+  cat(method, "model successfully created\nCreating survival curves\n")
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
-  return(list(model, surv))
+  if(opts$parallel && opts$sys.type == "Windows"){
+    cat("Stopping Cluster")
+    stopCluster(cl)
+  }
+
+  return_list <- list(
+    boot_params = if(!opts$bootstrap){
+      NA
+      } else {
+        list(
+          nboot = opts$nboot,
+          seed = opts$seed,
+          sample = opts$boot.sample
+        )
+    },
+    boot_models = if(!opts$bootstrap) NA else model,
+    model = if(!opts$bootstrap) model else model_summary,
+    survival_curve = surv,
+    survival_data = dcast(surv$data, followup~variable)
+    )
 }

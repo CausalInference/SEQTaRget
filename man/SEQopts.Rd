@@ -10,8 +10,9 @@ SEQopts(
   ncores = parallel::detectCores() - 1,
   bootstrap = FALSE,
   nboot = 100,
+  boot.sample = 0.8,
   seed = 1636,
-  max.period = Inf,
+  max.followup = Inf,
   max.survival = "max",
   expand = TRUE,
   covariates = NA,
@@ -33,9 +34,9 @@ SEQopts(
 
 \item{nboot}{Integer: number of bootstraps}
 
-\item{seed}{Integer: starting seed}
+\item{boot.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
 
-\item{max.period}{Integer: maximum time to expand about}
+\item{seed}{Integer: starting seed}
 
 \item{max.survival}{Integer: maximum time for survival curves, default is "max"}
 
@@ -52,6 +53,8 @@ SEQopts(
 \item{baseline.indicator}{String: identifier for baseline variables in \code{covariates} - intended as an override}
 
 \item{sq.indicator}{String: identifier for squared variables in \code{covariates} - intended as an override}
+
+\item{max.period}{Integer: maximum time to expand about}
 }
 \description{
 Parameter Builder - passing defaults to \code{SEQuential}
