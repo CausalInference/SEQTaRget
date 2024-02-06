@@ -3,6 +3,7 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
+#' @export
 internal.model <- function(DT, method, outcome.col, opts){
   if(method == "ITT"){
     model <- speedglm::speedglm(formula = paste0(outcome.col, "~", opts$covariates),
@@ -19,7 +20,7 @@ internal.model <- function(DT, method, outcome.col, opts){
 #' @import ggplot2 data.table
 #'
 #' @keywords internal
-
+#' @export
 internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
   if(opts$expand == TRUE) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
