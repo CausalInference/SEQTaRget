@@ -38,7 +38,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
     })
 
     if(opts$parallel){
-      if(opts$sys.type %in% c("Darwin", "Unix")){
+      if(opts$sys.type %in% c("Darwin", "Linux")){
 
         result <- parallel::mclapply(subsample, function(x){
 
