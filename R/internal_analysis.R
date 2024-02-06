@@ -26,7 +26,6 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
             }
           }
-        gc()
         return(model)
       }
   if(opts$bootstrap){
@@ -43,32 +42,41 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
         result <- parallel::mclapply(subsample, function(x){
 
-          data <- data[get(id.col) %in% x, ]
-          DT <- DT[get(id.col) %in% x, ]
+          RMdata <- data[get(id.col) %in% x, ]
+          RMDT <- DT[get(id.col) %in% x, ]
 
-          result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+          result <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+          rm(RMDT); rm(RMdata)
         }, mc.cores = opts$ncores)
+        cat("Bootstrap Successful\n")
+        gc()
         return(result)
 
       } else if(opts$sys.type == "Windows"){
         result <- foreach(x = subsample, .combine = "c", .packages = c("data.table", "SEQuential")) %dopar% {
-          data <- data[get(id.col) %in% x, ]
-          DT <- DT[get(id.col) %in% x, ]
+          RMdata <- data[get(id.col) %in% x, ]
+          RMDT <- DT[get(id.col) %in% x, ]
 
-          output <- list(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
+          output <- list(handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
+          rm(RMdata); rm(RMDT)
         }
       }
       cat("Bootstrap Successful\n")
+      gc()
       return(result)
     }
     # Non Parallel Bootstrapping ===============================================
     result <- lapply(subsample, function(x) {
-      data <- data[get(id.col) %in% x, ]
-      DT <- DT[get(id.col) %in% x, ]
+      RMdata <- data[get(id.col) %in% x, ]
+      RMDT <- DT[get(id.col) %in% x, ]
 
-      output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      rm(RMDT); rm(RMdata)
     })
+    cat("Bootstrap Successful\n")
+    gc()
     return(result)
+
   } else if(!opts$bootstrap){
     result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
     return(result)

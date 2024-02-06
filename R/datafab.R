@@ -37,7 +37,7 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
-#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", parallel = TRUE, bootstrap = TRUE)
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE)
 #print(test$coefficients)
 
 #Debugging Junk ==========
