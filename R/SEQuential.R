@@ -6,16 +6,16 @@
 #' @param eligible.col String: column name of the eligibility column
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
-#' @param method String: method of analysis to preform
+#' @param causal_contrast String: causal_contrast to preform
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... another option for passing parameters from \code{SEQOpts}
 #'
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast, params, ...){
   # Error Throwing ============================================
-  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
+  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, causal_contrast)
 
   # Parameter Space building ==================================
   opts <- SEQopts(); dots <- list(...)
@@ -37,15 +37,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   # Expansion ==================================================
-  if(opts$expand == TRUE){
+  if(opts$expand){
     cat("Expanding Data...\n")
     DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
 
-    if(method == "none"){
-      cat("Returning expanded data per 'method = 'none''")
+    if(causal_contrast == "none"){
+      cat("Returning expanded data per 'causal_contrast = 'none''")
       return(DT)
     }
-
     cat("Expansion Successful\nMoving forward with", method, "analysis\n")
   } else if(opts$expand == FALSE){
     cat("Skipping expansion per 'expand = FALSE'\n")

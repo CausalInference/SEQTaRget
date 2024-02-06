@@ -14,6 +14,7 @@
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param weight.time String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded
 #' @param stabilized Logical: if the weights should be stabilized, default is FALSE
+#' @param weight.covariates String: covariates to coerce into a formula object used in weight creation, eg. "A+B*C"
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates} - intended as an override
 #' @param sq.indicator String: identifier for squared variables in \code{covariates} - intended as an override
 #'
@@ -29,8 +30,10 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
                  nboot = nboot, boot.sample = boot.sample, seed = seed, max.followup = max.followup, max.survival = max.survival,
                  expand = expand, covariates = covariates,
-                 weighted = weighted, stabilized = stabilized, weight.time = weight.time,
+                 weighted = weighted, stabilized = stabilized, weight.covariates = weight.covariates, pre_expansion = pre_expansion,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
 
   return(params)
 }
+
+#add weight parameters to opts as an override

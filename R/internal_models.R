@@ -100,3 +100,10 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
   return(list(weighted_data = out,
               weighted_stats = stats))
 }
+
+
+
+
+
+
+
