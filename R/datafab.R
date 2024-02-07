@@ -37,11 +37,31 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
+#setDTthreads(0)
+#doFuture::registerDoFuture()
+#doRNG::registerDoRNG()
+#future::plan(future::multisession)
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE)
 #print(test$coefficients)
 
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
-#opts <- SEQuential::SEQopts(parallel = TRUE, bootstrap = TRUE, nboot = 5)
+#opts <- SEQuential::SEQopts(parallel = TRUE, bootstrap = TRUE)
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
+
+
+
+#v <- listenv::listenv()  # requires listenv package
+#library(future)
+#for (ii in 1:ncores) {
+#  v[[ii]] %<-% {
+#    Sys.getpid()
+#  }
+#}
+#for (i in 1:ncores) {
+  #For windows
+#  system(sprintf("taskkill /F /PID %s", v[[i]]))
+#}
+#For Linux
+#system(sprintf("kill -9 %s", v[[i]]))

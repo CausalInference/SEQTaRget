@@ -24,14 +24,3 @@ create.default.weight.covariates <- function(DT, data, id.col, time.col, eligibl
 
   return(string)
 }
-
-memory.check <- function(opts){
-  gc()
-
-  if(opts$sys.type == "Windows") free <- memory.size()
-  if(opts$sys.type %in% c("Darwin", "Unix")) free <-
-
-  if(opts$parallel){
-    expected <- opts$data.size * opts$ncores
-  }
-}

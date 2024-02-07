@@ -1,8 +1,8 @@
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
-#' @import parallel doParallel foreach data.table
-#' @export
+#' @import data.table future doFuture doRNG future.apply
+#' @keywords internal
 internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
 
@@ -30,49 +30,42 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
-    subsample <- lapply(1:opts$nboot, function(x){
-      set.seed(opts$seed + x)
-      id.sample <- sample(unique(DT[[id.col]]),
-                          round(opts$boot.sample*length(unique(DT[[id.col]]))), replace = FALSE)
-      return(id.sample)
-    })
-
     if(opts$parallel){
-      if(opts$sys.type %in% c("Darwin", "Linux")){
+      UIDs <- unique(DT[[id.col]])
+      lnID <- length(UIDs)
 
-        result <- parallel::mclapply(subsample, function(x){
+      result <- future.apply::future_lapply(1:opts$nboot, function(x) {
+        id.sample <- sample(UIDs,
+                            round(opts$boot.sample*lnID), replace = FALSE)
 
-          data <- copy(data)[get(id.col) %in% x, ]
-          DT <- copy(DT)[get(id.col) %in% x, ]
+        RMDT <- DT[get(id.col) %in% id.sample, ]
+        RMdata <- data[get(id.col) %in% id.sample, ]
 
-          output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-        }, mc.cores = opts$ncores)
-        cat("Bootstrap Successful\n")
-        return(result)
-
-      } else if(opts$sys.type == "Windows"){
-        result <- foreach(x = subsample, .combine = "c", .packages = c("data.table", "SEQuential")) %dopar% {
-          data <- copy(data)[get(id.col) %in% x, ]
-          DT <- copy(DT)[get(id.col) %in% x, ]
-
-          output <- list(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
-        }
-      }
+        output <- summary(handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
+        rm(RMDT, RMdata)
+        return(output)
+      }, future.seed = opts$seed)
+      gc()
       cat("Bootstrap Successful\n")
       return(result)
     }
     # Non Parallel Bootstrapping ===============================================
-    result <- lapply(subsample, function(x) {
-      data <- copy(data)[get(id.col) %in% x, ]
-      DT <- copy(DT)[get(id.col) %in% x, ]
+    result <- lapply(1:opts$nboot, function(x) {
+      set.seed(opts$seed + x)
 
-      output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      id.sample <- sample(UIDs,
+                          round(opts$boot.sample*lnID), replace = FALSE)
+
+      data <- copy(data)[get(id.col) %in% id.sample, ]
+      DT <- copy(DT)[get(id.col) %in% id.sample, ]
+
+      output <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
     })
     cat("Bootstrap Successful\n")
     return(result)
 
   } else if(!opts$bootstrap){
-    result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+    result <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
     return(result)
   }
 }

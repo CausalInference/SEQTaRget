@@ -14,6 +14,7 @@
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
+  time.start <- Sys.time()
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
 
@@ -24,13 +25,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(length(dots > 0)) opts[names(dots)] <- dots
   errorOpts(opts)
 
-  if(opts$parallel) opts$sys.type <- Sys.info()['sysname'][1]
-  if(opts$parallel && opts$sys.type == "Windows"){
-    cat("Starting parallel cluster with", opts$ncores, "cores\n")
-    cl <- makeCluster(opts$ncores)
-    registerDoParallel(cl)
-  }
+  ncores <<- opts$ncores
 
+  if(opts$parallel){
+    evalq({setDTthreads(0)
+    doFuture::registerDoFuture()
+    doRNG::registerDoRNG()
+    future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
+  }
+  rm(ncores, envir = .GlobalEnv)
   if(is.na(opts$covariates)){
     #Default covariates created, dependent on method selection
     opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
@@ -73,11 +76,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   cat(method, "model successfully created\nCreating survival curves\n")
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
-  if(opts$parallel && opts$sys.type == "Windows"){
-    cat("Stopping Cluster")
-    stopCluster(cl)
-  }
-
   return_list <- list(
     boot_params = if(!opts$bootstrap){
       NA
@@ -91,6 +89,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     boot_models = if(!opts$bootstrap) NA else model,
     model = if(!opts$bootstrap) model else model_summary,
     survival_curve = surv,
-    survival_data = dcast(surv$data, followup~variable)
+    survival_data = dcast(surv$data, followup~variable),
+    elapsed_time = difftime(Sys.time(), time.start, units = "secs")
     )
+  gc()
+  future:::ClusterRegistry("stop")
+  return(return_list)
 }
