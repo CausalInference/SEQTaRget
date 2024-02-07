@@ -10,12 +10,11 @@
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... another option for passing parameters from \code{SEQOpts}
 #'
-#' @importFrom tictoc tic toc
 #' @import data.table
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
-  tictoc::tic()
+  time.start <- Sys.time()
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
 
@@ -94,6 +93,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     model = if(!opts$bootstrap) model else model_summary,
     survival_curve = surv,
     survival_data = dcast(surv$data, followup~variable),
-    time = toc()
+    time = difftime(Sys.time(), time.start, units = "secs")
     )
 }

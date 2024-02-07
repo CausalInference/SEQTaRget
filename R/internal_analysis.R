@@ -1,7 +1,7 @@
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
-#' @import parallel doParallel foreach data.table
+#' @import parallel foreach doRNG data.table
 #' @export
 internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
@@ -38,12 +38,13 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
     })
 
     if(opts$parallel){
+      setDTthreads(0)
       if(opts$sys.type %in% c("Darwin", "Linux")){
 
         result <- parallel::mclapply(subsample, function(x){
 
-          data <- copy(data)[get(id.col) %in% x, ]
-          DT <- copy(DT)[get(id.col) %in% x, ]
+          data <- data[get(id.col) %in% x, ]
+          DT <- DT[get(id.col) %in% x, ]
 
           output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
         }, mc.cores = opts$ncores)
@@ -52,19 +53,20 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
       } else if(opts$sys.type == "Windows"){
         result <- foreach(x = subsample, .combine = "c", .packages = c("data.table", "SEQuential")) %dopar% {
-          data <- copy(data)[get(id.col) %in% x, ]
-          DT <- copy(DT)[get(id.col) %in% x, ]
+          data <- data[get(id.col) %in% x, ]
+          DT <- DT[get(id.col) %in% x, ]
 
           output <- list(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
         }
       }
       cat("Bootstrap Successful\n")
+      setDTthreads(opts$nthreads)
       return(result)
     }
     # Non Parallel Bootstrapping ===============================================
     result <- lapply(subsample, function(x) {
-      data <- copy(data)[get(id.col) %in% x, ]
-      DT <- copy(DT)[get(id.col) %in% x, ]
+      data <- data[get(id.col) %in% x, ]
+      DT <- DT[get(id.col) %in% x, ]
 
       output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
     })
