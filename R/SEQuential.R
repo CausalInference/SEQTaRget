@@ -10,10 +10,12 @@
 #' @param params List: optional list of parameters from \code{SEQOpts}
 #' @param ... another option for passing parameters from \code{SEQOpts}
 #'
+#' @importFrom tictoc tic toc
 #' @import data.table
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
+  tictoc::tic()
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
 
@@ -74,7 +76,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
   if(opts$parallel && opts$sys.type == "Windows"){
-    cat("Stopping Cluster")
+    cat("Stopping Cluster\n")
     stopCluster(cl)
   }
 
@@ -91,6 +93,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     boot_models = if(!opts$bootstrap) NA else model,
     model = if(!opts$bootstrap) model else model_summary,
     survival_curve = surv,
-    survival_data = dcast(surv$data, followup~variable)
+    survival_data = dcast(surv$data, followup~variable),
+    time = toc()
     )
 }
