@@ -110,7 +110,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
 
   } else if(!opts$bootstrap){
-    DT <- handler(DT, id.col, time.col, outcome.col, treatment.col, opts)
+    DT <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
     surv <- melt(DT[, .(txFALSE = mean(surv0),
                         txTRUE = mean(surv1)), by = "followup"],
                  id.vars = "followup") |>
