@@ -81,7 +81,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
       result <- lapply(subsample, function(x) {
         DT <- DT[get(id.col) %in% x, ]
 
-        output <- rbindlist(handler(DT, id.col, time.col, outcome.col, tx.col, opts))
+        output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
         })
       result <- rbindlist(result)
       }
