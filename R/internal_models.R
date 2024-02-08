@@ -83,6 +83,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 
         output <- rbindlist(handler(DT, id.col, time.col, outcome.col, tx.col, opts))
         })
+      result <- rbindlist(result)
       }
     kept <- c("surv0_mu", "surv0_lb", "surv0_ub",
               "surv1_mu", "surv1_lb", "surv1_ub",
