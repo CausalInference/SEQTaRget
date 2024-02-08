@@ -68,6 +68,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 
           output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
         }, mc.cores = opts$ncores)
+        result <- rbindlist(result)
 
       } else if(opts$sys.type == "Windows"){
         result <- foreach(x = subsample, .combine = "rbind", .packages = c("data.table", "SEQuential")) %dopar% {
