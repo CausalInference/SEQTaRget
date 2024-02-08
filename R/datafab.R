@@ -1,4 +1,4 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, ggplot2)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -37,10 +37,10 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
-#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE)
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE, nboot = 100)
 #print(test$coefficients)
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
-#opts <- SEQuential::SEQopts(parallel = TRUE, bootstrap = TRUE, nboot = 5)
+#opts <- SEQuential::SEQopts(parallel = TRUE, bootstrap = TRUE, nboot = 32)
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)

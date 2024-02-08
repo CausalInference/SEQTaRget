@@ -30,15 +30,15 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
+    UIDs <- unique(DT[[id.col]])
     subsample <- lapply(1:opts$nboot, function(x){
       set.seed(opts$seed + x)
-      id.sample <- sample(unique(DT[[id.col]]),
-                          round(opts$boot.sample*length(unique(DT[[id.col]]))), replace = FALSE)
+      id.sample <- sample(UIDs,
+                          round(opts$boot.sample*length(UIDs)), replace = FALSE)
       return(id.sample)
     })
 
     if(opts$parallel){
-      setDTthreads(0)
       if(opts$sys.type %in% c("Darwin", "Linux")){
 
         result <- parallel::mclapply(subsample, function(x){
@@ -60,7 +60,6 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         }
       }
       cat("Bootstrap Successful\n")
-      setDTthreads(opts$nthreads)
       return(result)
     }
     # Non Parallel Bootstrapping ===============================================
