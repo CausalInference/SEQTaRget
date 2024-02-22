@@ -16,11 +16,18 @@ gen_data <- function(){
       outcome_vector <- c(rep(0, outcome_time), 1, rep(0, max_time-outcome_time))
     }
 
+    tx_vector <- numeric(max_time+1)
+    for(i in 1:max_time+1){
+      if(i == 1) tx_vector[i] <- 0
+      if(tx_vector[i-1] == 0) tx_vector[i] <- sample(c(0,1), prob = c(0.8, 0.2))
+      if(tx_vector[i-1] == 1) tx_vector[i] <- sample(c(0,1), prob = c(0.05, 0.95))
+    }
+
     ID <- data.table(ID = rep(i, max_time+1),
                      time = 0:max_time,
                      eligible = c(rep(1, eligible_time+1), rep(0, max_time-eligible_time)),
                      outcome = outcome_vector,
-                     tx_init = c(rep(0, tx_time), 1, rep(1, max_time-tx_time)),
+                     tx_init = tx_vector,
                      sex = rep(sex, max_time+1),
                      N = rnorm(length(0:max_time), 10, 5),
                      L = runif(1),
