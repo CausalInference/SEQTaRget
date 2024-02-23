@@ -17,10 +17,10 @@ gen_data <- function(){
     }
 
     tx_vector <- numeric(max_time+1)
-    for(i in 1:max_time+1){
-      if(i == 1) tx_vector[i] <- 0
-      if(tx_vector[i-1] == 0) tx_vector[i] <- sample(c(0,1), prob = c(0.8, 0.2))
-      if(tx_vector[i-1] == 1) tx_vector[i] <- sample(c(0,1), prob = c(0.05, 0.95))
+    for(j in 1:max_time+1){
+      if(j == 1) tx_vector[j] <- 0
+      if(tx_vector[j-1] == 0) tx_vector[j] <- sample(c(0,1), prob = c(0.8, 0.2))
+      if(tx_vector[j-1] == 1) tx_vector[j] <- sample(c(0,1), prob = c(0.05, 0.95))
     }
 
     ID <- data.table(ID = rep(i, max_time+1),
@@ -48,6 +48,6 @@ gen_data <- function(){
 #print(test$coefficients)
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
-#opts <- SEQuential::SEQopts(parallel = TRUE, bootstrap = TRUE, nboot = 32)
+#opts <- SEQuential::SEQopts()
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
