@@ -128,7 +128,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
   if(is.na(opts$weight.covariates)) {
     opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
   }
-  if(!opts$stabilized_weights){
+  if(!opts$stabilized){
     if(opts$pre_expansion){
       data <- as.data.table(data)
 
@@ -151,6 +151,8 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                           ][, wt := 1/cmprd
                             ][, ..kept]
 
+      if(opts$expand) setnames(out, time.col, "followup")
+
       percentile <- quantile(out$wt, probs = c(.25, .5, .75))
       stats <- list(min = min(out$wt),
                     max = max(out$wt),
@@ -162,7 +164,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     } else if(!opts$pre_expansion){
       # NON STABILIZED - POST EXPANSION
     }
-  } else if(opts$stabilized_weights){
+  } else if(opts$stabilized){
 
   }
   return(list(weighted_data = out,

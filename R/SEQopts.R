@@ -21,15 +21,16 @@
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
                     max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE, stabilized = FALSE,
-                    weight.time = "post", baseline.indicator = "_bas", sq.indicator = "_sq"){
+                    weight.covariates = NA,
+                    pre_expansion = TRUE, baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
   covariates <- gsub("\\s", "", covariates)
 
   params <- list(parallel = parallel, nthreads = nthreads, ncores = ncores, bootstrap = bootstrap,
                  nboot = nboot, boot.sample = boot.sample, seed = seed, max.followup = max.followup, max.survival = max.survival,
-                 expand = expand, covariates = covariates,
-                 weighted = weighted, stabilized = stabilized, weight.time = weight.time,
+                 expand = expand, covariates = covariates, weight.covariates = weight.covariates,
+                 weighted = weighted, stabilized = stabilized, pre_expansion = pre_expansion,
                  baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
 
   return(params)
