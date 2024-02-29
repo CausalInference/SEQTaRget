@@ -21,9 +21,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
 
   DT <- data[data[[id.col]] %in% eligible_ids,
              ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
-
-  #Expansion =========================================================
-    result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
-
+                                    
+  result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
   return(result)
 }

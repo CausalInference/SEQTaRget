@@ -19,3 +19,4 @@ internal.analysis(
 \description{
 Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 }
+\keyword{internal}

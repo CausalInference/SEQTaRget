@@ -41,5 +41,4 @@ errorMemory <- function(data, id.col, eligible.col, time.col, opts){
 }
 
 errorOpts <- function(opts){
-  if(opts$stabilized == FALSE && opts$weight.time == "pre") stop("Non-stabilized weights can only be fit post-expansion")
 }

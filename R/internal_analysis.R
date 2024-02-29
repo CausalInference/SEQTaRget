@@ -1,8 +1,8 @@
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
-#' @import parallel foreach doRNG data.table
-#' @export
+#' @import data.table future doFuture doRNG future.apply
+#' @keywords internal
 internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
 
@@ -30,50 +30,55 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
-    UIDs <- unique(DT[[id.col]])
-    subsample <- lapply(1:opts$nboot, function(x){
-      set.seed(opts$seed + x)
-      id.sample <- sample(UIDs,
-                          round(opts$boot.sample*length(UIDs)), replace = FALSE)
-      return(id.sample)
-    })
-
     if(opts$parallel){
-      if(opts$sys.type %in% c("Darwin", "Linux")){
+      UIDs <- unique(DT[[id.col]])
+      lnID <- length(UIDs)
+      setDTthreads(0)
 
-        result <- parallel::mclapply(subsample, function(x){
+      result <- future.apply::future_lapply(1:opts$nboot, function(x) {
+        id.sample <- sample(UIDs,
+                            round(opts$boot.sample*lnID), replace = FALSE)
 
-          data <- data[get(id.col) %in% x, ]
-          DT <- DT[get(id.col) %in% x, ]
+        RMDT <- DT[get(id.col) %in% id.sample, ]
+        RMdata <- data[get(id.col) %in% id.sample, ]
 
-          output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-        }, mc.cores = opts$ncores)
-        cat("Bootstrap Successful\n")
-        return(result)
+        model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+        if(opts$boot.return == "coef") output <- coef(model)
+        if(opts$boot.return == "full") output <- model
+        if(opts$boot.return == "summary") output <- summary(model)
+        
+        return(output)
+      }, future.seed = opts$seed)
 
-      } else if(opts$sys.type == "Windows"){
-        result <- foreach(x = subsample, .combine = "c", .packages = c("data.table", "SEQuential")) %dopar% {
-          data <- data[get(id.col) %in% x, ]
-          DT <- DT[get(id.col) %in% x, ]
-
-          output <- list(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
-        }
-      }
       cat("Bootstrap Successful\n")
       return(result)
     }
     # Non Parallel Bootstrapping ===============================================
-    result <- lapply(subsample, function(x) {
-      data <- data[get(id.col) %in% x, ]
-      DT <- DT[get(id.col) %in% x, ]
+    result <- lapply(1:opts$nboot, function(x) {
+      set.seed(opts$seed + x)
 
-      output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      id.sample <- sample(UIDs,
+                          round(opts$boot.sample*lnID), replace = FALSE)
+
+      RMdata <- data[get(id.col) %in% id.sample, ]
+      RMDT <- DT[get(id.col) %in% id.sample, ]
+
+      output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      if(opts$boot.return == "coef") output <- coef(model)
+      if(opts$boot.return == "full") output <- model
+      if(opts$boot.return == "summary") output <- list(
+        coefficients = coef(model),
+        standard_errors = sqrt(diag(vcov(model))),
+        t_values = coef(model) / sqrt(diag(vcov(model))),
+        p_values = 2 * pt(abs(coef(model) / sqrt(diag(vcov(model)))), df.residual(model), lower.tail = FALSE)
+      )
     })
+
     cat("Bootstrap Successful\n")
     return(result)
 
   } else if(!opts$bootstrap){
-    result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+    result <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
     return(result)
   }
 }

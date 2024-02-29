@@ -129,7 +129,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
   }
   if(!opts$stabilized){
-    if(opts$pre_expansion){
+    if(opts$pre.expansion){
       data <- as.data.table(data)
 
       weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col)),
@@ -161,7 +161,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                     p50 = percentile[[2]],
                     p75 = percentile[[3]])
 
-    } else if(!opts$pre_expansion){
+    } else if(!opts$pre.expansion){
       # NON STABILIZED - POST EXPANSION
     }
   } else if(opts$stabilized){
