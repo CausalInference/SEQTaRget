@@ -39,14 +39,14 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         id.sample <- sample(UIDs,
                             round(opts$boot.sample*lnID), replace = FALSE)
 
-        RMDT <- copy(DT[get(id.col) %in% id.sample, ])
-        RMdata <- copy(data[get(id.col) %in% id.sample, ])
+        RMDT <- DT[get(id.col) %in% id.sample, ]
+        RMdata <- data[get(id.col) %in% id.sample, ]
 
         model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
         if(opts$boot.return == "coef") output <- coef(model)
         if(opts$boot.return == "full") output <- model
         if(opts$boot.return == "summary") output <- summary(model)
-
+        
         return(output)
       }, future.seed = opts$seed)
 
@@ -60,10 +60,10 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       id.sample <- sample(UIDs,
                           round(opts$boot.sample*lnID), replace = FALSE)
 
-      data <- copy(data)[get(id.col) %in% id.sample, ]
-      DT <- copy(DT)[get(id.col) %in% id.sample, ]
+      RMdata <- data[get(id.col) %in% id.sample, ]
+      RMDT <- DT[get(id.col) %in% id.sample, ]
 
-      output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
       if(opts$boot.return == "coef") output <- coef(model)
       if(opts$boot.return == "full") output <- model
       if(opts$boot.return == "summary") output <- list(
