@@ -22,17 +22,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
   DT <- data[data[[id.col]] %in% eligible_ids,
              ][, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
 
-  #Expansion =========================================================
-  if(!opts$parallel){
-    result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
-  } else {
-    ID.unique <- unique(DT[[id.col]])
-    if(opts$nthreads > 1) ID.split <- split(ID.unique, cut(ID.unique, opts$nthreads)) else ID.split <- ID.unique
+  result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
 
-    result <- foreach(x = ID.split, .combine = "rbind") %dopar% {
-      out <- internal.expansion(DT[get(id.col) %in% x, ], id.col, time.col, eligible.col, outcome.col, opts)
-      return(out)
-    }
-  }
   return(result)
 }

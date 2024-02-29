@@ -33,19 +33,23 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
     if(opts$parallel){
       UIDs <- unique(DT[[id.col]])
       lnID <- length(UIDs)
+      setDTthreads(0)
 
       result <- future.apply::future_lapply(1:opts$nboot, function(x) {
         id.sample <- sample(UIDs,
                             round(opts$boot.sample*lnID), replace = FALSE)
 
-        RMDT <- DT[get(id.col) %in% id.sample, ]
-        RMdata <- data[get(id.col) %in% id.sample, ]
+        RMDT <- copy(DT[get(id.col) %in% id.sample, ])
+        RMdata <- copy(data[get(id.col) %in% id.sample, ])
 
-        output <- summary(handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
-        rm(RMDT, RMdata)
+        model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+        if(opts$boot.return == "coef") output <- coef(model)
+        if(opts$boot.return == "full") output <- model
+        if(opts$boot.return == "summary") output <- summary(model)
+
         return(output)
       }, future.seed = opts$seed)
-      gc()
+
       cat("Bootstrap Successful\n")
       return(result)
     }
@@ -59,8 +63,17 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       data <- copy(data)[get(id.col) %in% id.sample, ]
       DT <- copy(DT)[get(id.col) %in% id.sample, ]
 
-      output <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
+      output <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      if(opts$boot.return == "coef") output <- coef(model)
+      if(opts$boot.return == "full") output <- model
+      if(opts$boot.return == "summary") output <- list(
+        coefficients = coef(model),
+        standard_errors = sqrt(diag(vcov(model))),
+        t_values = coef(model) / sqrt(diag(vcov(model))),
+        p_values = 2 * pt(abs(coef(model) / sqrt(diag(vcov(model)))), df.residual(model), lower.tail = FALSE)
+      )
     })
+
     cat("Bootstrap Successful\n")
     return(result)
 
