@@ -153,13 +153,16 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
 
       if(opts$expand) setnames(out, time.col, "followup")
 
-      percentile <- quantile(out$wt, probs = c(.25, .5, .75))
-      stats <- list(min = min(out$wt),
+      percentile <- quantile(out$wt, probs = c(.01, .25, .5, .75, .99))
+      stats <- list(covariates = opts$weight.covariates,
+                    min = min(out$wt),
                     max = max(out$wt),
                     sd = sd(out$wt),
-                    p25 = percentile[[1]],
-                    p50 = percentile[[2]],
-                    p75 = percentile[[3]])
+                    p01 = percentile[[1]],
+                    p25 = percentile[[2]],
+                    p50 = percentile[[3]],
+                    p75 = percentile[[4]],
+                    p99 = percentile[[99]])
 
     } else if(!opts$pre.expansion){
       # NON STABILIZED - POST EXPANSION

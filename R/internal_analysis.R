@@ -9,7 +9,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
           } else if (opts$weighted){
-            if(!opts$stabilized && opts$weight.time == "pre"){
+            if(!opts$stabilized && opts$pre.expansion){
               WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
               if(!opts$expand) {
                 WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
@@ -26,7 +26,8 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
             }
           }
-        return(model)
+        return(model = model,
+               weighted_stats = WT$weighted_stats)
       }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
@@ -43,15 +44,26 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         RMdata <- data[get(id.col) %in% id.sample, ]
 
         model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-        if(opts$boot.return == "coef") output <- coef(model)
-        if(opts$boot.return == "full") output <- model
-        if(opts$boot.return == "summary") output <- summary(model)
-        
-        return(output)
+        if(opts$boot.return == "coef") output <- coef(model$model)
+        if(opts$boot.return == "full") output <- model$model
+        if(opts$boot.return == "summary") output <- summary(model$model)
+
+        return(list(output = output,
+                    weighted_stats = model$weighted_stats))
       }, future.seed = opts$seed)
 
       cat("Bootstrap Successful\n")
-      return(result)
+      return(list(result = summary(result$model),
+                  weighted_stats = if(!opts$weighted){
+                    NA
+                  } else {
+                    list(
+                      stabilized = opts$stabilized,
+                      covariates = opts$weight.covariates,
+                      weighted_stats = result$weighted_stats
+                    )
+                  })
+      )
     }
     # Non Parallel Bootstrapping ===============================================
     result <- lapply(1:opts$nboot, function(x) {
@@ -64,21 +76,39 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       RMDT <- DT[get(id.col) %in% id.sample, ]
 
       output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-      if(opts$boot.return == "coef") output <- coef(model)
-      if(opts$boot.return == "full") output <- model
-      if(opts$boot.return == "summary") output <- list(
-        coefficients = coef(model),
-        standard_errors = sqrt(diag(vcov(model))),
-        t_values = coef(model) / sqrt(diag(vcov(model))),
-        p_values = 2 * pt(abs(coef(model) / sqrt(diag(vcov(model)))), df.residual(model), lower.tail = FALSE)
-      )
+      if(opts$boot.return == "coef") output <- coef(model$model)
+      if(opts$boot.return == "full") output <- model$model
+      if(opts$boot.return == "summary") output <- summary(model$model)
+
+      return(list(output = output,
+                  weighted_stats = model$weighted_stats))
     })
 
     cat("Bootstrap Successful\n")
-    return(result)
+    return(list(result = summary(result$model),
+                weighted_stats = if(!opts$weighted){
+                  NA
+                } else {
+                  list(
+                    stabilized = opts$stabilized,
+                    covariates = opts$weight.covariates,
+                    weighted_stats = result$weighted_stats
+                  )
+                })
+    )
 
   } else if(!opts$bootstrap){
-    result <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
-    return(result)
+    result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+    return(list(result = summary(result$model),
+                weighted_stats = if(!opts$weighted){
+                  NA
+                } else {
+                  list(
+                    stabilized = opts$stabilized,
+                    covariates = opts$weight.covariates,
+                    weighted_stats = result$weighted_stats
+                  )
+                })
+           )
   }
 }
