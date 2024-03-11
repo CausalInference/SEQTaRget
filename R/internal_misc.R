@@ -18,8 +18,8 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
   return(string)
 }
 
-create.default.weight.covariates <- function(DT, data, id.col, time.col, eligible.col, treatment.col, opts){
-  cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col)])
+create.default.weight.covariates <- function(DT, data, id.col, time.col, eligible.col, treatment.col, outcome.col, opts){
+  cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col, outcome.col)])
   string <- paste0(cols, collapse = "+")
 
   return(string)

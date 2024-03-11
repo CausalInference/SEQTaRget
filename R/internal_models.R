@@ -126,35 +126,37 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 
 internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
   if(is.na(opts$weight.covariates)) {
-    opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
+    opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, outcome.col, opts)
   }
   if(!opts$stabilized){
     if(opts$pre.expansion){
       data <- as.data.table(data)
 
       weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col)),
-                                   time_sq = get(time.col)^2), by = id.col]
+                                   time_sq = get(time.col)^2), by = id.col
+                           ][get(time.col) == 0, tx_lag := 0]
 
       model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
-                                   data = weight[tx_lag == 1, ],
+                                   data = weight[tx_lag == 0, ],
                                    family = binomial("logit"))
 
-      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
-                                   data = weight[tx_lag == 0],
+      model2 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col, "+time_sq")),
+                                   data = weight[tx_lag == 1],
                                    family = binomial("logit"))
 
       kept <- c("wt", time.col, id.col)
-      out <- weight[tx_lag == 0, pred := predict(model0, newdata = .SD, type = "response")
-                    ][tx_lag == 1, pred := predict(model1, newdata = .SD, type = "response")
-                      ][get(time.col) == 0, pred := 1
-                        ][, cmprd := cumprod(pred), by = eval(id.col)
-                          ][, wt := 1/cmprd
-                            ][, ..kept]
+      out <- weight[tx_lag == 0, pred := predict(model1, newdata = .SD, type = "response")
+                    ][get(treatment.col) == 0 & tx_lag == 0, pred := 1 - pred
+                      ][tx_lag == 1, pred := predict(model2, newdata = .SD, type = "response")
+                        ][get(treatment.col) == 1 & tx_lag == 1, pred := 1 - pred
+                          ][, cmprd := cumprod(pred), by = eval(id.col)
+                            ][, wt := 1/cmprd
+                              ][, ..kept]
 
       if(opts$expand) setnames(out, time.col, "followup")
 
       percentile <- quantile(out$wt, probs = c(.01, .25, .5, .75, .99))
-      stats <- list(covariates = opts$weight.covariates,
+      stats <- list(covariates = paste0(opts$weight.covariates, "+", time.col, "+time_sq"),
                     min = min(out$wt),
                     max = max(out$wt),
                     sd = sd(out$wt),
@@ -162,7 +164,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                     p25 = percentile[[2]],
                     p50 = percentile[[3]],
                     p75 = percentile[[4]],
-                    p99 = percentile[[99]])
+                    p99 = percentile[[5]])
 
     } else if(!opts$pre.expansion){
       # NON STABILIZED - POST EXPANSION

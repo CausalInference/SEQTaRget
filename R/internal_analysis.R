@@ -15,6 +15,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                 WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
                           ][wt := ifelse(get(time.col) == 0, 1, wt), by = id.col]
               } else {
+                time.col <- "followup"
                 WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
                           ][, wt := ifelse(followup == 0, 1, wt), by = id.col]
               }
