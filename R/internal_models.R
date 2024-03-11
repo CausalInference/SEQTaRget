@@ -157,6 +157,8 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
 
       percentile <- quantile(out$wt, probs = c(.01, .25, .5, .75, .99))
       stats <- list(covariates = paste0(opts$weight.covariates, "+", time.col, "+time_sq"),
+                    lag0_coef = coef(model1),
+                    lag1_coef = coef(model2),
                     min = min(out$wt),
                     max = max(out$wt),
                     sd = sd(out$wt),
