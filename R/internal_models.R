@@ -132,15 +132,14 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     if(opts$pre.expansion){
       data <- as.data.table(data)
 
-      weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col)),
-                                   time_sq = get(time.col)^2), by = id.col
+      weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col))), by = id.col
                            ][get(time.col) == 0, tx_lag := 0]
 
-      model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
+      model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates),
                                    data = weight[tx_lag == 0, ],
                                    family = binomial("logit"))
 
-      model2 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col, "+time_sq")),
+      model2 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates),
                                    data = weight[tx_lag == 1],
                                    family = binomial("logit"))
 
