@@ -12,18 +12,13 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             if(!opts$stabilized && opts$pre.expansion){
               WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
               if(!opts$expand) {
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][wt := ifelse(get(time.col) == 0, 1, wt), by = id.col]
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
               } else {
                 time.col <- "followup"
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][, wt := ifelse(followup == 0, 1, wt), by = id.col]
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
               }
             }
-            if(opts$weight.time == "pre") {
-
-            }
-            if(opts$weight.time == "post" ||  opts$stabilized){
+            if(opts$pre.expansion) {
 
             }
           }
