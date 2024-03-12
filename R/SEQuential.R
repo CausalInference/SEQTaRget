@@ -58,6 +58,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   #Model Dispersion ===========================================
   model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+
   if(opts$bootstrap){
     if(opts$boot.return != "coef"){
       TDT <- rbindlist(lapply(model,
