@@ -5,7 +5,6 @@
 #' @keywords internal
 internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
-
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
           } else if (opts$weighted){
@@ -14,7 +13,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
               if(!opts$expand) {
                 WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
               } else {
-                time.col <- "followup"
+                time.col <- "period"
                 WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
               }
             }

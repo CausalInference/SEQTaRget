@@ -152,7 +152,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                             ][, wt := 1/cmprd
                               ][, ..kept]
 
-      if(opts$expand) setnames(out, time.col, "followup")
+      if(opts$expand) setnames(out, time.col, "period")
 
       percentile <- quantile(out$wt, probs = c(.01, .25, .5, .75, .99))
       stats <- list(covariates = paste0(opts$weight.covariates, "+", time.col, "+time_sq"),
