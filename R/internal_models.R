@@ -157,7 +157,6 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     }
   } else if(opts$stabilized){
     if(!opts$pre.expansion){
-      treatment.col <- names(DT)[grep(treatment.col, names(DT))]
       weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(eval(id.col), "trial")
                          ][followup == 0, tx_lag := 0 ]
 
@@ -168,6 +167,8 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
       numerator1 <- speedglm::speedglm(paste0(treatment.col, "~", opts$weight.covariates),
                                        data = weight[tx_lag == 1],
                                        family = binomial("logit"))
+
+
     }
 
   }

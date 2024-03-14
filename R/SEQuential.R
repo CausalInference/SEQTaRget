@@ -42,7 +42,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Expansion ==================================================
   if(opts$expand == TRUE){
     cat("Expanding Data...\n")
-    DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
+    DT <- SEQexpand(data, id.col, time.col, treatment.col, eligible.col, outcome.col, opts)
 
     if(method == "none"){
       cat("Returning expanded data per 'method = 'none''")

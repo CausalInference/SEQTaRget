@@ -38,3 +38,4 @@ create.default.weight.covariates <- function(DT, data, id.col, time.col, eligibl
 
   return(string)
 }
+DT <- copy(data)

@@ -11,7 +11,7 @@
 #'
 #' @export
 
-SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
+SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outcome.col, opts) {
   # Pre-Processing ==================================================
   cols <- c(id.col, eligible.col)
   # binary.cols <- names(data)[sapply(data, function(col) all(unique(col) %in% c(0, 1)))]
