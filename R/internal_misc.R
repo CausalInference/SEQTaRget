@@ -10,7 +10,7 @@ create.formula <- function(y, x){
 #' @keywords internal
 create.default.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method){
   if(method == "ITT"){
-    cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, outcome.col, time.col)], "_bas", collapse = "+")
+    cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, outcome.col, time.col, treatment.col)], "_bas", collapse = "+")
     interactions <- paste0(treatment.col, "_bas*", "followup", collapse = "+")
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")

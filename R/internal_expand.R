@@ -4,8 +4,8 @@
 #' @import data.table
 #'
 #' @keywords internal
-internal.expansion <- function(DT, id.col, time.col, eligible.col, outcome.col, opts){
-  vars <- unlist(strsplit(opts$covariates, "\\+|\\*"))
+internal.expansion <- function(DT, id.col, time.col, treatment.col, eligible.col, outcome.col, opts){
+  vars <- c(unlist(strsplit(opts$covariates, "\\+|\\*")), treatment.col)
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
 
