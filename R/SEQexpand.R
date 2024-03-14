@@ -20,13 +20,7 @@ SEQexpand <- function(data, id.col, time.col, eligible.col, outcome.col, opts) {
                                           ][[id.col]])
 
   DT <- data[data[[id.col]] %in% eligible_ids, ]
-<<<<<<< Updated upstream
-  #[, (binary.cols) := lapply(.SD, as.logical), .SDcols = binary.cols]
-
   result <- internal.expansion(DT, id.col, time.col, treatment.col, eligible.col, outcome.col, opts)
-=======
 
-  result <- internal.expansion(DT, id.col, time.col, eligible.col, outcome.col, opts)
->>>>>>> Stashed changes
   return(result)
 }
