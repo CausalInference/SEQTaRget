@@ -19,8 +19,22 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
 }
 
 create.default.weight.covariates <- function(DT, data, id.col, time.col, eligible.col, treatment.col, outcome.col, opts){
-  cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col, outcome.col)])
-  string <- paste0(cols, collapse = "+")
+  if(!opts$stabilized){
+    if(opts$pre.expansion){
+      cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col, outcome.col)])
+      string <- paste0(cols, collapse = "+")
+    }
+  } else if(opts$stabilized){
+    if(opts$pre.expansion){
+
+    } else if (!opts$pre.expansion){
+      cols <- paste0(names(DT)[!names(DT) %in% c(id.col, eligible.col, outcome.col,
+                                                 names(DT)[grep("followup", names(DT))],
+                                                 "period", "trial",
+                                                 names(DT)[grep(treatment.col, names(DT))])])
+      string <- paste0(cols, collapse="+")
+    }
+  }
 
   return(string)
 }

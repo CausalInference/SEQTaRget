@@ -7,22 +7,42 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
+            time.col <- "time"
           } else if (opts$weighted){
             if(!opts$stabilized && opts$pre.expansion){
               WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
               if(!opts$expand) {
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+                          ][, cmprd := cumprod(pred), by = c(eval(id.col), "trial")
+                            ][, wt := 1/cmprd
+                              ]
               } else {
                 time.col <- "period"
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)]
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+                          ][, cmprd := cumprod(pred), by = c(eval(id.col), "trial")
+                            ][, wt := 1/cmprd
+                              ]
               }
             }
             if(opts$pre.expansion) {
 
             }
           }
+
+          percentile <- quantile(WDT$wt, probs = c(.01, .25, .5, .75, .99))
+          stats <- list(lag0_coef = WT$m1coef,
+                        lag1_coef = ,
+                        min = min(out$wt),
+                        max = max(out$wt),
+                        sd = sd(out$wt),
+                        p01 = percentile[[1]],
+                        p25 = percentile[[2]],
+                        p50 = percentile[[3]],
+                        p75 = percentile[[4]],
+                        p99 = percentile[[5]])
+
         return(model = model,
-               weighted_stats = WT$weighted_stats)
+               weighted_stats = stats)
       }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")

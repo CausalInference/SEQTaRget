@@ -143,36 +143,35 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                    data = weight[tx_lag == 1],
                                    family = binomial("logit"))
 
-      kept <- c("wt", time.col, id.col)
+      kept <- c("pred", time.col, id.col)
       out <- weight[tx_lag == 0, pred := predict(model1, newdata = .SD, type = "response")
                     ][get(treatment.col) == 0 & tx_lag == 0, pred := 1 - pred
                       ][tx_lag == 1, pred := predict(model2, newdata = .SD, type = "response")
                         ][get(treatment.col) == 1 & tx_lag == 1, pred := 1 - pred
-                          ][, cmprd := cumprod(pred), by = eval(id.col)
-                            ][, wt := 1/cmprd
-                              ][, ..kept]
+                          ][, ..kept]
 
       if(opts$expand) setnames(out, time.col, "period")
-
-      percentile <- quantile(out$wt, probs = c(.01, .25, .5, .75, .99))
-      stats <- list(covariates = paste0(opts$weight.covariates, "+", time.col, "+time_sq"),
-                    lag0_coef = coef(model1),
-                    lag1_coef = coef(model2),
-                    min = min(out$wt),
-                    max = max(out$wt),
-                    sd = sd(out$wt),
-                    p01 = percentile[[1]],
-                    p25 = percentile[[2]],
-                    p50 = percentile[[3]],
-                    p75 = percentile[[4]],
-                    p99 = percentile[[5]])
 
     } else if(!opts$pre.expansion){
       # NON STABILIZED - POST EXPANSION
     }
   } else if(opts$stabilized){
+    if(!opts$pre.expansion){
+      treatment.col <- names(DT)[grep(treatment.col, names(DT))]
+      weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(eval(id.col), "trial")
+                         ][followup == 0, tx_lag := 0 ]
+
+      numerator0 <- speedglm::speedglm(paste0(treatment.col, "~", opts$weight.covariates),
+                                      data = weight[tx_lag == 0],
+                                      family = binomial("logit"))
+
+      numerator1 <- speedglm::speedglm(paste0(treatment.col, "~", opts$weight.covariates),
+                                       data = weight[tx_lag == 1],
+                                       family = binomial("logit"))
+    }
 
   }
   return(list(weighted_data = out,
-              weighted_stats = stats))
+              m1coef = coef(model1),
+              m2coef = coef(model2)))
 }
