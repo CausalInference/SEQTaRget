@@ -13,7 +13,7 @@
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
   time.start <- Sys.time()
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
@@ -35,8 +35,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   rm(ncores, envir = .GlobalEnv)
   if(is.na(opts$covariates)){
-    #Default covariates created, dependent on method selection
-    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
+    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
   }
 
   # Expansion ==================================================

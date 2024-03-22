@@ -51,7 +51,7 @@ gen_data <- function(){
 #test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE)
 #print(test$coefficients)
 #Debugging Junk ==========
-#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
 #opts <- SEQopts(parallel = TRUE, bootstrap = TRUE)
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
