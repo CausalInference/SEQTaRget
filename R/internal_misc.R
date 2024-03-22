@@ -20,33 +20,13 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
   return(string)
 }
 
-create.default.weight.covariates <- function(DT, data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method){
-  if(!opts$stabilized){
-    cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col, outcome.col)])
-    string <- paste0(cols, collapse = "+")
-  } else if (opts$stabilized){
-    cols <-
-  }
-
-
-
-  if(!opts$stabilized){
-    if(opts$pre.expansion){
-      cols <- paste0(names(data)[!names(data) %in% c(id.col, eligible.col, treatment.col, time.col, outcome.col)])
-      string <- paste0(cols, collapse = "+")
-    }
-  } else if(opts$stabilized){
-    if(opts$pre.expansion){
-
-    } else if (!opts$pre.expansion){
-      cols <- paste0(names(DT)[!names(DT) %in% c(id.col, eligible.col, outcome.col,
-                                                 names(DT)[grep("followup", names(DT))],
-                                                 "period", "trial",
-                                                 names(DT)[grep(treatment.col, names(DT))])])
-      string <- paste0(cols, collapse="+")
+create.default.weight.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, type, method){
+  if(opts$pre.expansion){
+    if(type == "numerator"){
+      string <- paste0(fixed.cols, collapse = "+")
+    } else {
+      string <- paste0(c(fixed.cols, time.cols), collapse = "+")
     }
   }
-
   return(string)
 }
-DT <- copy(data)

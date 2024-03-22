@@ -21,7 +21,8 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   DT <- data[data[[id.col]] %in% eligible_ids, ]
 
   # Expansion =======================================================
-  vars <- c(unlist(strsplit(opts$covariates, "\\+|\\*")), treatment.col, names(DT)[!names(DT) %in% c(eligible.col, time.col)])
+  vars <- unique(c(unlist(strsplit(c(opts$covariates, opts$numerator, opts$denominator),
+                            "\\+|\\*")), treatment.col, names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
 
@@ -31,7 +32,7 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   vars.sq <- unique(sub(opts$sq.indicator, "", vars.sq))
   vars.kept <- c(vars, id.col, "trial", "period", "followup")
 
-  data <- DT[(get(eligible.col)), .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
+  data <- DT[(get(eligible.col)) == 1, .(period = Map(seq, get(time.col), table(DT[[id.col]])[.GRP] - 1)), by = eval(id.col)
              ][, cbind(.SD, trial = rowid(get(id.col)) - 1)
                ][, .(period = unlist(.SD)), by = c(eval(id.col), "trial")
                  ][, followup := as.integer(seq_len(.N)-1), by = c(eval(id.col), "trial")

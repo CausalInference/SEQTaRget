@@ -7,34 +7,24 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
-            time.col <- "time"
+
           } else if (opts$weighted){
-            if(!opts$stabilized && opts$pre.expansion){
-              WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-              if(!opts$expand) {
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][, cmprd := cumprod(pred), by = c(eval(id.col), "trial")
-                            ][, wt := 1/cmprd
-                              ]
-              } else {
-                time.col <- "period"
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][, cmprd := cumprod(pred), by = c(eval(id.col), "trial")
-                            ][, wt := 1/cmprd
-                              ]
-              }
-            }
-            if(opts$pre.expansion) {
+            WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+            if(opts$expand) time.col <- "period"
+            WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+                      ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                        ][, weight := cprod.Numerator/cprod.Denominator
+                          ][get(time.col) == 0 & trial == 0, weight := 1]
 
-            }
-          }
-
-          percentile <- quantile(WDT$wt, probs = c(.01, .25, .5, .75, .99))
-          stats <- list(lag0_coef = WT$m1coef,
-                        lag1_coef = ,
-                        min = min(out$wt),
-                        max = max(out$wt),
-                        sd = sd(out$wt),
+          percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99))
+          stats <- list(n0.coef = WT$coef.n0,
+                        n1.coef = WT$coef.n1,
+                        d0.coef = WT$coef.d0,
+                        d1.coef = WT$coef.d1,
+                        min = min(WDT$weight),
+                        max = max(WDT$weight),
+                        sd = sd(WDT$weight),
                         p01 = percentile[[1]],
                         p25 = percentile[[2]],
                         p50 = percentile[[3]],
@@ -43,7 +33,8 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
         return(model = model,
                weighted_stats = stats)
-      }
+          }
+        }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
     if(opts$parallel){
