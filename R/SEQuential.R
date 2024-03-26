@@ -13,7 +13,7 @@
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method, params, ...){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
   time.start <- Sys.time()
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
@@ -34,15 +34,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
   }
   rm(ncores, envir = .GlobalEnv)
-  if(is.na(opts$covariates)){
-    #Default covariates created, dependent on method selection
-    opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
+  if(is.na(opts$covariates)) opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
+  if(opts$weighted){
+    if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method)
+    if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method)
   }
 
   # Expansion ==================================================
   if(opts$expand == TRUE){
     cat("Expanding Data...\n")
-    DT <- SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
+    DT <- SEQexpand(data, id.col, time.col, treatment.col, eligible.col, outcome.col, opts)
 
     if(method == "none"){
       cat("Returning expanded data per 'method = 'none''")
@@ -58,6 +59,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   #Model Dispersion ===========================================
   model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+
   if(opts$bootstrap){
     if(opts$boot.return != "coef"){
       TDT <- rbindlist(lapply(model,

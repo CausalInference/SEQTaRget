@@ -125,48 +125,42 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 }
 
 internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
-  if(is.na(opts$weight.covariates)) {
-    opts$weight.covariates <- create.default.weight.covariates(DT, data, id.col, time.col, eligible.col, treatment.col, opts)
-  }
-  if(!opts$stabilized){
-    if(opts$pre.expansion){
-      data <- as.data.table(data)
+  if(opts$pre.expansion){
+    weight <- copy(data)[, tx_lag := shift(get(treatment.col)), by = id.col
+                         ][get(time.col) == 0, tx_lag := 0]
 
-      weight <- copy(data)[, `:=` (tx_lag = shift(get(treatment.col)),
-                                   time_sq = get(time.col)^2), by = id.col]
+    numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
+                                     data = weight[tx_lag == 0, ],
+                                     family = binomial("logit"))
 
-      model1 <- speedglm::speedglm(formula = paste0(treatment.col, "==1~", opts$weight.covariates, "+", time.col,"+time_sq"),
-                                   data = weight[tx_lag == 1, ],
-                                   family = binomial("logit"))
+    numerator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
+                                     data = weight[tx_lag == 1, ],
+                                     family = binomial("logit"))
 
-      model0 <- speedglm::speedglm(formula = paste0(paste0(treatment.col, "==0~", opts$weight.covariates, "+", time.col, "+time_sq")),
-                                   data = weight[tx_lag == 0],
-                                   family = binomial("logit"))
+    denominator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
+                                       data = weight[tx_lag == 0, ],
+                                       family = binomial("logit"))
 
-      kept <- c("wt", time.col, id.col)
-      out <- weight[tx_lag == 0, pred := predict(model0, newdata = .SD, type = "response")
-                    ][tx_lag == 1, pred := predict(model1, newdata = .SD, type = "response")
-                      ][get(time.col) == 0, pred := 1
-                        ][, cmprd := cumprod(pred), by = eval(id.col)
-                          ][, wt := 1/cmprd
-                            ][, ..kept]
+    denominator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
+                                       data = weight[tx_lag == 1, ],
+                                       family = binomial("logit"))
 
-      if(opts$expand) setnames(out, time.col, "followup")
-
-      percentile <- quantile(out$wt, probs = c(.25, .5, .75))
-      stats <- list(min = min(out$wt),
-                    max = max(out$wt),
-                    sd = sd(out$wt),
-                    p25 = percentile[[1]],
-                    p50 = percentile[[2]],
-                    p75 = percentile[[3]])
-
-    } else if(!opts$pre.expansion){
-      # NON STABILIZED - POST EXPANSION
-    }
-  } else if(opts$stabilized){
+    kept <- c("numerator", "denominator", time.col, id.col)
+    out <- copy(weight)[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
+                                           denominator = predict(denominator0, newdata = .SD, type = "response"))
+                  ][tx_lag == 0 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
+                                                                 denominator = 1 - denominator)
+                    ][tx_lag == 1, `:=` (numerator = predict(numerator1, newdata = .SD, type = "response"),
+                                         denominator = predict(denominator1, newdata = .SD, type = "response"))
+                      ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
+                                                                     denominator = 1 - denominator)
+                        ][, ..kept]
+    setnames(out, time.col, "period")
 
   }
   return(list(weighted_data = out,
-              weighted_stats = stats))
+              coef.n0 = coef(numerator0),
+              coef.n1 = coef(numerator1),
+              coef.d0 = coef(denominator0),
+              coef.d1 = coef(denominator1)))
 }

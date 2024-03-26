@@ -5,29 +5,36 @@
 #' @keywords internal
 internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
         handler <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
-
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
+
           } else if (opts$weighted){
-            if(!opts$stabilized && opts$weight.time == "pre"){
-              WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-              if(!opts$expand) {
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][wt := ifelse(get(time.col) == 0, 1, wt), by = id.col]
-              } else {
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                          ][, wt := ifelse(followup == 0, 1, wt), by = id.col]
-              }
-            }
-            if(opts$weight.time == "pre") {
+            WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+            if(opts$expand) time.col <- "period"
+            WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+                      ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                        ][, weight := cprod.Numerator/cprod.Denominator
+                          ][get(time.col) == 0 & trial == 0, weight := 1]
 
-            }
-            if(opts$weight.time == "post" ||  opts$stabilized){
+          percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99))
+          stats <- list(n0.coef = WT$coef.n0,
+                        n1.coef = WT$coef.n1,
+                        d0.coef = WT$coef.d0,
+                        d1.coef = WT$coef.d1,
+                        min = min(WDT$weight),
+                        max = max(WDT$weight),
+                        sd = sd(WDT$weight),
+                        p01 = percentile[[1]],
+                        p25 = percentile[[2]],
+                        p50 = percentile[[3]],
+                        p75 = percentile[[4]],
+                        p99 = percentile[[5]])
 
-            }
+        return(model = model,
+               weighted_stats = stats)
           }
-        return(model)
-      }
+        }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
     if(opts$parallel){
@@ -43,15 +50,26 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         RMdata <- data[get(id.col) %in% id.sample, ]
 
         model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-        if(opts$boot.return == "coef") output <- coef(model)
-        if(opts$boot.return == "full") output <- model
-        if(opts$boot.return == "summary") output <- summary(model)
-        
-        return(output)
+        if(opts$boot.return == "coef") output <- coef(model$model)
+        if(opts$boot.return == "full") output <- model$model
+        if(opts$boot.return == "summary") output <- summary(model$model)
+
+        return(list(output = output,
+                    weighted_stats = model$weighted_stats))
       }, future.seed = opts$seed)
 
       cat("Bootstrap Successful\n")
-      return(result)
+      return(list(result = summary(result$model),
+                  weighted_stats = if(!opts$weighted){
+                    NA
+                  } else {
+                    list(
+                      stabilized = opts$stabilized,
+                      covariates = opts$weight.covariates,
+                      weighted_stats = result$weighted_stats
+                    )
+                  })
+      )
     }
     # Non Parallel Bootstrapping ===============================================
     result <- lapply(1:opts$nboot, function(x) {
@@ -64,21 +82,39 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       RMDT <- DT[get(id.col) %in% id.sample, ]
 
       output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-      if(opts$boot.return == "coef") output <- coef(model)
-      if(opts$boot.return == "full") output <- model
-      if(opts$boot.return == "summary") output <- list(
-        coefficients = coef(model),
-        standard_errors = sqrt(diag(vcov(model))),
-        t_values = coef(model) / sqrt(diag(vcov(model))),
-        p_values = 2 * pt(abs(coef(model) / sqrt(diag(vcov(model)))), df.residual(model), lower.tail = FALSE)
-      )
+      if(opts$boot.return == "coef") output <- coef(model$model)
+      if(opts$boot.return == "full") output <- model$model
+      if(opts$boot.return == "summary") output <- summary(model$model)
+
+      return(list(output = output,
+                  weighted_stats = model$weighted_stats))
     })
 
     cat("Bootstrap Successful\n")
-    return(result)
+    return(list(result = summary(result$model),
+                weighted_stats = if(!opts$weighted){
+                  NA
+                } else {
+                  list(
+                    stabilized = opts$stabilized,
+                    covariates = opts$weight.covariates,
+                    weighted_stats = result$weighted_stats
+                  )
+                })
+    )
 
   } else if(!opts$bootstrap){
-    result <- summary(handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts))
-    return(result)
+    result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+    return(list(result = summary(result$model),
+                weighted_stats = if(!opts$weighted){
+                  NA
+                } else {
+                  list(
+                    stabilized = opts$stabilized,
+                    covariates = opts$weight.covariates,
+                    weighted_stats = result$weighted_stats
+                  )
+                })
+           )
   }
 }
