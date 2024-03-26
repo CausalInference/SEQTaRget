@@ -32,7 +32,10 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                         p99 = percentile[[5]])
 
         return(model = model,
-               weighted_stats = stats)
+               weighted_stats = if(opts$weighted){
+                 stats
+               } else NA
+               )
           }
         }
   if(opts$bootstrap){
@@ -50,23 +53,23 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         RMdata <- data[get(id.col) %in% id.sample, ]
 
         model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-        if(opts$boot.return == "coef") output <- coef(model$model)
-        if(opts$boot.return == "full") output <- model$model
-        if(opts$boot.return == "summary") output <- summary(model$model)
+        if(opts$boot.return == "coef") output <- coef(model)
+        if(opts$boot.return == "full") output <- model
+        if(opts$boot.return == "summary") output <- summary(model)
 
         return(list(output = output,
                     weighted_stats = model$weighted_stats))
       }, future.seed = opts$seed)
 
       cat("Bootstrap Successful\n")
-      return(list(result = summary(result$model),
+      return(list(result = lapply(1:opts$nboot, function(x) result[[x]][[1]]),
                   weighted_stats = if(!opts$weighted){
                     NA
                   } else {
                     list(
                       stabilized = opts$stabilized,
                       covariates = opts$weight.covariates,
-                      weighted_stats = result$weighted_stats
+                      weighted_stats = lapply(1:opts$nboot, function(x) result[[x]][[2]])
                     )
                   })
       )
@@ -81,24 +84,24 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
       RMdata <- data[get(id.col) %in% id.sample, ]
       RMDT <- DT[get(id.col) %in% id.sample, ]
 
-      output <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-      if(opts$boot.return == "coef") output <- coef(model$model)
-      if(opts$boot.return == "full") output <- model$model
-      if(opts$boot.return == "summary") output <- summary(model$model)
+      model <- handler(RMDT, RMdata, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+      if(opts$boot.return == "coef") output <- coef(model)
+      if(opts$boot.return == "full") output <- model
+      if(opts$boot.return == "summary") output <- summary(model)
 
       return(list(output = output,
                   weighted_stats = model$weighted_stats))
     })
 
     cat("Bootstrap Successful\n")
-    return(list(result = summary(result$model),
+    return(list(result = lapply(1:opts$nboot, function(x) result[[x]][[1]]),
                 weighted_stats = if(!opts$weighted){
                   NA
                 } else {
                   list(
                     stabilized = opts$stabilized,
                     covariates = opts$weight.covariates,
-                    weighted_stats = result$weighted_stats
+                    weighted_stats = lapply(1:opts$nboot, function(x) result[[x]][[2]])
                   )
                 })
     )

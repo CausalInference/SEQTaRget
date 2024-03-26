@@ -10,7 +10,7 @@ errorParams <- function(params, dots){
 #' Internal Error Thrower - when \code{data}, \code{id}, \code{time}, \code{treatment} are missing.
 #' Or, in the case of the latter three, if they are not found in \code{names(data)}
 #' @keywords internal
-errorData <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method,){
+errorData <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method){
   if(missing(data)) stop("Data is missing")
 
   requested.cols <- unique(c(id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols))

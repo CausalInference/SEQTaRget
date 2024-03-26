@@ -48,11 +48,11 @@ gen_data <- function(){
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
 #future::plan(future::multisession)
-#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", bootstrap = TRUE, parallel = TRUE)
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "ITT", fixed.cols = "sex", time.cols = c("N", "L", "P"), bootstrap = TRUE, parallel = TRUE, nboot = 10)
 #print(test$coefficients)
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "ITT"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
-#opts <- SEQopts(parallel = TRUE, bootstrap = TRUE)
+#opts <- SEQopts(parallel = TRUE, bootstrap = TRUE, nboot = 10)
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
 

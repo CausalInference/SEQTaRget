@@ -3,7 +3,6 @@
 export(SEQexpand)
 export(SEQopts)
 export(SEQuential)
-export(internal.expansion)
 export(internal.model)
 export(internal.survival)
 import(data.table)

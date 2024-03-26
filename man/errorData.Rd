@@ -12,6 +12,8 @@ errorData(
   eligible.col,
   treatment.col,
   outcome.col,
+  time.cols,
+  fixed.cols,
   method
 )
 }

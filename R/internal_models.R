@@ -23,7 +23,7 @@ internal.model <- function(DT, method, outcome.col, opts){
 #' @keywords internal
 #' @export
 internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
-  if(opts$expand == TRUE) time.col <- "followup"
+  if(opts$expand) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
   tx.col <- names(DT)[grep(treatment.col, names(DT))]
 
@@ -53,33 +53,23 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 
   if(opts$bootstrap){
     UIDs <- unique(DT[[id.col]])
-    subsample <- lapply(1:opts$nboot, function(x){
-      set.seed(opts$seed + x)
-      id.sample <- sample(UIDs,
-                          round(opts$boot.sample*length(UIDs)), replace = FALSE)
-      return(id.sample)
-    })
+    lnID <- length(UIDs)
 
     if(opts$parallel){
-      if(opts$sys.type %in% c("Darwin", "Linux")){
+      result <- future.apply::future_lapply(1:opts$nboot, function(x){
+        id.sample <- sample(UIDs,
+                            round(opts$boot.sample*lnID), replace = FALSE)
 
-        result <- parallel::mclapply(subsample, function(x){
-          DT <- DT[get(id.col) %in% x, ]
-
-          output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
-        }, mc.cores = opts$ncores)
-        result <- rbindlist(result)
-
-      } else if(opts$sys.type == "Windows"){
-        result <- foreach(x = subsample, .combine = "rbind", .packages = c("data.table", "SEQuential")) %dopar% {
-          DT <- DT[get(id.col) %in% x, ]
-          output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
-        }
-      }
+        RMDT <- DT[get(id.col) %in% id.sample, ]
+        output <- handler(RMDT, id.col, time.col, outcome.col, tx.col, opts)
+      }, future.seed = opts$seed)
+      result <- rbindlist(result)
     } else {
       # Non Parallel Bootstrapping ===============================================
-      result <- lapply(subsample, function(x) {
-        DT <- DT[get(id.col) %in% x, ]
+      result <- lapply(1:opts$nboot, function(x) {
+        set.seed(opts$seed + x)
+        id.sample <- sample(UIDs,
+                            round(opts$boot.sample*lnID), replace = FALSE)
 
         output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
         })

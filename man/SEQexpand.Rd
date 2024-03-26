@@ -4,7 +4,15 @@
 \alias{SEQexpand}
 \title{Creates an expanded dataset for use with \code{SEQuential}}
 \usage{
-SEQexpand(data, id.col, time.col, eligible.col, outcome.col, opts)
+SEQexpand(
+  data,
+  id.col,
+  time.col,
+  treatment.col,
+  eligible.col,
+  outcome.col,
+  opts
+)
 }
 \arguments{
 \item{data}{Dataframe or DataTable: data to expand}

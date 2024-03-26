@@ -16,7 +16,7 @@
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
   time.start <- Sys.time()
   # Error Throwing ============================================
-  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, method)
+  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
 
   # Parameter Space building ==================================
   opts <- SEQopts(); dots <- list(...)
@@ -60,25 +60,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   #Model Dispersion ===========================================
   model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
-  if(opts$bootstrap){
-    if(opts$boot.return != "coef"){
-      TDT <- rbindlist(lapply(model,
-                              function(x) as.list(coef(x))))
-    } else {
-      TDT <- rbindlist(lapply(model, function(x) as.list(x)))
-    }
-      model_summary <- lapply(TDT, function(col){
-        stats <- list(
-          mean = mean(col, na.rm = TRUE),
-          sd = sd(col, na.rm = TRUE),
-          min = min(col, na.rm = TRUE),
-          max = max(col, na.rm = TRUE),
-          CI_95 = quantile(col, c(0.025, 0.975), na.rm = TRUE)
-        )
-        return(stats)
-      })
-    }
-
   cat(method, "model successfully created\nCreating survival curves\n")
   surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
 
@@ -92,11 +73,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
           sample = opts$boot.sample,
           return = opts$boot.return
         )
-    },
-    boot_stats = if(!opts$bootstrap){
-      NA
-    } else {
-      model_summary
     },
     model = model,
     survival_curve = surv,

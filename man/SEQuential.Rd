@@ -11,6 +11,8 @@ SEQuential(
   eligible.col,
   treatment.col,
   outcome.col,
+  time.cols,
+  fixed.cols,
   method,
   params,
   ...

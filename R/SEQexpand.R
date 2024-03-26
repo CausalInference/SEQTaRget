@@ -23,6 +23,7 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   # Expansion =======================================================
   vars <- unique(c(unlist(strsplit(c(opts$covariates, opts$numerator, opts$denominator),
                             "\\+|\\*")), treatment.col, names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
+  vars <- vars[!is.na(vars)]
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
 
