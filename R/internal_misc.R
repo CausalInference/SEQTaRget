@@ -31,12 +31,12 @@ create.default.weight.covariates <- function(data, id.col, time.col, eligible.co
     if(type == "numerator"){
       baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
       fixed.cols <- paste0(fixed.cols, collapse = "+")
-      string <- paste0(fixed.cols, "+", baseline.cols)
+      string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq")
     } else {
       baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
       fixed.cols <- paste0(fixed.cols, collapse = "+")
       tv.cols <- paste0(time.cols, collapse = "+")
-      string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols)
+      string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols, "+followup+followup_sq")
     }
   }
   return(string)

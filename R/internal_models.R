@@ -150,8 +150,11 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
 
   } else {
     if(opts$expand) time.col <- "period"
+    opts$numerator <- paste0(opts$numerator, "+period+period_sq")
+    opts$denominator <- paste0(opts$denominator, "+period+period_sq")
     weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
-                       ][followup == 0, tx_lag := 0]
+                       ][followup == 0, tx_lag := 0
+                         ][, paste0(time.col, "_sq") := get(time.col)^2]
 
     numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
                                      data = weight[tx_lag == 0, ],
