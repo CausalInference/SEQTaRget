@@ -117,7 +117,8 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
   if(opts$pre.expansion){
     weight <- copy(data)[, tx_lag := shift(get(treatment.col)), by = id.col
-                         ][get(time.col) == 0, tx_lag := 0]
+                         ][get(time.col) == 0, tx_lag := 0
+                           ][, paste0(time.col, "_sq") := get(time.col)^2]
 
     numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
                                      data = weight[tx_lag == 0, ],
@@ -145,6 +146,39 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                       ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
                                                                      denominator = 1 - denominator)
                         ][, ..kept]
+    setnames(out, time.col, "period")
+
+  } else {
+    if(opts$expand) time.col <- "period"
+    weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
+                       ][followup == 0, tx_lag := 0]
+
+    numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
+                                     data = weight[tx_lag == 0, ],
+                                     family = binomial("logit"))
+
+    numerator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
+                                     data = weight[tx_lag == 1, ],
+                                     family = binomial("logit"))
+
+    denominator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
+                                       data = weight[tx_lag == 0, ],
+                                       family = binomial("logit"))
+
+    denominator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
+                                       data = weight[tx_lag == 1, ],
+                                       family = binomial("logit"))
+
+    kept <- c("numerator", "denominator", time.col, id.col, "trial")
+    out <- copy(weight)[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
+                                           denominator = predict(denominator0, newdata = .SD, type = "response"))
+                        ][tx_lag == 0 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
+                                                                       denominator = 1 - denominator)
+                          ][tx_lag == 1, `:=` (numerator = predict(numerator1, newdata = .SD, type = "response"),
+                                               denominator = predict(denominator1, newdata = .SD, type = "response"))
+                            ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
+                                                                           denominator = 1 - denominator)
+                              ]
     setnames(out, time.col, "period")
 
   }

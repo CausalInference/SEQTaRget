@@ -23,9 +23,20 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
 create.default.weight.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, type, method){
   if(opts$pre.expansion){
     if(type == "numerator"){
-      string <- paste0(fixed.cols, collapse = "+")
+      string <- paste0(paste0(fixed.cols, collapse = "+"), "+", time.col, "+", time.col, "_sq")
     } else {
-      string <- paste0(c(fixed.cols, time.cols), collapse = "+")
+      string <- paste0(paste0(c(fixed.cols, time.cols), collapse = "+"), "+", time.col, "+", time.col, "_sq")
+    }
+  } else {
+    if(type == "numerator"){
+      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
+      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      string <- paste0(fixed.cols, "+", baseline.cols)
+    } else {
+      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
+      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      tv.cols <- paste0(time.cols, collapse = "+")
+      string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols)
     }
   }
   return(string)

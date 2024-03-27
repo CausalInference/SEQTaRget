@@ -10,12 +10,23 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
           } else if (opts$weighted){
             WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
-            if(opts$expand) time.col <- "period"
-            WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                      ][, `:=` (cprod.Numerator = cumprod(numerator),
-                                cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                        ][, weight := cprod.Numerator/cprod.Denominator
-                          ][get(time.col) == 0 & trial == 0, weight := 1]
+
+            if(opts$pre.expansion){
+              if(opts$expand) time.col <- "period"
+              WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+                        ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                  cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                          ][, weight := cprod.Numerator/cprod.Denominator
+                            ][get(time.col) == 0 & trial == 0, weight := 1]
+            } else {
+              if(opts$expand) time.col <- "period"
+              WDT <- DT[WT$weighted_data, on = c(id.col, time.col, "trial")
+                        ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                  cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                          ][, weight := cprod.Numerator/cprod.Denominator
+                            ][followup == 0, weight := 1]
+            }
+
 
           percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99))
           stats <- list(n0.coef = WT$coef.n0,
