@@ -14,17 +14,20 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             if(opts$pre.expansion){
               if(opts$expand) time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                        ][, `:=` (cprod.Numerator = cumprod(numerator),
+                        ][get(time.col) == 0 & trial = 0, `:=` (numerator = 1,
+                                                    denominator = 1)
+                          ][, `:=` (cprod.Numerator = cumprod(numerator),
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                          ][, weight := cprod.Numerator/cprod.Denominator
-                            ][get(time.col) == 0 & trial == 0, weight := 1]
+                            ][, weight := cprod.Numerator/cprod.Denominator
+                              ]
             } else {
               if(opts$expand) time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col, "trial")
-                        ][, `:=` (cprod.Numerator = cumprod(numerator),
+                        ][followup == 0, `:=` (numerator = 1,
+                                               denominator = 1)
+                          ][, `:=` (cprod.Numerator = cumprod(numerator),
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                          ][, weight := cprod.Numerator/cprod.Denominator
-                            ][followup == 0, weight := 1]
+                            ][, weight := cprod.Numerator/cprod.Denominator]
             }
 
 
