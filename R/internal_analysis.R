@@ -14,7 +14,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             if(opts$pre.expansion){
               if(opts$expand) time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
-                        ][get(time.col) == 0 & trial = 0, `:=` (numerator = 1,
+                        ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
                                                     denominator = 1)
                           ][, `:=` (cprod.Numerator = cumprod(numerator),
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
