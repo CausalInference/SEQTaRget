@@ -21,9 +21,16 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   DT <- data[data[[id.col]] %in% eligible_ids, ]
 
   # Expansion =======================================================
-  vars <- unique(c(unlist(strsplit(c(opts$covariates, opts$numerator, opts$denominator),
-                            "\\+|\\*")), treatment.col, names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
-  vars <- vars[!is.na(vars)][!vars %in% c("dose", "dose_sq")]
+  if(opts$weighted & opts$pre.expansion) {
+    vars.intake <- c(opts$covariates)
+  } else {
+    vars.intake <- c(opts$covariates, opts$numerator, opts$denominator)
+  }
+  vars <- unique(c(unlist(strsplit(vars.intake,
+                                   "\\+|\\*")), treatment.col,
+                   names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
+  vars.nin <- c("dose", "dose_sq")
+  vars <- vars[!is.na(vars)][!vars %in% vars.nin]
 
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
