@@ -9,8 +9,12 @@ internal.model <- function(DT, method, outcome.col, opts){
     model <- speedglm(formula = paste0(outcome.col, "~", opts$covariates),
                                 DT,
                                 family = binomial("logit"))
-    names(model$coefficients) <- gsub("_bas", "", names(model$coefficients))
 
+  } else if (method == "dose-response") {
+    model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
+                      DT,
+                      family = binomial("logit"),
+                      weights = WDT$weight)
   }
   return(model)
 }

@@ -20,6 +20,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
                             ][, weight := cprod.Numerator/cprod.Denominator
                               ]
+              model <- internal.model(WDT, method, outcome.col, opts)
             } else {
               if(opts$expand) time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col, "trial")
@@ -28,6 +29,8 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                           ][, `:=` (cprod.Numerator = cumprod(numerator),
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
                             ][, weight := cprod.Numerator/cprod.Denominator]
+
+              model <- internal.model(WDT, method, outcome.col, opts)
             }
 
 
@@ -44,13 +47,12 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                         p50 = percentile[[3]],
                         p75 = percentile[[4]],
                         p99 = percentile[[5]])
-
-        return(model = model,
-               weighted_stats = if(opts$weighted){
-                 stats
-               } else NA
-               )
           }
+          return(model = model,
+                 weighted_stats = if(opts$weighted){
+                   stats
+                 } else NA
+                 )
         }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")

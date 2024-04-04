@@ -16,7 +16,18 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
     interactions <- paste0(treatment.col, "_bas*", "followup", collapse = "+")
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
+
+  } else if(method == "dose-response"){
+    if(opts$pre.expansion){
+      cols <- paste0(fixed.cols, collapse="+")
+    } else {
+      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
+      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      cols <- paste0(fixed.cols, "+", baseline.cols)
+    }
+    string <- paste0(cols, "+dose+dose_sq+followup+followup_sq+period+period_sq")
   }
+
   return(string)
 }
 
