@@ -11,7 +11,7 @@
 #'
 #' @export
 
-SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outcome.col, opts) {
+SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts) {
   # Pre-Processing ==================================================
   cols <- c(id.col, eligible.col)
   eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
@@ -21,12 +21,19 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   DT <- data[data[[id.col]] %in% eligible_ids, ]
 
   # Expansion =======================================================
-  vars <- unique(c(unlist(strsplit(c(opts$covariates, opts$numerator, opts$denominator),
-                            "\\+|\\*")), treatment.col, names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
-  vars <- vars[!is.na(vars)]
+  if(opts$weighted & opts$pre.expansion) {
+    vars.intake <- c(opts$covariates)
+  } else {
+    vars.intake <- c(opts$covariates, opts$numerator, opts$denominator)
+  }
+  vars <- unique(c(unlist(strsplit(vars.intake,
+                                   "\\+|\\*")), treatment.col,
+                   names(DT)[!names(DT) %in% c(eligible.col, time.col)]))
+  vars.nin <- c("dose", "dose_sq")
+  vars <- vars[!is.na(vars)][!vars %in% vars.nin]
+
   vars.base <- vars[grep(opts$baseline.indicator, vars)]
   vars.sq <- vars[grep(opts$sq.indicator, vars)]
-
   vars.time <- vars[!vars %in% vars.base]
   vars.base <- unique(gsub(opts$baseline.indicator, "", vars.base))
   vars.base <- vars.base[!vars.base %in% time.col]
@@ -61,6 +68,12 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
     out <- Reduce(function(x, y) merge(x, y, by = c(id.col, "trial", "period"), all = TRUE), data_list)
   } else if(length(data_list) == 1){
     out <- data_list[[1]]
+  }
+
+  if(method == "dose-response"){
+    out <- out[, dose := cumsum(get(treatment.col)), by = c(id.col, "trial")
+               ][, `:=` (dose_sq = dose^2,
+                         trial_sq = trial^2)]
   }
 
   return(out)

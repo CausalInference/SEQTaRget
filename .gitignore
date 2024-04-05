@@ -49,3 +49,4 @@ po/*~
 rsconnect/
 data.csv
 weighted_expansion.csv
+*.csv
