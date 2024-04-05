@@ -14,7 +14,7 @@ internal.model <- function(DT, method, outcome.col, opts){
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
                       DT,
                       family = binomial("logit"),
-                      weights = WDT$weight)
+                      weights = DT$weight)
   }
   return(model)
 }

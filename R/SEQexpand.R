@@ -72,7 +72,8 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
 
   if(method == "dose-response"){
     out <- out[, dose := cumsum(get(treatment.col)), by = c(id.col, "trial")
-               ][, dose_sq := dose^2]
+               ][, `:=` (dose_sq = dose^2,
+                         trial_sq = trial^2)]
   }
 
   return(out)

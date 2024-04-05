@@ -34,10 +34,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
   }
   rm(ncores, envir = .GlobalEnv)
-  if(is.na(opts$covariates)) opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
+  if(is.na(opts$covariates)) opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, opts)
   if(opts$weighted){
-    if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method)
-    if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method)
+    if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method, opts)
+    if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method, opts)
   }
 
   # Expansion ==================================================
