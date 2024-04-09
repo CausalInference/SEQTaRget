@@ -33,7 +33,6 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
               model <- internal.model(WDT, method, outcome.col, opts)
             }
 
-
           percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99))
           stats <- list(n0.coef = WT$coef.n0,
                         n1.coef = WT$coef.n1,
@@ -56,9 +55,9 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
         }
   if(opts$bootstrap){
     cat("Bootstrapping", opts$boot.sample*100, "% of data", opts$nboot, "times\n")
+    UIDs <- unique(DT[[id.col]])
+    lnID <- length(UIDs)
     if(opts$parallel){
-      UIDs <- unique(DT[[id.col]])
-      lnID <- length(UIDs)
       setDTthreads(0)
 
       result <- future.apply::future_lapply(1:opts$nboot, function(x) {
@@ -113,23 +112,18 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                 weighted_stats = if(!opts$weighted){
                   NA
                 } else {
-                  list(
-                    covariates = opts$weight.covariates,
-                    weighted_stats = lapply(1:opts$nboot, function(x) result[[x]][[2]])
-                  )
+                  lapply(1:opts$nboot, function(x) result[[x]][[2]])
                 })
     )
 
   } else if(!opts$bootstrap){
     result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+
     return(list(result = summary(result$model),
                 weighted_stats = if(!opts$weighted){
                   NA
                 } else {
-                  list(
-                    covariates = opts$weight.covariates,
-                    weighted_stats = result$weighted_stats
-                  )
+                  result$weighted_stats
                 })
            )
   }

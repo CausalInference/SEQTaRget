@@ -7,12 +7,12 @@
 internal.model <- function(DT, method, outcome.col, opts){
   if(method == "ITT"){
     model <- speedglm(formula = paste0(outcome.col, "~", opts$covariates),
-                                DT,
+                                data = DT,
                                 family = binomial("logit"))
 
   } else if (method == "dose-response") {
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
-                      DT,
+                      data = DT,
                       family = binomial("logit"),
                       weights = DT$weight)
   }
@@ -185,7 +185,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                                denominator = predict(denominator1, newdata = .SD, type = "response"))
                             ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
                                                                            denominator = 1 - denominator)
-                              ]
+                              ][, ..kept]
     setnames(out, time.col, "period")
 
   }
