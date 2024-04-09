@@ -8,7 +8,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
           if(!opts$weighted){
             model <- internal.model(DT, method, outcome.col, opts)
 
-          } else if (opts$weighted){
+          } else if(opts$weighted){
             WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
             if(opts$pre.expansion){
@@ -116,7 +116,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                 })
     )
 
-  } else if(!opts$bootstrap){
+  } else {
     result <- handler(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
     return(list(result = summary(result$model),
@@ -128,3 +128,4 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
            )
   }
 }
+

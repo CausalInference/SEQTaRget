@@ -4,17 +4,17 @@
 #'
 #' @keywords internal
 #' @export
-internal.model <- function(DT, method, outcome.col, opts){
+internal.model <- function(data, method, outcome.col, opts){
   if(method == "ITT"){
     model <- speedglm(formula = paste0(outcome.col, "~", opts$covariates),
-                                data = DT,
-                                family = binomial("logit"))
+                      data,
+                      family = binomial("logit"))
 
   } else if (method == "dose-response") {
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
-                      data = DT,
+                      data,
                       family = binomial("logit"),
-                      weights = DT$weight)
+                      weights = data$weight)
   }
   return(model)
 }
