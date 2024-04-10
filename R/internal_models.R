@@ -29,7 +29,11 @@ internal.model <- function(data, method, outcome.col, opts){
 internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
   if(opts$expand) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
-  tx.col <- names(DT)[grep(treatment.col, names(DT))]
+  if(method == "ITT"){
+    tx.col <- names(DT)[grep(treatment.col, names(DT))]
+  } else if (method == "dose-response"){
+    tx.col <- "dose"
+  }
 
   handler <- function(DT, id.col, time.col, outcome.col, tx.col, opts){
     survival.covars <- paste0(tx.col, "*", names(DT)[grep(time.col, names(DT))], collapse = "+")
