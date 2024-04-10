@@ -32,7 +32,9 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
   tx.col <- names(DT)[grep(treatment.col, names(DT))]
 
   handler <- function(DT, id.col, time.col, outcome.col, tx.col, opts){
-    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", paste0(opts$covariates, "+", tx.col, "*", time.col)),
+    survival.covars <- paste0(tx.col, "*", names(DT)[grep(time.col, names(DT))], collapse = "+")
+
+    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", paste0(opts$covariates, "+", survival.covars)),
                                    data = DT,
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
