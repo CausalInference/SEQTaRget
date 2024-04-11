@@ -52,3 +52,12 @@ create.default.weight.covariates <- function(data, id.col, time.col, eligible.co
   }
   return(string)
 }
+
+create.risk <- function(data){
+  table <- data[, .SD[.N], by = variable]
+  rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
+  rr <- round(as.numeric(table[2, 3]/table[1, 3]), 4)
+
+  return(list(rd = rd,
+              rr = rr))
+}

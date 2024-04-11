@@ -26,19 +26,17 @@ internal.model <- function(data, method, outcome.col, opts){
 #'
 #' @keywords internal
 #' @export
-internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
+internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, method, opts){
   if(opts$expand) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
   if(method == "ITT"){
-    tx.col <- names(DT)[grep(treatment.col, names(DT))]
+    survival.covars <- paste0(opts$covariates, "+", paste0(treatment.col, "*", c("followup", "followup_sq"), collapse = "+"))
   } else if (method == "dose-response"){
-    tx.col <- "dose"
+    survival.covars <- paste0(opts$covariates, "+", paste0(time.col, "*", c("dose", "dose_sq"), collapse = "+"))
   }
 
-  handler <- function(DT, id.col, time.col, outcome.col, tx.col, opts){
-    survival.covars <- paste0(tx.col, "*", names(DT)[grep(time.col, names(DT))], collapse = "+")
-
-    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", paste0(opts$covariates, "+", survival.covars)),
+  handler <- function(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts){
+    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", survival.covars),
                                    data = DT,
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
@@ -48,15 +46,19 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                    ][rep(1:.N, each = opts$max.survival + 1)
                      ][, `:=` (followup = seq(1:.N)-1,
                                followup_sq = (seq(1:.N)-1)^2), by = eval(id.col)
-                      ][, eval(tx.col) := FALSE
-                         ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
-                           ][, eval(tx.col) := TRUE
-                             ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
-                               ][, `:=` (surv0 = cumprod(1 - predFALSE),
-                                         surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
-                                 ][, `:=` (risk0 = 1 - surv0,
-                                          risk1 = 1 - surv1)
-                                  ][, ..kept]
+                       ][, eval(treatment.col) := FALSE
+                         ][, `:=` (dose = FALSE,
+                                   dose_sq = FALSE)
+                           ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
+                             ][, eval(treatment.col) := TRUE
+                               ][, `:=` (dose = followup,
+                                         dose_sq = followup_sq)
+                                 ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
+                                   ][, `:=` (surv0 = cumprod(1 - predFALSE),
+                                            surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
+                                     ][, `:=` (risk0 = 1 - surv0,
+                                               risk1 = 1 - surv1)
+                                       ]
     return(RMDT)
   }
 
@@ -71,7 +73,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                             round(opts$boot.sample*lnID), replace = FALSE)
 
         RMDT <- DT[get(id.col) %in% id.sample, ]
-        output <- handler(RMDT, id.col, time.col, outcome.col, tx.col, opts)
+        output <- handler(RMDT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
       }, future.seed = opts$seed)
       result <- rbindlist(result)
     } else {
@@ -81,7 +83,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
         id.sample <- sample(UIDs,
                             round(opts$boot.sample*lnID), replace = FALSE)
 
-        output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
+        output <- handler(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
         })
       result <- rbindlist(result)
       }
@@ -111,7 +113,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
 
   } else if(!opts$bootstrap){
-    DT <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
+    DT <- handler(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
     surv <- melt(DT[, .(txFALSE = mean(surv0),
                         txTRUE = mean(surv1)), by = "followup"],
                  id.vars = "followup") |>

@@ -61,7 +61,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
   cat(method, "model successfully created\nCreating survival curves\n")
-  surv <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
+  survival <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, method, opts)
+  risk <- create.risk(survival$data)
 
   return_list <- list(
     boot_params = if(!opts$bootstrap){
@@ -75,8 +76,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         )
     },
     model = model,
-    survival_curve = surv,
-    survival_data = surv$data,
+    survival_curve = survival,
+    survival_data = survival$data,
+    risk_difference = risk$rd,
+    risk_ratio = risk$rr,
     elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
     )
   gc()
