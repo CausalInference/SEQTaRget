@@ -161,12 +161,23 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     setnames(out, time.col, "period")
 
   } else {
+    subtable.kept <- c(treatment.col, id.col, time.col)
     if(opts$expand) time.col <- "period"
     opts$numerator <- paste0(opts$numerator, "+period+period_sq")
     opts$denominator <- paste0(opts$denominator, "+period+period_sq")
-    weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
-                       ][followup == 0, tx_lag := 0
-                         ][, paste0(time.col, "_sq") := get(time.col)^2]
+
+    baseline.lag <- data[, ..subtable.kept
+                         ][, tx_lag := shift(get(treatment.col)), by = id.col
+                           ][data[, .I[1L], by = id.col]$V1, tx_lag := 0
+                             ][, eval(treatment.col) := NULL]
+    setnames(baseline.lag, 2, time.col)
+    #this is heinous and needs documentation - it's essentially a conditional join
+    weight <- rbind(DT[followup == 0,
+                       ][baseline.lag, on = c(id.col, time.col), nomatch = 0],
+                    DT[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
+                       ][followup != 0, ]
+                    )[, paste0(time.col, opts$sq.indicator) := get(time.col)^2]
+
 
     numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
                                      data = weight[tx_lag == 0, ],
@@ -193,7 +204,7 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                                denominator = predict(denominator1, newdata = .SD, type = "response"))
                             ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
                                                                            denominator = 1 - denominator)
-                              ][, ..kept]
+                              ]
     setnames(out, time.col, "period")
 
   }
