@@ -163,8 +163,6 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
   } else {
     subtable.kept <- c(treatment.col, id.col, time.col)
     if(opts$expand) time.col <- "period"
-    opts$numerator <- paste0(opts$numerator, "+period+period_sq")
-    opts$denominator <- paste0(opts$denominator, "+period+period_sq")
 
     baseline.lag <- data[, ..subtable.kept
                          ][, tx_lag := shift(get(treatment.col)), by = id.col
