@@ -42,7 +42,7 @@ create.default.weight.covariates <- function(data, id.col, time.col, eligible.co
     if(type == "numerator"){
       baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
       fixed.cols <- paste0(fixed.cols, collapse = "+")
-      string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq")
+      string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
     } else {
       baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
       fixed.cols <- paste0(fixed.cols, collapse = "+")
