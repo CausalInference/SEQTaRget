@@ -11,6 +11,7 @@ SEQexpand(
   treatment.col,
   eligible.col,
   outcome.col,
+  method,
   opts
 )
 }

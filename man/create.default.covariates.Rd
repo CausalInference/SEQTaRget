@@ -14,7 +14,8 @@ create.default.covariates(
   outcome.col,
   time.cols,
   fixed.cols,
-  method
+  method,
+  opts
 )
 }
 \description{

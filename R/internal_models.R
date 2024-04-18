@@ -4,17 +4,17 @@
 #'
 #' @keywords internal
 #' @export
-internal.model <- function(DT, method, outcome.col, opts){
+internal.model <- function(data, method, outcome.col, opts){
   if(method == "ITT"){
     model <- speedglm(formula = paste0(outcome.col, "~", opts$covariates),
-                                DT,
-                                family = binomial("logit"))
+                      data,
+                      family = binomial("logit"))
 
   } else if (method == "dose-response") {
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
-                      DT,
+                      data,
                       family = binomial("logit"),
-                      weights = DT$weight)
+                      weights = data$weight)
   }
   return(model)
 }
@@ -26,13 +26,17 @@ internal.model <- function(DT, method, outcome.col, opts){
 #'
 #' @keywords internal
 #' @export
-internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, opts){
+internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, method, opts){
   if(opts$expand) time.col <- "followup"
   if(opts$max.survival == "max") opts$max.survival <- max(DT[[time.col]])
-  tx.col <- names(DT)[grep(treatment.col, names(DT))]
+  if(method == "ITT"){
+    survival.covars <- paste0(opts$covariates, "+", paste0(treatment.col, "*", c("followup", "followup_sq"), collapse = "+"))
+  } else if (method == "dose-response"){
+    survival.covars <- paste0(opts$covariates, "+", paste0(time.col, "*", c("dose", "dose_sq"), collapse = "+"))
+  }
 
-  handler <- function(DT, id.col, time.col, outcome.col, tx.col, opts){
-    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
+  handler <- function(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts){
+    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", survival.covars),
                                    data = DT,
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
@@ -42,15 +46,19 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                    ][rep(1:.N, each = opts$max.survival + 1)
                      ][, `:=` (followup = seq(1:.N)-1,
                                followup_sq = (seq(1:.N)-1)^2), by = eval(id.col)
-                      ][, eval(tx.col) := FALSE
-                         ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
-                           ][, eval(tx.col) := TRUE
-                             ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
-                               ][, `:=` (surv0 = cumprod(1 - predFALSE),
-                                         surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
-                                 ][, `:=` (risk0 = 1 - surv0,
-                                          risk1 = 1 - surv1)
-                                  ][, ..kept]
+                       ][, eval(treatment.col) := FALSE
+                         ][, `:=` (dose = FALSE,
+                                   dose_sq = FALSE)
+                           ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
+                             ][, eval(treatment.col) := TRUE
+                               ][, `:=` (dose = followup,
+                                         dose_sq = followup_sq)
+                                 ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
+                                   ][, `:=` (surv0 = cumprod(1 - predFALSE),
+                                            surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
+                                     ][, `:=` (risk0 = 1 - surv0,
+                                               risk1 = 1 - surv1)
+                                       ]
     return(RMDT)
   }
 
@@ -65,7 +73,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                             round(opts$boot.sample*lnID), replace = FALSE)
 
         RMDT <- DT[get(id.col) %in% id.sample, ]
-        output <- handler(RMDT, id.col, time.col, outcome.col, tx.col, opts)
+        output <- handler(RMDT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
       }, future.seed = opts$seed)
       result <- rbindlist(result)
     } else {
@@ -75,7 +83,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
         id.sample <- sample(UIDs,
                             round(opts$boot.sample*lnID), replace = FALSE)
 
-        output <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
+        output <- handler(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
         })
       result <- rbindlist(result)
       }
@@ -105,7 +113,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
 
   } else if(!opts$bootstrap){
-    DT <- handler(DT, id.col, time.col, outcome.col, tx.col, opts)
+    DT <- handler(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts)
     surv <- melt(DT[, .(txFALSE = mean(surv0),
                         txTRUE = mean(surv1)), by = "followup"],
                  id.vars = "followup") |>
@@ -153,12 +161,21 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
     setnames(out, time.col, "period")
 
   } else {
+    subtable.kept <- c(treatment.col, id.col, time.col)
     if(opts$expand) time.col <- "period"
-    opts$numerator <- paste0(opts$numerator, "+period+period_sq")
-    opts$denominator <- paste0(opts$denominator, "+period+period_sq")
-    weight <- copy(DT)[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
-                       ][followup == 0, tx_lag := 0
-                         ][, paste0(time.col, "_sq") := get(time.col)^2]
+
+    baseline.lag <- data[, ..subtable.kept
+                         ][, tx_lag := shift(get(treatment.col)), by = id.col
+                           ][data[, .I[1L], by = id.col]$V1, tx_lag := 0
+                             ][, eval(treatment.col) := NULL]
+    setnames(baseline.lag, 2, time.col)
+    #this is heinous and needs documentation - it's essentially a conditional join
+    weight <- rbind(DT[followup == 0,
+                       ][baseline.lag, on = c(id.col, time.col), nomatch = 0],
+                    DT[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
+                       ][followup != 0, ]
+                    )[, paste0(time.col, opts$sq.indicator) := get(time.col)^2]
+
 
     numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
                                      data = weight[tx_lag == 0, ],
