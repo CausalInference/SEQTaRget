@@ -19,14 +19,6 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
                                           ][[id.col]])
 
   DT <- data[data[[id.col]] %in% eligible_ids, ]
-  setorderv(DT, c(id.col, time.col))
-
-  # Censoring =======================================================
-  if(method == "censoring"){
-    DT <- DT[, tmp := cumsum(get(treatment.col)), by = id.col
-             ][tmp <= 1, .SD, by = id.col
-               ][, tmp := NULL]
-  }
 
   # Expansion =======================================================
   if(!opts$weighted | opts$pre.expansion) {

@@ -15,6 +15,7 @@
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
   time.start <- Sys.time()
+  setDT(data); setorderv(data, c(id.col, time.col))
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
 
@@ -38,6 +39,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if(opts$weighted){
     if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method, opts)
     if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method, opts)
+  }
+
+  # Censoring =======================================================
+  if(method == "censoring"){
+    data <- data[, tmp := cumsum(get(treatment.col)), by = id.col
+                 ][tmp <= 1, .SD, by = id.col
+                   ][, tmp := NULL]
   }
 
   # Expansion ==================================================

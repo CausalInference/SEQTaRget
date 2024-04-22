@@ -10,12 +10,13 @@ internal.model <- function(data, method, outcome.col, opts){
                       data,
                       family = binomial("logit"))
 
-  } else if (method == "dose-response") {
+  } else if (method %in% c("dose-response", "censoring")) {
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
                       data,
                       family = binomial("logit"),
                       weights = data$weight)
   }
+
   return(model)
 }
 
