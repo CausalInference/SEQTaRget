@@ -41,13 +41,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method, opts)
   }
 
-  # Censoring =======================================================
-  if(method == "censoring"){
-    data <- data[, tmp := cumsum(get(treatment.col)), by = id.col
-                 ][tmp <= 1, .SD, by = id.col
-                   ][, tmp := NULL]
-  }
-
   # Expansion ==================================================
   if(opts$expand == TRUE){
     cat("Expanding Data...\n")
