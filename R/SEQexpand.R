@@ -20,13 +20,6 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
 
   DT <- data[data[[id.col]] %in% eligible_ids, ]
 
-  # Censoring =======================================================
-  if(method == "censoring"){
-    DT <- DT[, tmp := cumsum(get(treatment.col)), by = id.col
-             ][tmp <= 1, .SD, by = id.col
-               ][, tmp := NULL]
-  }
-
   # Expansion =======================================================
   if(!opts$weighted | opts$pre.expansion) {
     vars.intake <- c(opts$covariates)
@@ -84,8 +77,13 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   }
 
   if(method == "censoring"){
-    out <- out[, trial_sq := trial^2]
-  }
+    out <- out[, `:=` (trial_sq = trial^2,
+                       switch = get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")
+               ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
 
+    out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
+               ][, `:=` (switch = NULL,
+                         firstSwitch = NULL)]
+  }
   return(out)
 }

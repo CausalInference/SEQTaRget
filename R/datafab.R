@@ -43,7 +43,7 @@ gen_data <- function(){
   stopCluster(cl)
   return(output)
 }
-data <- gen_data()
+#data <- gen_data()
 #setDTthreads(0)
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
