@@ -34,6 +34,8 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
     survival.covars <- paste0(opts$covariates, "+", paste0(treatment.col, "*", c("followup", "followup_sq"), collapse = "+"))
   } else if (method == "dose-response"){
     survival.covars <- paste0(opts$covariates, "+", paste0(time.col, "*", c("dose", "dose_sq"), collapse = "+"))
+  } else if (method == "censoring") {
+    survival.covars <- opts$covariates
   }
 
   handler <- function(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts){
