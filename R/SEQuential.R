@@ -15,6 +15,7 @@
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
   time.start <- Sys.time()
+  setDT(data); setorderv(data, c(id.col, time.col))
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
 

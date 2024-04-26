@@ -52,7 +52,7 @@ gen_data <- function(){
 #                               weighted = TRUE, pre.expansion = TRUE)
 #print(test$coefficients)
 #Debugging Junk ==========
-#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "dose-response"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
 #opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE)
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)

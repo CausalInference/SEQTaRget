@@ -76,5 +76,15 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
                          trial_sq = trial^2)]
   }
 
+  if(method == "censoring"){
+    out <- out[, `:=` (trial_sq = trial^2,
+                       switch = get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")
+               ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
+
+    out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
+               ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
+                 ][, `:=` (switch = NULL,
+                           firstSwitch = NULL)]
+  }
   return(out)
 }

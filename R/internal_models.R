@@ -10,12 +10,13 @@ internal.model <- function(data, method, outcome.col, opts){
                       data,
                       family = binomial("logit"))
 
-  } else if (method == "dose-response") {
+  } else if (method %in% c("dose-response", "censoring")) {
     model <- speedglm(formula = paste0(outcome.col, "==1~", opts$covariates),
                       data,
                       family = binomial("logit"),
                       weights = data$weight)
   }
+
   return(model)
 }
 
@@ -33,6 +34,8 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
     survival.covars <- paste0(opts$covariates, "+", paste0(treatment.col, "*", c("followup", "followup_sq"), collapse = "+"))
   } else if (method == "dose-response"){
     survival.covars <- paste0(opts$covariates, "+", paste0(time.col, "*", c("dose", "dose_sq"), collapse = "+"))
+  } else if (method == "censoring") {
+    survival.covars <- opts$covariates
   }
 
   handler <- function(DT, id.col, time.col, outcome.col, treatment.col, survival.covars, opts){

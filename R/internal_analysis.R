@@ -13,7 +13,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
 
             if(opts$pre.expansion){
               if(opts$expand) time.col <- "period"
-              WDT <- DT[WT$weighted_data, on = c(id.col, time.col)
+              WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
                         ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
                                                                  denominator = 1)
                           ][, `:=` (cprod.Numerator = cumprod(numerator),
@@ -23,7 +23,7 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
               model <- internal.model(WDT, method, outcome.col, opts)
             } else {
               if(opts$expand) time.col <- "period"
-              WDT <- DT[WT$weighted_data, on = c(id.col, time.col, "trial")
+              WDT <- DT[WT$weighted_data, on = c(id.col, time.col, "trial"), nomatch = NULL
                         ][followup == 0, `:=` (numerator = 1,
                                                denominator = 1)
                           ][, `:=` (cprod.Numerator = cumprod(numerator),
