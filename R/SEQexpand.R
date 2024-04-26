@@ -82,8 +82,9 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
                ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
 
     out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
-               ][, `:=` (switch = NULL,
-                         firstSwitch = NULL)]
+               ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
+                 ][, `:=` (switch = NULL,
+                           firstSwitch = NULL)]
   }
   return(out)
 }
