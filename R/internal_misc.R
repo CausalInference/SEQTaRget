@@ -17,7 +17,7 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
 
-  } else if(method == "dose-response"){
+  } else if(method %in% c("dose-response", "censoring")){
     if(opts$pre.expansion){
       cols <- paste0(fixed.cols, collapse="+")
     } else {
