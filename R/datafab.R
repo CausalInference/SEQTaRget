@@ -22,6 +22,19 @@ gen_data <- function(){
       if(tx_vector[j-1] == 0) tx_vector[j] <- sample(c(0,1), prob = c(0.8, 0.2))
       if(tx_vector[j-1] == 1) tx_vector[j] <- sample(c(0,1), prob = c(0.05, 0.95))
     }
+    excused0_vector <- numeric(max_time+1)
+    excused1_vector <- numeric(max_time+1)
+    for(j in 1:max_time+1){
+      if(j == 1){
+        excused0_vector[j] <- 0
+        excused1_vector[j] <- 0
+      }
+      if(excused0_vector[j-1] == 0) excused0_vector[j] <- rbinom(1, 1, 0.05)
+      if(excused1_vector[j-1] == 0) excused1_vector[j] <- rbinom(1, 1, 0.05)
+
+      if(excused0_vector[j-1] == 1) excused0_vector[j] <- 1
+      if(excused1_vector[j-1] == 1) excused1_vector[j] <- 1
+    }
 
     ID <- data.table(ID = rep(i, max_time+1),
                      time = 0:max_time,
@@ -31,7 +44,9 @@ gen_data <- function(){
                      sex = rep(sex, max_time+1),
                      N = rnorm(length(0:max_time), 10, 5),
                      L = runif(1),
-                     P = runif(1, 9, 10))
+                     P = runif(1, 9, 10),
+                     excused0 = excused0_vector,
+                     excused1 = excused1_vector)
 
     ID[, `:=`(L = L[1] * cumprod(c(1, rep(1.04, .N-1))),
               P = P[1] * cumprod(c(1, rep(0.98, .N-1))))]
@@ -44,6 +59,7 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
+#write.csv(data, "datagenExcused.csv", row.names = FALSE)
 #setDTthreads(0)
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
