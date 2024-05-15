@@ -29,7 +29,7 @@ gen_data <- function(){
         excused0_vector[j] <- 0
         excused1_vector[j] <- 0
       }
-      if(excused0_vector[j-1] == 0) excused0_vector[j] <- rbinom(1, 1, 0.05)
+      if(excused0_vector[j-1] == 0) excused0_vector[j] <- rbinom(1, 1, 0.65)
       if(excused1_vector[j-1] == 0) excused1_vector[j] <- rbinom(1, 1, 0.05)
 
       if(excused0_vector[j-1] == 1) excused0_vector[j] <- 1

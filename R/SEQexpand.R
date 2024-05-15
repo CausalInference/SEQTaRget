@@ -12,13 +12,6 @@
 #' @export
 
 SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts) {
-  # Pre-Processing ==================================================
-  cols <- c(id.col, eligible.col)
-  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
-                                        ][sum_elig != 0,
-                                          ][[id.col]])
-
-  DT <- prepare.data(data[data[[id.col]] %in% eligible_ids, ], method, opts)
   # Expansion =======================================================
   if(!opts$weighted | opts$pre.expansion) {
     vars.intake <- c(opts$covariates)
