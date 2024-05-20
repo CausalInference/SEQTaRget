@@ -8,15 +8,10 @@ prepare.data <- function(data, method, opts){
       if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; data <- data[, tmp0 := 0]}
       if(is.na(opts$excused.col1)){opts$excused.col0 <- "tmp1"; data <- data[, tmp1 := 0]}
 
-      data <- data[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
+      out <- data[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
                    ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
                      ][(isExcused), switch := FALSE
-                       ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = id.col]
-
-      out <- data[data[, .I[seq_len(firstSwitch[1])], by = id.col]$V1
-                 ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
-                   ][, `:=` (switch = NULL,
-                             firstSwitch = NULL)]
+                       ]
       return(out)
     }
   return(data)

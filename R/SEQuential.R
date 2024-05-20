@@ -40,13 +40,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method, opts)
     if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method, opts)
   }
-  # Pre-Processing =============================================
-  cols <- c(id.col, eligible.col)
-  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
-                                        ][sum_elig != 0,
-                                          ][[id.col]])
-
-  data <- prepare.data(data[data[[id.col]] %in% eligible_ids, ], method, opts)
 
   # Expansion ==================================================
   if(opts$expand == TRUE){

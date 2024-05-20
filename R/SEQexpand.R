@@ -10,8 +10,14 @@
 #' @import data.table parallel foreach doParallel
 #'
 #' @export
+SEQexpand <- function(DT, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts) {
+  # Pre-Processing =============================================
+  cols <- c(id.col, eligible.col)
+  eligible_ids <- unique(data[, ..cols][, sum_elig := sum(.SD[[eligible.col]]), by = id.col
+                                        ][sum_elig != 0,
+                                          ][[id.col]])
 
-SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts) {
+  data <- data[data[[id.col]] %in% eligible_ids, ]
   # Expansion =======================================================
   if(!opts$weighted | opts$pre.expansion) {
     vars.intake <- c(opts$covariates)
@@ -69,14 +75,25 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   }
 
   if(method == "censoring"){
-    out <- out[, `:=` (trial_sq = trial^2,
+    if(!opts$excused) {
+      out <- out[, switch := (get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")]
+
+      if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; out <- out[, tmp0 := 0]}
+      if(is.na(opts$excused.col1)){opts$excused.col0 <- "tmp1"; out <- out[, tmp1 := 0]}
+
+      out <- out[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
+                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
+                     ][(isExcused), switch := FALSE
+                       ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
+    } else {
+      out <- out[, `:=` (trial_sq = trial^2,
                        switch = get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")
                ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
-
-    out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
-               ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
-                 ][, `:=` (switch = NULL,
-                           firstSwitch = NULL)]
+    }
+      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
+                 ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
+                   ][, `:=` (switch = NULL,
+                             firstSwitch = NULL)]
   }
   return(out)
 }

@@ -180,25 +180,25 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                         ][, ..kept]
     setnames(out, time.col, "period")
   } else {
-    kept <- c("numerator", "denominator", time.col, id.col, opts$excused.col0, opts$excused.col1)
+    kept <- c("denominator", time.col, id.col, opts$excused.col0, opts$excused.col1)
     denominator0 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
-                                       data = weight[tx_lag == 0 & sum(get(opts$excused.col0), get(opts$excused.col1)), ],
+                                       data = weight[tx_lag == 0 & get(opts$excused.col0) ==0 & get(opts$excused.col1) == 0, ],
                                        family = binomial("logit"))
 
     denominator1 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
-                                       data = weight[tx_lag == 1 & sum(get(opts$excused.col0), get(opts$excused.col1)) == 0, ],
+                                       data = weight[tx_lag == 1 & get(opts$excused.col0) == 0 & get(opts$excused.col1) == 0, ],
                                        family = binomial("logit"))
 
     out <- weight[tx_lag == 0, denominator := predict(denominator0, newdata = .SD, type = "response")
                   ][tx_lag == 0 & get(treatment.col) == 0, denominator := 1 - denominator
                     ][tx_lag == 1, denominator := predict(denominator1, newdata = .SD, type = "response")
-                      ][tx_lag == 1 & get(treatment.col) == 0, denominator = 1 - denominator
+                      ][tx_lag == 1 & get(treatment.col) == 0, denominator := 1 - denominator
                         ][, ..kept]
   }
 
   return(list(weighted_data = out,
-              coef.n0 = coef(numerator0),
-              coef.n1 = coef(numerator1),
+              coef.n0 = if(!opts$excused) coef(numerator0) else NA,
+              coef.n1 = if(!opts$excused) coef(numerator1) else NA,
               coef.d0 = coef(denominator0),
               coef.d1 = coef(denominator1)))
 }

@@ -45,8 +45,8 @@ gen_data <- function(){
                      N = rnorm(length(0:max_time), 10, 5),
                      L = runif(1),
                      P = runif(1, 9, 10),
-                     excused0 = excused0_vector,
-                     excused1 = excused1_vector)
+                     excusedZero = excused0_vector,
+                     excusedOne = excused1_vector)
 
     ID[, `:=`(L = L[1] * cumprod(c(1, rep(1.04, .N-1))),
               P = P[1] * cumprod(c(1, rep(0.98, .N-1))))]
@@ -69,7 +69,7 @@ data <- gen_data()
 #print(test$coefficients)
 #Debugging Junk ==========
 id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
-opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excused0", excused.col1 = "excused1")
+opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
 
