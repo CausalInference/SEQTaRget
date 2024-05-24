@@ -29,7 +29,7 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
 
-  } else if(method %in% c("dose-response", "censoring")){
+  } else if(method %in% c("dose-response", "censoring") & !opts$excused){
     if(opts$pre.expansion){
       cols <- paste0(fixed.cols, collapse="+")
     } else {
@@ -41,7 +41,8 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
 
     if(method == "dose-resonse") string <- paste0(string, "+dose+dose_sq")
     if(method == "censoring") string <- paste0(treatment.col, "+", string, "+", paste0(treatment.col, "*followup"))
-
+  } else if(opts$excused){
+    string <- paste(treatment.col, "followup", "trial", paste0(c("followup", "trial"), opts$sq.indicator, collapse = "+"), sep = "+")
   }
 
   return(string)

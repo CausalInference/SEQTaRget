@@ -182,11 +182,11 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
   } else {
     kept <- c("denominator", time.col, id.col)
     denominator0 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
-                                       data = weight[tx_lag == 0 & get(opts$excused.col0) ==0 & get(opts$excused.col1) == 0, ],
+                                       data = weight[tx_lag == 0 & get(opts$excused.col0) ==0, ],
                                        family = binomial("logit"))
 
     denominator1 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
-                                       data = weight[tx_lag == 1 & get(opts$excused.col0) == 0 & get(opts$excused.col1) == 0, ],
+                                       data = weight[tx_lag == 1 & get(opts$excused.col1) == 0, ],
                                        family = binomial("logit"))
 
     out <- weight[tx_lag == 0, denominator := predict(denominator0, newdata = .SD, type = "response")
