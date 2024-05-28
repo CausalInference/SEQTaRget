@@ -21,7 +21,7 @@
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, boot.return = "coef", seed = 1636,
                     max.followup = Inf, max.survival = "max", expand = TRUE, covariates = NA, weighted = FALSE,
-                    numerator = NA, denominator = NA, pre.expansion = TRUE, weight.covariates = NA,
+                    numerator = NA, denominator = NA, pre.expansion = TRUE, weight.covariates = NA, excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", sq.indicator = "_sq"){
 
   #Standardization =============================================================
@@ -33,7 +33,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                  nboot = nboot, boot.sample = boot.sample, seed = seed, max.followup = max.followup, max.survival = max.survival,
                  expand = expand, covariates = covariates, boot.return = boot.return, weight.covariates = weight.covariates,
                  weighted = weighted, pre.expansion = pre.expansion, numerator = numerator, denominator = denominator,
-                 baseline.indicator = baseline.indicator, sq.indicator = sq.indicator)
+                 baseline.indicator = baseline.indicator, sq.indicator = sq.indicator, excused = excused, excused.col0 = excused.col0, excused.col1 = excused.col1)
 
   return(params)
 }

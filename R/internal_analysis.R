@@ -12,13 +12,14 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
             if(opts$pre.expansion){
-              if(opts$expand) time.col <- "period"
+              time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
                         ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
                                                                  denominator = 1)
-                          ][, `:=` (cprod.Numerator = cumprod(numerator),
+                          ][is.na(numerator), numerator := 1
+                            ][, `:=` (cprod.Numerator = cumprod(numerator),
                                   cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                            ][, weight := cprod.Numerator/cprod.Denominator]
+                              ][, weight := cprod.Numerator/cprod.Denominator]
 
               model <- internal.model(WDT, method, outcome.col, opts)
             } else {

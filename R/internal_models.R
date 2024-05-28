@@ -130,11 +130,28 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
 }
 
 internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts){
-  if(opts$pre.expansion){
+  if(!opts$pre.expansion){
+    subtable.kept <- c(treatment.col, id.col, time.col)
+    if(opts$expand) time.col <- "period"
+
+    baseline.lag <- data[, ..subtable.kept
+                         ][, tx_lag := shift(get(treatment.col)), by = id.col
+                           ][data[, .I[1L], by = id.col]$V1, tx_lag := 0
+                             ][, eval(treatment.col) := NULL]
+
+    setnames(baseline.lag, 2, time.col)
+    #conditional join
+    weight <- rbind(DT[followup == 0,
+                       ][baseline.lag, on = c(id.col, time.col), nomatch = 0],
+                    DT[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
+                       ][followup != 0, ]
+                    )[, paste0(time.col, opts$sq.indicator) := get(time.col)^2]
+  } else {
     weight <- copy(data)[, tx_lag := shift(get(treatment.col)), by = id.col
                          ][get(time.col) == 0, tx_lag := 0
                            ][, paste0(time.col, "_sq") := get(time.col)^2]
-
+  }
+  if(!opts$excused){
     numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
                                      data = weight[tx_lag == 0, ],
                                      family = binomial("logit"))
@@ -144,16 +161,16 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                      family = binomial("logit"))
 
     denominator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
-                                       data = weight[tx_lag == 0, ],
-                                       family = binomial("logit"))
+                                         data = weight[tx_lag == 0, ],
+                                         family = binomial("logit"))
 
     denominator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
                                        data = weight[tx_lag == 1, ],
                                        family = binomial("logit"))
 
     kept <- c("numerator", "denominator", time.col, id.col)
-    out <- copy(weight)[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
-                                           denominator = predict(denominator0, newdata = .SD, type = "response"))
+    out <- weight[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
+                                     denominator = predict(denominator0, newdata = .SD, type = "response"))
                   ][tx_lag == 0 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
                                                                  denominator = 1 - denominator)
                     ][tx_lag == 1, `:=` (numerator = predict(numerator1, newdata = .SD, type = "response"),
@@ -162,56 +179,28 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                                                      denominator = 1 - denominator)
                         ][, ..kept]
     setnames(out, time.col, "period")
-
   } else {
-    subtable.kept <- c(treatment.col, id.col, time.col)
-    if(opts$expand) time.col <- "period"
-
-    baseline.lag <- data[, ..subtable.kept
-                         ][, tx_lag := shift(get(treatment.col)), by = id.col
-                           ][data[, .I[1L], by = id.col]$V1, tx_lag := 0
-                             ][, eval(treatment.col) := NULL]
-    setnames(baseline.lag, 2, time.col)
-    #this is heinous and needs documentation - it's essentially a conditional join
-    weight <- rbind(DT[followup == 0,
-                       ][baseline.lag, on = c(id.col, time.col), nomatch = 0],
-                    DT[, tx_lag := shift(get(treatment.col)), by = c(id.col, "trial")
-                       ][followup != 0, ]
-                    )[, paste0(time.col, opts$sq.indicator) := get(time.col)^2]
-
-
-    numerator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
-                                     data = weight[tx_lag == 0, ],
-                                     family = binomial("logit"))
-
-    numerator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$numerator),
-                                     data = weight[tx_lag == 1, ],
-                                     family = binomial("logit"))
-
-    denominator0 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
-                                       data = weight[tx_lag == 0, ],
+    kept <- c("denominator", time.col, id.col)
+    denominator0 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
+                                       data = weight[tx_lag == 0 & get(opts$excused.col0) ==0, ],
                                        family = binomial("logit"))
 
-    denominator1 <- speedglm::speedglm(paste0(treatment.col, "==1~", opts$denominator),
-                                       data = weight[tx_lag == 1, ],
+    denominator1 <- speedglm::speedglm(paste0(treatment.col, "~", opts$denominator),
+                                       data = weight[tx_lag == 1 & get(opts$excused.col1) == 0, ],
                                        family = binomial("logit"))
 
-    kept <- c("numerator", "denominator", time.col, id.col, "trial")
-    out <- copy(weight)[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
-                                           denominator = predict(denominator0, newdata = .SD, type = "response"))
-                        ][tx_lag == 0 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
-                                                                       denominator = 1 - denominator)
-                          ][tx_lag == 1, `:=` (numerator = predict(numerator1, newdata = .SD, type = "response"),
-                                               denominator = predict(denominator1, newdata = .SD, type = "response"))
-                            ][tx_lag == 1 & get(treatment.col) == 0, `:=` (numerator = 1 - numerator,
-                                                                           denominator = 1 - denominator)
-                              ]
+    out <- weight[tx_lag == 0, denominator := predict(denominator0, newdata = .SD, type = "response")
+                  ][tx_lag == 0 & get(treatment.col) == 0, denominator := 1 - denominator
+                    ][tx_lag == 1, denominator := predict(denominator1, newdata = .SD, type = "response")
+                      ][tx_lag == 1 & get(treatment.col) == 0, denominator := 1 - denominator
+                        ][get(opts$excused.col0) == 1 | get(opts$excused.col1) == 1, denominator := 1
+                          ][, ..kept]
     setnames(out, time.col, "period")
-
   }
+
   return(list(weighted_data = out,
-              coef.n0 = coef(numerator0),
-              coef.n1 = coef(numerator1),
+              coef.n0 = if(!opts$excused) coef(numerator0) else NA,
+              coef.n1 = if(!opts$excused) coef(numerator1) else NA,
               coef.d0 = coef(denominator0),
               coef.d1 = coef(denominator1)))
 }
