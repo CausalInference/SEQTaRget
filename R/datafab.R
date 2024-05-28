@@ -1,4 +1,4 @@
-if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, speedglm)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, speedglm)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -58,7 +58,7 @@ gen_data <- function(){
   stopCluster(cl)
   return(output)
 }
-data <- gen_data()
+#data <- gen_data()
 #write.csv(data, "datagenExcused.csv", row.names = FALSE)
 #setDTthreads(0)
 #doFuture::registerDoFuture()
@@ -68,8 +68,8 @@ data <- gen_data()
 #                               weighted = TRUE, pre.expansion = TRUE)
 #print(test$coefficients)
 #Debugging Junk ==========
-id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
-opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
+#opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
 

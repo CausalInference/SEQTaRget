@@ -22,6 +22,9 @@ SEQopts(
   denominator = NA,
   pre.expansion = TRUE,
   weight.covariates = NA,
+  excused = FALSE,
+  excused.col1 = NA,
+  excused.col0 = NA,
   baseline.indicator = "_bas",
   sq.indicator = "_sq"
 )

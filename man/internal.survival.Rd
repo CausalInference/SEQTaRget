@@ -4,7 +4,15 @@
 \alias{internal.survival}
 \title{Internal function for creating survival curves}
 \usage{
-internal.survival(DT, id.col, time.col, outcome.col, treatment.col, opts)
+internal.survival(
+  DT,
+  id.col,
+  time.col,
+  outcome.col,
+  treatment.col,
+  method,
+  opts
+)
 }
 \description{
 Internal function for creating survival curves
