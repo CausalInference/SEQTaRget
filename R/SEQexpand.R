@@ -75,7 +75,7 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
   }
 
   if(method == "censoring"){
-    if(!opts$excused) {
+    if(opts$excused) {
       out <- out[, switch := (get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")]
 
       if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; out <- out[, tmp0 := 0]}
