@@ -1,21 +1,3 @@
-#' Internal Function to translate \code{x} (covariates) and \code{y} to a formula object
-#'
-#' @keywords internal
-prepare.data <- function(data, method, opts){
-    if(method == "censoring" & opts$excused){
-      data <- data[, switch := (get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = id.col]
-
-      if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; data <- data[, tmp0 := 0]}
-      if(is.na(opts$excused.col1)){opts$excused.col0 <- "tmp1"; data <- data[, tmp1 := 0]}
-
-      out <- data[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
-                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
-                     ][(isExcused), switch := FALSE
-                       ]
-      return(out)
-    }
-  return(data)
-}
 #' Internal Function to create 'default' formula
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
