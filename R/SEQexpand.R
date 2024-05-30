@@ -81,8 +81,8 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
       if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; out <- out[, tmp0 := 0]}
       if(is.na(opts$excused.col1)){opts$excused.col0 <- "tmp1"; out <- out[, tmp1 := 0]}
 
-      out <- out[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
-                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
+      out <- out[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
+                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
                      ][(isExcused), switch := FALSE
                        ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
     } else {
