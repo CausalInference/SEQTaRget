@@ -59,7 +59,7 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
-#write.csv(data, "datagenExcused.csv", row.names = FALSE)
+#data <- fread("datagenExcused.csv")
 #setDTthreads(0)
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
