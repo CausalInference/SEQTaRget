@@ -81,10 +81,11 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
       if(is.na(opts$excused.col0)){opts$excused.col0 <- "tmp0"; out <- out[, tmp0 := 0]}
       if(is.na(opts$excused.col1)){opts$excused.col0 <- "tmp1"; out <- out[, tmp1 := 0]}
 
-      out <- out[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col1) == 1, TRUE, FALSE)
-                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col0) == 1, TRUE, FALSE)
-                     ][(isExcused), switch := FALSE
-                       ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
+      out <- out[(switch) & get(treatment.col) == 0, isExcused := ifelse(get(opts$excused.col1) == 1, 1, 0)
+                   ][(switch) & get(treatment.col) == 1, isExcused := ifelse(get(opts$excused.col0) == 1, 1, 0)
+                     ][!is.na(isExcused), isExcused := cumsum(isExcused), by = c(id.col, "trial")
+                       ][(isExcused) > 0, switch := FALSE, by = c(id.col, "trial")
+                         ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(id.col, "trial")]
     } else {
       out <- out[, `:=` (trial_sq = trial^2,
                        switch = get(treatment.col) != shift(get(treatment.col), fill = get(treatment.col)[1])), by = c(id.col, "trial")
@@ -92,7 +93,9 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
     }
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
                  ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
-                   ][, `:=` (firstSwitch = NULL)]
+                   ][, `:=` (firstSwitch = NULL,
+                             switch = NULL,
+                             isExcused = NULL)]
   }
   return(out)
 }
