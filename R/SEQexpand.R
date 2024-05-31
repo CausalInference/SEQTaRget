@@ -94,8 +94,7 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
                  ][, paste0(outcome.col) := ifelse(switch, NA, get(outcome.col))
                    ][, `:=` (firstSwitch = NULL,
-                             switch = NULL,
-                             isExcused = NULL)]
+                             switch = NULL)]
   }
   return(out)
 }
