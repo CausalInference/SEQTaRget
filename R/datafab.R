@@ -59,7 +59,11 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
+<<<<<<< excused
 #data <- fread("datagenExcused.csv")
+=======
+#write.csv(data, "datagenExcused.csv", row.names = FALSE)
+>>>>>>> main
 #setDTthreads(0)
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
@@ -70,7 +74,11 @@ gen_data <- function(){
 #print(test$coefficients)
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
+<<<<<<< excused
 #opts <- SEQuential::SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+=======
+#opts <- SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+>>>>>>> main
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
 
