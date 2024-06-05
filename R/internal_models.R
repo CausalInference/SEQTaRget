@@ -193,7 +193,10 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                   ][tx_lag == 0 & get(treatment.col) == 0, denominator := 1 - denominator
                     ][tx_lag == 1, denominator := predict(denominator1, newdata = .SD, type = "response")
                       ][tx_lag == 1 & get(treatment.col) == 0, denominator := 1 - denominator
-                        ][get(opts$excused.col0) == 1 | get(opts$excused.col1) == 1, denominator := 1
+                        ][, denominator := ifelse(
+                          (get(treatment.col) != get(treatment.col)[1] &
+                             ((get(treatment.col)[1] == 1 & get(opts$excused.col1) == 1) |
+                                (tx_init[1] == 0 & get(opts$excused.col0) == 1))), 1, denominator), by = id.col
                           ][, ..kept]
     setnames(out, time.col, "period")
   }

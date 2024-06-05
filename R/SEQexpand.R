@@ -23,6 +23,7 @@ SEQexpand <- function(data, id.col, time.col, treatment.col, eligible.col, outco
     vars.intake <- c(opts$covariates)
   } else {
     vars.intake <- c(opts$covariates, opts$numerator, opts$denominator)
+    if(opts$excused) vars.intake <- c(vars.intake, paste0(treatment.col, opts$baseline.indicator))
   }
   vars <- unique(c(unlist(strsplit(vars.intake,
                                    "\\+|\\*")), treatment.col,
