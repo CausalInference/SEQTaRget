@@ -16,7 +16,7 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
       if(opts$excused){
         cols <- NULL
       } else {
-        cols <- paste0(fixed.cols, collapse="+")
+        cols <- paste0(paste0(fixed.cols, collapse="+"), "+")
       }
     } else {
       baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
