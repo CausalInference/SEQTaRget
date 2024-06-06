@@ -80,7 +80,7 @@ Going through the definition of `out`-
 3. Where treatment lag = 1, predict denominator from d1 model
 4. Where treatment lag = 1 AND treatment = 1, 1 - prediction (step 3)
 5. Where either excused cols are = 1, denominator = 1
-    1. This is changed in the Excused-Fix branch, but wanted to keep things where we had prior
+    1. This is changed in the Excused-Fix branch (discussed at the bottom of this README), but wanted to keep things where we had prior
 6. Limit to necessary cols
 
 Or the other problem could be in `internal_analysis.R` within `handler` in `lines15-22`
@@ -102,7 +102,29 @@ Going through the assignment of WDT (Weight Data Table)
 5. Assign weight as cumprod-numerator / cumprod-denominator
 
 ### Setup
-1. In `datafab.R` You will need the packages loaded in `line1`, and data pull-in from `line62`. You will also need to intake `opts` and necessary environment variables from `Lines72-73`.\\
-2. In `internal_misc.R` You will need the functions `create.default.covariates` and `create.default.weight.covariates`. Functionally speaking, using `_bas` or `_sq` behind a variable name (within your dataframe, or created from the function) will force `SEQexpand` to create either the baseline or squared variables respectively. For additional debugging, you can override these default creations by specifying anything other than `NA` to `opts$covariates`, `opts$denominator`, or `opts$numerator`. E.g. the default creation might be `N+L+P`, but if you wanted these baseline variables, you could force `N_bas+L_bas+P_bas` to force a transformation to their baseline counterparts. This has not been tested with excused, since we decided at some point not to allow the user this level of freedom, so please take with a grain of salt.\\
+1. In `datafab.R` You will need the packages loaded in `line1`, and data pull-in from `line62`. You will also need to intake `opts` and necessary environment variables from `Lines72-73`.\
+2. In `internal_misc.R` You will need the functions `create.default.covariates` and `create.default.weight.covariates`. Functionally speaking, using `_bas` or `_sq` behind a variable name (within your dataframe, or created from the function) will force `SEQexpand` to create either the baseline or squared variables respectively. For additional debugging, you can override these default creations by specifying anything other than `NA` to `opts$covariates`, `opts$denominator`, or `opts$numerator`. E.g. the default creation might be `N+L+P`, but if you wanted these baseline variables, you could force `N_bas+L_bas+P_bas` to force a transformation to their baseline counterparts. This has not been tested with excused, since we decided at some point not to allow the user this level of freedom, so please take with a grain of salt.\
 3. With these now loaded into your environment, you can now step through `SEQuential` - the only parts that matter are running `line38-42` to enact default weight creation and `line47` to enforce expansion.
 4. You can now step through `internal_analysis.R`! - I would stick to `handler` defined within internal analysis, as this is the 'driver' for the bootstraps later - stepping through handler is effectively the same as `nboot=1` or `bootstrap=FALSE`.
+
+## Branch Excused-Fix
+Everything in Excused fix is the same, with exception to the last portion of weight creation:
+Recall from main branch:
+```r
+[get(opts$excused.col0) == 1 | get(opts$excused.col1) == 1, denominator := 1
+                          ]
+```
+
+This is changed to 
+```r
+[, denominator := ifelse((get(treatment.col) != get(treatment.col)[1] &
+                        ((get(treatment.col)[1] == 1 & get(opts$excused.col1) == 1) |
+                        (get(treatment.col)[1] == 0 & get(opts$excused.col0) == 1))),
+                        1, denominator), by = id.col]
+```
+This changes the denominator 'override' from: 'where either excused column = 1, override' to more complicated logic:\
+(BY ID)
+> IF treatment at current cell is NOT the same as the initial treatment AND
+> ({IF initial treatment IS 1 AND excused1 = 1} OR {IF initial treatment is 0 AND excused0 = 1})
+> THEN override the denominator to 1
+> ELSE keep denominator
