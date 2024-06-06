@@ -47,6 +47,3 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
-data.csv
-weighted_expansion.csv
-*.csv
