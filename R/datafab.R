@@ -1,4 +1,4 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, speedglm)
+if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, speedglm)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -59,7 +59,7 @@ gen_data <- function(){
   return(output)
 }
 #data <- gen_data()
-#data <- fread("datagenExcused.csv")
+data <- fread("datagenExcused.csv")
 #setDTthreads(0)
 #doFuture::registerDoFuture()
 #doRNG::registerDoRNG()
@@ -69,8 +69,8 @@ gen_data <- function(){
 #                               weighted = TRUE, pre.expansion = TRUE, excused = FALSE)
 #print(test$coefficients)
 #Debugging Junk ==========
-#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
-#opts <- SEQuential::SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
+opts <- SEQuential::SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
 #opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
 #autoplot(test$surv)
 
@@ -89,3 +89,47 @@ gen_data <- function(){
 #}
 #For Linux
 #system(sprintf("kill -9 %s", v[[i]]))
+
+
+
+test <- copy(WDT)[, cump := {
+  excused_start <- which(isExcused == 1)[1]
+  if(!is.na(excused_start)){
+    output <- denominator
+    if(excused_start < .N){
+      output[(excused_start+1):.N] <- denominator[excused_start]
+    }
+  } else {
+    output <- denominator
+  }
+  cumprod(output)
+}, by = c(id.col, "trial")
+][, weight := numerator/cump]
+
+
+pA <- mydata$pA
+ex = mydata$ex0
+myprod <-function(pA,ex){
+  ex.indicator <- 0
+  myprod0 <- rep(1,length(pA))
+  myprod0[1]<- 1
+
+  for (i in 1:length(pA)){
+    if (ex[i] == 1 & ex.indicator == 0 )  ex.indicator <- 1
+    if (ex.indicator == 0) {
+      if (i ==1) {myprod0[i]<- pA[1]
+      }else {
+        myprod0[i]<-myprod0[i-1]*pA[i]
+      }
+    } else {
+      myprod0[i] <- myprod0[i-1]}
+  }
+  return(myprod0)
+}
+mydata <- data.frame(time=0:4 ,treat=c(0,0,1,1,1),pA = c(0.1,0.2,0.3,0.4,0.5),ex0= rep(0,5),ex1=rep(0,5) )
+mydata$ex0[3]<-1
+print(mydata)
+x0<-myprod(mydata$pA,mydata$ex0)
+print(x0)
+x1<-myprod(mydata$pA[3:5],mydata$ex1[3:5])
+print(x1)
