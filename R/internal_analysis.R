@@ -12,14 +12,28 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             WT <- internal.weights(DT, data, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
 
             if(opts$pre.expansion){
-              time.col <- "period"
-              WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
-                        ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
-                                                                 denominator = 1)
-                          ][is.na(numerator), numerator := 1
-                            ][, `:=` (cprod.Numerator = cumprod(numerator),
-                                  cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                              ][, weight := cprod.Numerator/cprod.Denominator]
+              if(opts$excused){
+                time.col <- "period"
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
+                          ][get(time.col) == 0 & trial == 0, denominator := 1
+                            ][denominator < 1e-15, denominator := 1
+                              ][is.na(get(outcome.col)), denominator := 1
+                                ][, numerator := 1
+                                  ][, wt := numerator/denominator
+                                    ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(id.col, "trial")
+                                      ][tmp > 0, wt := 1, by = c(id.col, "trial")
+                                        ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(id.col, "trial")
+                                          ][, weight := weight[1], .(cumsum(!is.na(weight)))]
+              } else {
+                time.col <- "period"
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
+                          ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
+                                                                   denominator = 1)
+                            ][is.na(numerator), numerator := 1
+                              ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                        cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                                ][, weight := cprod.Numerator/cprod.Denominator]
+              }
 
               model <- internal.model(WDT, method, outcome.col, opts)
             } else {
@@ -34,14 +48,14 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
               model <- internal.model(WDT, method, outcome.col, opts)
             }
 
-          percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99))
+          percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
           stats <- list(n0.coef = WT$coef.n0,
                         n1.coef = WT$coef.n1,
                         d0.coef = WT$coef.d0,
                         d1.coef = WT$coef.d1,
-                        min = min(WDT$weight),
-                        max = max(WDT$weight),
-                        sd = sd(WDT$weight),
+                        min = min(WDT$weight, na.rm = TRUE),
+                        max = max(WDT$weight, na.rm = TRUE),
+                        sd = sd(WDT$weight, na.rm = TRUE),
                         p01 = percentile[[1]],
                         p25 = percentile[[2]],
                         p50 = percentile[[3]],

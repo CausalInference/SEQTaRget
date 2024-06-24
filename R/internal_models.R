@@ -44,7 +44,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
 
-    RMDT <- copy(DT)[, eval(id.col) := paste0(get(id.col), "_", trial)
+    RMDT <- DT[, eval(id.col) := paste0(get(id.col), "_", trial)
                 ][get(time.col) == 0,
                    ][rep(1:.N, each = opts$max.survival + 1)
                      ][, `:=` (followup = seq(1:.N)-1,
@@ -189,12 +189,11 @@ internal.weights <- function(DT, data, id.col, time.col, eligible.col, outcome.c
                                        data = weight[tx_lag == 1 & get(opts$excused.col1) == 0, ],
                                        family = binomial("logit"))
 
-    out <- weight[tx_lag == 0, denominator := predict(denominator0, newdata = .SD, type = "response")
-                  ][tx_lag == 0 & get(treatment.col) == 0, denominator := 1 - denominator
-                    ][tx_lag == 1, denominator := predict(denominator1, newdata = .SD, type = "response")
-                      ][tx_lag == 1 & get(treatment.col) == 0, denominator := 1 - denominator
-                        ][get(opts$excused.col0) == 1 | get(opts$excused.col1) == 1, denominator := 1
-                          ][, ..kept]
+    out <- weight[tx_lag == 0 & get(opts$excused.col0) != 1, denominator := predict(denominator0, newdata = .SD, type = "response")
+                  ][tx_lag == 0 & get(treatment.col) == 0 & get(opts$excused.col0) != 1, denominator := 1 - denominator
+                    ][tx_lag == 1 & get(opts$excused.col1) != 1, denominator := predict(denominator1, newdata = .SD, type = "response")
+                      ][tx_lag == 1 & get(treatment.col) == 0 & get(opts$excused.col1) != 1, denominator := 1 - denominator
+                        ][, ..kept]
     setnames(out, time.col, "period")
   }
 
