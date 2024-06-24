@@ -20,10 +20,10 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                               ][is.na(get(outcome.col)), denominator := 1
                                 ][, numerator := 1
                                   ][, wt := numerator/denominator
-                                    ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(id.col, "trial")
-                                      ][, weight := weight[1], .(cumsum(!is.na(weight)))
-                                        ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(id.col, "trial")
-                                          ][tmp > 0, weight := 1, by = c(id.col, "trial")]
+                                    ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(id.col, "trial")
+                                      ][tmp > 0, wt := 1, by = c(id.col, "trial")
+                                        ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(id.col, "trial")
+                                          ][, weight := weight[1], .(cumsum(!is.na(weight)))]
               }
               time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
