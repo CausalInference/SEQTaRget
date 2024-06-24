@@ -14,14 +14,16 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
             if(opts$pre.expansion){
               if(opts$excused){
                 time.col <- "period"
-                WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
+                WDT <- copy(DT)[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
                           ][get(time.col) == 0 & trial == 0, denominator := 1
                             ][denominator < 1e-15, denominator := 1
                               ][is.na(get(outcome.col)), denominator := 1
                                 ][, numerator := 1
-                                  ][, weight := cumprod(numerator/denominator), by = c(id.col, "trial")
-                                    ][, weight := weight[1], .(cumsum(!is.na(weight)))
-                                      ]
+                                  ][, wt := numerator/denominator
+                                    ][followup == 0, wt := 1
+                                      ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(id.col, "trial")
+                                        ][, weight := weight[1], .(cumsum(!is.na(weight)))
+                                          ][cumsum(ifelse(is.na(isExcused), 0, isExcused)) > 0, weight := 1, by = c(id.col, "trial")]
               }
               time.col <- "period"
               WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
