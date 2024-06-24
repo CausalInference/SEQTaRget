@@ -26,7 +26,10 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
     string <- paste0(cols, paste0(c("followup", "trial", paste0(c("followup", "trial"), opts$sq.indicator, collapse = "+")), collapse = "+"))
 
     if(method == "dose-resonse") string <- paste0(string, "+dose+dose_sq")
-    if(method == "censoring") string <- paste0(treatment.col, "+", string, "+", paste0(treatment.col, "*followup"))
+    if(method == "censoring"){
+      if(opts$excused) tx <- paste0(treatment.col, opts$baseline.indicator) else tx <- treatment.col
+      string <- paste0(tx, "+", string, "+", paste0(tx, "*followup"))
+    }
   }
   return(string)
 }
