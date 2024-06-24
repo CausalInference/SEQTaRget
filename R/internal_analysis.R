@@ -24,15 +24,16 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                                       ][tmp > 0, wt := 1, by = c(id.col, "trial")
                                         ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(id.col, "trial")
                                           ][, weight := weight[1], .(cumsum(!is.na(weight)))]
+              } else {
+                time.col <- "period"
+                WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
+                          ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
+                                                                   denominator = 1)
+                            ][is.na(numerator), numerator := 1
+                              ][, `:=` (cprod.Numerator = cumprod(numerator),
+                                        cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
+                                ][, weight := cprod.Numerator/cprod.Denominator]
               }
-              time.col <- "period"
-              WDT <- DT[WT$weighted_data, on = c(id.col, time.col), nomatch = NULL
-                        ][get(time.col) == 0 & trial == 0, `:=` (numerator = 1,
-                                                                 denominator = 1)
-                          ][is.na(numerator), numerator := 1
-                            ][, `:=` (cprod.Numerator = cumprod(numerator),
-                                      cprod.Denominator = cumprod(denominator)), by = c(id.col, "trial")
-                              ][, weight := cprod.Numerator/cprod.Denominator]
 
               model <- internal.model(WDT, method, outcome.col, opts)
             } else {
@@ -60,7 +61,6 @@ internal.analysis <- function(DT, data, method, id.col, time.col, eligible.col, 
                         p50 = percentile[[3]],
                         p75 = percentile[[4]],
                         p99 = percentile[[5]])
-          stats
           }
           return(list(model = model,
                  weighted_stats = if(opts$weighted){

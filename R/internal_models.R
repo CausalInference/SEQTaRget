@@ -44,7 +44,7 @@ internal.survival <- function(DT, id.col, time.col, outcome.col, treatment.col, 
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
 
-    RMDT <- copy(DT)[, eval(id.col) := paste0(get(id.col), "_", trial)
+    RMDT <- DT[, eval(id.col) := paste0(get(id.col), "_", trial)
                 ][get(time.col) == 0,
                    ][rep(1:.N, each = opts$max.survival + 1)
                      ][, `:=` (followup = seq(1:.N)-1,
