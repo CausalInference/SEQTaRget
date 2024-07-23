@@ -33,35 +33,24 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   # Parameter Setup ==================================
-  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col,
+  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
                              as.list(time_varying.cols), as.list(fixed.cols),
                              method, options)
 
-  if(is.na(params@covariates)) create.default.covariates(params)
+  if(is.na(params@covariates)) params@covariates <- create.default.covariates(params)
   if(params@weighted){
     if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
+  params <- parameter.simplifier(params)
 
   # Expansion ==================================================
-  if(TRUE){
     cat("Expanding Data...\n")
-    params@DT <- SEQexpand(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts)
-
-    if(params@method == "none"){
-      cat("Returning expanded data per 'method = 'none''")
-      return(DT)
-    }
-
-    cat("Expansion Successful\nMoving forward with", method, "analysis\n")
-  } else if(opts$expand == FALSE){
-    cat("Skipping expansion per 'expand = FALSE'\n")
-    cat("Moving forward with", method, "analysis\n")
-    DT <- as.data.table(data)
-  }
+    params@DT <- SEQexpand(params)
+    cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   #Model Dispersion ===========================================
-  model <- internal.analysis(DT, data, method, id.col, time.col, eligible.col, outcome.col, treatment.col, opts)
+  internal.analysis(params)
 
   cat(method, "model successfully created\nCreating survival curves\n")
   survival <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, method, opts)

@@ -52,8 +52,7 @@ setClass("SEQparams",
            outcome = "character",
            time_varying = "list",
            fixed = "list",
-           method = "character",
-           opts = "SEQopts"
+           method = "character"
          ), prototype = list(
            data = NA,
            DT = NA,
@@ -64,26 +63,43 @@ setClass("SEQparams",
            outcome = NA_character_,
            time_varying = list(),
            fixed = list(),
-           method = NA_character_,
-           opts = new("SEQopts")
+           method = NA_character_
+         ))
+
+setClass("SEQweights",
+         slots = c(
+           weights = "data.table",
+           coef.n0 = "numeric",
+           coef.n1 = "numeric",
+           coef.d0 = "numeric",
+           coef.d1 = "numeric"
+         ), prototype = c(
+           weights = NA,
+           coef.n0 = NA_real_,
+           coef.n1 = NA_real_,
+           coef.d0 = NA_real_,
+           coef.d1 = NA_real_
          ))
 
 setClass("SEQuential",
          contains = "SEQparams",
          slots = c(
-           outcome_model = "lm",
+           outcome_model = "list",
            survival_curve = "list",
            survival_data = "data.frame",
            risk_difference = "numeric",
            risk_ratio = "numeric",
            elapsed_time = "numeric",
+           weight_statistics = "list",
            parameters = "SEQparams"
+
          ), prototype = c(
-           outcome_model = NA,
+           outcome_model = list(),
            survival_curve = list(),
            survival_data = data.frame(),
            risk_difference = NA_real_,
            risk_ratio = NA_real_,
            elapsed_time = NA_real_,
+           weight_statistics = list(),
            parameters = new("SEQparams")
          ))
