@@ -1,6 +1,6 @@
 #' Internal function for creating survival curves
 #'
-#' @import ggplot2 data.table parallel foreach doRNG
+#' @import ggplot2 data.table future doFuture doRNG future.apply
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
