@@ -34,22 +34,22 @@ create.default.covariates <- function(data, id.col, time.col, eligible.col, trea
   return(string)
 }
 
-create.default.weight.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, type, method, opts){
-  if(opts$pre.expansion){
+create.default.weight.covariates <- function(params, type){
+  if(params@method == "ITT"){
     if(type == "numerator"){
-      string <- paste0(paste0(fixed.cols, collapse = "+"), "+", time.col, "+", time.col, "_sq")
+      string <- paste0(paste0(params@fixed, collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
     } else {
-      string <- paste0(paste0(c(fixed.cols, time.cols), collapse = "+"), "+", time.col, "+", time.col, "_sq")
+      string <- paste0(paste0(c(params@fixed, params@time_varying), collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
     }
   } else {
     if(type == "numerator"){
-      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+      fixed.cols <- paste0(params@fixed, collapse = "+")
       string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
     } else {
-      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-      fixed.cols <- paste0(fixed.cols, collapse = "+")
-      tv.cols <- paste0(time.cols, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
+      fixed.cols <- paste0(params@fixed, collapse = "+")
+      tv.cols <- paste0(params@time_varying, collapse = "+")
       string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
     }
   }

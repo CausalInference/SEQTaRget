@@ -7,46 +7,48 @@
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
 #' @param method String: method of analysis to preform
-#' @param params List: optional list of parameters from \code{SEQOpts}
-#' @param ... another option for passing parameters from \code{SEQOpts}
+#' @param options List: optional list of parameters from \code{SEQOpts}
 #'
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, params, ...){
-  time.start <- Sys.time()
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, options){
   setDT(data); setorderv(data, c(id.col, time.col))
+  time.start <- Sys.time()
+
   # Error Throwing ============================================
   errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
+  if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
+  time_varying.cols <- as.list(time_varying.cols)
+  fixed.cols <- as.list(fixed.cols)
 
-  # Parameter Space building ==================================
-  opts <- SEQopts(); dots <- list(...)
-  if(!missing(params)) errorParams(params, dots)
-  if(!missing(params)) opts[names(params)] <- params
-  if(length(dots > 0)) opts[names(dots)] <- dots
-  errorOpts(opts)
-
-  ncores <<- opts$ncores
-
+  # Parallel Setup ==================================
   if(opts$parallel){
+    ncores <<- options@ncores
     evalq({
     doFuture::registerDoFuture()
     doRNG::registerDoRNG()
     future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
+    rm(ncores, envir = .GlobalEnv)
   }
-  rm(ncores, envir = .GlobalEnv)
-  if(is.na(opts$covariates)) opts$covariates <- create.default.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, opts)
-  if(opts$weighted){
-    if(is.na(opts$numerator)) opts$numerator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "numerator", method, opts)
-    if(is.na(opts$denominator)) opts$denominator <- create.default.weight.covariates(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, "denominator", method, opts)
+
+  # Parameter Setup ==================================
+  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col,
+                             as.list(time_varying.cols), as.list(fixed.cols),
+                             method, options)
+
+  if(is.na(params@covariates)) create.default.covariates(params)
+  if(params@weighted){
+    if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
+    if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
 
   # Expansion ==================================================
-  if(opts$expand == TRUE){
+  if(TRUE){
     cat("Expanding Data...\n")
-    DT <- SEQexpand(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts)
+    params@DT <- SEQexpand(data, id.col, time.col, treatment.col, eligible.col, outcome.col, method, opts)
 
-    if(method == "none"){
+    if(params@method == "none"){
       cat("Returning expanded data per 'method = 'none''")
       return(DT)
     }
