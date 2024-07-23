@@ -50,31 +50,17 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   #Model Dispersion ===========================================
-  internal.analysis(params)
+  outcome <- internal.analysis(params)
 
   cat(method, "model successfully created\nCreating survival curves\n")
-  survival <- internal.survival(DT, id.col, time.col, outcome.col, treatment.col, method, opts)
+  survival <- internal.survival(params)
   risk <- create.risk(survival$data)
 
-  return_list <- list(
-    boot_params = if(!opts$bootstrap){
-      NA
-      } else {
-        list(
-          nboot = opts$nboot,
-          seed = opts$seed,
-          sample = opts$boot.sample,
-          return = opts$boot.return
-        )
-    },
-    model = model,
-    survival_curve = survival,
-    survival_data = survival$data,
-    risk_difference = risk$rd,
-    risk_ratio = risk$rr,
-    elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
-    )
+  out <- prepare.output(params, outcome, survival, risk,
+                        elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes"))
+
   gc()
   future:::ClusterRegistry("stop")
-  return(return_list)
+
+  return(out)
 }

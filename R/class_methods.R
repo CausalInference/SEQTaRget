@@ -89,7 +89,7 @@ setClass("SEQuential",
            survival_data = "data.frame",
            risk_difference = "numeric",
            risk_ratio = "numeric",
-           elapsed_time = "numeric",
+           elapsed_time = "character",
            weight_statistics = "list",
            parameters = "SEQparams"
 
