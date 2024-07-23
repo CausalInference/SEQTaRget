@@ -11,19 +11,16 @@ SEQuential(
   eligible.col,
   treatment.col,
   outcome.col,
-  time.cols,
+  time_varying.cols,
   fixed.cols,
   method,
-  params,
-  ...
+  options
 )
 }
 \arguments{
 \item{data}{data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}}
 
 \item{id.col}{String: column name of the id column}
-
-\item{time.col}{String: column name of the time column}
 
 \item{eligible.col}{String: column name of the eligibility column}
 
@@ -33,9 +30,9 @@ SEQuential(
 
 \item{method}{String: method of analysis to preform}
 
-\item{params}{List: optional list of parameters from \code{SEQOpts}}
+\item{options}{List: optional list of parameters from \code{SEQOpts}}
 
-\item{...}{another option for passing parameters from \code{SEQOpts}}
+\item{time_varying.col}{String: column name of the time column}
 }
 \description{
 SEQuential processing per (paper here?)

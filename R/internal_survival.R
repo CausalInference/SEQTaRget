@@ -10,18 +10,18 @@ internal.survival <- function(params){
   if(is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])
 
   if(params@method == "ITT"){
-    survival.covars <- paste0(params@covariates, "+", paste0(treatment.col, "*", c("followup", "followup_sq"), collapse = "+"))
+    survival.covars <- paste0(params@covariates, "+", paste0(params@treatment, "*", c("followup", "followup_sq"), collapse = "+"))
   } else if (params@method == "dose-response"){
-    survival.covars <- paste0(params@covariates, "+", paste0(time.col, "*", c("dose", "dose_sq"), collapse = "+"))
+    survival.covars <- paste0(params@covariates, "+", paste0(params@time, "*", c("dose", "dose_sq"), collapse = "+"))
   } else if (params@method == "censoring") {
     survival.covars <- params@covariates
   }
 
   handler <- function(DT, params){
-    surv.model <- speedglm::speedglm(formula = paste0(outcome.col, "==1~", survival.covars),
+    surv.model <- speedglm::speedglm(formula = paste0(params@outcome, "==1~", survival.covars),
                                    data = DT,
                                    family = binomial("logit"))
-    kept <- c("risk0", "risk1", "surv0", "surv1", time.col)
+    kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
 
     RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
                 ][get(params@time) == 0,
@@ -37,7 +37,7 @@ internal.survival <- function(params){
                                          dose_sq = followup_sq)
                                  ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
                                    ][, `:=` (surv0 = cumprod(1 - predFALSE),
-                                            surv1 = cumprod(1 - predTRUE)), by = eval(id.col)
+                                            surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
                                      ][, `:=` (risk0 = 1 - surv0,
                                                risk1 = 1 - surv1)
                                        ]

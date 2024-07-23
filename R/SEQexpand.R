@@ -1,15 +1,10 @@
 #' Creates an expanded dataset for use with \code{SEQuential}
 #'
-#' @param data Dataframe or DataTable: data to expand
-#' @param id.col String: column name of the id column
-#' @param time.col String: colum name of the time column
-#' @param eligible.col String: column name of the eligibility column
-#' @param outcome.col String: column name of the outcome column
-#' @param opts List: optional list of parameters from \code{SEQOpts}
+#' @param params SEQparams object built in the SEQuential function
 #'
 #' @import data.table
 #'
-#' @export
+#' @keywords internal
 SEQexpand <- function(params) {
   # Pre-Processing =============================================
   cols <- c(params@id, params@eligible)
@@ -26,7 +21,7 @@ SEQexpand <- function(params) {
     if(params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator))
   }
   vars <- unique(c(unlist(strsplit(vars.intake,
-                                   "\\+|\\*")), treatment.col,
+                                   "\\+|\\*")), params@treatment,
                    names(DT)[!names(DT) %in% c(params@eligible, params@time)]))
   vars.nin <- c("dose", "dose_sq")
   vars <- vars[!is.na(vars)][!vars %in% vars.nin]
@@ -69,13 +64,13 @@ SEQexpand <- function(params) {
     out <- data_list[[1]]
   }
 
-  if(method == "dose-response"){
+  if(params@method == "dose-response"){
     out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")
                ][, `:=` (dose_sq = dose^2,
                          trial_sq = trial^2)]
   }
 
-  if(method == "censoring"){
+  if(params@method == "censoring"){
     if(params@excused) {
       out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")]
 
@@ -93,7 +88,7 @@ SEQexpand <- function(params) {
                        switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
                ][, firstSwitch := if(any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
     }
-      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(id.col, "trial")]$V1
+      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
                    ][, `:=` (firstSwitch = NULL,
                              switch = NULL)]

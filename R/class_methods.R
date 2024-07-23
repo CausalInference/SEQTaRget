@@ -1,3 +1,5 @@
+setOldClass(c("gg", "ggplot"))
+
 setClass("SEQopts",
          slots = c(
            parallel = "logical",
@@ -82,24 +84,36 @@ setClass("SEQweights",
          ))
 
 setClass("SEQuential",
-         contains = "SEQparams",
+         contains = c("ggplot"),
          slots = c(
+           bootstrap = "logical",
+           boot.sample = "numeric",
+           seed = "integer",
+           nboot = "integer",
+           outcome = "character",
+           numerator = "character",
+           denominator = "character",
            outcome_model = "list",
-           survival_curve = "list",
-           survival_data = "data.frame",
+           survival_curve = "gg",
+           survival_data = "data.table",
            risk_difference = "numeric",
            risk_ratio = "numeric",
            elapsed_time = "character",
-           weight_statistics = "list",
-           parameters = "SEQparams"
+           weight_statistics = "list"
 
          ), prototype = c(
+           bootstrap = FALSE,
+           boot.sample = NA_real_,
+           seed = NA_integer_,
+           nboot = NA_integer_,
+           outcome = NA_character_,
+           numerator = NA_character_,
+           denominator = NA_character_,
            outcome_model = list(),
-           survival_curve = list(),
-           survival_data = data.frame(),
+           survival_curve = NA,
+           survival_data = data.table(),
            risk_difference = NA_real_,
            risk_ratio = NA_real_,
-           elapsed_time = NA_real_,
-           weight_statistics = list(),
-           parameters = new("SEQparams")
+           elapsed_time = NA_character_,
+           weight_statistics = list()
          ))

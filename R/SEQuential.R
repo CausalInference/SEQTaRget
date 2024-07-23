@@ -2,7 +2,7 @@
 #'
 #' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
-#' @param time.col String: column name of the time column
+#' @param time_varying.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
@@ -12,18 +12,18 @@
 #' @import data.table
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, options){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols, fixed.cols, method, options){
   setDT(data); setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
   # Error Throwing ============================================
-  errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
+  #errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
   if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
   fixed.cols <- as.list(fixed.cols)
 
   # Parallel Setup ==================================
-  if(opts$parallel){
+  if(options@parallel){
     ncores <<- options@ncores
     evalq({
     doFuture::registerDoFuture()

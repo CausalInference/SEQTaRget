@@ -47,8 +47,8 @@ parameter.simplifier <- function(params) {
 
 prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_time) {
 
-  outcome.coefs <- lapply(1:params@nboot, function(x) outcome[[x]]$coefficients)
-  weight.stats <- lapply(1:params@nboot, function(x) outcome[[x]]$weight_info)
+  outcome.coefs <- lapply(1:params@nboot, function(x) outcome_model[[x]]$coefficients)
+  weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
 
   new("SEQuential",
       bootstrap = params@bootstrap,
@@ -58,7 +58,7 @@ prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_t
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = paste0(params@treatment, "~", params@numerator),
       denominator = paste0(params@treatment, "~", params@denominator),
-      outcome_model = outcome_coefs,
+      outcome_model = outcome.coefs,
       weight_statistics = weight.stats,
       survival_curve = survival_curve,
       survival_data = survival_curve$data,

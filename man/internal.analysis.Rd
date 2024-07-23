@@ -4,17 +4,7 @@
 \alias{internal.analysis}
 \title{Internal analysis tool for handling parallelization/bootstrapping on multiple OS types}
 \usage{
-internal.analysis(
-  DT,
-  data,
-  method,
-  id.col,
-  time.col,
-  eligible.col,
-  outcome.col,
-  treatment.col,
-  opts
-)
+internal.analysis(params)
 }
 \description{
 Internal analysis tool for handling parallelization/bootstrapping on multiple OS types

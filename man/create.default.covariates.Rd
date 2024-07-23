@@ -5,18 +5,7 @@
 \title{Internal Function to create 'default' formula
 Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'}
 \usage{
-create.default.covariates(
-  data,
-  id.col,
-  time.col,
-  eligible.col,
-  treatment.col,
-  outcome.col,
-  time.cols,
-  fixed.cols,
-  method,
-  opts
-)
+create.default.covariates(params)
 }
 \description{
 Internal Function to create 'default' formula
