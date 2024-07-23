@@ -1,4 +1,4 @@
-#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, foreach, doParallel, doRNG, SEQuential, speedglm)
+#if(!require(pacman)) install.packages(pacman); pacman::p_load(data.table, SEQuential, speedglm)
 
 gen_data <- function(){
   n_patients <- 1e3; max_time <- 59; ncores <- parallel::detectCores() - 1; cl <- makeCluster(ncores); registerDoParallel(cl)
@@ -60,32 +60,10 @@ gen_data <- function(){
 }
 #data <- gen_data()
 #data <- fread("datagenExcused.csv")
-#setDTthreads(0)
-#doFuture::registerDoFuture()
-#doRNG::registerDoRNG()
-#future::plan(future::multisession)
-#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
-#                               method = "censoring", fixed.cols = "sex", time.cols = c("N", "L", "P"),
-#                               weighted = TRUE, pre.expansion = TRUE, excused = TRUE, excused.col1 = "excusedOne", excused.col0 = "excusedZero")
-#print(test$coefficients)
+#test <- SEQuential::SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method = "censoring", fixed.cols = "sex", time_varying.cols = c("N", "L", "P"), options)
+
 #Debugging Junk ==========
-#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time.cols = c("N", "L", "P"); fixed.cols = "sex"
-#opts <- SEQuential::SEQopts(parallel = TRUE, pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
-#opts$covariates = "tx_init_bas+tx_init_bas*period+tx_init_base*period_sq+period+period_sq+sex+N_bas+L_bas+P_bas"
-#autoplot(test$surv)
+#id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
+#options <- SEQopts(parallel = TRUE, pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+#rm(id.col, time.col, eligible.col, outcome.col, treatment.col, method, time_varying.cols, fixed.cols)
 
-
-
-#v <- listenv::listenv()  # requires listenv package
-#library(future)
-#for (ii in 1:ncores) {
-#  v[[ii]] %<-% {
-#    Sys.getpid()
-#  }
-#}
-#for (i in 1:ncores) {
-  #For windows
-#  system(sprintf("taskkill /F /PID %s", v[[i]]))
-#}
-#For Linux
-#system(sprintf("kill -9 %s", v[[i]]))

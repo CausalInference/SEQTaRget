@@ -14,7 +14,7 @@ SEQopts(
   boot.return = "coef",
   seed = 1636,
   max.followup = Inf,
-  max.survival = "max",
+  max.survival = Inf,
   expand = TRUE,
   covariates = NA,
   weighted = FALSE,
@@ -26,7 +26,7 @@ SEQopts(
   excused.col1 = NA,
   excused.col0 = NA,
   baseline.indicator = "_bas",
-  sq.indicator = "_sq"
+  squared.indicator = "_sq"
 )
 }
 \arguments{
@@ -54,13 +54,13 @@ SEQopts(
 
 \item{baseline.indicator}{String: identifier for baseline variables in \code{covariates} - intended as an override}
 
-\item{sq.indicator}{String: identifier for squared variables in \code{covariates} - intended as an override}
-
 \item{max.period}{Integer: maximum time to expand about}
 
 \item{weight.time}{String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded}
 
 \item{stabilized}{Logical: if the weights should be stabilized, default is FALSE}
+
+\item{sq.indicator}{String: identifier for squared variables in \code{covariates} - intended as an override}
 }
 \description{
 Parameter Builder - passing defaults to \code{SEQuential}

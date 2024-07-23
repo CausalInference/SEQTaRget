@@ -4,30 +4,12 @@
 \alias{SEQexpand}
 \title{Creates an expanded dataset for use with \code{SEQuential}}
 \usage{
-SEQexpand(
-  data,
-  id.col,
-  time.col,
-  treatment.col,
-  eligible.col,
-  outcome.col,
-  method,
-  opts
-)
+SEQexpand(params)
 }
 \arguments{
-\item{data}{Dataframe or DataTable: data to expand}
-
-\item{id.col}{String: column name of the id column}
-
-\item{time.col}{String: colum name of the time column}
-
-\item{eligible.col}{String: column name of the eligibility column}
-
-\item{outcome.col}{String: column name of the outcome column}
-
-\item{opts}{List: optional list of parameters from \code{SEQOpts}}
+\item{params}{SEQparams object built in the SEQuential function}
 }
 \description{
 Creates an expanded dataset for use with \code{SEQuential}
 }
+\keyword{internal}

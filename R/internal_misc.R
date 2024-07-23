@@ -2,54 +2,54 @@
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
-create.default.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method, opts){
-  if(method == "ITT"){
-    baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-    fixed.cols <- paste0(fixed.cols, collapse = "+")
+create.default.covariates <- function(params){
+  if(params@method == "ITT"){
+    baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+    fixed.cols <- paste0(params@fixed, collapse = "+")
     cols <- paste0(fixed.cols, "+", baseline.cols)
-    interactions <- paste0(treatment.col, "_bas*", "followup", collapse = "+")
+    interactions <- paste0(params@treatment, "_bas*", "followup", collapse = "+")
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
 
-  } else if(method %in% c("dose-response", "censoring")){
-    if(opts$pre.expansion){
-      if(opts$excused){
+  } else if(params@method %in% c("dose-response", "censoring")){
+    if(params@pre.expansion){
+      if(params@excused){
         cols <- NULL
       } else {
-        cols <- paste0(paste0(fixed.cols, collapse="+"), "+")
+        cols <- paste0(paste0(params@fixed, collapse="+"), "+")
       }
     } else {
-      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+      fixed.cols <- paste0(params@fixed, collapse = "+")
       cols <- paste0(fixed.cols, "+", baseline.cols)
     }
-    string <- paste0(cols, paste0(c("followup", "trial", paste0(c("followup", "trial"), opts$sq.indicator, collapse = "+")), collapse = "+"))
+    string <- paste0(cols, "+", paste0(c("followup", "trial", paste0(c("followup", "trial"), params@squared.indicator, collapse = "+")), collapse = "+"))
 
-    if(method == "dose-resonse") string <- paste0(string, "+dose+dose_sq")
-    if(method == "censoring"){
-      if(opts$excused) tx <- paste0(treatment.col, opts$baseline.indicator) else tx <- treatment.col
+    if(params@method == "dose-resonse") string <- paste0(string, "+dose+dose_sq")
+    if(params@method == "censoring"){
+      if(params@excused) tx <- paste0(params@treatment, params@baseline.indicator) else tx <- params@treatment
       string <- paste0(tx, "+", string, "+", paste0(tx, "*followup"))
     }
   }
   return(string)
 }
 
-create.default.weight.covariates <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, type, method, opts){
-  if(opts$pre.expansion){
+create.default.weight.covariates <- function(params, type){
+  if(params@method == "ITT"){
     if(type == "numerator"){
-      string <- paste0(paste0(fixed.cols, collapse = "+"), "+", time.col, "+", time.col, "_sq")
+      string <- paste0(paste0(params@fixed, collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
     } else {
-      string <- paste0(paste0(c(fixed.cols, time.cols), collapse = "+"), "+", time.col, "+", time.col, "_sq")
+      string <- paste0(paste0(c(params@fixed, params@time_varying), collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
     }
   } else {
     if(type == "numerator"){
-      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-      fixed.cols <- paste0(fixed.cols, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+      fixed.cols <- paste0(params@fixed, collapse = "+")
       string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
     } else {
-      baseline.cols <- paste0(time.cols, "_bas", collapse = "+")
-      fixed.cols <- paste0(fixed.cols, collapse = "+")
-      tv.cols <- paste0(time.cols, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
+      fixed.cols <- paste0(params@fixed, collapse = "+")
+      tv.cols <- paste0(params@time_varying, collapse = "+")
       string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
     }
   }
