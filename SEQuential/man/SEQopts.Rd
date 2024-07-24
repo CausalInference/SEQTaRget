@@ -11,17 +11,14 @@ SEQopts(
   bootstrap = FALSE,
   nboot = 100,
   boot.sample = 0.8,
-  boot.return = "coef",
   seed = 1636,
   max.followup = Inf,
   max.survival = Inf,
-  expand = TRUE,
   covariates = NA,
   weighted = FALSE,
   numerator = NA,
   denominator = NA,
   pre.expansion = TRUE,
-  weight.covariates = NA,
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
@@ -44,23 +41,32 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
-\item{max.survival}{Integer: maximum time for survival curves, default is "max"}
+\item{max.followup}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
-\item{expand}{Logical: defines if the data should be expanded, default is TRUE}
+\item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
 
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
-\item{baseline.indicator}{String: identifier for baseline variables in \code{covariates} - intended as an override}
+\item{numerator}{String: numerator covariates to coerce to formula object}
 
-\item{max.period}{Integer: maximum time to expand about}
+\item{denominator}{String: denominator covariates to coerce to formula object}
 
-\item{weight.time}{String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded}
+\item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
 
-\item{stabilized}{Logical: if the weights should be stabilized, default is FALSE}
+\item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 
-\item{sq.indicator}{String: identifier for squared variables in \code{covariates} - intended as an override}
+\item{excused.col1}{String: in the case of \code{excused = TRUE} the column name for Excused1}
+
+\item{excused.col0}{String: in the case of \code{excused = TRUE} the column name for Excused0}
+
+\item{baseline.indicator}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
+
+\item{squared.indicator}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
+}
+\value{
+An object of class 'SEQOpts'
 }
 \description{
 Parameter Builder - passing defaults to \code{SEQuential}

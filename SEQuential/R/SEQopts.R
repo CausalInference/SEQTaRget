@@ -7,21 +7,26 @@
 #' @param nboot Integer: number of bootstraps
 #' @param boot.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @param seed Integer: starting seed
-#' @param max.period Integer: maximum time to expand about
-#' @param max.survival Integer: maximum time for survival curves, default is "max"
-#' @param expand Logical: defines if the data should be expanded, default is TRUE
+#' @param max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
+#' @param max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
+#' @param numerator String: numerator covariates to coerce to formula object
+#' @param denominator String: denominator covariates to coerce to formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
-#' @param weight.time String: "pre" or "post", whether to construct weights on data that has been pre-expanded or post-expanded
-#' @param stabilized Logical: if the weights should be stabilized, default is FALSE
-#' @param baseline.indicator String: identifier for baseline variables in \code{covariates} - intended as an override
-#' @param sq.indicator String: identifier for squared variables in \code{covariates} - intended as an override
+#' @param pre.expansion Logical: whether weighting should be done on pre-expanded data
+#' @param excused Logical: in the case of censoring, whether there is an excused condition
+#' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
+#' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @param baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
+#' @param squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #'
 #' @export
+#' @returns An object of class 'SEQOpts'
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
-                    bootstrap = FALSE, nboot = 100, boot.sample = 0.8, boot.return = "coef", seed = 1636,
-                    max.followup = Inf, max.survival = Inf, expand = TRUE, covariates = NA, weighted = FALSE,
-                    numerator = NA, denominator = NA, pre.expansion = TRUE, weight.covariates = NA, excused = FALSE, excused.col1 = NA, excused.col0 = NA,
+                    bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
+                    max.followup = Inf, max.survival = Inf, covariates = NA, weighted = FALSE,
+                    numerator = NA, denominator = NA, pre.expansion = TRUE,
+                    excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
 
   #Standardization =============================================================

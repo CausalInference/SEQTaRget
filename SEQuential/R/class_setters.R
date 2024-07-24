@@ -1,3 +1,7 @@
+#' Parameter Helper
+#'
+#' @importFrom methods new
+#' @keywords internal
 parameter.setter <- function(data, DT,
                              id.col, time.col, eligible.col, outcome.col, treatment.col,
                              time_varying.cols, fixed.cols, method,
@@ -35,6 +39,9 @@ parameter.setter <- function(data, DT,
       )
 }
 
+#' Simplifies parameters down for later use
+#'
+#' @keywords internal
 parameter.simplifier <- function(params) {
   if(!params@bootstrap) {
     params@nboot <- 1L
@@ -45,6 +52,10 @@ parameter.simplifier <- function(params) {
   return(params)
 }
 
+#' Output constructor
+#'
+#' @importFrom methods new
+#' @keywords internal
 prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_time) {
 
   outcome.coefs <- lapply(1:params@nboot, function(x) outcome_model[[x]]$coefficients)
