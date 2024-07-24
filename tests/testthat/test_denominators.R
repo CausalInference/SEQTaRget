@@ -114,7 +114,7 @@ test_that("Default Denominator Creation: Post-Expansion Excused Censoring", {
   covariates <- create.default.weight.covariates(params, type = "denominator")
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq",
-                       "trial_sq", "trial"))
+  expected <- unlist(c(params@fixed, params@time_varying, paste0(params@time_varying, params@baseline.indicator),
+                       "followup", "followup_sq", "trial_sq", "trial"))
   expect_true(setequal(components, expected))
 })

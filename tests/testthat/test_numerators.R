@@ -71,7 +71,7 @@ test_that("Default Numerator Creation: Post-Expansion Censoring", {
   covariates <- create.default.weight.covariates(params, type = "numerator")
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@fixed, params@time_varying, "followup", "followup_sq",
+  expected <- unlist(c(params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq",
                        "trial", "trial_sq"))
   expect_true(setequal(components, expected))
 })

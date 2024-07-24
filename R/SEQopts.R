@@ -9,6 +9,8 @@
 #' @param seed Integer: starting seed
 #' @param max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
 #' @param max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
+#' @param include.period Logical: whether or not to include 'period' and 'period_squared' in the outcome model
+#' @param include.trial Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @param numerator String: numerator covariates to coerce to formula object
 #' @param denominator String: denominator covariates to coerce to formula object
@@ -24,7 +26,8 @@
 #' @returns An object of class 'SEQOpts'
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
-                    max.followup = Inf, max.survival = Inf, covariates = NA, weighted = FALSE,
+                    max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
+                    covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, pre.expansion = TRUE,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
@@ -38,6 +41,9 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   seed <- as.integer(seed)
   max.followup <- as.numeric(max.followup)
   max.survival <- as.numeric(max.survival)
+
+  include.trial <- as.logical(include.trial)
+  include.period <- as.logical(include.period)
 
   covariates <- gsub("\\s", "", covariates)
   numerator <- gsub("\\s", "", numerator)
@@ -63,6 +69,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
       seed = seed,
       max.followup = max.followup,
       max.survival = max.survival,
+      include.trial = include.trial,
+      include.period = include.period,
       weighted = weighted,
       pre.expansion = pre.expansion,
       excused = excused,
