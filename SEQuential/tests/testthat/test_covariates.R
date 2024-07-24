@@ -15,7 +15,7 @@ test_that("Default Covariate Creation: ITT", {
 
   expected <- unlist(c(params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup",
                        "followup_sq", paste0(params@treatment, params@baseline.indicator, "*", "followup")))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Pre-Expansion Dose-Response", {
@@ -31,7 +31,7 @@ test_that("Default Covariate Creation: Pre-Expansion Dose-Response", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- unlist(c("dose", "dose_sq", "followup", "followup_sq", "period", "period_sq", params@fixed))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Post-Expansion Dose-Response", {
@@ -48,7 +48,7 @@ test_that("Default Covariate Creation: Post-Expansion Dose-Response", {
 
   expected <- unlist(c("dose", "dose_sq", "followup", "followup_sq", "period", "period_sq", params@fixed,
                        paste0(params@time_varying, params@baseline.indicator)))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Pre-Expansion Censoring", {
@@ -65,7 +65,7 @@ test_that("Default Covariate Creation: Pre-Expansion Censoring", {
 
   expected <- unlist(c(params@fixed, params@treatment, "followup", "followup_sq", "trial", "trial_sq",
                        paste0(params@treatment, "*", "followup")))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Post-Expansion Censoring", {
@@ -82,7 +82,7 @@ test_that("Default Covariate Creation: Post-Expansion Censoring", {
 
   expected <- unlist(c(params@fixed, params@treatment, "followup", "followup_sq", "trial", "trial_sq",
                        paste0(params@treatment, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
@@ -100,7 +100,7 @@ test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
 
   expected <- unlist(c(params@treatment, "followup", "followup_sq", "trial", "trial_sq",
                        paste0(params@treatment, "*", "followup")))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
 
 test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
@@ -118,5 +118,5 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
 
   expected <- unlist(c(params@fixed, params@treatment, "followup", "followup_sq", "trial", "trial_sq",
                        paste0(params@treatment, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)))
-  expect_contains(components, expected)
+  expect_true(setequal(components, expected))
 })
