@@ -22,17 +22,21 @@ SEQuential(
 
 \item{id.col}{String: column name of the id column}
 
+\item{time.col}{String: column name of the time column}
+
 \item{eligible.col}{String: column name of the eligibility column}
 
 \item{treatment.col}{String: column name of the treatment column}
 
 \item{outcome.col}{String: column name of the outcome column}
 
+\item{time_varying.cols}{List: column names for time varying columns}
+
+\item{fixed.cols}{List: column names for fixed columns}
+
 \item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{SEQOpts}}
-
-\item{time_varying.col}{String: column name of the time column}
 }
 \description{
 SEQuential processing per (paper here?)

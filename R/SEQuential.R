@@ -2,10 +2,12 @@
 #'
 #' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
-#' @param time_varying.col String: column name of the time column
+#' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
+#' @param time_varying.cols List: column names for time varying columns
+#' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQOpts}
 #'
@@ -58,9 +60,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   out <- prepare.output(params, outcome, survival, risk,
                         elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes"))
-
-  gc()
-  future:::ClusterRegistry("stop")
 
   return(out)
 }
