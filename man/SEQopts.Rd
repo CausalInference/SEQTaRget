@@ -14,6 +14,8 @@ SEQopts(
   seed = 1636,
   max.followup = Inf,
   max.survival = Inf,
+  include.period = TRUE,
+  include.trial = TRUE,
   covariates = NA,
   weighted = FALSE,
   numerator = NA,
@@ -44,6 +46,10 @@ SEQopts(
 \item{max.followup}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
 \item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
+
+\item{include.period}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
+
+\item{include.trial}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
