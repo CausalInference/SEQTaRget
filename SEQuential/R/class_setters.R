@@ -58,8 +58,10 @@ parameter.simplifier <- function(params) {
 #' @keywords internal
 prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_time) {
 
-  outcome.coefs <- lapply(1:params@nboot, function(x) outcome_model[[x]]$coefficients)
-  weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
+  if(!missing(outcome_model)){
+    outcome.coefs <- lapply(1:params@nboot, function(x) outcome_model[[x]]$coefficients)
+    weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
+  }
 
   new("SEQuential",
       bootstrap = params@bootstrap,
