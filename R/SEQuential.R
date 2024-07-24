@@ -45,9 +45,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.simplifier(params)
 
   # Expansion ==================================================
-    cat("Expanding Data...\n")
-    params@DT <- SEQexpand(params)
-    cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
+  cat("Expanding Data...\n")
+  params@DT <- SEQexpand(params)
+  cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   #Model Dispersion ===========================================
   outcome <- internal.analysis(params)

@@ -9,6 +9,8 @@
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params){
+#  DT <- copy(params@DT)
+#  data <- copy(params@data)
   if(!params@pre.expansion){
     subtable.kept <- c(params@treatment, params@id, params@time)
     params@time <- "period"
@@ -30,7 +32,7 @@ internal.weights <- function(DT, data, params){
                          ][get(params@time) == 0, tx_lag := 0
                            ][, paste0(params@time, "_sq") := get(params@time)^2]
   }
-  if(params@excused){
+  if(!params@excused){
     numerator0 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@numerator),
                                      data = weight[tx_lag == 0, ],
                                      family = binomial("logit"))
@@ -59,7 +61,18 @@ internal.weights <- function(DT, data, params){
                         ][, ..kept]
     setnames(out, params@time, "period")
   } else {
-    kept <- c("denominator", params@time, params@id, "trial")
+    kept <- c("numerator", "denominator", params@time, params@id, "trial")
+
+    if(!params@pre.expansion){
+      numerator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
+                                       data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 & get(params@excused.col0) == 0, ],
+                                       family = binomial("logit"))
+
+      numerator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
+                                       data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 1 & get(params@excused.col1) == 0, ],
+                                       family = binomial("logit"))
+    }
+
     denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
                                        data = weight[tx_lag == 0 & get(params@excused.col0) ==0, ],
                                        family = binomial("logit"))
@@ -72,13 +85,23 @@ internal.weights <- function(DT, data, params){
                   ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
                     ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := predict(denominator1, newdata = .SD, type = "response")
                       ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator
-                        ][, ..kept]
+                        ]
+
+    if(!params@pre.expansion){
+      out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := predict(numerator0, newdata = .SD, type = "response")
+                 ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := predict(numerator1, newdata = .SD, type = "response")
+                   ][get(params@treatment) == 0, numerator := 1 - numerator
+                     ][, ..kept]
+    } else {
+      out <- out[, numerator := 1
+                 ][, ..kept]
+    }
     setnames(out, params@time, "period")
   }
   weight.info <- new("SEQweights",
                      weights = out,
                      coef.n0 = if(!(params@excused & params@pre.expansion)) coef(numerator0) else NA,
-                     coef.n1 = if(!(params@excused & params@pre.expansion)) coef(numerator0) else NA,
+                     coef.n1 = if(!(params@excused & params@pre.expansion)) coef(numerator1) else NA,
                      coef.d0 = coef(denominator0),
                      coef.d1 = coef(denominator1))
   return(weight.info)

@@ -14,21 +14,18 @@ SEQexpand <- function(params) {
 
   DT <- params@data[params@data[[params@id]] %in% eligible_ids, ]
   # Expansion =======================================================
-  if(!params@weighted | params@pre.expansion) {
+  if(!params@weighted) {
     vars.intake <- c(params@covariates)
   } else {
     vars.intake <- c(params@covariates, params@numerator, params@denominator)
     if(params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator))
   }
-  vars <- unique(c(unlist(strsplit(vars.intake,
-                                   "\\+|\\*")), params@treatment,
-                   names(DT)[!names(DT) %in% c(params@eligible, params@time)]))
+  vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")), params@treatment))
   vars.nin <- c("dose", "dose_sq")
   vars <- vars[!is.na(vars)][!vars %in% vars.nin]
-
   vars.base <- vars[grep(params@baseline.indicator, vars)]
   vars.sq <- vars[grep(params@squared.indicator, vars)]
-  vars.time <- vars[!vars %in% vars.base]
+  vars.time <- c(vars[!vars %in% vars.base], params@excused.col0, params@excused.col1)
   vars.base <- unique(gsub(params@baseline.indicator, "", vars.base))
   vars.base <- vars.base[!vars.base %in% params@time]
   vars.sq <- unique(sub(params@squared.indicator, "", vars.sq))

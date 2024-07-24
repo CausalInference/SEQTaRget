@@ -64,6 +64,6 @@ gen_data <- function(){
 
 #Debugging Junk ==========
 #id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
-#options <- SEQopts(parallel = TRUE, pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+#options <- SEQopts(parallel = FALSE, pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
 #rm(id.col, time.col, eligible.col, outcome.col, treatment.col, method, time_varying.cols, fixed.cols)
 

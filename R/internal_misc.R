@@ -4,10 +4,10 @@
 #' @keywords internal
 create.default.covariates <- function(params){
   if(params@method == "ITT"){
-    baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+    baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
     fixed.cols <- paste0(params@fixed, collapse = "+")
     cols <- paste0(fixed.cols, "+", baseline.cols)
-    interactions <- paste0(params@treatment, "_bas*", "followup", collapse = "+")
+    interactions <- paste0(params@treatment, params@baseline.indicator, "*", "followup", collapse = "+")
 
     string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
 
@@ -16,10 +16,10 @@ create.default.covariates <- function(params){
       if(params@excused){
         cols <- NULL
       } else {
-        cols <- paste0(paste0(params@fixed, collapse="+"), "+")
+        cols <- paste0(paste0(params@fixed, collapse="+"))
       }
     } else {
-      baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+      baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
       fixed.cols <- paste0(params@fixed, collapse = "+")
       cols <- paste0(fixed.cols, "+", baseline.cols)
     }
@@ -31,11 +31,12 @@ create.default.covariates <- function(params){
       string <- paste0(tx, "+", string, "+", paste0(tx, "*followup"))
     }
   }
+  string <- gsub("\\+\\+", "+", string)
   return(string)
 }
 
 create.default.weight.covariates <- function(params, type){
-  if(params@method == "ITT"){
+  if(params@pre.expansion){
     if(type == "numerator"){
       string <- paste0(paste0(params@fixed, collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
     } else {
@@ -63,4 +64,32 @@ create.risk <- function(data){
 
   return(list(rd = rd,
               rr = rr))
+}
+
+strip.glm <- function(model) {
+  model$data <- NULL
+  model$y <- NULL
+  model$linear.predictors <- NULL
+  model$weights <- NULL
+  model$fitted.values <- NULL
+  model$model <- NULL
+  model$prior.weights <- NULL
+  model$residuals <- NULL
+  model$effects <- NULL
+  model$qr$qr <- NULL
+
+  return(model)
+}
+
+create.sticker <- function(){
+  hexSticker::sticker("SEQgraphic.png", package = "SEQuential",
+                      s_width = .5,
+                      s_height = .5,
+                      s_x = 1,
+                      s_y = .75,
+                      p_size = 19,
+                      p_color = "maroon",
+                      h_fill = "white",
+                      h_color = "darkgray")
+  return(0)
 }
