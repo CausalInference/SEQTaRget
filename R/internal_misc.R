@@ -3,58 +3,84 @@
 #'
 #' @keywords internal
 create.default.covariates <- function(params){
-  if(params@method == "ITT"){
-    baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
-    fixed.cols <- paste0(params@fixed, collapse = "+")
-    cols <- paste0(fixed.cols, "+", baseline.cols)
-    interactions <- paste0(params@treatment, params@baseline.indicator, "*", "followup", collapse = "+")
+  timeVarying <- ""
+  timeVarying_bas <- ""
+  fixed <- ""
+  trial <- ""
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
+  tx <- paste0(params@treatment, "+")
+  followup <- paste0(paste0("followup", c("", params@squared.indicator), collapse = "+"), "+")
+  dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
+  interaction <- paste0(params@treatment, "*", "followup")
 
-    string <- paste0(interactions, "+", cols, "+", "followup+followup_sq")
-
-  } else if(params@method %in% c("dose-response", "censoring")){
-    if(params@pre.expansion){
-      if(params@excused){
-        cols <- NULL
-      } else {
-        cols <- paste0(paste0(params@fixed, collapse="+"))
-      }
-    } else {
-      baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
-      fixed.cols <- paste0(params@fixed, collapse = "+")
-      cols <- paste0(fixed.cols, "+", baseline.cols)
-    }
-    string <- paste0(cols, "+", paste0(c("followup", "trial", paste0(c("followup", "trial"), params@squared.indicator, collapse = "+")), collapse = "+"))
-
-    if(params@method == "dose-resonse") string <- paste0(string, "+dose+dose_sq")
-    if(params@method == "censoring"){
-      if(params@excused) tx <- paste0(params@treatment, params@baseline.indicator) else tx <- params@treatment
-      string <- paste0(tx, "+", string, "+", paste0(tx, "*followup"))
-    }
+  if(length(params@time_varying) > 0) {
+    timeVarying <- paste0(paste0(params@time_varying, collapse = "+"), "+")
+    timeVarying_bas <- paste0(paste0(params@time_varying, params@baseline.indicator, collapse = "+"), "+")
   }
-  string <- gsub("\\+\\+", "+", string)
-  return(string)
+
+  if(length(params@fixed) > 0){
+    fixed <- paste0(paste0(params@fixed, collapse = "+"), "+")
+  }
+  if(params@include.trial) trial <- paste0(paste0("trial", c("", params@squared.indicator), collapse = "+"), "+")
+  if(params@include.period) period <- paste0(paste0("period", c("", params@squared.indicator), collapse = "+"), "+")
+
+  if(params@method == "ITT") {
+    out <- paste0(fixed, timeVarying_bas, paste0(tx_bas, "*", "followup"))
+    return(out)
+  }
+
+  if(params@weighted){
+    if(params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, followup, period, dose)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, tx, followup, trial, interaction)
+      if(params@method == "censoring" & params@excused) out <- paste0(tx, followup, trial, interaction)
+    } else if(!params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, period, dose)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, tx, followup, trial, interaction)
+      if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial, interaction)
+    }
+    return(out)
+  }
 }
 
 create.default.weight.covariates <- function(params, type){
-  if(params@pre.expansion){
-    if(type == "numerator"){
-      string <- paste0(paste0(params@fixed, collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
-    } else {
-      string <- paste0(paste0(c(params@fixed, params@time_varying), collapse = "+"), "+", params@time, "+", params@time, params@squared.indicator)
+  timeVarying <- ""
+  timeVarying_bas <- ""
+  fixed <- ""
+  trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
+  followup <- paste0(paste0("followup", c("", params@squared.indicator), collapse = "+"), "+")
+  time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
+
+  if(length(params@time_varying) > 0) {
+    timeVarying <- paste0(paste0(params@time_varying, collapse = "+"), "+")
+    timeVarying_bas <- paste0(paste0(params@time_varying, params@baseline.indicator, collapse = "+"), "+")
+  }
+
+  if(length(params@fixed) > 0){
+    fixed <- paste0(paste0(params@fixed, collapse = "+"), "+")
+  }
+
+  if(type == "numerator"){
+    if(params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, time)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, time)
+    } else if(!params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, trial)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial)
+      if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial)
     }
-  } else {
-    if(type == "numerator"){
-      baseline.cols <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
-      fixed.cols <- paste0(params@fixed, collapse = "+")
-      string <- paste0(fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
-    } else {
-      baseline.cols <- paste0(params@time_varying, "_bas", collapse = "+")
-      fixed.cols <- paste0(params@fixed, collapse = "+")
-      tv.cols <- paste0(params@time_varying, collapse = "+")
-      string <- paste0(tv.cols, "+", fixed.cols, "+", baseline.cols, "+followup+followup_sq+trial+trial_sq")
+  } else if(type == "denominator"){
+    if(params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, timeVarying, time)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying, time)
+      if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying, time)
+    } else if(!params@pre.expansion){
+      if(params@method == "dose-response") out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
+      if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
     }
   }
-  return(string)
+  return(out)
 }
 
 create.risk <- function(data){

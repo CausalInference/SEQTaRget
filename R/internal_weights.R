@@ -6,6 +6,7 @@
 #'
 #' @import data.table
 #' @importFrom speedglm speedglm
+#' @importFrom stats binomial coef predict qnorm quantile sd
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params){

@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+
+datafab.R
+.github
+datagenExcused.csv
