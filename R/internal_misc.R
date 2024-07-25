@@ -7,11 +7,10 @@ create.default.covariates <- function(params){
   timeVarying_bas <- ""
   fixed <- ""
   trial <- ""
-  tx_bas <- paste0(params@treatment, params@baseline.indicator)
-  tx <- paste0(params@treatment, "+")
+  tx_bas <- paste0(params@treatment, params@baseline.indicator, "+")
   followup <- paste0(paste0("followup", c("", params@squared.indicator), collapse = "+"), "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
-  interaction <- paste0(params@treatment, "*", "followup")
+  interaction <- paste0(params@treatment, params@baseline.indicator, "*", "followup")
 
   if(length(params@time_varying) > 0) {
     timeVarying <- paste0(paste0(params@time_varying, collapse = "+"), "+")
@@ -25,18 +24,18 @@ create.default.covariates <- function(params){
   if(params@include.period) period <- paste0(paste0("period", c("", params@squared.indicator), collapse = "+"), "+")
 
   if(params@method == "ITT") {
-    out <- paste0(fixed, timeVarying_bas, paste0(tx_bas, "*", "followup"))
+    out <- paste0(fixed, timeVarying_bas, interaction)
     return(out)
   }
 
   if(params@weighted){
     if(params@pre.expansion){
       if(params@method == "dose-response") out <- paste0(fixed, followup, period, dose)
-      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, tx, followup, trial, interaction)
-      if(params@method == "censoring" & params@excused) out <- paste0(tx, followup, trial, interaction)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, tx_bas, followup, trial, interaction)
+      if(params@method == "censoring" & params@excused) out <- paste0(tx_bas, followup, trial, interaction)
     } else if(!params@pre.expansion){
       if(params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, period, dose)
-      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, tx, followup, trial, interaction)
+      if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial, interaction)
       if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial, interaction)
     }
     return(out)

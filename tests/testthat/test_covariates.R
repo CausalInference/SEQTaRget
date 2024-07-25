@@ -64,8 +64,8 @@ test_that("Default Covariate Creation: Pre-Expansion Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@fixed, params@treatment, "followup", "followup_sq", "trial", "trial_sq",
-                       paste0(params@treatment, "*", "followup")))
+  expected <- unlist(c(params@fixed, paste0(params@treatment, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
+                       paste0(params@treatment, params@baseline.indicator, "*", "followup")))
   expect_true(setequal(components, expected))
 })
 
@@ -82,8 +82,8 @@ test_that("Default Covariate Creation: Post-Expansion Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@fixed, params@treatment, "followup", "followup_sq", "trial", "trial_sq",
-                       paste0(params@treatment, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)))
+  expected <- unlist(c(params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
+                       paste0(params@treatment, params@baseline.indicator, "*", "followup")))
   expect_true(setequal(components, expected))
 })
 
@@ -101,8 +101,8 @@ test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@treatment, "followup", "followup_sq", "trial", "trial_sq",
-                       paste0(params@treatment, "*", "followup")))
+  expected <- unlist(c(paste0(params@treatment, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
+                       paste0(params@treatment, params@baseline.indicator, "*", "followup")))
   expect_true(setequal(components, expected))
 })
 
@@ -120,7 +120,7 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(params@fixed, "followup", "followup_sq", "trial", "trial_sq",
-                       paste0(params@treatment, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)))
+  expected <- unlist(c(params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
+                       paste0(params@treatment, params@baseline.indicator, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)))
   expect_true(setequal(components, expected))
 })
