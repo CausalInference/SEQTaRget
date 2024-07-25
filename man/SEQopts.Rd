@@ -20,6 +20,7 @@ SEQopts(
   weighted = FALSE,
   numerator = NA,
   denominator = NA,
+  surv = NA,
   pre.expansion = TRUE,
   excused = FALSE,
   excused.col1 = NA,
@@ -58,6 +59,8 @@ SEQopts(
 \item{numerator}{String: numerator covariates to coerce to formula object}
 
 \item{denominator}{String: denominator covariates to coerce to formula object}
+
+\item{surv}{String: survival covariates to coerce to formula object}
 
 \item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
 

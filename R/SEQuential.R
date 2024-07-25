@@ -40,6 +40,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                              method, options)
 
   if(is.na(params@covariates)) params@covariates <- create.default.covariates(params)
+  if(is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
   if(params@weighted){
     if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
@@ -47,9 +48,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.simplifier(params)
 
   # Expansion ==================================================
-    cat("Expanding Data...\n")
-    params@DT <- SEQexpand(params)
-    cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
+  cat("Expanding Data...\n")
+  params@DT <- SEQexpand(params)
+  cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   #Model Dispersion ===========================================
   outcome <- internal.analysis(params)

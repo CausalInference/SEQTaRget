@@ -9,16 +9,8 @@ internal.survival <- function(params){
   params@time <- "followup"
   if(is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])
 
-  if(params@method == "ITT"){
-    survival.covars <- paste0(params@covariates, "+", paste0(params@treatment, "*", c("followup", "followup_sq"), collapse = "+"))
-  } else if (params@method == "dose-response"){
-    survival.covars <- paste0(params@covariates, "+", paste0(params@time, "*", c("dose", "dose_sq"), collapse = "+"))
-  } else if (params@method == "censoring") {
-    survival.covars <- params@covariates
-  }
-
-  handler <- function(DT, params){
-    surv.model <- speedglm::speedglm(formula = paste0(params@outcome, "==1~", survival.covars),
+    handler <- function(DT, params){
+    surv.model <- speedglm::speedglm(formula = paste0(params@outcome, "==1~", params@surv),
                                    data = DT,
                                    family = binomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
