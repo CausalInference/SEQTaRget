@@ -14,6 +14,7 @@
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @param numerator String: numerator covariates to coerce to formula object
 #' @param denominator String: denominator covariates to coerce to formula object
+#' @param surv String: survival covariates to coerce to formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param pre.expansion Logical: whether weighting should be done on pre-expanded data
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
@@ -28,7 +29,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
                     max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
                     covariates = NA, weighted = FALSE,
-                    numerator = NA, denominator = NA, pre.expansion = TRUE,
+                    numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
 
@@ -48,6 +49,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   covariates <- gsub("\\s", "", covariates)
   numerator <- gsub("\\s", "", numerator)
   denominator <- gsub("\\s", "", denominator)
+  surv <- gsub("\\s", "", surv)
 
   weighted <- as.logical(weighted)
   pre.expansion <- as.logical(pre.expansion)
@@ -79,6 +81,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
       covariates = covariates,
       numerator = numerator,
       denominator = denominator,
+      surv = surv,
       baseline.indicator = baseline.indicator,
       squared.indicator = squared.indicator)
 }

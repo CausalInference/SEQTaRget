@@ -21,6 +21,7 @@ setClass("SEQopts",
            covariates = "character",
            numerator = "character",
            denominator = "character",
+           surv = "character",
            baseline.indicator = "character",
            squared.indicator = "character"
          ), prototype = list(
@@ -42,6 +43,7 @@ setClass("SEQopts",
            covariates = NA_character_,
            numerator = NA_character_,
            denominator = NA_character_,
+           surv = NA_character_,
            baseline.indicator = "_bas",
            squared.indicator = "_sq"
          ))

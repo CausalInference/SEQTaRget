@@ -10,8 +10,6 @@
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params){
-#  DT <- copy(params@DT)
-#  data <- copy(params@data)
   if(!params@pre.expansion){
     subtable.kept <- c(params@treatment, params@id, params@time)
     params@time <- "period"
@@ -50,7 +48,7 @@ internal.weights <- function(DT, data, params){
                                        data = weight[tx_lag == 1, ],
                                        family = binomial("logit"))
 
-    kept <- c("numerator", "denominator", params@time, params@id, "trial")
+    kept <- c("numerator", "denominator", params@time, params@id)
     out <- weight[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
                                      denominator = predict(denominator0, newdata = .SD, type = "response"))
                   ][tx_lag == 0 & get(params@treatment) == 0, `:=` (numerator = 1 - numerator,
@@ -62,9 +60,8 @@ internal.weights <- function(DT, data, params){
                         ][, ..kept]
     setnames(out, params@time, "period")
   } else {
-    kept <- c("numerator", "denominator", params@time, params@id, "trial")
-
     if(!params@pre.expansion){
+      kept <- c("numerator", "denominator", params@time, params@id, "trial")
       numerator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
                                        data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 & get(params@excused.col0) == 0, ],
                                        family = binomial("logit"))
@@ -94,6 +91,7 @@ internal.weights <- function(DT, data, params){
                    ][get(params@treatment) == 0, numerator := 1 - numerator
                      ][, ..kept]
     } else {
+      kept <- c("numerator", "denominator", params@time, params@id)
       out <- out[, numerator := 1
                  ][, ..kept]
     }
@@ -101,8 +99,8 @@ internal.weights <- function(DT, data, params){
   }
   weight.info <- new("SEQweights",
                      weights = out,
-                     coef.n0 = if(!(params@excused & params@pre.expansion)) coef(numerator0) else NA,
-                     coef.n1 = if(!(params@excused & params@pre.expansion)) coef(numerator1) else NA,
+                     coef.n0 = if(!(params@excused & params@pre.expansion)) coef(numerator0) else NA_real_,
+                     coef.n1 = if(!(params@excused & params@pre.expansion)) coef(numerator1) else NA_real_,
                      coef.d0 = coef(denominator0),
                      coef.d1 = coef(denominator1))
   return(weight.info)

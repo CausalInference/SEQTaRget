@@ -64,6 +64,7 @@ create.default.weight.covariates <- function(params, type){
     if(params@pre.expansion){
       if(params@method == "dose-response") out <- paste0(fixed, time)
       if(params@method == "censoring" & !params@excused) out <- paste0(fixed, time)
+      if(params@method == "censoring" & params@excused) out <- NA_character_
     } else if(!params@pre.expansion){
       if(params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, trial)
       if(params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial)
@@ -80,6 +81,14 @@ create.default.weight.covariates <- function(params, type){
       if(params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
     }
   }
+  return(out)
+}
+
+create.default.survival.covariates <- function(params){
+  if(params@method == "ITT") out <- paste0(params@covariates, "+", paste0(params@treatment, "*", c("followup", "followup_sq"), collapse = "+"))
+  if(params@method == "dose-response") out <- paste0(params@covariates, "+", paste0("followup", "*", c("dose", "dose_sq"), collapse = "+"))
+  if(params@method == "censoring") out <- params@covariates
+
   return(out)
 }
 
@@ -105,17 +114,4 @@ strip.glm <- function(model) {
   model$qr$qr <- NULL
 
   return(model)
-}
-
-create.sticker <- function(){
-  hexSticker::sticker("SEQgraphic.png", package = "SEQuential",
-                      s_width = .5,
-                      s_height = .5,
-                      s_x = 1,
-                      s_y = .75,
-                      p_size = 19,
-                      p_color = "maroon",
-                      h_fill = "white",
-                      h_color = "darkgray")
-  return(0)
 }
