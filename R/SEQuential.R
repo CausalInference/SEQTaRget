@@ -12,9 +12,11 @@
 #' @param options List: optional list of parameters from \code{SEQOpts}
 #'
 #' @import data.table
+#' @importFrom methods is
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols, fixed.cols, method, options){
+  if(missing(data)) stop("Data was not supplied")
   setDT(data); setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 

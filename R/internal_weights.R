@@ -49,6 +49,7 @@ internal.weights <- function(DT, data, params){
                                        family = binomial("logit"))
 
     kept <- c("numerator", "denominator", params@time, params@id)
+    if(!params@pre.expansion) kept <- c(kept, "trial")
     out <- weight[tx_lag == 0, `:=` (numerator = predict(numerator0, newdata = .SD, type = "response"),
                                      denominator = predict(denominator0, newdata = .SD, type = "response"))
                   ][tx_lag == 0 & get(params@treatment) == 0, `:=` (numerator = 1 - numerator,

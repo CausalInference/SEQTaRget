@@ -8,3 +8,4 @@ datagenExcused.csv
 SEQuential.png
 sticker.R
 ^\.github$
+^data-raw$
