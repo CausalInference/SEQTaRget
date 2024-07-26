@@ -4,6 +4,7 @@
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQuential)
 [![R-CMD-check](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/CausalInference/SEQuential-private/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential-private)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 
