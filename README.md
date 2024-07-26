@@ -1,7 +1,7 @@
 # SEQuential
 ![CRAN Version](https://www.r-pkg.org/badges/version/SEQuential)
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQuential)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CausalInference/SEQuential-private/R)
+![R-CMD Check](https://img.shields.io/github/actions/workflow/status/CausalInference/SEQuential-private/R)
 
 
 <img align="right" src="SEQuential.png" style="float" width="200">
