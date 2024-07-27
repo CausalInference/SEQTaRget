@@ -11,17 +11,33 @@
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQOpts}
 #'
-#' @import data.table
+#' @import data.table doRNG
 #' @importFrom methods is
+#' @importFrom future plan multisession sequential
+#' @importFrom doFuture registerDoFuture
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols, fixed.cols, method, options){
+  # Immediate error checking =================================
   if(missing(data)) stop("Data was not supplied")
+  if(missing(time.col)) stop("Time column name was not supplied")
+  if(missing(eligible.col)) stop("Eligibility column was not supplied")
+  if(missing(treatment.col)) stop("Treatment column was not supplied")
+  if(missing(outcome.col)) stop("Outcome column was not supplied")
+  if(missing(method)) stop("Method of analysis was not supplied")
+  if(missing(time_varying.cols)) warning("Time varying columns was not supplied")
+  if(missing(fixed.cols)) warning("Fixed columns was not supplied")
+
+  cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
+  missing.cols <- cols[!cols %in% names(data)]
+
+  if(length(missing.cols) > 0) {
+    stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
+  }
+
   setDT(data); setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
-  # Error Throwing ============================================
-  #errorData(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time.cols, fixed.cols, method)
   if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
   fixed.cols <- as.list(fixed.cols)
@@ -64,5 +80,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   out <- prepare.output(params, outcome, survival, risk,
                         elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes"))
 
+  plan(future::sequential())
   return(out)
 }

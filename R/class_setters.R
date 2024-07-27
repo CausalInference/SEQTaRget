@@ -50,6 +50,9 @@ parameter.simplifier <- function(params) {
     params@parallel <- FALSE
   }
 
+  if(is.na(params@excused.col0)) params@excused.col0 <- "tmp0"
+  if(is.na(params@excused.col1)) params@excused.col1 <- "tmp1"
+
   return(params)
 }
 

@@ -92,25 +92,10 @@ create.default.survival.covariates <- function(params){
 }
 
 create.risk <- function(data){
-  table <- data[, .SD[.N], by = variable]
+  table <- data[, .SD[.N], by = "variable"]
   rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
   rr <- round(as.numeric(table[2, 3]/table[1, 3]), 4)
 
   return(list(rd = rd,
               rr = rr))
-}
-
-strip.glm <- function(model) {
-  model$data <- NULL
-  model$y <- NULL
-  model$linear.predictors <- NULL
-  model$weights <- NULL
-  model$fitted.values <- NULL
-  model$model <- NULL
-  model$prior.weights <- NULL
-  model$residuals <- NULL
-  model$effects <- NULL
-  model$qr$qr <- NULL
-
-  return(model)
 }
