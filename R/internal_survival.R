@@ -4,7 +4,6 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-#' @export
 internal.survival <- function(params){
   params@time <- "followup"
   if(is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])

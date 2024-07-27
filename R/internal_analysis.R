@@ -87,7 +87,7 @@ internal.analysis <- function(params){
     setDTthreads(1)
 
     result <- future_lapply(1:params@nboot, function(x) {
-      id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+      id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
 
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
       RMdata <- rbindlist(lapply(id.sample, function(x) params@data[get(params@id) == x, ]))
@@ -100,7 +100,7 @@ internal.analysis <- function(params){
     } else {
       result <- lapply(1:params@nboot, function(x) {
         if(params@bootstrap){
-          id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+          id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
 
           RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
           RMdata <- rbindlist(lapply(id.sample, function(x) params@data[get(params@id) == x, ]))

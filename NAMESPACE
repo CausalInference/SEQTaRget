@@ -2,8 +2,7 @@
 
 export(SEQopts)
 export(SEQuential)
-export(internal.model)
-export(internal.survival)
+export(explore)
 import(data.table)
 import(doFuture)
 import(doRNG)

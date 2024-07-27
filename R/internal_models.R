@@ -3,7 +3,6 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-#' @export
 internal.model <- function(data, params){
   if(params@method == "ITT"){
     model <- speedglm(formula = paste0(params@outcome, "~", params@covariates),

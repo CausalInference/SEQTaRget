@@ -83,7 +83,6 @@ setClass("SEQopts",
 #' @slot fixed list of fixed columns as defined by the user
 #' @slot method method of analysis as defined by the user
 #'
-#' @importFrom data.table data.table
 
 setClass("SEQparams",
          contains = "SEQopts",
@@ -118,7 +117,6 @@ setClass("SEQparams",
 #' @slot coef.n1 coefficients from the numerator one model
 #' @slot coef.d0 coefficients from the denominator zero model
 #' @slot coef.d1 coefficients from the denominator one model
-#' @importFrom data.table data.table
 setClass("SEQweights",
          slots = c(
            weights = "data.table",
