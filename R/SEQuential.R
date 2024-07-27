@@ -38,6 +38,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   setDT(data); setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
+  # Error Throwing ============================================
+  if(FALSE){
+    #Debugging tools ==========================================
+    data <- fread("datagenExcused.csv")
+    id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
+    options <- SEQuential::SEQopts(pre.expansion = TRUE, weighted = TRUE, excused = FALSE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+  }
+
   if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
   fixed.cols <- as.list(fixed.cols)

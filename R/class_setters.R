@@ -67,9 +67,10 @@ prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_t
     weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
-  new("SEQuential",
+  new("SEQoutput",
       bootstrap = params@bootstrap,
       boot.sample = params@boot.sample,
+      boot.slice = 1L,
       seed = params@seed,
       nboot = params@nboot,
       outcome = paste0(params@outcome, "~", params@covariates),

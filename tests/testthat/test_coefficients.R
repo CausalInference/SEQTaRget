@@ -2,7 +2,7 @@ test_that("ITT", {
   data <- SEQdata
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts())
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -2.2087,
                    sex = 0.1190,
@@ -23,7 +23,7 @@ test_that("Pre-Expansion Dose-Response", {
                                        list("N", "L", "P"), list("sex"),
                                        method = "dose-response",
                                        options = SEQopts(weighted = TRUE)))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -4.3247,
                    sex = 0.1447,
@@ -44,7 +44,7 @@ test_that("Post-Expansion Dose-Response", {
                                        list("N", "L", "P"), list("sex"),
                                        method = "dose-response",
                                        options = SEQopts(weighted = TRUE, pre.expansion = FALSE)))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -7.5894,
                    sex = 0.1503,
@@ -67,7 +67,7 @@ test_that("Pre-Expansion Censoring", {
                                        list("N", "L", "P"), list("sex"),
                                        method = "censoring",
                                        options = SEQopts(weighted = TRUE)))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -4.7970,
                    sex = 0.0484,
@@ -87,7 +87,7 @@ test_that("Post-Expansion Censoring", {
                                        list("N", "L", "P"), list("sex"),
                                        method = "censoring",
                                        options = SEQopts(weighted = TRUE, pre.expansion = FALSE)))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -9.1036,
                    sex = 0.0825,
@@ -110,7 +110,7 @@ test_that("Post-Expansion Censoring", {
                                        list("N", "L", "P"), list("sex"),
                                        method = "censoring",
                                        options = SEQopts(weighted = TRUE, pre.expansion = FALSE)))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -9.1036,
                    sex = 0.0825,
@@ -135,7 +135,7 @@ test_that("Pre-Expansion Excused Censoring", {
                                        options = SEQopts(weighted = TRUE, excused = TRUE,
                                                          excused.col1 = "excusedOne",
                                                          excused.col0 = "excusedZero")))
-  expect_s4_class(model, "SEQuential")
+  expect_s4_class(model, "SEQoutput")
 
   expected <- list(`(Intercept)` = -4.8136,
                    followup = 0.0238,
