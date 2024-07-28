@@ -20,6 +20,7 @@
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols, fixed.cols, method, options){
   # Immediate error checking =================================
   if(missing(data)) stop("Data was not supplied")
+  if(missing(id.col)) stop("ID column name was not supplied")
   if(missing(time.col)) stop("Time column name was not supplied")
   if(missing(eligible.col)) stop("Eligibility column was not supplied")
   if(missing(treatment.col)) stop("Treatment column was not supplied")
