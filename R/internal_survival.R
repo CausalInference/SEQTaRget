@@ -4,7 +4,6 @@
 #' @importFrom speedglm speedglm
 #'
 #' @keywords internal
-#' @export
 internal.survival <- function(params){
   params@time <- "followup"
   if(is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])
@@ -43,7 +42,6 @@ internal.survival <- function(params){
 
     result <- future_lapply(1:params@nboot, function(x) {
       id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
-
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
 
       out <- handler(RMDT, params)
@@ -63,8 +61,8 @@ internal.survival <- function(params){
       out <- handler(RMDT, params)
       return(out)
     })
-    result <- rbindlist(result)
   }
+  result <- rbindlist(result)
   if(!params@bootstrap){
     DT <- handler(params@DT, params)
     surv <- melt(DT[, .(txFALSE = mean(surv0),
@@ -79,7 +77,7 @@ internal.survival <- function(params){
     kept <- c("surv0_mu", "surv0_lb", "surv0_ub",
               "surv1_mu", "surv1_lb", "surv1_ub",
               "followup")
-    DT <- result[, .(surv0_mu = mean(surv0),
+    DT <- result[, list(surv0_mu = mean(surv0),
                      surv1_mu = mean(surv1),
                      se_surv0 = sd(surv0)/sqrt(params@nboot),
                      se_surv1 = sd(surv1)/sqrt(params@nboot)), by = eval(params@time)
@@ -90,11 +88,11 @@ internal.survival <- function(params){
                followup = get(params@time))
     ][, ..kept]
 
-    SDT <- rbind(DT[, .(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, type := "txFALSE"],
-                 DT[, .(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, type := "txTRUE"])
+    SDT <- rbind(DT[, .(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
+                 DT[, .(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"])
     rm(DT)
 
-    surv <- ggplot(SDT, aes(x = followup, y = mu, fill = type)) +
+    surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
       geom_line(col = "black") +
       geom_ribbon(aes(ymax = ub, ymin = lb), alpha = 0.5) +
       theme_classic() +

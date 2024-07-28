@@ -89,8 +89,10 @@ internal.analysis <- function(params){
     result <- future_lapply(1:params@nboot, function(x) {
       id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
 
-      RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
-      RMdata <- rbindlist(lapply(id.sample, function(x) params@data[get(params@id) == x, ]))
+      RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
+                                                                           ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+      RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
+                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
 
       model <- handler(RMDT, RMdata, params)
 
@@ -102,8 +104,10 @@ internal.analysis <- function(params){
         if(params@bootstrap){
           id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
 
-          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
-          RMdata <- rbindlist(lapply(id.sample, function(x) params@data[get(params@id) == x, ]))
+          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
+                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
+                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
 
           } else {
             RMDT <- params@DT

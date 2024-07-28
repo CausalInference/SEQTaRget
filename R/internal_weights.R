@@ -58,7 +58,7 @@ internal.weights <- function(DT, data, params){
                                          denominator = predict(denominator1, newdata = .SD, type = "response"))
                       ][tx_lag == 1 & get(params@treatment) == 0, `:=` (numerator = 1 - numerator,
                                                                      denominator = 1 - denominator)
-                        ][, ..kept]
+                        ]
     setnames(out, params@time, "period")
   } else {
     if(!params@pre.expansion){
@@ -90,11 +90,11 @@ internal.weights <- function(DT, data, params){
       out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := predict(numerator0, newdata = .SD, type = "response")
                  ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := predict(numerator1, newdata = .SD, type = "response")
                    ][get(params@treatment) == 0, numerator := 1 - numerator
-                     ][, ..kept]
+                     ]
     } else {
       kept <- c("numerator", "denominator", params@time, params@id)
       out <- out[, numerator := 1
-                 ][, ..kept]
+                 ]
     }
     setnames(out, params@time, "period")
   }

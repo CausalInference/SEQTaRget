@@ -50,6 +50,9 @@ parameter.simplifier <- function(params) {
     params@parallel <- FALSE
   }
 
+  if(is.na(params@excused.col0)) params@excused.col0 <- "tmp0"
+  if(is.na(params@excused.col1)) params@excused.col1 <- "tmp1"
+
   return(params)
 }
 
@@ -64,14 +67,15 @@ prepare.output <- function(params, outcome_model, survival_curve,risk, elapsed_t
     weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
-  new("SEQuential",
+  new("SEQoutput",
       bootstrap = params@bootstrap,
       boot.sample = params@boot.sample,
+      boot.slice = 1L,
       seed = params@seed,
       nboot = params@nboot,
       outcome = paste0(params@outcome, "~", params@covariates),
-      numerator = paste0(params@treatment, "~", params@numerator),
-      denominator = paste0(params@treatment, "~", params@denominator),
+      numerator = if(!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
+      denominator = if(!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
       outcome_model = outcome.coefs,
       weight_statistics = weight.stats,
       survival_curve = survival_curve,
