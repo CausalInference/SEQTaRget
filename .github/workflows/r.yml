@@ -20,15 +20,21 @@ permissions:
 jobs:
   build-macos:
     runs-on: macos-latest
+    defaults:
+      run: 
+        working-directory: SEQuential
     strategy:
       matrix:
         r-version: ['4.1.1']
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          working-directory: SEQuential
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
         with:
+          working-directory: SEQuential
           r-version: ${{ matrix.r-version }}
       - name: Install dependencies
         run: |
@@ -41,15 +47,21 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run: 
+        working-directory: SEQuential
     strategy:
       matrix:
         r-version: ['4.1.1']
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          working-directory: SEQuential
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
         with:
+          working-directory: SEQuential
           r-version: ${{ matrix.r-version }}
       - name: Install dependencies
         run: |

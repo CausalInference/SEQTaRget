@@ -17,17 +17,22 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          working-directory: SEQuential
 
       - uses: r-lib/actions/pr-fetch@v2
         with:
+          working-directory: SEQuential
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: r-lib/actions/setup-r@v2
         with:
+          working-directory: SEQuential
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          working-directory: SEQuential
           extra-packages: any::roxygen2
           needs: pr-document
 
@@ -54,18 +59,27 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          working-directory: SEQuential
 
       - uses: r-lib/actions/pr-fetch@v2
         with:
+          working-directory: SEQuential
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: r-lib/actions/setup-r@v2
+        with:
+          working-directory: SEQuential
 
       - name: Install dependencies
+        with:
+          working-directory: SEQuential
         run: install.packages("styler")
         shell: Rscript {0}
 
       - name: Style
+        with:
+          working-directory: SEQuential
         run: styler::style_pkg()
         shell: Rscript {0}
 
@@ -78,4 +92,5 @@ jobs:
 
       - uses: r-lib/actions/pr-push@v2
         with:
+          working-directory: SEQuential
           repo-token: ${{ secrets.GITHUB_TOKEN }}
