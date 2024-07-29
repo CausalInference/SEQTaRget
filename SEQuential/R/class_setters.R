@@ -44,6 +44,9 @@ parameter.setter <- function(data, DT,
 #'
 #' @keywords internal
 parameter.simplifier <- function(params) {
+  # Variable pre-definition ===================================
+  tmp1 <- NULL; tmp0 <- NULL
+
   if(!params@bootstrap) {
     params@nboot <- 1L
     params@boot.sample <- 1

@@ -10,11 +10,16 @@
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params){
+  # Variable pre-definition ===================================
+  tx_lag <- NULL
+  numerator <- denominator <- NULL
+  followup <- NULL
+
   if(!params@pre.expansion){
     subtable.kept <- c(params@treatment, params@id, params@time)
     params@time <- "period"
 
-    baseline.lag <- data[, ..subtable.kept
+    baseline.lag <- data[, subtable.kept, with = FALSE
                                 ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
                                   ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := 0
                                     ][, eval(params@treatment) := NULL]

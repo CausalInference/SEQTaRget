@@ -4,6 +4,18 @@
 #' @import data.table future doFuture doRNG future.apply
 #' @keywords internal
 internal.analysis <- function(params){
+  # Variable pre-definition ===================================
+  trial <- NULL
+  denominator <- NULL
+  numerator <- NULL
+  wt <- NULL
+  tmp <- NULL
+  weight <- NULL
+  cprod.numerator <- NULL; cprod.Numerator <- NULL #TODO - fix these
+  cprod.denominator <- NULL; cprod.Denominator <- NULL
+  followup <- NULL
+  isExcused <- NULL
+
   handler <- function(DT, data, params){
     if(!params@weighted){
       model <- internal.model(DT, params)
@@ -23,7 +35,7 @@ internal.analysis <- function(params){
                                 ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
                                   ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
                                     ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                      ][, weight := weight[1], .(cumsum(!is.na(weight)))]
+                                      ][, weight := weight[1], list(cumsum(!is.na(weight)))]
           } else {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
@@ -47,7 +59,7 @@ internal.analysis <- function(params){
                                 ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
                                   ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
                                     ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                      ][, weight := weight[1], .(cumsum(!is.na(weight)))]
+                                      ][, weight := weight[1], list(cumsum(!is.na(weight)))]
             } else {
               params@time <- "period"
               WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
