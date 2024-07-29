@@ -17,16 +17,19 @@
 #' @importFrom doFuture registerDoFuture
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols, fixed.cols, method, options){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options){
   # Immediate error checking =================================
   if(missing(data)) stop("Data was not supplied")
+  if(missing(id.col)) stop("ID column name was not supplied")
   if(missing(time.col)) stop("Time column name was not supplied")
   if(missing(eligible.col)) stop("Eligibility column was not supplied")
   if(missing(treatment.col)) stop("Treatment column was not supplied")
   if(missing(outcome.col)) stop("Outcome column was not supplied")
   if(missing(method)) stop("Method of analysis was not supplied")
-  if(missing(time_varying.cols)) warning("Time varying columns was not supplied")
-  if(missing(fixed.cols)) warning("Fixed columns was not supplied")
+  if(!method %in% c("ITT", "dose-response", "censoring")) stop("Method ", method, "is unsupported. Supported methods are:
+                                                               'dose-response', 'ITT', and 'censoring'")
+  if(length(time_varying.cols) < 1) warning("Time varying columns was not supplied")
+  if(length(fixed.cols) < 1) warning("Fixed columns was not supplied")
 
   cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
   missing.cols <- cols[!cols %in% names(data)]
@@ -44,12 +47,24 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     #data <- fread("datagenExcused.csv")
     data <- SEQdata
     id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
-    options <- SEQuential::SEQopts(pre.expansion = TRUE, weighted = TRUE, excused = FALSE, excused.col0 = "excusedZero", excused.col1 = "excusedOne")
+    options <- SEQuential::SEQopts(pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne")
   }
-
+  # Parameter Setup ==================================
   if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
   fixed.cols <- as.list(fixed.cols)
+
+  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
+                             as.list(time_varying.cols), as.list(fixed.cols),
+                             method, options)
+  params <- parameter.simplifier(params)
+
+  if(is.na(params@covariates)) params@covariates <- create.default.covariates(params)
+  if(is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
+  if(params@weighted){
+    if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
+    if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
+  }
 
   # Parallel Setup ==================================
   if(options@parallel){
@@ -60,19 +75,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
     rm(ncores, envir = .GlobalEnv)
   }
-
-  # Parameter Setup ==================================
-  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
-                             as.list(time_varying.cols), as.list(fixed.cols),
-                             method, options)
-
-  if(is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if(is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
-  if(params@weighted){
-    if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
-    if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
-  }
-  params <- parameter.simplifier(params)
 
   # Expansion ==================================================
   cat("Expanding Data...\n")

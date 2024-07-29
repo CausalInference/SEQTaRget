@@ -7,12 +7,12 @@ internal.model <- function(data, params){
   if(params@method == "ITT"){
     model <- speedglm(formula = paste0(params@outcome, "~", params@covariates),
                       data,
-                      family = binomial("logit"))
+                      family = quasibinomial("logit"))
 
   } else if (params@method %in% c("dose-response", "censoring")) {
     model <- speedglm(formula = paste0(params@outcome, "==1~", params@covariates),
                       data,
-                      family = binomial("logit"),
+                      family = quasibinomial("logit"),
                       weights = data$weight)
   }
 

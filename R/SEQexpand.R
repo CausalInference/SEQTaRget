@@ -28,7 +28,6 @@ SEQexpand <- function(params) {
   vars.sq <- vars[grep(params@squared.indicator, vars)]
   vars.time <- c(vars[!vars %in% vars.base], params@excused.col0, params@excused.col1)
   vars.time <- vars.time[!is.na(vars.time)]
-  vars.time <- vars.time[!vars.time %in% c("tmp0", "tmp1")]
   vars.base <- unique(gsub(params@baseline.indicator, "", vars.base))
   vars.base <- vars.base[!vars.base %in% params@time]
   vars.sq <- unique(sub(params@squared.indicator, "", vars.sq))
@@ -73,12 +72,8 @@ SEQexpand <- function(params) {
 
   if(params@method == "censoring"){
     if(params@excused){
-      out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")]
-
-      if(params@excused.col0 == "tmp0") out <- out[, tmp0 := 0]
-      if(params@excused.col1 == "tmp1") out <- out[, tmp1 := 0]
-
-      out <- out[(switch) & get(params@treatment) == 0, isExcused := ifelse(get(params@excused.col1) == 1, 1, 0)
+      out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
+                 ][(switch) & get(params@treatment) == 0, isExcused := ifelse(get(params@excused.col1) == 1, 1, 0)
                    ][(switch) & get(params@treatment) == 1, isExcused := ifelse(get(params@excused.col0) == 1, 1, 0)
                      ][!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
                        ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")

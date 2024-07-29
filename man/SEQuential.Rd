@@ -11,8 +11,8 @@ SEQuential(
   eligible.col,
   treatment.col,
   outcome.col,
-  time_varying.cols,
-  fixed.cols,
+  time_varying.cols = list(),
+  fixed.cols = list(),
   method,
   options
 )

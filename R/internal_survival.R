@@ -11,7 +11,7 @@ internal.survival <- function(params){
     handler <- function(DT, params){
     surv.model <- speedglm::speedglm(formula = paste0(params@outcome, "==1~", params@surv),
                                    data = DT,
-                                   family = binomial("logit"))
+                                   family = quasibinomial("logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
 
     RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
