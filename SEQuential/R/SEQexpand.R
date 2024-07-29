@@ -6,11 +6,21 @@
 #'
 #' @keywords internal
 SEQexpand <- function(params) {
+  # Variable pre-definition ===================================
+  sum_elig <- NULL
+  followup <- NULL
+  dose <- NULL
+  trial <- NULL
+  isExcused <- NULL
+  excused_tmp <- NULL
+  firstSwitch <- NULL
+
   # Pre-Processing =============================================
   cols <- c(params@id, params@eligible)
-  eligible_ids <- unique(params@data[, ..cols][, sum_elig := sum(.SD[[params@eligible]]), by = eval(params@id)
-                                               ][sum_elig != 0,
-                                                 ][[params@id]])
+  eligible_ids <- unique(params@data[, cols, with = FALSE
+                                     ][, sum_elig := sum(.SD[[params@eligible]]), by = eval(params@id)
+                                       ][sum_elig != 0,
+                                         ][[params@id]])
 
   DT <- params@data[params@data[[params@id]] %in% eligible_ids, ]
   # Expansion =======================================================
@@ -33,9 +43,9 @@ SEQexpand <- function(params) {
   vars.sq <- unique(sub(params@squared.indicator, "", vars.sq))
   vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
-  data <- DT[get(params@eligible) == 1, .(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id)
+  data <- DT[get(params@eligible) == 1, list(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id)
              ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
-               ][, .(period = unlist(.SD)), by = c(eval(params@id), "trial")
+               ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
                  ][, followup := as.integer(seq_len(.N)-1), by = c(eval(params@id), "trial")
                    ][followup <= params@max.followup,
                      ]
@@ -47,7 +57,7 @@ SEQexpand <- function(params) {
                         ][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
     vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
-    data_list[["time"]] <- data.time[, ..vars.found]
+    data_list[["time"]] <- data.time[, vars.found, with = FALSE]
   }
   if(length(vars.base) > 0){
     data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0
@@ -55,7 +65,7 @@ SEQexpand <- function(params) {
 
     vars.found <- unique(c(paste0(vars.base, params@baseline.indicator), "period", "trial", params@id))
     setnames(data.base, old = vars.base, new = paste0(vars.base, params@baseline.indicator))
-    data_list[["base"]] <- data.base[, ..vars.found]
+    data_list[["base"]] <- data.base[, vars.found, with = FALSE]
   }
   if(length(data_list) > 1){
     out <- Reduce(function(x, y) merge(x, y, by = c(params@id, "trial", "period"), all = TRUE), data_list)

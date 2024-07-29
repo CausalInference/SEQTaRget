@@ -5,7 +5,7 @@
 #'
 #' @returns a SEQuential object where outcome_model and weight_statistics are limited to the bootstrap \code{n}
 #'
-#' @importFrom methods is
+#' @importFrom methods is slot slot<-
 #'
 #' @export
 explore <- function(obj, n){

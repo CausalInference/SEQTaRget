@@ -68,12 +68,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Parallel Setup ==================================
   if(options@parallel){
-    ncores <<- options@ncores
+    ncores <- NULL
+    ncores <- options@ncores
+    assign.global(ncores)
     evalq({
-    doFuture::registerDoFuture()
-    doRNG::registerDoRNG()
-    future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
-    rm(ncores, envir = .GlobalEnv)
+      doFuture::registerDoFuture()
+      doRNG::registerDoRNG()
+      future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
+      rm(ncores, envir = .GlobalEnv)
   }
 
   # Expansion ==================================================

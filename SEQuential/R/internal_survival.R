@@ -5,6 +5,21 @@
 #'
 #' @keywords internal
 internal.survival <- function(params){
+  # Variable pre-definition ===================================
+  trial <- NULL
+  predTRUE <- predFALSE <- NULL
+  followup <- followup_sq <- NULL
+  surv0 <- surv1 <- NULL
+  variable <- NULL
+  surv0_mu <- surv1_mu <- NULL
+  se_surv0 <- se_surv1 <- NULL
+  surv0_lb <- surv1_lb <- NULL
+  surv0_ub <- surv1_ub <- NULL
+  mu <- lb <- ub <- NULL
+  tx_lag <- NULL
+  followup <- NULL
+  numerator <- denominator <- NULL
+
   params@time <- "followup"
   if(is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])
 
@@ -65,8 +80,8 @@ internal.survival <- function(params){
   result <- rbindlist(result)
   if(!params@bootstrap){
     DT <- handler(params@DT, params)
-    surv <- melt(DT[, .(txFALSE = mean(surv0),
-                        txTRUE = mean(surv1)), by = "followup"],
+    surv <- melt(DT[, list(txFALSE = mean(surv0),
+                           txTRUE = mean(surv1)), by = "followup"],
                  id.vars = "followup") |>
       ggplot(aes(x = followup, y = value, col = variable)) +
       geom_line() +
@@ -86,10 +101,10 @@ internal.survival <- function(params){
                surv1_lb = surv1_mu - qnorm(0.975)*se_surv1,
                surv1_ub = surv1_mu + qnorm(0.975)*se_surv1,
                followup = get(params@time))
-    ][, ..kept]
+    ][, kept, with = FALSE]
 
-    SDT <- rbind(DT[, .(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
-                 DT[, .(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"])
+    SDT <- rbind(DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
+                 DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"])
     rm(DT)
 
     surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
