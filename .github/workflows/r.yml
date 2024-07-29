@@ -38,8 +38,6 @@ jobs:
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
-        env:
-          _R_CHECK_USE_CODETOOLS_: FALSE
 
   build-windows:
     runs-on: windows-latest
@@ -61,5 +59,3 @@ jobs:
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
-        env:
-          _R_CHECK_USE_CODETOOLS_: FALSE
