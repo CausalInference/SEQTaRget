@@ -50,8 +50,28 @@ parameter.simplifier <- function(params) {
     params@parallel <- FALSE
   }
 
-  if(is.na(params@excused.col0)) params@excused.col0 <- "tmp0"
-  if(is.na(params@excused.col1)) params@excused.col1 <- "tmp1"
+  if(is.na(params@excused.col0) & is.na(params@excused.col1) & params@excused & params@method == "censoring"){
+    warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
+    params@excused <- FALSE
+  }
+  if(params@method %in% c("dose-response", "censoring") & !params@weighted){
+    warning("Unweighted ", params@method, " is not supported, automatically changed to weighted = TRUE")
+    params@weighted <- TRUE
+  }
+
+  if(is.na(params@excused.col0)) {
+    params@excused.col0 <- "tmp0"
+    params@data <- params@data[, tmp0 := 0]
+  }
+  if(is.na(params@excused.col1)) {
+    params@excused.col1 <- "tmp1"
+    params@data <- params@data[, tmp1 := 0]
+  }
+
+  if(params@method == "ITT" & params@weighted){
+    warning("Weighted ITT model is not supported, automatically changed to weighted = FALSE")
+    params@weighted <- FALSE
+  }
 
   return(params)
 }

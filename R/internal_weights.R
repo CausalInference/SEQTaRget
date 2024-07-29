@@ -6,7 +6,7 @@
 #'
 #' @import data.table
 #' @importFrom speedglm speedglm
-#' @importFrom stats binomial coef predict qnorm quantile sd
+#' @importFrom stats quasibinomial coef predict qnorm quantile sd
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params){
@@ -34,19 +34,19 @@ internal.weights <- function(DT, data, params){
   if(!params@excused){
     numerator0 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@numerator),
                                      data = weight[tx_lag == 0, ],
-                                     family = binomial("logit"))
+                                     family = quasibinomial("logit"))
 
     numerator1 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@numerator),
                                      data = weight[tx_lag == 1, ],
-                                     family = binomial("logit"))
+                                     family = quasibinomial("logit"))
 
     denominator0 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@denominator),
                                          data = weight[tx_lag == 0, ],
-                                         family = binomial("logit"))
+                                         family = quasibinomial("logit"))
 
     denominator1 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@denominator),
                                        data = weight[tx_lag == 1, ],
-                                       family = binomial("logit"))
+                                       family = quasibinomial("logit"))
 
     kept <- c("numerator", "denominator", params@time, params@id)
     if(!params@pre.expansion) kept <- c(kept, "trial")
@@ -65,20 +65,20 @@ internal.weights <- function(DT, data, params){
       kept <- c("numerator", "denominator", params@time, params@id, "trial")
       numerator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
                                        data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 & get(params@excused.col0) == 0, ],
-                                       family = binomial("logit"))
+                                       family = quasibinomial("logit"))
 
       numerator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
                                        data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 1 & get(params@excused.col1) == 0, ],
-                                       family = binomial("logit"))
+                                       family = quasibinomial("logit"))
     }
 
     denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
                                        data = weight[tx_lag == 0 & get(params@excused.col0) ==0, ],
-                                       family = binomial("logit"))
+                                       family = quasibinomial("logit"))
 
     denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
                                        data = weight[tx_lag == 1 & get(params@excused.col1) == 0, ],
-                                       family = binomial("logit"))
+                                       family = quasibinomial("logit"))
 
     out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := predict(denominator0, newdata = .SD, type = "response")
                   ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
