@@ -9,3 +9,4 @@ SEQuential.png
 sticker.R
 ^\.github$
 ^data-raw$
+^codecov\.yml$
