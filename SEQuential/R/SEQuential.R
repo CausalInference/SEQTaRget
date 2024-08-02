@@ -17,66 +17,80 @@
 #' @importFrom doFuture registerDoFuture
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options){
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
   # Immediate error checking =================================
-  if(missing(data)) stop("Data was not supplied")
-  if(missing(id.col)) stop("ID column name was not supplied")
-  if(missing(time.col)) stop("Time column name was not supplied")
-  if(missing(eligible.col)) stop("Eligibility column was not supplied")
-  if(missing(treatment.col)) stop("Treatment column was not supplied")
-  if(missing(outcome.col)) stop("Outcome column was not supplied")
-  if(missing(method)) stop("Method of analysis was not supplied")
-  if(!method %in% c("ITT", "dose-response", "censoring")) stop("Method ", method, "is unsupported. Supported methods are:
+  if (missing(data)) stop("Data was not supplied")
+  if (missing(id.col)) stop("ID column name was not supplied")
+  if (missing(time.col)) stop("Time column name was not supplied")
+  if (missing(eligible.col)) stop("Eligibility column was not supplied")
+  if (missing(treatment.col)) stop("Treatment column was not supplied")
+  if (missing(outcome.col)) stop("Outcome column was not supplied")
+  if (missing(method)) stop("Method of analysis was not supplied")
+  if (!method %in% c("ITT", "dose-response", "censoring")) stop("Method ", method, "is unsupported. Supported methods are:
                                                                'dose-response', 'ITT', and 'censoring'")
-  if(length(time_varying.cols) < 1) warning("Time varying columns was not supplied")
-  if(length(fixed.cols) < 1) warning("Fixed columns was not supplied")
+  if (length(time_varying.cols) < 1) warning("Time varying columns was not supplied")
+  if (length(fixed.cols) < 1) warning("Fixed columns was not supplied")
 
   cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
   missing.cols <- cols[!cols %in% names(data)]
 
-  if(length(missing.cols) > 0) {
+  if (length(missing.cols) > 0) {
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
 
-  setDT(data); setorderv(data, c(id.col, time.col))
+  setDT(data)
+  setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
-  if(FALSE){
-    #Debugging tools ==========================================
-    #data <- fread("datagenExcused.csv")
+  if (FALSE) {
+    # Debugging tools ==========================================
+    # data <- fread("datagenExcused.csv")
     data <- SEQdata
-    id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
+    id.col <- "ID"
+    time.col <- "time"
+    eligible.col <- "eligible"
+    outcome.col <- "outcome"
+    treatment.col <- "tx_init"
+    method <- "censoring"
+    time_varying.cols <- c("N", "L", "P")
+    fixed.cols <- "sex"
     options <- SEQuential::SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne", excused.col0 = "excusedZero")
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
   # Parameter Setup ==================================
-  if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
+  if (!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
   fixed.cols <- as.list(fixed.cols)
 
-  params <- parameter.setter(data, DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
-                             as.list(time_varying.cols), as.list(fixed.cols),
-                             method, options)
+  params <- parameter.setter(data,
+    DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
+    as.list(time_varying.cols), as.list(fixed.cols),
+    method, options
+  )
   params <- parameter.simplifier(params)
 
-  if(is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if(is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
-  if(params@weighted){
-    if(is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
-    if(is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
+  if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
+  if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
+  if (params@weighted) {
+    if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
+    if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
 
   # Parallel Setup ==================================
-  if(options@parallel){
+  if (options@parallel) {
     ncores <- NULL
     ncores <- options@ncores
     assign.global(ncores)
-    evalq({
-      doFuture::registerDoFuture()
-      doRNG::registerDoRNG()
-      future::plan(future::multisession(workers = ncores), gc = TRUE)}, envir = .GlobalEnv)
-      rm(ncores, envir = .GlobalEnv)
+    evalq(
+      {
+        doFuture::registerDoFuture()
+        doRNG::registerDoRNG()
+        future::plan(future::multisession(workers = ncores), gc = TRUE)
+      },
+      envir = .GlobalEnv
+    )
+    rm(ncores, envir = .GlobalEnv)
   }
 
   # Expansion ==================================================
@@ -84,7 +98,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- SEQexpand(params)
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
-  #Model Dispersion ===========================================
+  # Model Dispersion ===========================================
   outcome <- internal.analysis(params)
 
   cat(method, "model successfully created\nCreating survival curves\n")
@@ -92,7 +106,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   risk <- create.risk(survival$data)
 
   out <- prepare.output(params, outcome, survival, risk,
-                        elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes"))
+    elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
+  )
 
   plan(future::sequential())
   return(out)

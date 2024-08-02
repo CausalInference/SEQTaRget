@@ -32,8 +32,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
-
-  #Standardization =============================================================
+  # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
   ncores <- as.integer(ncores)
@@ -62,26 +61,27 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   squared.indicator <- as.character(squared.indicator)
 
   new("SEQopts",
-      parallel = parallel,
-      nthreads = nthreads,
-      ncores = ncores,
-      bootstrap = bootstrap,
-      nboot = nboot,
-      boot.sample = boot.sample,
-      seed = seed,
-      max.followup = max.followup,
-      max.survival = max.survival,
-      include.trial = include.trial,
-      include.period = include.period,
-      weighted = weighted,
-      pre.expansion = pre.expansion,
-      excused = excused,
-      excused.col1 = excused.col1,
-      excused.col0 = excused.col0,
-      covariates = covariates,
-      numerator = numerator,
-      denominator = denominator,
-      surv = surv,
-      baseline.indicator = baseline.indicator,
-      squared.indicator = squared.indicator)
+    parallel = parallel,
+    nthreads = nthreads,
+    ncores = ncores,
+    bootstrap = bootstrap,
+    nboot = nboot,
+    boot.sample = boot.sample,
+    seed = seed,
+    max.followup = max.followup,
+    max.survival = max.survival,
+    include.trial = include.trial,
+    include.period = include.period,
+    weighted = weighted,
+    pre.expansion = pre.expansion,
+    excused = excused,
+    excused.col1 = excused.col1,
+    excused.col0 = excused.col0,
+    covariates = covariates,
+    numerator = numerator,
+    denominator = denominator,
+    surv = surv,
+    baseline.indicator = baseline.indicator,
+    squared.indicator = squared.indicator
+  )
 }

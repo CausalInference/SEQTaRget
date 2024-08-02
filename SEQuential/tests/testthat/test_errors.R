@@ -8,20 +8,30 @@ test_that("Early Column Erroring", {
   expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible"))
   expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init"))
   expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome"))
-  expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
-                          time_varying.cols = c("N", "L", "P"), fixed.cols = c("sex", "foobar")))
-  expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
-                          time_varying.cols = c("N", "L", "P"), fixed.cols = c("sex"), options = list()))
+  expect_error(SEQuential(data,
+    id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
+    time_varying.cols = c("N", "L", "P"), fixed.cols = c("sex", "foobar")
+  ))
+  expect_error(SEQuential(data,
+    id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
+    time_varying.cols = c("N", "L", "P"), fixed.cols = c("sex"), options = list()
+  ))
 
   # Missing Fixed/TimeVarying columns ====
-  expect_warning(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
-                            time_varying.cols = c("N", "L", "P"), options = SEQopts()))
-  expect_warning(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
-                            fixed.cols = "sex", options = SEQopts()))
+  expect_warning(SEQuential(data,
+    id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
+    time_varying.cols = c("N", "L", "P"), options = SEQopts()
+  ))
+  expect_warning(SEQuential(data,
+    id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "ITT",
+    fixed.cols = "sex", options = SEQopts()
+  ))
 
   # Method failure ========================
-  expect_error(SEQuential(data, id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "foobar",
-                          time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", options = SEQopts()))
+  expect_error(SEQuential(data,
+    id.col = "ID", time.col = "time", eligible.col = "eligible", treatment.col = "tx_init", outcome.col = "outcome", method = "foobar",
+    time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", options = SEQopts()
+  ))
 
   # Output Testing ========================
   expect_error(explore(list(), 2))
