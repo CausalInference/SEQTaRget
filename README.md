@@ -33,9 +33,14 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
 boot50 <- explore(model, 50)
 show(boot50)
 ```
+### Assumptions
+This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed - 
+1. User provided `time.col` begins at 0 per unique `id.col` entries, we also assume that the column contains only integers and doest continues by 1 for every time step. e.g. (0, 1, 2, 3, ...) is allowed and (0, 1, 2, 2.5, ...) or (0, 1, 2, 4, 5, ...) are not.
+    - Provided `time.col` entries may be out of order as a sort is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, ...) is valid because it begins at 0 and is continuously increasing by increments of 1, even though it is not ordered.
+2. `eligible`, `excused.col1`, and `excused.col0` are once one only one (with respect to `time.col`) flag variables 
 
 ## Return
-`SEQuential` returns an S4 object of class `SEQoutput` with slots:
+The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` with slots:
 1. bootstrap - TRUE/FALSE dependent if bootstrapping was done
 2. boot.sample - sample of data used in each bootstrap
 3. boot.slice - used in method `show()`
@@ -49,3 +54,25 @@ show(boot50)
 11. risk_difference - risk difference
 12. risk_ratio - risk ratio
 13. elapsed_time - elapsed time for the SEQuential analysis
+
+These can be handily and easily printed to the terminal with `show(.)`
+
+## Dependencies
+- data.table
+- doFuture
+- doRNG
+- future
+- future.apply
+- ggplot2
+- speedglm
+- methods
+
+## Contributing to the package
+Community members are welcome to contribute to this package through several different avenues- 
+- Asking/Answering questions about the package via [Github Discussions](https://github.com/CausalInference/SEQuential/discussions/categories/q-a). These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.
+- Contributing to [Github Issues](https://github.com/CausalInference/SEQuential/issues) if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.
+- Adding content to the package
+    - If you intend to add to the package, we would prefer you to branch and then pull-request. This PR will need to:
+        1. Pass current unit-tests to ensure nothing is being broken backwards.
+        2. Add tests to added portions of code if they are not already covered in existing tests
+        3. Pass R-CMD-Check (initiated on PR) with 0-0-0 status
