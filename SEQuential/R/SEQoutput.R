@@ -16,40 +16,40 @@
 #' @slot weight_statistics information from the weighting process, containing weight coefficients and weight statistics
 #'
 setClass("SEQoutput",
-         slots = c(
-           bootstrap = "logical",
-           boot.sample = "numeric",
-           boot.slice = "integer",
-           seed = "integer",
-           nboot = "integer",
-           outcome = "character",
-           numerator = "character",
-           denominator = "character",
-           outcome_model = "list",
-           survival_curve = "ANY",
-           survival_data = "data.table",
-           risk_difference = "numeric",
-           risk_ratio = "numeric",
-           elapsed_time = "character",
-           weight_statistics = "list"
-
-         ), prototype = c(
-           bootstrap = FALSE,
-           boot.sample = NA_real_,
-           boot.slice = 1L,
-           seed = NA_integer_,
-           nboot = NA_integer_,
-           outcome = NA_character_,
-           numerator = NA_character_,
-           denominator = NA_character_,
-           outcome_model = list(),
-           survival_curve = NA,
-           survival_data = data.table(),
-           risk_difference = NA_real_,
-           risk_ratio = NA_real_,
-           elapsed_time = NA_character_,
-           weight_statistics = list()
-         ))
+  slots = c(
+    bootstrap = "logical",
+    boot.sample = "numeric",
+    boot.slice = "integer",
+    seed = "integer",
+    nboot = "integer",
+    outcome = "character",
+    numerator = "character",
+    denominator = "character",
+    outcome_model = "list",
+    survival_curve = "ANY",
+    survival_data = "data.table",
+    risk_difference = "numeric",
+    risk_ratio = "numeric",
+    elapsed_time = "character",
+    weight_statistics = "list"
+  ), prototype = c(
+    bootstrap = FALSE,
+    boot.sample = NA_real_,
+    boot.slice = 1L,
+    seed = NA_integer_,
+    nboot = NA_integer_,
+    outcome = NA_character_,
+    numerator = NA_character_,
+    denominator = NA_character_,
+    outcome_model = list(),
+    survival_curve = NA,
+    survival_data = data.table(),
+    risk_difference = NA_real_,
+    risk_ratio = NA_real_,
+    elapsed_time = NA_character_,
+    weight_statistics = list()
+  )
+)
 
 setMethod("show", "SEQoutput", function(object) {
   elapsed_time <- slot(object, "elapsed_time")
@@ -78,7 +78,7 @@ setMethod("show", "SEQoutput", function(object) {
   }
 
   outcome_model <- paste0(names(outcome_model), ": ", outcome_model, "\n")
-  if(!is.na(weight_statistics$max)) {
+  if (!is.na(weight_statistics$max)) {
     n0.coef <- paste0(names(weight_statistics$n0.coef), ": ", weight_statistics$n0.coef, "\n")
     n1.coef <- paste0(names(weight_statistics$n1.coef), ": ", weight_statistics$n1.coef, "\n")
     d0.coef <- paste0(names(weight_statistics$d0.coef), ": ", weight_statistics$d0.coef, "\n")
@@ -104,5 +104,3 @@ setMethod("show", "SEQoutput", function(object) {
   cat("Risk Ratio:\n", risk_ratio, "\n\n")
   cat("Risk Difference:\n", risk_difference, "\n")
 })
-
-

@@ -24,52 +24,53 @@
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 
 setClass("SEQopts",
-         slots = c(
-           parallel = "logical",
-           nthreads = "numeric",
-           ncores = "integer",
-           nboot = "integer",
-           bootstrap = "logical",
-           boot.sample = "numeric",
-           seed = "integer",
-           max.followup = "numeric",
-           max.survival = "numeric",
-           include.trial = "logical",
-           include.period = "logical",
-           weighted = "logical",
-           pre.expansion = "logical",
-           excused = "logical",
-           excused.col0 = "character",
-           excused.col1 = "character",
-           covariates = "character",
-           numerator = "character",
-           denominator = "character",
-           surv = "character",
-           baseline.indicator = "character",
-           squared.indicator = "character"
-         ), prototype = list(
-           parallel = FALSE,
-           nthreads = data.table::getDTthreads(),
-           ncores = parallel::detectCores(),
-           bootstrap = FALSE,
-           boot.sample = 0.8,
-           seed = 1636L,
-           max.followup = Inf,
-           max.survival = Inf,
-           include.trial = TRUE,
-           include.period = TRUE,
-           weighted = FALSE,
-           pre.expansion = TRUE,
-           excused = FALSE,
-           excused.col0 = NA_character_,
-           excused.col1 = NA_character_,
-           covariates = NA_character_,
-           numerator = NA_character_,
-           denominator = NA_character_,
-           surv = NA_character_,
-           baseline.indicator = "_bas",
-           squared.indicator = "_sq"
-         ))
+  slots = c(
+    parallel = "logical",
+    nthreads = "numeric",
+    ncores = "integer",
+    nboot = "integer",
+    bootstrap = "logical",
+    boot.sample = "numeric",
+    seed = "integer",
+    max.followup = "numeric",
+    max.survival = "numeric",
+    include.trial = "logical",
+    include.period = "logical",
+    weighted = "logical",
+    pre.expansion = "logical",
+    excused = "logical",
+    excused.col0 = "character",
+    excused.col1 = "character",
+    covariates = "character",
+    numerator = "character",
+    denominator = "character",
+    surv = "character",
+    baseline.indicator = "character",
+    squared.indicator = "character"
+  ), prototype = list(
+    parallel = FALSE,
+    nthreads = data.table::getDTthreads(),
+    ncores = parallel::detectCores(),
+    bootstrap = FALSE,
+    boot.sample = 0.8,
+    seed = 1636L,
+    max.followup = Inf,
+    max.survival = Inf,
+    include.trial = TRUE,
+    include.period = TRUE,
+    weighted = FALSE,
+    pre.expansion = TRUE,
+    excused = FALSE,
+    excused.col0 = NA_character_,
+    excused.col1 = NA_character_,
+    covariates = NA_character_,
+    numerator = NA_character_,
+    denominator = NA_character_,
+    surv = NA_character_,
+    baseline.indicator = "_bas",
+    squared.indicator = "_sq"
+  )
+)
 
 #' An internal S4 class to carry around parameters during the SEQuential process - inherits user facing parameters from \code{SEQopts}
 #'
@@ -85,30 +86,31 @@ setClass("SEQopts",
 #'
 
 setClass("SEQparams",
-         contains = "SEQopts",
-         slots = c(
-           data = "data.table",
-           DT = "data.table",
-           id = "character",
-           time = "character",
-           eligible = "character",
-           treatment = "character",
-           outcome = "character",
-           time_varying = "list",
-           fixed = "list",
-           method = "character"
-         ), prototype = list(
-           data = NA,
-           DT = NA,
-           id = NA_character_,
-           time = NA_character_,
-           eligible = NA_character_,
-           treatment = NA_character_,
-           outcome = NA_character_,
-           time_varying = list(),
-           fixed = list(),
-           method = NA_character_
-         ))
+  contains = "SEQopts",
+  slots = c(
+    data = "data.table",
+    DT = "data.table",
+    id = "character",
+    time = "character",
+    eligible = "character",
+    treatment = "character",
+    outcome = "character",
+    time_varying = "list",
+    fixed = "list",
+    method = "character"
+  ), prototype = list(
+    data = NA,
+    DT = NA,
+    id = NA_character_,
+    time = NA_character_,
+    eligible = NA_character_,
+    treatment = NA_character_,
+    outcome = NA_character_,
+    time_varying = list(),
+    fixed = list(),
+    method = NA_character_
+  )
+)
 
 #' An internal S4 class to help transfer weight statistics out of \code{internal_weights}
 #'
@@ -118,16 +120,17 @@ setClass("SEQparams",
 #' @slot coef.d0 coefficients from the denominator zero model
 #' @slot coef.d1 coefficients from the denominator one model
 setClass("SEQweights",
-         slots = c(
-           weights = "data.table",
-           coef.n0 = "numeric",
-           coef.n1 = "numeric",
-           coef.d0 = "numeric",
-           coef.d1 = "numeric"
-         ), prototype = c(
-           weights = NA,
-           coef.n0 = NA_real_,
-           coef.n1 = NA_real_,
-           coef.d0 = NA_real_,
-           coef.d1 = NA_real_
-         ))
+  slots = c(
+    weights = "data.table",
+    coef.n0 = "numeric",
+    coef.n1 = "numeric",
+    coef.d0 = "numeric",
+    coef.d1 = "numeric"
+  ), prototype = c(
+    weights = NA,
+    coef.n0 = NA_real_,
+    coef.n1 = NA_real_,
+    coef.d0 = NA_real_,
+    coef.d1 = NA_real_
+  )
+)
