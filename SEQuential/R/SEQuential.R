@@ -45,7 +45,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (FALSE) {
     # Debugging tools ==========================================
     # data <- fread("datagenExcused.csv")
-    data <- SEQdata
+    # data <- SEQdata
     id.col <- "ID"
     time.col <- "time"
     eligible.col <- "eligible"
