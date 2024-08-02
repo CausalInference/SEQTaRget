@@ -44,10 +44,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Error Throwing ============================================
   if(FALSE){
     #Debugging tools ==========================================
-    #data <- fread("datagenExcused.csv")
-    data <- SEQdata
+    data <- fread("datagenExcused.csv")
+    #data <- SEQdata
     id.col = "ID"; time.col = "time"; eligible.col = "eligible"; outcome.col = "outcome"; treatment.col = "tx_init"; method = "censoring"; time_varying.cols = c("N", "L", "P"); fixed.cols = "sex"
-    options <- SEQuential::SEQopts(pre.expansion = TRUE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne")
+    options <- SEQuential::SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne", excused.col0 = "excusedZero")
   }
   # Parameter Setup ==================================
   if(!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
