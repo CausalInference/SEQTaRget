@@ -82,15 +82,31 @@ internal.weights <- function(DT, data, params){
                                                        isExcused < 1 &
                                                        followup != 0, ],
                                        family = quasibinomial("logit"))
+
+      denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
+                                         data = weight[tx_lag == 0 &
+                                                         get(params@excused.col0) == 0 &
+                                                         isExcused < 1 &
+                                                         followup != 0, ],
+                                         family = quasibinomial("logit"))
+
+      denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
+                                         data = weight[tx_lag == 1 &
+                                                         get(params@excused.col1) == 0 &
+                                                         isExcused < 1 &
+                                                         followup != 0, ],
+                                         family = quasibinomial("logit"))
+
+
+    } else {
+      denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
+                                         data = weight[tx_lag == 0 & get(params@excused.col0) == 0, ],
+                                         family = quasibinomial("logit"))
+
+      denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
+                                         data = weight[tx_lag == 1 & get(params@excused.col1) == 0, ],
+                                         family = quasibinomial("logit"))
     }
-
-    denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-                                       data = weight[tx_lag == 0 & get(params@excused.col0) == 0, ],
-                                       family = quasibinomial("logit"))
-
-    denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-                                       data = weight[tx_lag == 1 & get(params@excused.col1) == 0, ],
-                                       family = quasibinomial("logit"))
 
     out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := predict(denominator0, newdata = .SD, type = "response")
                   ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
