@@ -34,9 +34,8 @@ internal.survival <- function(params) {
     RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
                ][get(params@time) == 0,
                  ][rep(1:.N, each = params@max.survival + 1)
-                   ][, `:=`(
-                     followup = seq(1:.N) - 1,
-                     followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
+                   ][, `:=`(followup = seq(1:.N) - 1,
+                            followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
                      ][, eval(params@treatment) := FALSE
                        ][, `:=`(dose = FALSE,
                                 dose_sq = FALSE)
@@ -47,8 +46,8 @@ internal.survival <- function(params) {
                                ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
                                  ][, `:=`(surv0 = cumprod(1 - predFALSE),
                                           surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
-                                                                                    ][, `:=`(risk0 = 1 - surv0,
-                                                                                             risk1 = 1 - surv1)]
+                                   ][, `:=`(risk0 = 1 - surv0,
+                                            risk1 = 1 - surv1)]
     return(RMDT)
   }
   UIDs <- unique(params@DT[[params@id]])
