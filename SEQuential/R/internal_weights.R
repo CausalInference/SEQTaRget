@@ -5,8 +5,8 @@
 #' @param params object of class SEQparams (defined in SEQuential)
 #'
 #' @import data.table
-#' @importFrom speedglm speedglm
 #' @importFrom stats quasibinomial coef predict qnorm quantile sd
+#' @importFrom fastglm fastglm
 #'
 #' @keywords internal
 internal.weights <- function(DT, data, params) {
@@ -40,93 +40,88 @@ internal.weights <- function(DT, data, params) {
                      ][, paste0(params@time, "_sq") := get(params@time)^2]
   }
 
+  prepare.data <- function(weight, params, type, model){
+    weight <- weight[!is.na(get(params@outcome))]
+    if (type == "numerator") {
+      cols <- unlist(strsplit(params@numerator, "\\+"))
+      if(!params@excused) {
+        if(model == 0) weight <- weight[tx_lag == 0, ]
+        if(model == 1) weight <- weight[tx_lag == 1, ]
+
+      } else {
+        if (model == 0) weight <- weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 &
+                                           get(params@excused.col0) == 0 &
+                                           isExcused < 1 &
+                                           followup != 0, ]
+        if(model == 1) weight <- weight[get(paste0(params@treatment, params@baseline.indicator)) == 1 &
+                                          get(params@excused.col1) == 0 &
+                                          isExcused < 1 &
+                                          followup != 0, ]
+      }
+    } else if (type == "denominator"){
+      cols <- unlist(strsplit(params@denominator, "\\+"))
+      if(!params@excused) {
+        if (model == 0) weight <- weight[tx_lag == 0, ]
+        if (model == 1) weight <- weight[tx_lag == 1, ]
+      } else {
+        if(!params@pre.expansion){
+          if (model == 0) weight <- weight[tx_lag == 0 &
+                                             get(params@excused.col0) == 0 &
+                                             isExcused < 1 &
+                                             followup != 0, ]
+          if (model == 1) weight <- weight[tx_lag == 1 &
+                                             get(params@excused.col1) == 0 &
+                                             isExcused < 1 &
+                                             followup != 0, ]
+        } else {
+          if (model == 0) weight <- weight[tx_lag == 0 & get(params@excused.col0) == 0, ]
+          if (model == 1) weight <- weight[tx_lag == 1 & get(params@excused.col1) == 0, ]
+        }
+      }
+    }
+    y <- weight[[params@treatment]]
+    X <- as.matrix(weight[, cols, with = FALSE])
+    X <- cbind(X, rep(1, nrow(X)))
+
+    return(list(y = y, X = X))
+  }
+
+  if(!(params@excused & params@pre.expansion)){
+    n0.data <- prepare.data(weight, params, type = "numerator", model = 0)
+    n1.data <- prepare.data(weight, params, type = "numerator", model = 1)
+
+    numerator0 <- fastglm::fastglm(n0.data$X, n0.data$y, family = quasibinomial(), method = 2)
+    numerator1 <- fastglm::fastglm(n1.data$X, n1.data$y, family = quasibinomial(), method = 2)
+  }
+  d0.data <- prepare.data(weight, params, type = "denominator", model = 0)
+  d1.data <- prepare.data(weight, params, type = "denominator", model = 1)
+
+  denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = 2)
+  denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = 2)
+
   # Modeling ====================================================
   if (!params@excused) {
-    numerator0 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@numerator),
-      data = weight[tx_lag == 0, ],
-      family = quasibinomial("logit")
-    )
-
-    numerator1 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@numerator),
-      data = weight[tx_lag == 1, ],
-      family = quasibinomial("logit")
-    )
-
-    denominator0 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@denominator),
-      data = weight[tx_lag == 0, ],
-      family = quasibinomial("logit")
-    )
-
-    denominator1 <- speedglm::speedglm(paste0(params@treatment, "==1~", params@denominator),
-      data = weight[tx_lag == 1, ],
-      family = quasibinomial("logit")
-    )
-
-    out <- weight[tx_lag == 0, `:=`(numerator = predict(numerator0, newdata = .SD, type = "response"),
-                                    denominator = predict(denominator0, newdata = .SD, type = "response"))
+    out <- weight[tx_lag == 0, `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator"),
+                                    denominator = inline.pred(denominator0, .SD, params, "denominator"))
                   ][tx_lag == 0 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                    denominator = 1 - denominator)
-                    ][tx_lag == 1, `:=`(numerator = predict(numerator1, newdata = .SD, type = "response"),
-                                        denominator = predict(denominator1, newdata = .SD, type = "response"))
+                    ][tx_lag == 1, `:=`(numerator = inline.pred(numerator1, .SD, params, "numerator"),
+                                        denominator = inline.pred(denominator1, .SD, params, "denominator"))
                       ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                        denominator = 1 - denominator)]
     setnames(out, params@time, "period")
   } else {
-    if (!params@pre.expansion) {
-      numerator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
-        data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 &
-          get(params@excused.col0) == 0 &
-          isExcused < 1 &
-          followup != 0, ],
-        family = quasibinomial("logit")
-      )
+        out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := inline.pred(denominator0, .SD, params, "denominator")
+                      ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
+                        ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := inline.pred(denominator1, .SD, params, "denominator")
+                          ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
 
-      numerator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@numerator),
-        data = weight[get(paste0(params@treatment, params@baseline.indicator)) == 1 &
-          get(params@excused.col1) == 0 &
-          isExcused < 1 &
-          followup != 0, ],
-        family = quasibinomial("logit")
-      )
-
-      denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-        data = weight[tx_lag == 0 &
-          get(params@excused.col0) == 0 &
-          isExcused < 1 &
-          followup != 0, ],
-        family = quasibinomial("logit")
-      )
-
-      denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-        data = weight[tx_lag == 1 &
-          get(params@excused.col1) == 0 &
-          isExcused < 1 &
-          followup != 0, ],
-        family = quasibinomial("logit")
-      )
-    } else {
-      denominator0 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-        data = weight[tx_lag == 0 & get(params@excused.col0) == 0, ],
-        family = quasibinomial("logit")
-      )
-
-      denominator1 <- speedglm::speedglm(paste0(params@treatment, "~", params@denominator),
-        data = weight[tx_lag == 1 & get(params@excused.col1) == 0, ],
-        family = quasibinomial("logit")
-      )
-    }
-
-    out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := predict(denominator0, newdata = .SD, type = "response")
-                  ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
-                    ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := predict(denominator1, newdata = .SD, type = "response")
-                      ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
-
-    if (!params@pre.expansion) {
-      out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := predict(numerator0, newdata = .SD, type = "response")
-                 ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := predict(numerator1, newdata = .SD, type = "response")
-                   ][get(params@treatment) == 0, numerator := 1 - numerator]
-    } else {
+    if (params@pre.expansion) {
       out <- out[, numerator := 1]
+    } else {
+      out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := inline.pred(numerator0, .SD, params, "numerator")
+                 ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := inline.pred(numerator1, .SD, params, "numerator")
+                   ][get(params@treatment) == 0, numerator := 1 - numerator]
     }
     setnames(out, params@time, "period")
   }

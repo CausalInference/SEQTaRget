@@ -2,11 +2,11 @@
 % Please edit documentation in R/internal_models.R
 \name{internal.model}
 \alias{internal.model}
-\title{Internal function for fitting ITT model on in-memory data}
+\title{Internal function for fitting outcome models}
 \usage{
 internal.model(data, params)
 }
 \description{
-Internal function for fitting ITT model on in-memory data
+Internal function for fitting outcome models
 }
 \keyword{internal}

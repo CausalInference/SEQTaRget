@@ -25,7 +25,7 @@ internal.survival <- function(params) {
 
   handler <- function(DT, params) {
     surv.model <- speedglm::speedglm(
-      formula = paste0(params@outcome, "==1~", params@surv),
+      formula = paste0(params@outcome, "~", params@surv),
       data = DT,
       family = quasibinomial("logit")
     )
@@ -61,6 +61,7 @@ internal.survival <- function(params) {
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
 
       out <- handler(RMDT, params)
+      rm(RMDT); gc()
       return(out)
     }, future.seed = params@seed)
   } else {
@@ -74,6 +75,7 @@ internal.survival <- function(params) {
       }
 
       out <- handler(RMDT, params)
+      rm(RMDT); gc()
       return(out)
     })
   }
@@ -115,7 +117,8 @@ internal.survival <- function(params) {
       DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
       DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"]
     )
-    rm(DT)
+    rm(DT, result)
+    gc()
 
     surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
       geom_line(col = "black") +

@@ -106,16 +106,16 @@ test_that("Post-Expansion Censoring", {
 
   expected <- list(
     `(Intercept)` = -9.1036,
-    sex = 0.0825,
+    sex = 0.0898,
     N_bas = 0.0048,
-    L_bas = 0.0140,
-    P_bas = 0.4470,
-    followup = 0.0151,
-    followup_sq = 0.0000,
-    trial = 0.0666,
+    L_bas = 0.0121,
+    P_bas = 0.4412,
+    followup = 0.0162,
+    followup_sq = 0.0001,
+    trial = 0.0668,
     trial_sq = 0.0005,
-    tx_init_bas = 0.3899,
-    `followup:tx_init_bas` = 0.0159
+    tx_init_bas = 0.3962,
+    `followup:tx_init_bas` = 0.0135
   )
 
   test <- as.list(model@outcome_model[[1]])
@@ -165,13 +165,13 @@ test_that("Post-Expansion Excused Censoring", {
 
   expected <- list(
     `(Intercept)` = -8.3349,
-    sex = 0.1491,
-    N_bas = 0.0014,
-    L_bas = 0.0025,
-    P_bas = 0.3537,
+    sex = 0.1507,
+    N_bas = 0.0015,
+    L_bas = 0.0027,
+    P_bas = 0.3625,
     followup = 0.0387,
     followup_sq = -0.0001,
-    trial = 0.0653,
+    trial = 0.0667,
     trial_sq = 0.0005,
     tx_init_bas = 0.2652,
     `followup:tx_init_bas` = -0.0040

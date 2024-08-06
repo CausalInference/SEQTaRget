@@ -1,22 +1,18 @@
-#' Internal function for fitting ITT model on in-memory data
+#' Internal function for fitting outcome models
 #'
-#' @importFrom speedglm speedglm
+#' @importFrom fastglm fastglm
+#' @importFrom stats as.formula model.matrix
 #'
 #' @keywords internal
 internal.model <- function(data, params) {
-  if (params@method == "ITT") {
-    model <- speedglm(
-      formula = paste0(params@outcome, "~", params@covariates),
-      data,
-      family = quasibinomial("logit")
-    )
-  } else if (params@method %in% c("dose-response", "censoring")) {
-    model <- speedglm(
-      formula = paste0(params@outcome, "==1~", params@covariates),
-      data,
-      family = quasibinomial("logit"),
-      weights = data$weight
-    )
+  data <- data[!is.na(get(params@outcome)), ]
+  X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data)
+  y <- data[[params@outcome]]
+
+  if(!params@weighted) model <- fastglm::fastglm(X, y, family = quasibinomial(), method = 3)
+  if(params@weighted) {
+    weight <- data[['weight']]
+    model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = 3)
   }
 
   return(model)
