@@ -110,3 +110,22 @@ create.risk <- function(data) {
 assign.global <- function(ncores, pos = 1) {
   assign("ncores", ncores, envir = as.environment(pos))
 }
+
+#' Helper Function to inline predict a fastglm object
+#' @param model a fastglm object
+#' @param newdata filler for a .SD from data.table
+#' @param params parameter from SEQuential
+#' @param type type of prediction
+#'
+#' @keywords internal
+
+inline.pred <- function(model, newdata, params, type){
+  if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+"))
+  if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
+  data <- newdata[, cols, with = FALSE]
+
+  X <- as.matrix(data)
+  X <- cbind(X, rep(1, nrow(X)))
+  pred <- predict(model, X, "response")
+  return(pred)
+}

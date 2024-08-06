@@ -27,47 +27,62 @@ internal.analysis <- function(params) {
       if (params@pre.expansion) {
         if (params@excused) {
           params@time <- "period"
-          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL][get(params@time) == 0 & trial == 0, denominator := 1][denominator < 1e-15, denominator := 1][is.na(get(params@outcome)), denominator := 1][, numerator := 1][, wt := numerator / denominator][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")][tmp > 0, wt := 1, by = c(eval(params@id), "trial")][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")][, weight := weight[1], list(cumsum(!is.na(weight)))]
+          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
+                    ][get(params@time) == 0 & trial == 0, denominator := 1
+                      ][denominator < 1e-15, denominator := 1
+                        ][is.na(get(params@outcome)), denominator := 1
+                          ][, numerator := 1][, wt := numerator / denominator
+                                              ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
+                                                ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
+                                                  ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
+                                                    ][, weight := weight[1], list(cumsum(!is.na(weight)))]
         } else {
           params@time <- "period"
-          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL][get(params@time) == 0 & trial == 0, `:=`(
-            numerator = 1,
-            denominator = 1
-          )][is.na(numerator), numerator := 1][, `:=`(
-            cprod.Numerator = cumprod(numerator),
-            cprod.Denominator = cumprod(denominator)
-          ), by = c(eval(params@id), "trial")][, weight := cprod.Numerator / cprod.Denominator]
+          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
+                    ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1,
+                                                               denominator = 1)
+                      ][is.na(numerator), numerator := 1
+                        ][, `:=`(cprod.Numerator = cumprod(numerator),
+                                 cprod.Denominator = cumprod(denominator)), by = c(eval(params@id), "trial")
+                          ][, weight := cprod.Numerator / cprod.Denominator]
         }
         model <- internal.model(WDT, params)
       } else {
         if (params@excused) {
           params@time <- "period"
-          WDT <- params@DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL][followup == 0, `:=`(
-            numerator = 1,
-            denominator = 1
-          )][denominator < 1e-15, denominator := 1][is.na(get(params@outcome)), denominator := 1][, wt := numerator / denominator][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")][tmp > 0, wt := 1, by = c(eval(params@id), "trial")][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")][, weight := weight[1], list(cumsum(!is.na(weight)))]
+          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
+                    ][followup == 0, `:=`(numerator = 1,
+                                          denominator = 1)
+                      ][denominator < 1e-15, denominator := 1
+                        ][numerator < 1e-15, numerator := 1
+                          ][is.na(get(params@outcome)), denominator := 1
+                            ][, wt := numerator / denominator
+                              ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
+                                ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
+                                  ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
+                                    ][, weight := weight[1], list(cumsum(!is.na(weight)))]
         } else {
           params@time <- "period"
-          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL][followup == 0, `:=`(
-            numerator = 1,
-            denominator = 1
-          )][is.na(numerator), numerator := 1][, `:=`(
-            cprod.Numerator = cumprod(numerator),
-            cprod.Denominator = cumprod(denominator)
-          ), by = c(eval(params@id), "trial")][, weight := cprod.Numerator / cprod.Denominator]
+          WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
+                    ][followup == 0, `:=`(numerator = 1,
+                                          denominator = 1)
+                      ][is.na(numerator), numerator := 1
+                        ][, `:=`(cprod.Numerator = cumprod(numerator),
+                                 cprod.Denominator = cumprod(denominator)), by = c(eval(params@id), "trial")
+                          ][, weight := cprod.Numerator / cprod.Denominator]
         }
 
         model <- internal.model(WDT, params)
       }
-      percentile <- quantile(WDT$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
+      percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
       stats <- list(
         n0.coef = WT@coef.n0,
         n1.coef = WT@coef.n1,
         d0.coef = WT@coef.d0,
         d1.coef = WT@coef.d1,
-        min = min(WDT$weight, na.rm = TRUE),
-        max = max(WDT$weight, na.rm = TRUE),
-        sd = sd(WDT$weight, na.rm = TRUE),
+        min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
+        max = max(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
+        sd = sd(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
         p01 = percentile[[1]],
         p25 = percentile[[2]],
         p50 = percentile[[3]],
@@ -95,8 +110,10 @@ internal.analysis <- function(params) {
         id.sample <- UIDs
       }
 
-      RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x], ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-      RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x], ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+      RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
+                                                                           ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+      RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
+                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
 
       model <- handler(RMDT, RMdata, params)
 
@@ -113,8 +130,10 @@ internal.analysis <- function(params) {
         } else {
           id.sample <- UIDs
         }
-        RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x], ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-        RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x], ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+        RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
+                                                                             ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+        RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
+                                                                                 ][, eval(params@id) := paste0(get(params@id), "_", x)]))
       } else {
         RMDT <- params@DT
         RMdata <- params@data

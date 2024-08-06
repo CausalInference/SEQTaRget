@@ -16,6 +16,7 @@ Imports:
     data.table,
     doFuture,
     doRNG,
+    fastglm,
     future,
     future.apply,
     ggplot2,

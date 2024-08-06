@@ -17,7 +17,10 @@ SEQexpand <- function(params) {
 
   # Pre-Processing =============================================
   cols <- c(params@id, params@eligible)
-  eligible_ids <- unique(params@data[, cols, with = FALSE][, sum_elig := sum(.SD[[params@eligible]]), by = eval(params@id)][sum_elig != 0, ][[params@id]])
+  eligible_ids <- unique(params@data[, cols, with = FALSE
+                                     ][, sum_elig := sum(.SD[[params@eligible]]), by = eval(params@id)
+                                       ][sum_elig != 0,
+                                         ][[params@id]])
 
   DT <- params@data[params@data[[params@id]] %in% eligible_ids, ]
   # Expansion =======================================================
@@ -44,7 +47,9 @@ SEQexpand <- function(params) {
 
   data_list <- list()
   if (length(c(vars.time, vars.sq)) > 0) {
-    data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time][, eval(params@eligible) := NULL][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
+    data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time
+                      ][, eval(params@eligible) := NULL
+                        ][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
     vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
     data_list[["time"]] <- data.time[, vars.found, with = FALSE]
@@ -72,17 +77,23 @@ SEQexpand <- function(params) {
 
   if (params@method == "censoring") {
     if (params@excused) {
-      out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")][(switch) & get(params@treatment) == 0, isExcused := ifelse(get(params@excused.col1) == 1, 1, 0)][(switch) & get(params@treatment) == 1, isExcused := ifelse(get(params@excused.col0) == 1, 1, 0)][!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")][, excused_tmp := NULL]
+      out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
+                 ][(switch) & get(params@treatment) == 0, isExcused := ifelse(get(params@excused.col1) == 1, 1, 0)
+                   ][(switch) & get(params@treatment) == 1, isExcused := ifelse(get(params@excused.col0) == 1, 1, 0)
+                     ][!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
+                       ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")
+                         ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")][, excused_tmp := NULL]
     } else {
       out <- out[, `:=`(
         trial_sq = trial^2,
         switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])
       ), by = c(eval(params@id), "trial")][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
     }
-    out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))][, `:=`(
-      firstSwitch = NULL,
-      switch = NULL
-    )]
+    out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1
+               ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
+                 ][, `:=`(
+                   firstSwitch = NULL,
+                   switch = NULL)]
   }
   return(out)
 }

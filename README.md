@@ -76,4 +76,3 @@ Community members are welcome to contribute to this package through several diff
         1. Pass current unit-tests to ensure nothing is being broken backwards.
         2. Add tests to added portions of code if they are not already covered in existing tests
         3. Pass R-CMD-Check (initiated on PR) with 0-0-0 status
-        4. Be styled using `styler::style_pkg`

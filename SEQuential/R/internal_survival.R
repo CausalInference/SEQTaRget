@@ -25,28 +25,29 @@ internal.survival <- function(params) {
 
   handler <- function(DT, params) {
     surv.model <- speedglm::speedglm(
-      formula = paste0(params@outcome, "==1~", params@surv),
+      formula = paste0(params@outcome, "~", params@surv),
       data = DT,
       family = quasibinomial("logit")
     )
     kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
 
-    RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)][get(params@time) == 0, ][rep(1:.N, each = params@max.survival + 1)][, `:=`(
-      followup = seq(1:.N) - 1,
-      followup_sq = (seq(1:.N) - 1)^2
-    ), by = eval(params@id)][, eval(params@treatment) := FALSE][, `:=`(
-      dose = FALSE,
-      dose_sq = FALSE
-    )][, predFALSE := predict(surv.model, newdata = .SD, type = "response")][, eval(params@treatment) := TRUE][, `:=`(
-      dose = followup,
-      dose_sq = followup_sq
-    )][, predTRUE := predict(surv.model, newdata = .SD, type = "response")][, `:=`(
-      surv0 = cumprod(1 - predFALSE),
-      surv1 = cumprod(1 - predTRUE)
-    ), by = eval(params@id)][, `:=`(
-      risk0 = 1 - surv0,
-      risk1 = 1 - surv1
-    )]
+    RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
+               ][get(params@time) == 0,
+                 ][rep(1:.N, each = params@max.survival + 1)
+                   ][, `:=`(followup = seq(1:.N) - 1,
+                            followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
+                     ][, eval(params@treatment) := FALSE
+                       ][, `:=`(dose = FALSE,
+                                dose_sq = FALSE)
+                         ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
+                           ][, eval(params@treatment) := TRUE
+                             ][, `:=`(dose = followup,
+                                      dose_sq = followup_sq)
+                               ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
+                                 ][, `:=`(surv0 = cumprod(1 - predFALSE),
+                                          surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
+                                   ][, `:=`(risk0 = 1 - surv0,
+                                            risk1 = 1 - surv1)]
     return(RMDT)
   }
   UIDs <- unique(params@DT[[params@id]])
@@ -60,6 +61,7 @@ internal.survival <- function(params) {
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
 
       out <- handler(RMDT, params)
+      rm(RMDT); gc()
       return(out)
     }, future.seed = params@seed)
   } else {
@@ -73,6 +75,7 @@ internal.survival <- function(params) {
       }
 
       out <- handler(RMDT, params)
+      rm(RMDT); gc()
       return(out)
     })
   }
@@ -114,7 +117,8 @@ internal.survival <- function(params) {
       DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
       DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"]
     )
-    rm(DT)
+    rm(DT, result)
+    gc()
 
     surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
       geom_line(col = "black") +
