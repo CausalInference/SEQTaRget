@@ -5,7 +5,7 @@
 #' @param max.time Integer: max followup time per individual
 #'
 #' @keywords internal
-generate_data <- function(n = 1e5, max.time = 59, LTFU = TRUE) {
+generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   output <- future.apply::future_lapply(1:n, function(x) {
     sex <- as.integer(rbinom(1, 1, 0.5))
     outcome <- as.integer(rbinom(1, 1, 0.7))
@@ -13,8 +13,11 @@ generate_data <- function(n = 1e5, max.time = 59, LTFU = TRUE) {
 
     if (LTFU){
       LTFU.ind <- rbinom(1, 1, .1)
-      if (LTFU.ind == 1) LTFU.time <- sample(1:max.time, 1)
-      LTFU_vector <- c(rep(0, LTFU.time), 1)
+      if (LTFU.ind == 1) {
+        LTFU.time <- sample(1:max.time, 1)
+        LTFU_vector <- c(rep(0, LTFU.time), 1)
+      }
+      LTFU_vector <- rep(0, max.time+1)
     }
 
     if (outcome == 1) outcome_time <- as.integer(sample(0:max.time, 1)) else outcome_time <- NA
@@ -71,6 +74,7 @@ generate_data <- function(n = 1e5, max.time = 59, LTFU = TRUE) {
     if (LTFU) {
       if (LTFU.ind == 1) ID <- ID[time <= LTFU.time]
       ID <- cbind(ID, LTFU = LTFU_vector)
+      ID <- cbind(ID, eligible_cense = rep(1, nrow(ID)))
     }
     if (outcome == 1) ID <- ID[time <= outcome_time]
 
@@ -78,5 +82,6 @@ generate_data <- function(n = 1e5, max.time = 59, LTFU = TRUE) {
   }, future.seed = 1636)
   return(data.table::rbindlist(output))
 }
-SEQdata.LTFU <- generate_data()
+SEQdata.LTFU <- generate_data(1e3, 59, TRUE)
+
 usethis::use_data(SEQdata.LTFU, overwrite = TRUE)
