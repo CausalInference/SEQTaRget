@@ -16,8 +16,9 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
       if (LTFU.ind == 1) {
         LTFU.time <- sample(1:max.time, 1)
         LTFU_vector <- c(rep(0, LTFU.time), 1)
+      } else {
+        LTFU_vector <- rep(0, max.time+1)
       }
-      LTFU_vector <- rep(0, max.time+1)
     }
 
     if (outcome == 1) outcome_time <- as.integer(sample(0:max.time, 1)) else outcome_time <- NA
@@ -72,7 +73,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
     )]
 
     if (LTFU) {
-      if (LTFU.ind == 1) ID <- ID[time <= LTFU.time]
+      if (LTFU.ind == 1) ID <- ID[time <= LTFU.time, ]
       ID <- cbind(ID, LTFU = LTFU_vector)
       ID <- cbind(ID, eligible_cense = rep(1, nrow(ID)))
     }
