@@ -29,6 +29,10 @@ parameter.setter <- function(data, DT,
     weighted = opts@weighted,
     pre.expansion = opts@pre.expansion,
     excused = opts@excused,
+    cense = opts@cense,
+    cense2 = opts@cense2,
+    eligible_cense = opts@eligible_cense,
+    eligible_cense2 = opts@eligible_cense2,
     excused.col0 = opts@excused.col0,
     excused.col1 = opts@excused.col1,
     covariates = opts@covariates,
@@ -72,8 +76,13 @@ parameter.simplifier <- function(params) {
     params@data <- params@data[, tmp1 := 0]
   }
 
-  if (params@method == "ITT" & params@weighted) {
-    warning("Weighted ITT model is not supported, automatically changed to weighted = FALSE")
+  if(length(c(params@cense, params@cense2)[!is.na(c(params@cense, params@cense2))]) > 0) {
+    params@LTFU <- TRUE
+    params@weighted <- TRUE
+  }
+
+  if (params@method == "ITT" & params@weighted & !params@LTFU) {
+    warning("Without LTFU, weighted ITT model is not supported, automatically changed to weighted = FALSE")
     params@weighted <- FALSE
   }
 
