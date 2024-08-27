@@ -14,12 +14,18 @@
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @slot numerator String: numerator covariates to coerce to formula object
 #' @slot denominator String: denominator covariates to coerce to formula object
+#' @slot LTFU.covs String: LTFU covariates to coerce into formula object
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
+#' @slot cense String: TODO
+#' @slot cense2 String: TODO
+#' @slot eligible_cense String: TODO
+#' @slot eligible_cense2 String: TODO
 #' @slot excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @slot excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @slot LTFU Logical: internal flag for LTFU weighting
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 
@@ -49,6 +55,7 @@ setClass("SEQopts",
     covariates = "character",
     numerator = "character",
     denominator = "character",
+    LTFU.covs = "character",
     surv = "character",
     baseline.indicator = "character",
     squared.indicator = "character"
@@ -76,6 +83,7 @@ setClass("SEQopts",
     covariates = NA_character_,
     numerator = NA_character_,
     denominator = NA_character_,
+    LTFU.covs = NA_character_,
     surv = NA_character_,
     baseline.indicator = "_bas",
     squared.indicator = "_sq"

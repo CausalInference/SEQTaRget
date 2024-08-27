@@ -83,6 +83,18 @@ create.default.weight.covariates <- function(params, type) {
   return(out)
 }
 
+create.default.LTFU.covariates <- function(params){
+  fixed <- ""
+  timeVarying <- ""
+
+  fixed <- paste0(params@fixed, collapse = "+")
+  timeVarying <- paste0(params@time_varying, collapse = "+")
+
+  out <- paste0(c(fixed, timeVarying), collapse = "+")
+
+  return(out)
+}
+
 create.default.survival.covariates <- function(params) {
   if (params@method == "ITT") out <- paste0(params@covariates, "+", paste0(params@treatment, "*", c("followup", "followup_sq"), collapse = "+"))
   if (params@method == "dose-response") out <- paste0(params@covariates, "+", paste0("followup", "*", c("dose", "dose_sq"), collapse = "+"))
@@ -128,4 +140,66 @@ inline.pred <- function(model, newdata, params, type){
   X <- cbind(X, rep(1, nrow(X)))
   pred <- predict(model, X, "response")
   return(pred)
+}
+
+#' Helper function to prepare data for fastglm
+#' @param weight data after undergoing preparation
+#' @param params parameter from SEQuential
+#' @param type type of model, e.g. d0 = "denominator"
+#' @param model model number, e.g. d0 = "zero model"
+#'
+#' @keywords internal
+
+prepare.data <- function(weight, params, type, model, case){
+  weight <- weight[!is.na(get(params@outcome))]
+  if (case == "default") {
+    if (type == "numerator") {
+      cols <- unlist(strsplit(params@numerator, "\\+"))
+      if(!params@excused) {
+        if(model == 0) weight <- weight[tx_lag == 0, ]
+        if(model == 1) weight <- weight[tx_lag == 1, ]
+
+      } else {
+        if (model == 0) weight <- weight[get(paste0(params@treatment, params@baseline.indicator)) == 0 &
+                                           get(params@excused.col0) == 0 &
+                                           isExcused < 1 &
+                                           followup != 0, ]
+        if(model == 1) weight <- weight[get(paste0(params@treatment, params@baseline.indicator)) == 1 &
+                                          get(params@excused.col1) == 0 &
+                                          isExcused < 1 &
+                                          followup != 0, ]
+      }
+    } else if (type == "denominator"){
+      cols <- unlist(strsplit(params@denominator, "\\+"))
+      if(!params@excused) {
+        if (model == 0) weight <- weight[tx_lag == 0, ]
+        if (model == 1) weight <- weight[tx_lag == 1, ]
+      } else {
+        if(!params@pre.expansion){
+          if (model == 0) weight <- weight[tx_lag == 0 &
+                                             get(params@excused.col0) == 0 &
+                                             isExcused < 1 &
+                                             followup != 0, ]
+          if (model == 1) weight <- weight[tx_lag == 1 &
+                                             get(params@excused.col1) == 0 &
+                                             isExcused < 1 &
+                                             followup != 0, ]
+        } else {
+          if (model == 0) weight <- weight[tx_lag == 0 & get(params@excused.col0) == 0, ]
+          if (model == 1) weight <- weight[tx_lag == 1 & get(params@excused.col1) == 0, ]
+        }
+      }
+    }
+    y <- weight[[params@treatment]]
+    X <- as.matrix(weight[, cols, with = FALSE])
+    X <- cbind(X, rep(1, nrow(X)))
+  } else if (case == "LTFU") {
+    cols <- unlist(strsplit(params@LTFU.covs, "\\+"))
+
+    y <- weight[[params@cense]]
+    X <- as.matrix(weight[, cols, with = FALSE])
+    X <- cbind(X, rep(1, nrow(X)))
+  }
+
+  return(list(y = y, X = X))
 }

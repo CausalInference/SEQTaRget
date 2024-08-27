@@ -44,11 +44,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    # data <- fread("datagenExcused.csv")
+    data <- fread("SEQdata_ltfu_2.csv")
     # data <- SEQdata
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQuential::SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne", excused.col0 = "excusedZero", parallel = TRUE, bootstrap = TRUE, nboot = 100)
+    method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = FALSE, excused.col1 = "excusedOne", excused.col0 = "excusedZero", cense = "LTFU")
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
@@ -69,6 +69,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (params@weighted) {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
+  }
+  if (params@LTFU) {
+    if (is.na(params@LTFU.covs)) params@LTFU.covs <- create.default.LTFU.covariates(params)
   }
 
   # Parallel Setup ==================================
