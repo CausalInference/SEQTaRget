@@ -4,7 +4,7 @@
 \alias{prepare.data}
 \title{Helper function to prepare data for fastglm}
 \usage{
-prepare.data(weight, params, type, model)
+prepare.data(weight, params, type, model, case)
 }
 \arguments{
 \item{weight}{data after undergoing preparation}

@@ -27,10 +27,11 @@ SEQexpand <- function(params) {
   if (!params@weighted) {
     vars.intake <- c(params@covariates, params@surv)
   } else {
-    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv)
+    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv, params@LTFU.covs)
     if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
   }
-  vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")), params@treatment))
+  vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")),
+                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2))
   vars.nin <- c("dose", "dose_sq", eval(params@time), eval(paste0(params@time, params@squared.indicator)))
   vars <- vars[!is.na(vars)]
   vars <- vars[!vars %in% vars.nin]

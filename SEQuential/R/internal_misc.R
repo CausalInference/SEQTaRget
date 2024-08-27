@@ -193,6 +193,7 @@ prepare.data <- function(weight, params, type, model, case){
     y <- weight[[params@treatment]]
     X <- as.matrix(weight[, cols, with = FALSE])
     X <- cbind(X, rep(1, nrow(X)))
+
   } else if (case == "LTFU") {
     cols <- unlist(strsplit(params@LTFU.covs, "\\+"))
 
