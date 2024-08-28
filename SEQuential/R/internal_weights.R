@@ -13,14 +13,18 @@ internal.weights <- function(DT, data, params) {
   # Variable pre-definition ===================================
   tx_lag <- NULL
   numerator <- denominator <- NULL
+  cense1.wt <- cense2.wt <- NULL
   followup <- NULL
   isExcused <- NULL
 
   # Setting up weight data ====================================
   if (params@method == "ITT") {
     if (params@pre.expansion) weight <- params@data else weight <- params@DT
+
     ltfu.data <- prepare.data(weight, params, type = NA, model = NA, case = "LTFU")
     ltfu <- fastglm::fastglm(ltfu.data$X, ltfu.data$y, family = quasibinomial(), method = 2)
+
+    out <- weight
 
   } else {
     if (!params@pre.expansion) {
@@ -87,7 +91,11 @@ internal.weights <- function(DT, data, params) {
     }
   }
 
-  kept <- c("numerator", "denominator", "period", "trial", params@id)
+  if (params@LTFU) {
+    out <- out[, cense1.wt := inline.pred(ltfu, .SD, params, "LTFU")]
+  }
+
+  kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1.wt")
   kept <- kept[kept %in% names(out)]
   out <- out[, kept, with = FALSE]
 

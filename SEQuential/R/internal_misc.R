@@ -134,6 +134,7 @@ assign.global <- function(ncores, pos = 1) {
 inline.pred <- function(model, newdata, params, type){
   if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+"))
   if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
+  if(type == "LTFU") cols <- unlist(strsplit(params@LTFU.covs, "\\+"))
   data <- newdata[, cols, with = FALSE]
 
   X <- as.matrix(data)
