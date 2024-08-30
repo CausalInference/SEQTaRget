@@ -27,7 +27,8 @@ SEQexpand <- function(params) {
   if (!params@weighted) {
     vars.intake <- c(params@covariates, params@surv)
   } else {
-    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv, params@LTFU.covs)
+    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv,
+                     params@ltfu.denominator, params@ltfu.numerator)
     if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
   }
   vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")),

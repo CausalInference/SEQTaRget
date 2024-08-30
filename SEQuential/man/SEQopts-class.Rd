@@ -38,7 +38,9 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{denominator}}{String: denominator covariates to coerce to formula object}
 
-\item{\code{LTFU.covs}}{String: LTFU covariates to coerce into formula object}
+\item{\code{ltfu.numerator}}{String: TODO}
+
+\item{\code{ltfu.denominator}}{String: TODO}
 
 \item{\code{surv}}{String: survival covariates to coerce to formula object}
 

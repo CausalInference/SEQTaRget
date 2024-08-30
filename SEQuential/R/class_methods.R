@@ -14,7 +14,8 @@
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @slot numerator String: numerator covariates to coerce to formula object
 #' @slot denominator String: denominator covariates to coerce to formula object
-#' @slot LTFU.covs String: LTFU covariates to coerce into formula object
+#' @slot ltfu.numerator String: TODO
+#' @slot ltfu.denominator String: TODO
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
@@ -55,7 +56,8 @@ setClass("SEQopts",
     covariates = "character",
     numerator = "character",
     denominator = "character",
-    LTFU.covs = "character",
+    ltfu.numerator = "character",
+    ltfu.denominator = "character",
     surv = "character",
     baseline.indicator = "character",
     squared.indicator = "character"
@@ -83,7 +85,8 @@ setClass("SEQopts",
     covariates = NA_character_,
     numerator = NA_character_,
     denominator = NA_character_,
-    LTFU.covs = NA_character_,
+    ltfu.numerator = NA_character_,
+    ltfu.denominator = NA_character_,
     surv = NA_character_,
     baseline.indicator = "_bas",
     squared.indicator = "_sq"

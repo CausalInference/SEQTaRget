@@ -3,94 +3,122 @@
 #'
 #' @keywords internal
 create.default.covariates <- function(params) {
-  timeVarying <- ""
-  timeVarying_bas <- ""
-  fixed <- ""
-  trial <- ""
-  tx_bas <- paste0(params@treatment, params@baseline.indicator, "+")
-  followup <- paste0(paste0("followup", c("", params@squared.indicator), collapse = "+"), "+")
+  timeVarying <- NULL
+  timeVarying_bas <- NULL
+  fixed <- NULL
+  trial <- NULL
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
+  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
   interaction <- paste0(params@treatment, params@baseline.indicator, "*", "followup")
 
   if (length(params@time_varying) > 0) {
-    timeVarying <- paste0(paste0(params@time_varying, collapse = "+"), "+")
-    timeVarying_bas <- paste0(paste0(params@time_varying, params@baseline.indicator, collapse = "+"), "+")
+    timeVarying <- paste0(params@time_varying, collapse = "+")
+    timeVarying_bas <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
   }
 
   if (length(params@fixed) > 0) {
-    fixed <- paste0(paste0(params@fixed, collapse = "+"), "+")
+    fixed <- paste0(params@fixed, collapse = "+")
   }
-  if (params@include.trial) trial <- paste0(paste0("trial", c("", params@squared.indicator), collapse = "+"), "+")
-  if (params@include.period) period <- paste0(paste0("period", c("", params@squared.indicator), collapse = "+"), "+")
+  if (params@include.trial) trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
+  if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
 
   if (params@method == "ITT") {
-    out <- paste0(fixed, timeVarying_bas, interaction)
+    out <- paste0(c(fixed, timeVarying_bas, interaction), collapse = "+")
     return(out)
   }
 
   if (params@weighted) {
     if (params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, followup, period, dose)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, tx_bas, followup, trial, interaction)
-      if (params@method == "censoring" & params@excused) out <- paste0(tx_bas, followup, trial, interaction)
+      if (params@method == "dose-response") out <- paste0(c(fixed, followup, period, dose), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, tx_bas, followup, trial, interaction), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, interaction), collapse = "+")
     } else if (!params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, period, dose)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial, interaction)
-      if (params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial, interaction)
+      if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying_bas, followup, period, dose), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial, interaction), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial, interaction), collapse = "+")
     }
     return(out)
   }
 }
 
+# TODO - in weight covariates, does include.trial and include.period affect time?
 create.default.weight.covariates <- function(params, type) {
-  timeVarying <- ""
-  timeVarying_bas <- ""
-  fixed <- ""
+  timeVarying <- NULL
+  timeVarying_bas <- NULL
+  fixed <- NULL
   trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
-  followup <- paste0(paste0("followup", c("", params@squared.indicator), collapse = "+"), "+")
+  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
 
   if (length(params@time_varying) > 0) {
-    timeVarying <- paste0(paste0(params@time_varying, collapse = "+"), "+")
-    timeVarying_bas <- paste0(paste0(params@time_varying, params@baseline.indicator, collapse = "+"), "+")
+    timeVarying <- paste0(params@time_varying, collapse = "+")
+    timeVarying_bas <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
   }
 
   if (length(params@fixed) > 0) {
-    fixed <- paste0(paste0(params@fixed, collapse = "+"), "+")
+    fixed <- paste0(params@fixed, collapse = "+")
   }
 
   if (type == "numerator") {
     if (params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, time)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, time)
+      if (params@method == "dose-response") out <- paste0(c(fixed, time), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, time), collapse = "+")
       if (params@method == "censoring" & params@excused) out <- NA_character_
     } else if (!params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, timeVarying_bas, followup, trial)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial)
-      if (params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying_bas, followup, trial)
+      if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, timeVarying, time)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying, time)
-      if (params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying, time)
+      if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying, time), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
     } else if (!params@pre.expansion) {
-      if (params@method == "dose-response") out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
-      if (params@method == "censoring" & !params@excused) out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
-      if (params@method == "censoring" & params@excused) out <- paste0(fixed, timeVarying, timeVarying_bas, followup, trial)
+      if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
     }
   }
   return(out)
 }
 
-create.default.LTFU.covariates <- function(params){
-  fixed <- ""
-  timeVarying <- ""
+create.default.LTFU.covariates <- function(params, type){
+  timeVarying <- NULL
+  timeVarying_bas <- NULL
+  fixed <- NULL
+  trial <- NULL
+  period <- NULL
+  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
+  time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
-  fixed <- paste0(params@fixed, collapse = "+")
-  timeVarying <- paste0(params@time_varying, collapse = "+")
+  if (length(params@time_varying) > 0) {
+    timeVarying <- paste0(params@time_varying, collapse = "+")
+    timeVarying_bas <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+  }
 
-  out <- paste0(c(fixed, timeVarying), collapse = "+")
+  if (length(params@fixed) > 0) {
+    fixed <- paste0(params@fixed, collapse = "+")
+  }
+
+  if (params@include.trial) trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
+  if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
+
+  if (type == "numerator") {
+    if (params@pre.expansion) {
+      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, time, fixed), collapse = "+")
+    } else if (!params@pre.expansion) {
+      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
+    }
+  } else if (type == "denominator") {
+    if (params@pre.expansion) {
+      if (params@method == "ITT") out <- paste0(c(tx_bas, time, fixed, timeVarying), collapse = "+")
+    } else if (!params@pre.expansion) {
+      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
+    }
+  }
 
   return(out)
 }

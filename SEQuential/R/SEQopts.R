@@ -14,6 +14,8 @@
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @param numerator String: numerator covariates to coerce to formula object
 #' @param denominator String: denominator covariates to coerce to formula object
+#' @param ltfu.numerator String: TODO
+#' @param ltfu.denominator String: TODO
 #' @param surv String: survival covariates to coerce to formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param pre.expansion Logical: whether weighting should be done on pre-expanded data
@@ -34,7 +36,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
                     covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
-                    LTFU.covs = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
+                    ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
   # Standardization =============================================================
@@ -53,7 +55,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   covariates <- gsub("\\s", "", covariates)
   numerator <- gsub("\\s", "", numerator)
   denominator <- gsub("\\s", "", denominator)
-  LTFU.covs <- gsub("\\s", "", LTFU.covs)
+  ltfu.numerator <- gsub("\\s", "", ltfu.numerator)
+  ltfu.denominator <- gsub("\\s", "", ltfu.denominator)
   surv <- gsub("\\s", "", surv)
 
   weighted <- as.logical(weighted)
