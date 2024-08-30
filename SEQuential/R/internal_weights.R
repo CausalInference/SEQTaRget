@@ -21,8 +21,11 @@ internal.weights <- function(DT, data, params) {
   if (params@method == "ITT") {
     if (params@pre.expansion) weight <- params@data else weight <- params@DT
 
-    ltfu.data <- prepare.data(weight, params, type = NA, model = NA, case = "LTFU")
-    ltfu <- fastglm::fastglm(ltfu.data$X, ltfu.data$y, family = quasibinomial(), method = 2)
+    ltfu.data.numerator <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
+    ltfu.data.denominator <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
+
+    ltfu.denominator <- fastglm::fastglm(ltfu.data.denominator$X, ltfu.data.denominator$y, family = quasibinomial(), method = 2)
+    ltfu.numerator <- fastglm::fastglm(ltfu.data.numerator$X, ltfu.data.numerator$y, family = quasibinomial(), method = 2)
 
     out <- weight
 

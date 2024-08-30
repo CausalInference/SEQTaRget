@@ -108,13 +108,13 @@ create.default.LTFU.covariates <- function(params, type){
 
   if (type == "numerator") {
     if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, time, fixed), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c(params@treatment, time, fixed), collapse = "+")
     } else if (!params@pre.expansion) {
       if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(tx_bas, time, fixed, timeVarying), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c(params@treatment, time, fixed, timeVarying), collapse = "+")
     } else if (!params@pre.expansion) {
       if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
     }
@@ -180,6 +180,10 @@ inline.pred <- function(model, newdata, params, type){
 #' @keywords internal
 
 prepare.data <- function(weight, params, type, model, case){
+  followup <- NULL
+  isExcused <- NULL
+  tx_lag <- NULL
+
   weight <- weight[!is.na(get(params@outcome))]
   if (case == "default") {
     if (type == "numerator") {
@@ -224,12 +228,16 @@ prepare.data <- function(weight, params, type, model, case){
     X <- cbind(X, rep(1, nrow(X)))
 
   } else if (case == "LTFU") {
-    cols <- unlist(strsplit(params@LTFU.covs, "\\+"))
+    if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+"))
+    if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
+    ykept <- c(params@cense)
 
     y <- weight[[params@cense]]
-    X <- as.matrix(weight[, cols, with = FALSE])
+    rev <- abs(y - 1)
+    X <- as.matrix(weight[, paste0(params@time, params@squared.indicator) := get(params@time)^2
+                          ][, cols, with = FALSE])
     X <- cbind(X, rep(1, nrow(X)))
   }
 
-  return(list(y = y, X = X))
+  return(list(y = rev, X = X))
 }
