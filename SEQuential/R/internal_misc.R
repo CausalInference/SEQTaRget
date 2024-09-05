@@ -110,7 +110,7 @@ create.default.LTFU.covariates <- function(params, type){
     if (params@pre.expansion) {
       if (params@method == "ITT") out <- paste0(c("tx_lag", time, fixed), collapse = "+")
     } else if (!params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying_bas), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@pre.expansion) {
