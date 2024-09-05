@@ -18,42 +18,41 @@ internal.weights <- function(DT, data, params) {
   isExcused <- NULL
 
   # Setting up weight data ====================================
-  if (params@method == "ITT") {
-    if (params@pre.expansion) weight <- params@data else weight <- params@DT
+  if (!params@pre.expansion) {
+    subtable.kept <- c(params@treatment, params@id, params@time)
+    params@time <- "period"
 
-    ltfu.data.numerator <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
-    ltfu.data.denominator <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
+    baseline.lag <- data[, subtable.kept, with = FALSE
+                         ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
+                           ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := 0
+                             ][, eval(params@treatment) := NULL]
 
-    ltfu.denominator <- fastglm::fastglm(ltfu.data.denominator$X, ltfu.data.denominator$y, family = quasibinomial(), method = 2)
-    ltfu.numerator <- fastglm::fastglm(ltfu.data.numerator$X, ltfu.data.numerator$y, family = quasibinomial(), method = 2)
+    setnames(baseline.lag, 2, params@time)
+    # conditional join
+    weight <- rbind(
+      DT[followup == 0,
+         ][baseline.lag, on = c(params@id, params@time), nomatch = 0],
+      DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
+         ][followup != 0, ])[, paste0(params@time, params@squared.indicator) := get(params@time)^2
+                             ]
 
-    out <- weight
+    if (params@excused) weight <- weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
   } else {
-    if (!params@pre.expansion) {
-      subtable.kept <- c(params@treatment, params@id, params@time)
-      params@time <- "period"
+    weight <- data[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
+                   ][get(params@time) == 0, tx_lag := 0
+                     ][, paste0(params@time, "_sq") := get(params@time)^2]
+  }
+  # Modeling ======================================================
+  if (params@method == "ITT" | params@LTFU) {
+    ltfu.numerator.data <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
+    ltfu.denominator.data <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
 
-      baseline.lag <- data[, subtable.kept, with = FALSE
-                           ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                             ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := 0
-                               ][, eval(params@treatment) := NULL]
+    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = 2)
+    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = 2)
 
-      setnames(baseline.lag, 2, params@time)
-      # conditional join
-      weight <- rbind(
-        DT[followup == 0,
-           ][baseline.lag, on = c(params@id, params@time), nomatch = 0],
-        DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
-           ][followup != 0, ])[, paste0(params@time, params@squared.indicator) := get(params@time)^2
-                               ][, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
-    } else {
-      weight <- data[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                     ][get(params@time) == 0, tx_lag := 0
-                       ][, paste0(params@time, "_sq") := get(params@time)^2]
-    }
-
-    if(!(params@excused & params@pre.expansion)){
+  } else {
+    if (!(params@excused & params@pre.expansion)){
       n0.data <- prepare.data(weight, params, type = "numerator", model = 0, case = "default")
       n1.data <- prepare.data(weight, params, type = "numerator", model = 1, case = "default")
 
@@ -65,8 +64,10 @@ internal.weights <- function(DT, data, params) {
 
     denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = 2)
     denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = 2)
+  }
 
-    # Modeling ====================================================
+
+    # Estimating ====================================================
     if (!params@excused) {
       out <- weight[tx_lag == 0, `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator"),
                                       denominator = inline.pred(denominator0, .SD, params, "denominator"))
@@ -92,7 +93,6 @@ internal.weights <- function(DT, data, params) {
       }
       setnames(out, params@time, "period")
     }
-  }
 
   if (params@LTFU) {
     out <- out[, cense1.wt := inline.pred(ltfu, .SD, params, "LTFU")]

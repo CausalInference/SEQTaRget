@@ -92,7 +92,7 @@ create.default.LTFU.covariates <- function(params, type){
   period <- NULL
   followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
-  tx_bas <- paste0(params@treatment, params@baseline.indicator)
+#  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -108,15 +108,15 @@ create.default.LTFU.covariates <- function(params, type){
 
   if (type == "numerator") {
     if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(params@treatment, time, fixed), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c("tx_lag", time, fixed), collapse = "+")
     } else if (!params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(params@treatment, time, fixed, timeVarying), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c("tx_lag", time, fixed, timeVarying), collapse = "+")
     } else if (!params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c(tx_bas, trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
+      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
     }
   }
 
@@ -232,12 +232,10 @@ prepare.data <- function(weight, params, type, model, case){
     if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
     ykept <- c(params@cense)
 
-    y <- weight[[params@cense]]
-    rev <- abs(y - 1)
+    y <- abs(weight[[params@cense]] - 1)
     X <- as.matrix(weight[, paste0(params@time, params@squared.indicator) := get(params@time)^2
                           ][, cols, with = FALSE])
     X <- cbind(X, rep(1, nrow(X)))
   }
-
-  return(list(y = rev, X = X))
+  return(list(y = y, X = X))
 }

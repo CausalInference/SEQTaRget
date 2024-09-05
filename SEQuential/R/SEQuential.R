@@ -48,7 +48,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # data <- SEQdata
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = FALSE, excused.col1 = "excusedOne", excused.col0 = "excusedZero", cense = "LTFU")
+    options <- SEQopts(pre.expansion = FALSE, cense = "LTFU")
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
