@@ -41,7 +41,6 @@ internal.analysis <- function(params) {
                       ][, wt := numerator / denominator
                         ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
         }
-        model <- internal.model(WDT, params)
       } else {
         if (params@excused) {
           params@time <- "period"
@@ -64,13 +63,10 @@ internal.analysis <- function(params) {
                       ][, wt := numerator / denominator
                         ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
         }
-
-        if (params@LTFU) {
-          WDT <- WDT[, weight := weight * cense1]
-        }
-
-        model <- internal.model(WDT, params)
       }
+      if (params@LTFU) WDT <- WDT[, weight := weight * cense1]
+      model <- internal.model(WDT, params)
+
       percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
       stats <- list(
         n0.coef = WT@coef.n0,
