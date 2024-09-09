@@ -13,7 +13,7 @@ internal.weights <- function(DT, data, params) {
   # Variable pre-definition ===================================
   tx_lag <- NULL
   numerator <- denominator <- NULL
-  cense1.wt <- cense2.wt <- NULL
+  cense1.numerator <- cense1.denominator <- NULL
   followup <- NULL
   isExcused <- NULL
 
@@ -65,9 +65,8 @@ internal.weights <- function(DT, data, params) {
     denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = 2)
     denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = 2)
   }
-
-
     # Estimating ====================================================
+  if(params@method != "ITT") {
     if (!params@excused) {
       out <- weight[tx_lag == 0, `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator"),
                                       denominator = inline.pred(denominator0, .SD, params, "denominator"))
@@ -93,12 +92,18 @@ internal.weights <- function(DT, data, params) {
       }
       setnames(out, params@time, "period")
     }
+  } else out <- weight
 
   if (params@LTFU) {
-    out <- out[, cense1.wt := inline.pred(ltfu, .SD, params, "LTFU")]
+    if (params@method == "ITT") {
+      out <- out[, `:=` (numerator = 1,
+                         denominator = 1)]
+    }
+    out <- out[, `:=` (cense1.numerator = inline.pred(ltfu.numerator, .SD, params, "LTFU"),
+                       cense2.denominator = inline.pred(ltfu.denominator, .SD, params, "LTFU"))]
   }
 
-  kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1.wt")
+  kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1.denominator", "cense1.numerator")
   kept <- kept[kept %in% names(out)]
   out <- out[, kept, with = FALSE]
 

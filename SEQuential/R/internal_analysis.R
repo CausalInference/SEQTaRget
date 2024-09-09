@@ -11,12 +11,9 @@ internal.analysis <- function(params) {
   wt <- NULL
   tmp <- NULL
   weight <- NULL
-  cprod.numerator <- NULL
-  cprod.Numerator <- NULL # TODO - fix these
-  cprod.denominator <- NULL
-  cprod.Denominator <- NULL
   followup <- NULL
   isExcused <- NULL
+  #TODO cleanup unused columns befoe they go to internal.analysis
 
   handler <- function(DT, data, params) {
     if (!params@weighted) {
@@ -31,20 +28,18 @@ internal.analysis <- function(params) {
                     ][get(params@time) == 0 & trial == 0, denominator := 1
                       ][denominator < 1e-15, denominator := 1
                         ][is.na(get(params@outcome)), denominator := 1
-                          ][, numerator := 1][, wt := numerator / denominator
-                                              ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
-                                                ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
-                                                  ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                                    ][, weight := weight[1], list(cumsum(!is.na(weight)))]
+                          ][, wt := numerator / denominator
+                            ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
+                              ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
+                                ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
+                                  ][, weight := weight[1], list(cumsum(!is.na(weight)))]
         } else {
           params@time <- "period"
           WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                     ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1,
                                                                denominator = 1)
-                      ][is.na(numerator), numerator := 1
-                        ][, `:=`(cprod.Numerator = cumprod(numerator),
-                                 cprod.Denominator = cumprod(denominator)), by = c(eval(params@id), "trial")
-                          ][, weight := cprod.Numerator / cprod.Denominator]
+                      ][, wt := numerator / denominator
+                        ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
         }
         model <- internal.model(WDT, params)
       } else {
@@ -66,10 +61,13 @@ internal.analysis <- function(params) {
           WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                     ][followup == 0, `:=`(numerator = 1,
                                           denominator = 1)
-                      ][is.na(numerator), numerator := 1
-                        ][, `:=`(cprod.Numerator = cumprod(numerator),
-                                 cprod.Denominator = cumprod(denominator)), by = c(eval(params@id), "trial")
-                          ][, weight := cprod.Numerator / cprod.Denominator]
+                      ][, wt := numerator / denominator
+                        ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
+        }
+
+        if (params@LTFU) {
+          WDT <- WDT[, cense1.wt := cense1.numerator / cense1.denominator
+                     ][, weight := weight * cense1.wt]
         }
 
         model <- internal.model(WDT, params)
