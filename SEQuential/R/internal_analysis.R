@@ -10,7 +10,7 @@ internal.analysis <- function(params) {
   numerator <- NULL
   wt <- NULL
   tmp <- NULL
-  weight <- NULL
+  weight <- cense1 <- NULL
   followup <- NULL
   isExcused <- NULL
   #TODO cleanup unused columns befoe they go to internal.analysis
@@ -66,8 +66,7 @@ internal.analysis <- function(params) {
         }
 
         if (params@LTFU) {
-          WDT <- WDT[, cense1.wt := cense1.numerator / cense1.denominator
-                     ][, weight := weight * cense1.wt]
+          WDT <- WDT[, weight := weight * cense1]
         }
 
         model <- internal.model(WDT, params)

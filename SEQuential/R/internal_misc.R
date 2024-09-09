@@ -165,8 +165,8 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
     if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
   }
   if(case == "LTFU") {
-    if (type == "numerator") cols <- unlist(strsplit(params@cense1.numerator, "\\+"))
-    if (type == "denominator") cols <- unlist(strsplit(params@cense1.denominator, "\\+"))
+    if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+"))
+    if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
   }
   data <- newdata[, cols, with = FALSE]
 

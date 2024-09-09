@@ -13,7 +13,7 @@ internal.weights <- function(DT, data, params) {
   # Variable pre-definition ===================================
   tx_lag <- NULL
   numerator <- denominator <- NULL
-  cense1.numerator <- cense1.denominator <- NULL
+  cense1 <- cense1.numerator <- cense1.denominator <- NULL
   followup <- NULL
   isExcused <- NULL
 
@@ -76,7 +76,6 @@ internal.weights <- function(DT, data, params) {
                                           denominator = inline.pred(denominator1, .SD, params, "denominator"))
                         ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                          denominator = 1 - denominator)]
-      setnames(out, params@time, "period")
     } else {
           out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := inline.pred(denominator0, .SD, params, "denominator")
                         ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
@@ -90,7 +89,6 @@ internal.weights <- function(DT, data, params) {
                    ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := inline.pred(numerator1, .SD, params, "numerator")
                      ][get(params@treatment) == 0, numerator := 1 - numerator]
       }
-      setnames(out, params@time, "period")
     }
   } else out <- weight
 
@@ -100,19 +98,21 @@ internal.weights <- function(DT, data, params) {
                          denominator = 1)]
     }
     out <- out[, `:=` (cense1.numerator = inline.pred(ltfu.numerator, .SD, params, "numerator", "LTFU"),
-                       cense2.denominator = inline.pred(ltfu.denominator, .SD, params, "denominator", "LTFU"))]
+                       cense1.denominator = inline.pred(ltfu.denominator, .SD, params, "denominator", "LTFU"))
+               ][, cense1 := cense1.numerator / cense1.denominator]
   }
 
-  kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1.denominator", "cense1.numerator")
+  if (params@time %in% names(out)) setnames(out, params@time, "period")
+  kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "cense2")
   kept <- kept[kept %in% names(out)]
   out <- out[, kept, with = FALSE]
 
   weight.info <- new("SEQweights",
     weights = out,
-    coef.n0 = if (!(params@excused & params@pre.expansion)) coef(numerator0) else NA_real_,
-    coef.n1 = if (!(params@excused & params@pre.expansion)) coef(numerator1) else NA_real_,
-    coef.d0 = coef(denominator0),
-    coef.d1 = coef(denominator1)
+    coef.n0 = if (!(params@excused & params@pre.expansion) & params@method != "ITT") coef(numerator0) else NA_real_,
+    coef.n1 = if (!(params@excused & params@pre.expansion) & params@method != "ITT") coef(numerator1) else NA_real_,
+    coef.d0 = if (params@method != "ITT") coef(denominator0) else NA_real_,
+    coef.d1 = if (params@method != "ITT") coef(denominator1) else NA_real_
   )
   return(weight.info)
 }
