@@ -159,10 +159,15 @@ assign.global <- function(ncores, pos = 1) {
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type){
-  if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+"))
-  if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
-  if(type == "LTFU") cols <- unlist(strsplit(params@LTFU.covs, "\\+"))
+inline.pred <- function(model, newdata, params, type, case = "default"){
+  if (case == "default") {
+    if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+"))
+    if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
+  }
+  if(case == "LTFU") {
+    if (type == "numerator") cols <- unlist(strsplit(params@cense1.numerator, "\\+"))
+    if (type == "denominator") cols <- unlist(strsplit(params@cense1.denominator, "\\+"))
+  }
   data <- newdata[, cols, with = FALSE]
 
   X <- as.matrix(data)

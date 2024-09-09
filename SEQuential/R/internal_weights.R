@@ -99,8 +99,8 @@ internal.weights <- function(DT, data, params) {
       out <- out[, `:=` (numerator = 1,
                          denominator = 1)]
     }
-    out <- out[, `:=` (cense1.numerator = inline.pred(ltfu.numerator, .SD, params, "LTFU"),
-                       cense2.denominator = inline.pred(ltfu.denominator, .SD, params, "LTFU"))]
+    out <- out[, `:=` (cense1.numerator = inline.pred(ltfu.numerator, .SD, params, "numerator", "LTFU"),
+                       cense2.denominator = inline.pred(ltfu.denominator, .SD, params, "denominator", "LTFU"))]
   }
 
   kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1.denominator", "cense1.numerator")
