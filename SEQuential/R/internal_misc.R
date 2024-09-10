@@ -24,7 +24,8 @@ create.default.covariates <- function(params) {
   if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
 
   if (params@method == "ITT") {
-    out <- paste0(c(fixed, timeVarying_bas, interaction), collapse = "+")
+    if (params@pre.expansion) out <- paste0(c(fixed, timeVarying_bas, interaction), collapse = "+")
+    if (!params@pre.expansion) out <- paste0(c(fixed, timeVarying_bas, trial, interaction), collapse = "+")
     return(out)
   }
 
