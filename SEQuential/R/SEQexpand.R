@@ -27,11 +27,13 @@ SEQexpand <- function(params) {
   if (!params@weighted) {
     vars.intake <- c(params@covariates, params@surv)
   } else {
-    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv)
+    vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv,
+                     params@ltfu.denominator, params@ltfu.numerator)
     if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
   }
-  vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")), params@treatment))
-  vars.nin <- c("dose", "dose_sq", eval(params@time), eval(paste0(params@time, params@squared.indicator)))
+  vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")),
+                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2))
+  vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@squared.indicator), "tx_lag")
   vars <- vars[!is.na(vars)]
   vars <- vars[!vars %in% vars.nin]
   vars.base <- vars[grep(params@baseline.indicator, vars)]
@@ -43,7 +45,11 @@ SEQexpand <- function(params) {
   vars.sq <- unique(sub(params@squared.indicator, "", vars.sq))
   vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
-  data <- DT[get(params@eligible) == 1, list(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id)][, cbind(.SD, trial = rowid(get(params@id)) - 1)][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")][followup <= params@max.followup, ]
+  data <- DT[get(params@eligible) == 1, list(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id)
+             ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
+               ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
+                 ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
+                   ][followup <= params@max.followup, ]
 
   data_list <- list()
   if (length(c(vars.time, vars.sq)) > 0) {

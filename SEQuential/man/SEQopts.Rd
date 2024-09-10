@@ -22,6 +22,12 @@ SEQopts(
   denominator = NA,
   surv = NA,
   pre.expansion = TRUE,
+  ltfu.numerator = NA,
+  ltfu.denominator = NA,
+  cense = NA,
+  cense2 = NA,
+  eligible_cense = NA,
+  eligible_cense2 = NA,
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
@@ -63,6 +69,18 @@ SEQopts(
 \item{surv}{String: survival covariates to coerce to formula object}
 
 \item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
+
+\item{ltfu.numerator}{String: TODO}
+
+\item{ltfu.denominator}{String: TODO}
+
+\item{cense}{String: TODO}
+
+\item{cense2}{String: TODO}
+
+\item{eligible_cense}{String: TODO}
+
+\item{eligible_cense2}{String: TODO}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 

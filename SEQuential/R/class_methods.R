@@ -14,12 +14,19 @@
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @slot numerator String: numerator covariates to coerce to formula object
 #' @slot denominator String: denominator covariates to coerce to formula object
+#' @slot ltfu.numerator String: TODO
+#' @slot ltfu.denominator String: TODO
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
+#' @slot cense String: TODO
+#' @slot cense2 String: TODO
+#' @slot eligible_cense String: TODO
+#' @slot eligible_cense2 String: TODO
 #' @slot excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @slot excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @slot LTFU Logical: internal flag for LTFU weighting
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 
@@ -39,11 +46,18 @@ setClass("SEQopts",
     weighted = "logical",
     pre.expansion = "logical",
     excused = "logical",
+    cense = "character",
+    cense2 = "character",
+    eligible_cense = "character",
+    eligible_cense2 = "character",
     excused.col0 = "character",
     excused.col1 = "character",
+    LTFU = "logical",
     covariates = "character",
     numerator = "character",
     denominator = "character",
+    ltfu.numerator = "character",
+    ltfu.denominator = "character",
     surv = "character",
     baseline.indicator = "character",
     squared.indicator = "character"
@@ -61,11 +75,18 @@ setClass("SEQopts",
     weighted = FALSE,
     pre.expansion = TRUE,
     excused = FALSE,
+    cense = NA_character_,
+    cense2 = NA_character_,
+    eligible_cense = NA_character_,
+    eligible_cense2 = NA_character_,
     excused.col0 = NA_character_,
     excused.col1 = NA_character_,
+    LTFU = FALSE,
     covariates = NA_character_,
     numerator = NA_character_,
     denominator = NA_character_,
+    ltfu.numerator = NA_character_,
+    ltfu.denominator = NA_character_,
     surv = NA_character_,
     baseline.indicator = "_bas",
     squared.indicator = "_sq"

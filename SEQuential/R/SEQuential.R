@@ -28,8 +28,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (missing(method)) stop("Method of analysis was not supplied")
   if (!method %in% c("ITT", "dose-response", "censoring")) stop("Method ", method, "is unsupported. Supported methods are:
                                                                'dose-response', 'ITT', and 'censoring'")
-  if (length(time_varying.cols) < 1) warning("Time varying columns was not supplied")
-  if (length(fixed.cols) < 1) warning("Fixed columns was not supplied")
+  if (length(time_varying.cols) < 1) warning("Time varying columns were not supplied")
+  if (length(fixed.cols) < 1) warning("Fixed columns were not supplied")
 
   cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
   missing.cols <- cols[!cols %in% names(data)]
@@ -44,12 +44,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    # data <- fread("datagenExcused.csv")
+    data <- fread("SEQdata_ltfu_2.csv")
     # data <- SEQdata
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQuential::SEQopts(pre.expansion = FALSE, weighted = TRUE, excused = TRUE, excused.col1 = "excusedOne", excused.col0 = "excusedZero", parallel = TRUE, bootstrap = TRUE, nboot = 100)
-    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
+    method <- "dose-response"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts(pre.expansion = TRUE, cense = "LTFU", weighted = TRUE)
+    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
   }
 
   # Parameter Setup ==================================
@@ -66,9 +66,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
   if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
-  if (params@weighted) {
+  if (params@weighted & params@method != "ITT") {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
+  }
+  if (params@LTFU) {
+    if (is.na(params@ltfu.numerator)) params@ltfu.numerator <- create.default.LTFU.covariates(params, "numerator")
+    if (is.na(params@ltfu.denominator)) params@ltfu.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
 
   # Parallel Setup ==================================

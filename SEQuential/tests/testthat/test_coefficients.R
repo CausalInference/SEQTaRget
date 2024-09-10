@@ -179,3 +179,49 @@ test_that("Post-Expansion Excused Censoring", {
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
 })
+
+test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
+  data <- SEQdata.LTFU
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(cense = "LTFU", pre.expansion = TRUE))
+
+  expect_s4_class(model, "SEQoutput")
+
+  expected <- list(
+    `(Intercept)` = -1.4348244162825,
+    sex = 0.0578472989119999,
+    N_bas = 6.62467716389115e-06,
+    L_bas = -0.0569574476787094,
+    P_bas = -0.396831308904797,
+    tx_init_bas = -0.0393725815326663,
+    followup = 0.0266190146171601,
+    `tx_init_bas:followup` = -0.000581459477945257)
+
+  test <- as.list(model@outcome_model[[1]])
+  expect_equal(test, expected, tolerance = 1e-2)
+})
+
+test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
+  data <- SEQdata.LTFU
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(cense = "LTFU", pre.expansion = FALSE))
+
+  expect_s4_class(model, "SEQoutput")
+
+  expected <- list(
+    `(Intercept)` = -6.20645685197078,
+    sex = 0.047444072162239,
+    N_bas = 0.000581363083345401,
+    L_bas = -0.159943984561706,
+    P_bas = 0.157473854878466,
+    trial = 0.0470295163644785,
+    trial_sq = 0.000655423692321318,
+    tx_init_bas = -0.163600019438483,
+    followup = 0.0229638301738138,
+    `tx_init_bas:followup` = 0.00839924678598092)
+
+  test <- as.list(model@outcome_model[[1]])
+  expect_equal(test, expected, 1e-2)
+})

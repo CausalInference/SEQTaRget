@@ -38,6 +38,10 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{denominator}}{String: denominator covariates to coerce to formula object}
 
+\item{\code{ltfu.numerator}}{String: TODO}
+
+\item{\code{ltfu.denominator}}{String: TODO}
+
 \item{\code{surv}}{String: survival covariates to coerce to formula object}
 
 \item{\code{weighted}}{Logical: whether or not to preform weighted analysis, default is FALSE}
@@ -46,9 +50,19 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{excused}}{Logical: in the case of censoring, whether there is an excused condition}
 
+\item{\code{cense}}{String: TODO}
+
+\item{\code{cense2}}{String: TODO}
+
+\item{\code{eligible_cense}}{String: TODO}
+
+\item{\code{eligible_cense2}}{String: TODO}
+
 \item{\code{excused.col1}}{String: in the case of \code{excused = TRUE} the column name for Excused1}
 
 \item{\code{excused.col0}}{String: in the case of \code{excused = TRUE} the column name for Excused0}
+
+\item{\code{LTFU}}{Logical: internal flag for LTFU weighting}
 
 \item{\code{baseline.indicator}}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
