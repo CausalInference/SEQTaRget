@@ -108,17 +108,11 @@ create.default.LTFU.covariates <- function(params, type){
   if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
 
   if (type == "numerator") {
-    if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c("tx_lag", time, fixed), collapse = "+")
-    } else if (!params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying_bas), collapse = "+")
-    }
+    if (params@pre.expansion) out <- paste0(c("tx_lag", time, fixed), collapse = "+")
+    if (!params@pre.expansion) out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying_bas), collapse = "+")
   } else if (type == "denominator") {
-    if (params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c("tx_lag", time, fixed, timeVarying), collapse = "+")
-    } else if (!params@pre.expansion) {
-      if (params@method == "ITT") out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
-    }
+    if (params@pre.expansion) out <- paste0(c("tx_lag", time, fixed, timeVarying), collapse = "+")
+    if (!params@pre.expansion) out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
   }
 
   return(out)

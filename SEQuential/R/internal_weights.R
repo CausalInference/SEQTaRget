@@ -51,7 +51,8 @@ internal.weights <- function(DT, data, params) {
     ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = 2)
     ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = 2)
 
-  } else {
+  }
+  if(params@method != "ITT"){
     if (!(params@excused & params@pre.expansion)){
       n0.data <- prepare.data(weight, params, type = "numerator", model = 0, case = "default")
       n1.data <- prepare.data(weight, params, type = "numerator", model = 1, case = "default")
@@ -65,6 +66,7 @@ internal.weights <- function(DT, data, params) {
     denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = 2)
     denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = 2)
   }
+
     # Estimating ====================================================
   if(params@method != "ITT") {
     if (!params@excused) {

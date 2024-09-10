@@ -83,6 +83,5 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   }, future.seed = 1636)
   return(data.table::rbindlist(output))
 }
-SEQdata.LTFU <- generate_data(1e3, 59, TRUE)
-
-usethis::use_data(SEQdata.LTFU, overwrite = TRUE)
+#SEQdata.LTFU <- generate_data(1e2, 59, TRUE)
+#usethis::use_data(SEQdata.LTFU, overwrite = TRUE)
