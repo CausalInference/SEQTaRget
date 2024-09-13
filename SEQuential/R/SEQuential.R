@@ -44,7 +44,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQdata_ltfu_2.csv")
+    data <- fread("SEQdata_ltfu_3.csv")
     # data <- SEQdata
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "dose-response"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
