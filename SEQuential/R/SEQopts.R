@@ -26,8 +26,10 @@
 #' @param eligible_cense2 String: TODO
 #' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
+#'
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -37,7 +39,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
-                    excused = FALSE, excused.col1 = NA, excused.col0 = NA,
+                    excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
@@ -95,6 +97,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     eligible_cense2 = eligible_cense2,
     excused.col1 = excused.col1,
     excused.col0 = excused.col0,
+    km.curves = km.curves,
     covariates = covariates,
     numerator = numerator,
     denominator = denominator,

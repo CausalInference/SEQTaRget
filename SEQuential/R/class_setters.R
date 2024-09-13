@@ -40,6 +40,7 @@ parameter.setter <- function(data, DT,
     denominator = opts@denominator,
     ltfu.numerator = opts@ltfu.numerator,
     ltfu.denominator = opts@ltfu.denominator,
+    km.curves = opts@km.curves,
     surv = opts@surv,
     baseline.indicator = opts@baseline.indicator,
     squared.indicator = opts@squared.indicator
@@ -112,10 +113,10 @@ prepare.output <- function(params, outcome_model, survival_curve, risk, elapsed_
     denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
     outcome_model = outcome.coefs,
     weight_statistics = weight.stats,
-    survival_curve = survival_curve,
-    survival_data = survival_curve$data,
-    risk_difference = risk$rd,
-    risk_ratio = risk$rr,
+    survival_curve = if (!params@km.curves) NA else survival_curve,
+    survival_data = if (!params@km.curves) NA else survival_curve$data,
+    risk_difference = if (!params@km.curves) NA_real_ else risk$rd,
+    risk_ratio = if (!params@km.curves) NA_real_ else risk$rr,
     elapsed_time = elapsed_time
   )
 }

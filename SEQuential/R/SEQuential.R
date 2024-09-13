@@ -48,8 +48,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # data <- SEQdata
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "dose-response"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(pre.expansion = TRUE, cense = "LTFU", weighted = TRUE)
-    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
+    options <- SEQopts(pre.expansion = TRUE, cense = "LTFU")
+    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "ITT", options)
   }
 
   # Parameter Setup ==================================
@@ -98,15 +98,18 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Model Dispersion ===========================================
   outcome <- internal.analysis(params)
+  cat(method, "model created successfully\n")
 
-  cat(method, "model successfully created\nCreating survival curves\n")
-  survival <- internal.survival(params)
-  risk <- create.risk(survival$data)
+  if (params@km.curves) {
+    cat("Creating survival curves\n")
+    survival <- internal.survival(params)
+    risk <- create.risk(survival$data)
+  } else survival <- risk <- NA
 
   out <- prepare.output(params, outcome, survival, risk,
     elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
   )
-
+  cat("Completed")
   plan(future::sequential())
   return(out)
 }

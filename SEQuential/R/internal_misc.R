@@ -228,6 +228,7 @@ prepare.data <- function(weight, params, type, model, case){
     X <- cbind(X, rep(1, nrow(X)))
 
   } else if (case == "LTFU") {
+    weight <- weight[!is.na(get(params@cense)), ]
     if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+"))
     if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
     ykept <- c(params@cense)
