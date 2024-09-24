@@ -8,7 +8,7 @@
 generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   output <- future.apply::future_lapply(1:n, function(x) {
     sex <- as.integer(rbinom(1, 1, 0.5))
-    outcome <- as.integer(rbinom(1, 1, 0.2))
+    outcome <- as.integer(rbinom(1, 1, 0.02))
     tx_time <- as.integer(sample(0:max.time, 1))
 
     if (LTFU){
