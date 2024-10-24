@@ -46,10 +46,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # Debugging tools ==========================================
     data <- fread("SEQdata_ltfu_3.csv")
     # data <- SEQdata
+    #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "dose-response"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(pre.expansion = TRUE, cense = "LTFU")
-    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "ITT", options)
+    method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts(compevent = "LTFU")
+    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
   }
 
   # Parameter Setup ==================================
@@ -65,7 +66,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.simplifier(params)
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
   if (params@weighted & params@method != "ITT") {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
@@ -94,6 +94,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Expansion ==================================================
   cat("Expanding Data...\n")
   params@DT <- SEQexpand(params)
+  gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Model Dispersion ===========================================

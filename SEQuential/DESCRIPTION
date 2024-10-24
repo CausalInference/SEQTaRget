@@ -20,6 +20,7 @@ Imports:
     future,
     future.apply,
     ggplot2,
+    Matrix,
     methods,
     speedglm
 Config/testthat/edition: 3

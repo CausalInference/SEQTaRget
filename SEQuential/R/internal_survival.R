@@ -1,7 +1,7 @@
 #' Internal function for creating survival curves
 #'
 #' @import ggplot2 data.table future doFuture doRNG future.apply
-#' @importFrom speedglm speedglm
+#' @importFrom fastglm fastglm
 #'
 #' @keywords internal
 internal.survival <- function(params) {
@@ -16,34 +16,30 @@ internal.survival <- function(params) {
   surv0_lb <- surv1_lb <- NULL
   surv0_ub <- surv1_ub <- NULL
   mu <- lb <- ub <- NULL
-  tx_lag <- NULL
   followup <- NULL
   numerator <- denominator <- NULL
 
-  params@time <- "followup"
-  if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[[params@time]])
+  if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
-    surv.model <- speedglm::speedglm(
-      formula = paste0(params@outcome, "~", params@surv),
-      data = DT,
-      family = quasibinomial("logit")
-    )
+    if (!is.na(params@compevent)) type <- "compevent" else type <- NA_character_
+    surv.data <- prepare.data(DT, params, type = type, case = "surv")
+    model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
     kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
 
     RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
-               ][get(params@time) == 0,
+               ][get("followup") == 0,
                  ][rep(1:.N, each = params@max.survival + 1)
                    ][, `:=`(followup = seq(1:.N) - 1,
                             followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
                      ][, eval(params@treatment) := FALSE
                        ][, `:=`(dose = FALSE,
                                 dose_sq = FALSE)
-                         ][, predFALSE := predict(surv.model, newdata = .SD, type = "response")
+                         ][, predFALSE := inline.pred(model, newdata = .SD, params, type = "response", case = "surv")
                            ][, eval(params@treatment) := TRUE
                              ][, `:=`(dose = followup,
                                       dose_sq = followup_sq)
-                               ][, predTRUE := predict(surv.model, newdata = .SD, type = "response")
+                               ][, predTRUE := inline.pred(model, newdata = .SD, params, case = "surv")
                                  ][, `:=`(surv0 = cumprod(1 - predFALSE),
                                           surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
                                    ][, `:=`(risk0 = 1 - surv0,

@@ -24,6 +24,7 @@
 #' @param cense2 String: TODO
 #' @param eligible_cense String: TODO
 #' @param eligible_cense2 String: TODO
+#' @param compevent String: TODO
 #' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
@@ -39,6 +40,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
+                    compevent = NA,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     baseline.indicator = "_bas", squared.indicator = "_sq") {
   # Standardization =============================================================
@@ -72,6 +74,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   cense2 <- as.character(cense2)
   eligible_cense <- as.character(eligible_cense)
   eligible_cense2 <- as.character(eligible_cense2)
+  compevent <- as.character(compevent)
 
   baseline.indicator <- as.character(baseline.indicator)
   squared.indicator <- as.character(squared.indicator)
@@ -93,6 +96,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     excused = excused,
     cense = cense,
     cense2 = cense2,
+    compevent = compevent,
     eligible_cense = eligible_cense,
     eligible_cense2 = eligible_cense2,
     excused.col1 = excused.col1,
