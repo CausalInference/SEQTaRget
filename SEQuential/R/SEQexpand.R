@@ -32,7 +32,8 @@ SEQexpand <- function(params) {
     if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
   }
   vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*")),
-                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2))
+                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2,
+                   params@compevent))
   vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@squared.indicator), "tx_lag")
   vars <- vars[!is.na(vars)]
   vars <- vars[!vars %in% vars.nin]

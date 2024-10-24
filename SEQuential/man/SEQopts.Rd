@@ -28,6 +28,7 @@ SEQopts(
   cense2 = NA,
   eligible_cense = NA,
   eligible_cense2 = NA,
+  compevent = NA,
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
@@ -81,6 +82,8 @@ SEQopts(
 \item{eligible_cense}{String: TODO}
 
 \item{eligible_cense2}{String: TODO}
+
+\item{compevent}{String: TODO}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 

@@ -118,14 +118,6 @@ create.default.LTFU.covariates <- function(params, type){
   return(out)
 }
 
-create.default.survival.covariates <- function(params) {
-  if (params@method == "ITT") out <- paste0(params@covariates, "+", paste0(params@treatment, "*", c("followup", "followup_sq"), collapse = "+"))
-  if (params@method == "dose-response") out <- paste0(params@covariates, "+", paste0("followup", "*", c("dose", "dose_sq"), collapse = "+"))
-  if (params@method == "censoring") out <- params@covariates
-
-  return(out)
-}
-
 create.risk <- function(data) {
   table <- data[, .SD[.N], by = "variable"]
   rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
@@ -156,17 +148,17 @@ assign.global <- function(ncores, pos = 1) {
 
 inline.pred <- function(model, newdata, params, type, case = "default"){
   if (case == "default") {
-    if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+"))
-    if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+"))
+    if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+")); covs <- params@numerator
+    if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+")); covs <- params@denominator
   }
   if(case == "LTFU") {
-    if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+"))
-    if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
+    if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+")); covs <- params@numerator
+    if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+")); covs <- params@denominator
   }
-  data <- newdata[, cols, with = FALSE]
+  if(case == "surv") cols <- unlist(strsplit(params@covariates, "\\+")); covs <- params@covariates
+  cols <- unlist(strsplit(covs, "\\*|\\+"))
 
-  X <- as.matrix(data)
-  X <- cbind(X, rep(1, nrow(X)))
+  X <- model.matrix(as.formula(paste0("~", covs)), data = newdata[, cols, with = FALSE])
   pred <- predict(model, X, "response")
   return(pred)
 }
@@ -236,6 +228,12 @@ prepare.data <- function(weight, params, type, model, case){
     X <- as.matrix(weight[, paste0(params@time, params@squared.indicator) := get(params@time)^2
                           ][, cols, with = FALSE])
     X <- cbind(X, rep(1, nrow(X)))
+  } else if (case == "surv") {
+    cols <- unlist(strsplit(params@covariates, "\\+|\\*"))
+
+    if (type == "compevent") y <- weight[[params@compevent]] else y <- weight[[params@outcome]]
+    X <- model.matrix(as.formula(paste0("~", params@covariates)), data = weight[, cols, with = FALSE])
   }
+
   return(list(y = y, X = X))
 }
