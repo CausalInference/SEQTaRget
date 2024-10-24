@@ -32,6 +32,7 @@ SEQopts(
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
+  km.curves = FALSE,
   baseline.indicator = "_bas",
   squared.indicator = "_sq"
 )
@@ -90,6 +91,8 @@ SEQopts(
 \item{excused.col1}{String: in the case of \code{excused = TRUE} the column name for Excused1}
 
 \item{excused.col0}{String: in the case of \code{excused = TRUE} the column name for Excused0}
+
+\item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
 
 \item{baseline.indicator}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 

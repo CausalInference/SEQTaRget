@@ -8,11 +8,11 @@
 generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   output <- future.apply::future_lapply(1:n, function(x) {
     sex <- as.integer(rbinom(1, 1, 0.5))
-    outcome <- as.integer(rbinom(1, 1, 0.7))
+    outcome <- as.integer(rbinom(1, 1, 0.02))
     tx_time <- as.integer(sample(0:max.time, 1))
 
     if (LTFU){
-      LTFU.ind <- rbinom(1, 1, .1)
+      LTFU.ind <- rbinom(1, 1, .2)
       if (LTFU.ind == 1) {
         LTFU.time <- sample(1:max.time, 1)
         LTFU_vector <- c(rep(0, LTFU.time), 1)
@@ -76,6 +76,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
       if (LTFU.ind == 1) ID <- ID[time <= LTFU.time, ]
       ID <- cbind(ID, LTFU = LTFU_vector)
       ID <- cbind(ID, eligible_cense = rep(1, nrow(ID)))
+      ID <- ID[outcome == 1, LTFU := NA]
     }
     if (outcome == 1) ID <- ID[time <= outcome_time]
 
@@ -83,5 +84,5 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   }, future.seed = 1636)
   return(data.table::rbindlist(output))
 }
-#SEQdata.LTFU <- generate_data(1e2, 59, TRUE)
+SEQdata.LTFU <- generate_data(1e4, 59, TRUE)
 #usethis::use_data(SEQdata.LTFU, overwrite = TRUE)

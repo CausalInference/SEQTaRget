@@ -44,7 +44,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQdata_ltfu_2.csv")
+    data <- fread("SEQdata_ltfu_3.csv")
     # data <- SEQdata
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
@@ -99,15 +99,18 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Model Dispersion ===========================================
   outcome <- internal.analysis(params)
+  cat(method, "model created successfully\n")
 
-  cat(method, "model successfully created\nCreating survival curves\n")
-  survival <- internal.survival(params)
-  risk <- create.risk(survival$data)
+  if (params@km.curves) {
+    cat("Creating survival curves\n")
+    survival <- internal.survival(params)
+    risk <- create.risk(survival$data)
+  } else survival <- risk <- NA
 
   out <- prepare.output(params, outcome, survival, risk,
     elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
   )
-
+  cat("Completed")
   plan(future::sequential())
   return(out)
 }
