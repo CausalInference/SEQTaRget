@@ -2,15 +2,15 @@
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
-create.default.covariates <- function(params) {
+create.default.covariates <- function(params, type = "outcome") {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
   trial <- NULL
-  tx_bas <- paste0(params@treatment, params@baseline.indicator)
+  if (type == "outcome") tx_bas <- paste0(params@treatment, params@baseline.indicator) else tx_bas <- params@treatment
   followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
-  interaction <- paste0(params@treatment, params@baseline.indicator, "*", "followup")
+  interaction <- paste0(tx_bas, "*", "followup")
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")

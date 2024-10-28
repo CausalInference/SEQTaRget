@@ -74,6 +74,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (is.na(params@ltfu.numerator)) params@ltfu.numerator <- create.default.LTFU.covariates(params, "numerator")
     if (is.na(params@ltfu.denominator)) params@ltfu.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
+  if (is.na(params@surv)) params@surv <- create.default.covariates(params, type = "surv")
 
   # Parallel Setup ==================================
   if (options@parallel) {
