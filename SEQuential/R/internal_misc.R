@@ -148,16 +148,31 @@ assign.global <- function(ncores, pos = 1) {
 
 inline.pred <- function(model, newdata, params, type, case = "default"){
   if (case == "default") {
-    if(type == "numerator") cols <- unlist(strsplit(params@numerator, "\\+")); covs <- params@numerator
-    if(type == "denominator") cols <- unlist(strsplit(params@denominator, "\\+")); covs <- params@denominator
+    if(type == "numerator") {
+      cols <- unlist(strsplit(params@numerator, "\\+"))
+      covs <- params@numerator
+    }
+    if(type == "denominator") {
+      cols <- unlist(strsplit(params@denominator, "\\+"))
+      covs <- params@denominator
+    }
   }
   if(case == "LTFU") {
-    if (type == "numerator") cols <- unlist(strsplit(params@ltfu.numerator, "\\+")); covs <- params@numerator
-    if (type == "denominator") cols <- unlist(strsplit(params@ltfu.denominator, "\\+")); covs <- params@denominator
+    if (type == "numerator") {
+      cols <- unlist(strsplit(params@ltfu.numerator, "\\+"))
+      covs <- params@ltfu.numerator
+    }
+    if (type == "denominator") {
+      cols <- unlist(strsplit(params@ltfu.denominator, "\\+"))
+      covs <- params@ltfu.denominator
+    }
   }
-  if(case == "surv") cols <- unlist(strsplit(params@covariates, "\\+")); covs <- params@covariates
-  cols <- unlist(strsplit(covs, "\\*|\\+"))
+  if(case == "surv") {
+    cols <- unlist(strsplit(params@covariates, "\\+"))
+    covs <- params@covariates
+  }
 
+  cols <- unlist(strsplit(covs, "\\*|\\+"))
   X <- model.matrix(as.formula(paste0("~", covs)), data = newdata[, cols, with = FALSE])
   pred <- predict(model, X, "response")
   return(pred)

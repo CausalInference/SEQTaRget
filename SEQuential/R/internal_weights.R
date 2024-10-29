@@ -48,8 +48,8 @@ internal.weights <- function(DT, data, params) {
     ltfu.numerator.data <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
     ltfu.denominator.data <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
 
-    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = 2)
-    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = 2)
+    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial())
+    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial())
 
   }
   if(params@method != "ITT"){

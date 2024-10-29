@@ -76,7 +76,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
       if (LTFU.ind == 1) ID <- ID[time <= LTFU.time, ]
       ID <- cbind(ID, LTFU = LTFU_vector)
       ID <- cbind(ID, eligible_cense = rep(1, nrow(ID)))
-      ID <- ID[outcome == 1, LTFU := NA]
+#      ID <- ID[outcome == 1, LTFU := NA]
     }
     if (outcome == 1) ID <- ID[time <= outcome_time]
 
@@ -84,5 +84,6 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   }, future.seed = 1636)
   return(data.table::rbindlist(output))
 }
-SEQdata.LTFU <- generate_data(1e4, 59, TRUE)
+#SEQdata.LTFU <- generate_data(1e3, 59, TRUE)
+#write.csv(SEQdata.LTFU, "SEQdata_LTFU_4.csv", row.names = FALSE)
 #usethis::use_data(SEQdata.LTFU, overwrite = TRUE)

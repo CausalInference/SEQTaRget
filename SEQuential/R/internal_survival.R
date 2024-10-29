@@ -6,10 +6,13 @@
 #' @keywords internal
 internal.survival <- function(params) {
   # Variable pre-definition ===================================
-  trial <- NULL
-  predTRUE <- predFALSE <- NULL
+  trialID <- trial <- NULL
+  surv.predTRUE <- surv.predFALSE <- NULL
+  ce.predTRUE <- ce.predFALSE <- NULL
+  cumsurvFALSE <- cumsurvTRUE <- NULL
   followup <- followup_sq <- NULL
-  surv0 <- surv1 <- NULL
+  surv.0 <- surv.1 <- NULL
+  inc0 <- inc1 <- NULL
   variable <- NULL
   surv0_mu <- surv1_mu <- NULL
   se_surv0 <- se_surv1 <- NULL
@@ -28,7 +31,7 @@ internal.survival <- function(params) {
     }
     surv.data <- prepare.data(DT, params, case = "surv", type = "default")
     surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
-    kept <- c("risk0", "risk1", "surv0", "surv1", params@time, "inc1", "inc0")
+    kept <- c("risk0", "risk1", "surv0", "surv1", "followup", "inc1", "inc0")
 
     RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
                ][get("followup") == 0,
@@ -115,10 +118,10 @@ internal.survival <- function(params) {
       "followup"
     )
     DT <- result[, list(
-      surv0_mu = mean(surv0),
-      surv1_mu = mean(surv1),
-      se_surv0 = sd(surv0) / sqrt(params@nboot),
-      se_surv1 = sd(surv1) / sqrt(params@nboot)
+      surv0_mu = mean(surv.0),
+      surv1_mu = mean(surv.1),
+      se_surv0 = sd(surv.0) / sqrt(params@nboot),
+      se_surv1 = sd(surv.1) / sqrt(params@nboot)
     ), by = eval(params@time)][, `:=`(
       surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
       surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,

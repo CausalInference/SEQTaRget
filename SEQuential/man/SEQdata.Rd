@@ -5,7 +5,7 @@
 \alias{SEQdata}
 \title{Simulated observational example data for SEQuential}
 \format{
-A data frame with 12,180 rows and 11 columns:
+A data frame with 54,687 rows and 13 columns:
 \describe{
   \item{ID}{Integer: Unique ID emulating individual patients}
   \item{time}{Integer: Time of observation, always begins at 0, max time of 59. Should be continuous}
@@ -18,6 +18,8 @@ A data frame with 12,180 rows and 11 columns:
   \item{P}{Numeric: 2\% continuously decrease from U\(9, 10\)}
   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
+  \item{LTFU}{Binary: Only represented as zero in the non-LTFU dataset}
+  \item{eligible_cense}{Binary: Only represented as one in this dataset}
 }
 }
 \usage{

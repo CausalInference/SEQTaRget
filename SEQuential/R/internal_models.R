@@ -9,10 +9,10 @@ internal.model <- function(data, params) {
   X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data)
   y <- data[[params@outcome]]
 
-  if(!params@weighted) model <- fastglm::fastglm(X, y, family = quasibinomial(), method = 3)
+  if(!params@weighted) model <- fastglm::fastglm(X, y, family = quasibinomial(), method = 2)
   if(params@weighted) {
     weight <- data[['weight']]
-    model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = 3)
+    model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = 2)
   }
 
   return(model)
