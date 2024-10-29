@@ -22,29 +22,47 @@ internal.survival <- function(params) {
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
-    if (!is.na(params@compevent)) type <- "compevent" else type <- NA_character_
-    surv.data <- prepare.data(DT, params, type = type, case = "surv")
-    model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
-    kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
+    if (!is.na(params@compevent)) {
+      ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
+      ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"))
+    }
+    surv.data <- prepare.data(DT, params, case = "surv", type = "default")
+    surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
+    kept <- c("risk0", "risk1", "surv0", "surv1", params@time, "inc1", "inc0")
 
-    RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
+    RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
                ][get("followup") == 0,
                  ][rep(1:.N, each = params@max.survival + 1)
-                   ][, `:=`(followup = seq(1:.N) - 1,
-                            followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
-                     ][, eval(params@treatment) := FALSE
-                       ][, `:=`(dose = FALSE,
-                                dose_sq = FALSE)
-                         ][, predFALSE := inline.pred(model, newdata = .SD, params, type = "response", case = "surv")
-                           ][, eval(params@treatment) := TRUE
-                             ][, `:=`(dose = followup,
-                                      dose_sq = followup_sq)
-                               ][, predTRUE := inline.pred(model, newdata = .SD, params, case = "surv")
-                                 ][, `:=`(surv0 = cumprod(1 - predFALSE),
-                                          surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
-                                   ][, `:=`(risk0 = 1 - surv0,
-                                            risk1 = 1 - surv1)]
-    return(RMDT)
+                   ][, `:=`(followup = seq(1:.N)-1,
+                            followup_sq = (seq(1:.N)-1)^2), by = get(params@id)
+                     ][, eval(params@treatment) := FALSE]
+
+    if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
+
+    RMDT <- RMDT[, surv.predFALSE := inline.pred(surv.model, newdata = .SD, params, type = "response", case = "surv")]
+
+    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, type = "response", case = "surv")]
+    if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
+
+    RMDT <- RMDT[, eval(params@treatment) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
+    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+
+    setorderv(RMDT, c("trialID", "followup"))
+    RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
+                        surv.1 = cumprod(1 - surv.predTRUE)), by = eval(params@id)
+                 ][, `:=`(risk0 = 1 - surv.0,
+                          risk1 = 1 - surv.1)]
+
+    if (!is.na(params@compevent)) {
+      RMDT <- RMDT[followup == 0, `:=` (ce.predTRUE = 0, ce.predFALSE = 0,
+                                        surv.predTRUE = 0, surv.predFALSE = 0)
+                   ][, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
+                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE)))
+                     ][, `:=` (inc0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
+                               inc1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE))]
+    }
+    kept <- kept[kept %in% colnames(RMDT)]
+    return(RMDT[, kept, with = FALSE])
   }
   UIDs <- unique(params@DT[[params@id]])
   lnID <- length(UIDs)
@@ -80,8 +98,8 @@ internal.survival <- function(params) {
     DT <- handler(params@DT, params)
     surv <- melt(
       DT[, list(
-        txFALSE = mean(surv0),
-        txTRUE = mean(surv1)
+        txFALSE = mean(inc0),
+        txTRUE = mean(inc1)
       ), by = "followup"],
       id.vars = "followup"
     ) |>

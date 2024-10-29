@@ -20,9 +20,8 @@ Imports:
     future,
     future.apply,
     ggplot2,
-    Matrix,
     methods,
-    speedglm
+    Matrix,
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

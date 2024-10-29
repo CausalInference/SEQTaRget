@@ -44,7 +44,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQdata_ltfu_3.csv")
+    data <- fread("SEQData_0.2_0.02_10k.csv")[is.na(LTFU), LTFU := 1]
     # data <- SEQdata
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"

@@ -230,10 +230,10 @@ prepare.data <- function(weight, params, type, model, case){
                           ][, cols, with = FALSE])
     X <- cbind(X, rep(1, nrow(X)))
   } else if (case == "surv") {
-    cols <- unlist(strsplit(params@covariates, "\\+|\\*"))
+    cols <- unlist(strsplit(params@surv, "\\+|\\*"))
 
     if (type == "compevent") y <- weight[[params@compevent]] else y <- weight[[params@outcome]]
-    X <- model.matrix(as.formula(paste0("~", params@covariates)), data = weight[, cols, with = FALSE])
+    X <- model.matrix(as.formula(paste0("~", params@surv)), data = weight[, cols, with = FALSE])
   }
 
   return(list(y = y, X = X))
