@@ -30,7 +30,8 @@
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
-#'
+#' @param glm.fitter String: choice of speedglm or fastglm fit methods for the outcome model. Covariates are approximately equal; however, the intercept for fastglm may be incorrect with small data
+#' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -42,7 +43,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     compevent = NA,
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
-                    baseline.indicator = "_bas", squared.indicator = "_sq") {
+                    baseline.indicator = "_bas", squared.indicator = "_sq",
+                    glm.fitter = "fastglm", fastglm.method = 2L) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -79,6 +81,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   baseline.indicator <- as.character(baseline.indicator)
   squared.indicator <- as.character(squared.indicator)
 
+  fastglm.method <- as.integer(fastglm.method)
+
   new("SEQopts",
     parallel = parallel,
     nthreads = nthreads,
@@ -107,6 +111,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     denominator = denominator,
     surv = surv,
     baseline.indicator = baseline.indicator,
-    squared.indicator = squared.indicator
+    squared.indicator = squared.indicator,
+    glm.fitter = glm.fitter,
+    fastglm.method = fastglm.method
   )
 }

@@ -18,8 +18,6 @@ A data frame with 54,687 rows and 13 columns:
   \item{P}{Numeric: 2\% continuously decrease from U\(9, 10\)}
   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
-  \item{LTFU}{Binary: Only represented as zero in the non-LTFU dataset}
-  \item{eligible_cense}{Binary: Only represented as one in this dataset}
 }
 }
 \usage{
