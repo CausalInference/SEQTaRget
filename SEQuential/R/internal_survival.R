@@ -12,7 +12,7 @@ internal.survival <- function(params) {
   cumsurvFALSE <- cumsurvTRUE <- NULL
   followup <- followup_sq <- NULL
   surv.0 <- surv.1 <- NULL
-  inc0 <- inc1 <- NULL
+  inc.0 <- inc.1 <- NULL
   variable <- NULL
   surv0_mu <- surv1_mu <- NULL
   se_surv0 <- se_surv1 <- NULL
@@ -27,11 +27,12 @@ internal.survival <- function(params) {
   handler <- function(DT, params) {
     if (!is.na(params@compevent)) {
       ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
-      ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"))
+      ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
     }
     surv.data <- prepare.data(DT, params, case = "surv", type = "default")
-    surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
-    kept <- c("risk0", "risk1", "surv0", "surv1", "followup", "inc1", "inc0")
+    surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+    rm(surv.data)
+    kept <- c("followup", "risk0", "risk1", "surv.0", "surv.1", "inc.1", "inc.0")
 
     RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
                ][get("followup") == 0,
@@ -42,15 +43,14 @@ internal.survival <- function(params) {
 
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
 
-    RMDT <- RMDT[, surv.predFALSE := inline.pred(surv.model, newdata = .SD, params, type = "response", case = "surv")]
+    RMDT <- RMDT[, surv.predFALSE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
 
-    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, type = "response", case = "surv")]
+    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
 
     RMDT <- RMDT[, eval(params@treatment) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
     if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
 
-    setorderv(RMDT, c("trialID", "followup"))
     RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
                         surv.1 = cumprod(1 - surv.predTRUE)), by = eval(params@id)
                  ][, `:=`(risk0 = 1 - surv.0,
@@ -60,9 +60,9 @@ internal.survival <- function(params) {
       RMDT <- RMDT[followup == 0, `:=` (ce.predTRUE = 0, ce.predFALSE = 0,
                                         surv.predTRUE = 0, surv.predFALSE = 0)
                    ][, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
-                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE)))
-                     ][, `:=` (inc0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
-                               inc1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE))]
+                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = eval(params@id)
+                     ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
+                               inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = eval(params@id)]
     }
     kept <- kept[kept %in% colnames(RMDT)]
     return(RMDT[, kept, with = FALSE])
@@ -98,11 +98,13 @@ internal.survival <- function(params) {
   }
   result <- rbindlist(result)
   if (!params@bootstrap) {
-    DT <- handler(params@DT, params)
+    DT2 <- handler(params@DT, params)
     surv <- melt(
-      DT[, list(
-        txFALSE = mean(inc0),
-        txTRUE = mean(inc1)
+      sruv = DT2[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1),
+        inc.0 = mean(inc.0),
+        inc.1 = mean(inc.1)
       ), by = "followup"],
       id.vars = "followup"
     ) |>

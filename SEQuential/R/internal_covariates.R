@@ -2,12 +2,12 @@
 #' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
-create.default.covariates <- function(params, type = "outcome") {
+create.default.covariates <- function(params) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
   trial <- NULL
-  if (type == "outcome") tx_bas <- paste0(params@treatment, params@baseline.indicator) else tx_bas <- params@treatment
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
   followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
   interaction <- paste0(tx_bas, "*", "followup")
@@ -114,6 +114,32 @@ create.default.LTFU.covariates <- function(params, type){
     if (params@pre.expansion) out <- paste0(c("tx_lag", time, fixed, timeVarying), collapse = "+")
     if (!params@pre.expansion) out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
   }
+
+  return(out)
+}
+
+create.default.survival.covariates <- function(params) {
+  timeVarying <- NULL
+  timeVarying_bas <- NULL
+  fixed <- NULL
+  trial <- NULL
+  tx <- params@treatment
+  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
+  period <- paste0("period", c("", params@squared.indicator), collapse = "+")
+  dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
+  interaction <- paste0(tx, "*", "followup")
+
+  if (length(params@time_varying) > 0) {
+    timeVarying <- paste0(params@time_varying, collapse = "+")
+    timeVarying_bas <- paste0(params@time_varying, params@baseline.indicator, collapse = "+")
+  }
+
+  if (length(params@fixed) > 0) {
+    fixed <- paste0(params@fixed, collapse = "+")
+  }
+
+  if (params@method == "ITT") out <- paste0(c(tx, interaction, followup, period, timeVarying_bas, fixed), collapse = "+")
+  if (params@method != "ITT") out <- paste0(c(tx), collapse = "+")
 
   return(out)
 }

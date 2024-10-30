@@ -28,8 +28,8 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
     }
   }
   if(case == "surv") {
-    cols <- unlist(strsplit(params@covariates, "\\+"))
-    covs <- params@covariates
+    cols <- unlist(strsplit(params@surv, "\\+"))
+    covs <- params@surv
   }
 
   cols <- unlist(strsplit(covs, "\\*|\\+"))
