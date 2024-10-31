@@ -21,6 +21,7 @@ internal.survival <- function(params) {
   mu <- lb <- ub <- NULL
   followup <- NULL
   numerator <- denominator <- NULL
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
@@ -28,6 +29,7 @@ internal.survival <- function(params) {
     if (!is.na(params@compevent)) {
       ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
       ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+      rm(ce.data)
     }
     surv.data <- prepare.data(DT, params, case = "surv", type = "default")
     surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
@@ -38,8 +40,8 @@ internal.survival <- function(params) {
                ][get("followup") == 0,
                  ][rep(1:.N, each = params@max.survival + 1)
                    ][, `:=`(followup = seq(1:.N)-1,
-                            followup_sq = (seq(1:.N)-1)^2), by = get(params@id)
-                     ][, eval(params@treatment) := FALSE]
+                            followup_sq = (seq(1:.N)-1)^2), by = "trialID"
+                     ][, eval(tx_bas) := FALSE]
 
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
 
@@ -48,11 +50,11 @@ internal.survival <- function(params) {
     if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
 
-    RMDT <- RMDT[, eval(params@treatment) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
+    RMDT <- RMDT[, eval(tx_bas) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
     if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
 
     RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
-                        surv.1 = cumprod(1 - surv.predTRUE)), by = eval(params@id)
+                        surv.1 = cumprod(1 - surv.predTRUE)), by = "trialID"
                  ][, `:=`(risk0 = 1 - surv.0,
                           risk1 = 1 - surv.1)]
 
@@ -60,9 +62,9 @@ internal.survival <- function(params) {
       RMDT <- RMDT[followup == 0, `:=` (ce.predTRUE = 0, ce.predFALSE = 0,
                                         surv.predTRUE = 0, surv.predFALSE = 0)
                    ][, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
-                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = eval(params@id)
+                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = "trialID"
                      ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
-                               inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = eval(params@id)]
+                               inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
     }
     kept <- kept[kept %in% colnames(RMDT)]
     return(RMDT[, kept, with = FALSE])
@@ -98,9 +100,10 @@ internal.survival <- function(params) {
   }
   result <- rbindlist(result)
   if (!params@bootstrap) {
-    DT2 <- handler(params@DT, params)
+    surv.DT <- handler(params@DT, params)
+    gc()
     surv <- melt(
-      sruv = DT2[, list(
+      surv.DT[, list(
         surv.0 = mean(surv.0),
         surv.1 = mean(surv.1),
         inc.0 = mean(inc.0),

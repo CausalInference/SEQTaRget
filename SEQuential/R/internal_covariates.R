@@ -93,7 +93,6 @@ create.default.LTFU.covariates <- function(params, type){
   period <- NULL
   followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
-  #  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -122,12 +121,12 @@ create.default.survival.covariates <- function(params) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
-  trial <- NULL
-  tx <- params@treatment
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
   followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   period <- paste0("period", c("", params@squared.indicator), collapse = "+")
+  trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
-  interaction <- paste0(tx, "*", "followup")
+  interaction <- paste0(tx_bas, "*", "followup")
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -138,8 +137,8 @@ create.default.survival.covariates <- function(params) {
     fixed <- paste0(params@fixed, collapse = "+")
   }
 
-  if (params@method == "ITT") out <- paste0(c(tx, interaction, followup, period, timeVarying_bas, fixed), collapse = "+")
-  if (params@method != "ITT") out <- paste0(c(tx), collapse = "+")
+  if (params@method == "ITT") out <- paste0(c(tx_bas, interaction, followup, trial, timeVarying_bas, fixed), collapse = "+")
+  if (params@method != "ITT") out <- paste0(c(tx_bas), collapse = "+")
 
   return(out)
 }
