@@ -115,7 +115,8 @@ prepare.data <- function(weight, params, type, model, case){
     covs <- params@surv
 
     if (type == "compevent") y <- weight[[params@compevent]] else y <- weight[[params@outcome]]
-    X <- model.matrix(as.formula(paste0("~", covs)), data = weight[, cols, with = FALSE])
+    X <- model.matrix(as.formula(paste0("~", covs)), data = weight[!is.na(get(params@outcome))]
+                      [, cols, with = FALSE])
   }
 
   return(list(y = y, X = X))
