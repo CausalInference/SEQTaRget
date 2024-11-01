@@ -34,7 +34,9 @@ SEQopts(
   excused.col0 = NA,
   km.curves = FALSE,
   baseline.indicator = "_bas",
-  squared.indicator = "_sq"
+  squared.indicator = "_sq",
+  glm.fitter = "fastglm",
+  fastglm.method = 2L
 )
 }
 \arguments{
@@ -97,6 +99,10 @@ SEQopts(
 \item{baseline.indicator}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{squared.indicator}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
+
+\item{glm.fitter}{String: choice of speedglm or fastglm fit methods for the outcome model. Covariates are approximately equal; however, the intercept for fastglm may be incorrect with small data}
+
+\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
 }
 \value{
 An object of class 'SEQOpts'

@@ -6,10 +6,13 @@
 #' @keywords internal
 internal.survival <- function(params) {
   # Variable pre-definition ===================================
-  trial <- NULL
-  predTRUE <- predFALSE <- NULL
+  trialID <- trial <- NULL
+  surv.predTRUE <- surv.predFALSE <- NULL
+  ce.predTRUE <- ce.predFALSE <- NULL
+  cumsurvFALSE <- cumsurvTRUE <- NULL
   followup <- followup_sq <- NULL
-  surv0 <- surv1 <- NULL
+  surv.0 <- surv.1 <- NULL
+  inc.0 <- inc.1 <- NULL
   variable <- NULL
   surv0_mu <- surv1_mu <- NULL
   se_surv0 <- se_surv1 <- NULL
@@ -18,32 +21,61 @@ internal.survival <- function(params) {
   mu <- lb <- ub <- NULL
   followup <- NULL
   numerator <- denominator <- NULL
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
-    if (!is.na(params@compevent)) type <- "compevent" else type <- NA_character_
-    surv.data <- prepare.data(DT, params, type = type, case = "surv")
-    model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"))
-    kept <- c("risk0", "risk1", "surv0", "surv1", params@time)
+    if (!is.na(params@compevent)) {
+      ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
+      ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+      rm(ce.data)
+    }
+    surv.data <- prepare.data(DT, params, case = "surv", type = "default")
+    surv.model <- fastglm::fastglm(surv.data$X, surv.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+    rm(surv.data)
+    kept <- c("followup", "risk0", "risk1", "surv.0", "surv.1", "inc.1", "inc.0")
 
-    RMDT <- DT[, eval(params@id) := paste0(get(params@id), "_", trial)
+    RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
                ][get("followup") == 0,
                  ][rep(1:.N, each = params@max.survival + 1)
-                   ][, `:=`(followup = seq(1:.N) - 1,
-                            followup_sq = (seq(1:.N) - 1)^2), by = eval(params@id)
-                     ][, eval(params@treatment) := FALSE
-                       ][, `:=`(dose = FALSE,
-                                dose_sq = FALSE)
-                         ][, predFALSE := inline.pred(model, newdata = .SD, params, type = "response", case = "surv")
-                           ][, eval(params@treatment) := TRUE
-                             ][, `:=`(dose = followup,
-                                      dose_sq = followup_sq)
-                               ][, predTRUE := inline.pred(model, newdata = .SD, params, case = "surv")
-                                 ][, `:=`(surv0 = cumprod(1 - predFALSE),
-                                          surv1 = cumprod(1 - predTRUE)), by = eval(params@id)
-                                   ][, `:=`(risk0 = 1 - surv0,
-                                            risk1 = 1 - surv1)]
+                   ][, `:=`(followup = seq(1:.N)-1,
+                            followup_sq = (seq(1:.N)-1)^2), by = "trialID"
+                     ][, eval(tx_bas) := FALSE]
+
+    if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
+
+    RMDT <- RMDT[, surv.predFALSE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
+
+    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+    if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
+
+    RMDT <- RMDT[, eval(tx_bas) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
+    if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+
+    RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
+                        surv.1 = cumprod(1 - surv.predTRUE)), by = "trialID"
+                 ][, `:=`(risk0 = 1 - surv.0,
+                          risk1 = 1 - surv.1)]
+
+    if (!is.na(params@compevent)) {
+      RMDT <- RMDT[followup == 0, `:=` (ce.predTRUE = 0, ce.predFALSE = 0,
+                                        surv.predTRUE = 0, surv.predFALSE = 0)
+                   ][, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
+                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = "trialID"
+                     ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
+                               inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
+
+      RMDT <- RMDT[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1),
+        inc.0 = mean(inc.0),
+        inc.1 = mean(inc.1)), by = "followup"]
+    } else {
+      RMDT <- RMDT[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1)), by = "followup"]
+    }
     return(RMDT)
   }
   UIDs <- unique(params@DT[[params@id]])
@@ -77,11 +109,14 @@ internal.survival <- function(params) {
   }
   result <- rbindlist(result)
   if (!params@bootstrap) {
-    DT <- handler(params@DT, params)
+    surv.DT <- handler(params@DT, params)
+    gc()
     surv <- melt(
-      DT[, list(
-        txFALSE = mean(surv0),
-        txTRUE = mean(surv1)
+      surv.DT[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1),
+        inc.0 = mean(inc.0),
+        inc.1 = mean(inc.1)
       ), by = "followup"],
       id.vars = "followup"
     ) |>
@@ -97,10 +132,10 @@ internal.survival <- function(params) {
       "followup"
     )
     DT <- result[, list(
-      surv0_mu = mean(surv0),
-      surv1_mu = mean(surv1),
-      se_surv0 = sd(surv0) / sqrt(params@nboot),
-      se_surv1 = sd(surv1) / sqrt(params@nboot)
+      surv0_mu = mean(surv.0),
+      surv1_mu = mean(surv.1),
+      se_surv0 = sd(surv.0) / sqrt(params@nboot),
+      se_surv1 = sd(surv.1) / sqrt(params@nboot)
     ), by = eval(params@time)][, `:=`(
       surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
       surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,

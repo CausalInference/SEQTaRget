@@ -13,7 +13,7 @@ internal.analysis <- function(params) {
   weight <- cense1 <- NULL
   followup <- NULL
   isExcused <- NULL
-  #TODO cleanup unused columns befoe they go to internal.analysis
+  #TODO cleanup unused columns before they go to internal.analysis
 
   handler <- function(DT, data, params) {
     if (!params@weighted) {

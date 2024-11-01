@@ -44,7 +44,9 @@ parameter.setter <- function(data, DT,
     km.curves = opts@km.curves,
     surv = opts@surv,
     baseline.indicator = opts@baseline.indicator,
-    squared.indicator = opts@squared.indicator
+    squared.indicator = opts@squared.indicator,
+    glm.fitter = opts@glm.fitter,
+    fastglm.method = opts@fastglm.method
   )
 }
 

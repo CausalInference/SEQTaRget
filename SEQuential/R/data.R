@@ -1,6 +1,6 @@
 #' Simulated observational example data for SEQuential
 #'
-#' @format A data frame with 12,180 rows and 11 columns:
+#' @format A data frame with 54,687 rows and 13 columns:
 #' \describe{
 #'   \item{ID}{Integer: Unique ID emulating individual patients}
 #'   \item{time}{Integer: Time of observation, always begins at 0, max time of 59. Should be continuous}

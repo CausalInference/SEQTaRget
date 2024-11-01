@@ -17,12 +17,11 @@ Imports:
     doFuture,
     doRNG,
     fastglm,
+    speedglm,
     future,
     future.apply,
     ggplot2,
-    Matrix,
-    methods,
-    speedglm
+    methods
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
