@@ -65,9 +65,18 @@ internal.survival <- function(params) {
                              cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = "trialID"
                      ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
                                inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
+
+      RMDT <- RMDT[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1),
+        inc.0 = mean(inc.0),
+        inc.1 = mean(inc.1)), by = "followup"]
+    } else {
+      RMDT <- RMDT[, list(
+        surv.0 = mean(surv.0),
+        surv.1 = mean(surv.1)), by = "followup"]
     }
-    kept <- kept[kept %in% colnames(RMDT)]
-    return(RMDT[, kept, with = FALSE])
+    return(RMDT)
   }
   UIDs <- unique(params@DT[[params@id]])
   lnID <- length(UIDs)

@@ -138,7 +138,14 @@ create.default.survival.covariates <- function(params) {
   }
 
   if (params@method == "ITT") out <- paste0(c(tx_bas, interaction, followup, trial, timeVarying_bas, fixed), collapse = "+")
-  if (params@method != "ITT") out <- paste0(c(tx_bas), collapse = "+")
+  if (params@method == "censoring") {
+    if (!params@pre.expansion) out <- paste0(c(tx_bas, interaction, followup, trial, timeVarying_bas, fixed), collapse = "+")
+    if (params@pre.expansion) out <- paste0(c(fixed, tx_bas, followup, trial, interaction), collapse = "+")
+  }
+  if (params@method == "dose-response") {
+    if (!params@pre.expansion) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+    if (params@pre.expansion) out <- paste0(c(fixed, followup, period, dose), collapse = "+")
+  }
 
   return(out)
 }
