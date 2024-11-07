@@ -17,7 +17,6 @@ Imports:
     doFuture,
     doRNG,
     fastglm,
-    speedglm,
     future,
     future.apply,
     ggplot2,
