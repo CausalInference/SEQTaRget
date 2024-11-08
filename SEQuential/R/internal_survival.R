@@ -21,8 +21,8 @@ internal.survival <- function(params) {
   mu <- lb <- ub <- NULL
   followup <- NULL
   numerator <- denominator <- NULL
-  tx_bas <- paste0(params@treatment, params@baseline.indicator)
 
+  tx_bas <- paste0(params@treatment, params@baseline.indicator)
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
@@ -59,24 +59,34 @@ internal.survival <- function(params) {
                           risk1 = 1 - surv.1)]
 
     if (!is.na(params@compevent)) {
-      RMDT <- RMDT[followup == 0, `:=` (ce.predTRUE = 0, ce.predFALSE = 0,
-                                        surv.predTRUE = 0, surv.predFALSE = 0)
-                   ][, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
-                             cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = "trialID"
-                     ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
-                               inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
+      RMDT <- RMDT[, `:=` (cumsurvTRUE = cumprod((1-surv.predTRUE)*(1-ce.predTRUE)),
+                           cumsurvFALSE = cumprod((1-surv.predFALSE)*(1-ce.predFALSE))), by = "trialID"
+                    ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
+                              inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"
+                      ]
 
       RMDT <- RMDT[, list(
         surv.0 = mean(surv.0),
         surv.1 = mean(surv.1),
         inc.0 = mean(inc.0),
-        inc.1 = mean(inc.1)), by = "followup"]
+        inc.1 = mean(inc.1)), by = "followup"
+        ]
+
+      fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1, inc.0 = 0, inc.1 = 0)
     } else {
       RMDT <- RMDT[, list(
         surv.0 = mean(surv.0),
-        surv.1 = mean(surv.1)), by = "followup"]
+        surv.1 = mean(surv.1)), by = "followup"
+        ]
+
+      fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1)
     }
-    return(RMDT)
+
+    out <- rbind(fup0, RMDT[, followup := followup+1])[, `:=` (risk.0 = 1 - surv.0,
+                                                               risk.1 = 1 - surv.1)]
+
+
+    return(out)
   }
   UIDs <- unique(params@DT[[params@id]])
   lnID <- length(UIDs)

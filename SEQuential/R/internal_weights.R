@@ -48,8 +48,8 @@ internal.weights <- function(DT, data, params) {
     ltfu.numerator.data <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
     ltfu.denominator.data <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
 
-    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = 4)
-    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = 4)
+    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
   }
   if(params@method != "ITT"){
@@ -57,14 +57,14 @@ internal.weights <- function(DT, data, params) {
       n0.data <- prepare.data(weight, params, type = "numerator", model = 0, case = "default")
       n1.data <- prepare.data(weight, params, type = "numerator", model = 1, case = "default")
 
-      numerator0 <- fastglm::fastglm(n0.data$X, n0.data$y, family = quasibinomial(), method = 4)
-      numerator1 <- fastglm::fastglm(n1.data$X, n1.data$y, family = quasibinomial(), method = 4)
+      numerator0 <- fastglm::fastglm(n0.data$X, n0.data$y, family = quasibinomial(), method = params@fastglm.method)
+      numerator1 <- fastglm::fastglm(n1.data$X, n1.data$y, family = quasibinomial(), method = params@fastglm.method)
     }
     d0.data <- prepare.data(weight, params, type = "denominator", model = 0, case = "default")
     d1.data <- prepare.data(weight, params, type = "denominator", model = 1, case = "default")
 
-    denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = 4)
-    denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = 4)
+    denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = params@fastglm.method)
+    denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = params@fastglm.method)
   }
 
     # Estimating ====================================================

@@ -68,8 +68,6 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{squared.indicator}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{\code{glm.fitter}}{String: choice of glm fitter, either 'speedglm' or 'fastglm' (default)}
-
 \item{\code{fasgtlm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
 }}
 

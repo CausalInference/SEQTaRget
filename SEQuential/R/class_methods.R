@@ -29,7 +29,6 @@
 #' @slot LTFU Logical: internal flag for LTFU weighting
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
-#' @slot glm.fitter String: choice of glm fitter, either 'speedglm' or 'fastglm' (default)
 #' @slot fasgtlm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 setClass("SEQopts",
   slots = c(
@@ -64,7 +63,6 @@ setClass("SEQopts",
     surv = "character",
     baseline.indicator = "character",
     squared.indicator = "character",
-    glm.fitter = "character",
     fastglm.method = "integer"
   ), prototype = list(
     parallel = FALSE,
@@ -97,7 +95,6 @@ setClass("SEQopts",
     surv = NA_character_,
     baseline.indicator = "_bas",
     squared.indicator = "_sq",
-    glm.fitter = "speedglm",
     fastglm.method = 2L
   )
 )

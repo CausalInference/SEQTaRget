@@ -2,7 +2,14 @@ Package: SEQuential
 Type: Package
 Title: Target Trial Emulation
 Version: 0.1.0
-Author: Ryan ODea [aut, cre]
+Authors@R: c(person(given = "Ryan",
+                    family = "O\'Dea",
+                    role = c("aut", "cre"),
+                    email = "ryanodea@hsph.harvard.edu"),
+             person(given = "Alejandro",
+                    family = "Szmulewicz",
+                    role = c("aut"),
+                    email = "aszmulewicz@hsph.harvard.edu"))
 Maintainer: Ryan ODea <ryanodea@hsph.harvard.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
@@ -17,7 +24,6 @@ Imports:
     doFuture,
     doRNG,
     fastglm,
-    speedglm,
     future,
     future.apply,
     ggplot2,
