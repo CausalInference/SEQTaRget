@@ -57,38 +57,38 @@ internal.weights <- function(DT, data, params) {
       n0.data <- prepare.data(weight, params, type = "numerator", model = 0, case = "default")
       n1.data <- prepare.data(weight, params, type = "numerator", model = 1, case = "default")
 
-      numerator0 <- fastglm::fastglm(n0.data$X, n0.data$y, family = quasibinomial(), method = params@fastglm.method)
-      numerator1 <- fastglm::fastglm(n1.data$X, n1.data$y, family = quasibinomial(), method = params@fastglm.method)
+      numerator0 <- model.passer(n0.data$X, n0.data$y, params)
+      numerator1 <- model.passer(n1.data$X, n1.data$y, params)
     }
     d0.data <- prepare.data(weight, params, type = "denominator", model = 0, case = "default")
     d1.data <- prepare.data(weight, params, type = "denominator", model = 1, case = "default")
 
-    denominator0 <- fastglm::fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = params@fastglm.method)
-    denominator1 <- fastglm::fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = params@fastglm.method)
+    denominator0 <- model.passer(d0.data$X, d0.data$y, params)
+    denominator1 <- model.passer(d1.data$X, d1.data$y, params)
   }
 
     # Estimating ====================================================
   if(params@method != "ITT") {
     if (!params@excused) {
-      out <- weight[tx_lag == 0, `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator"),
-                                      denominator = inline.pred(denominator0, .SD, params, "denominator"))
+      out <- weight[tx_lag == 0, `:=`(numerator = prediction.passer(numerator0, .SD, params, "numerator"),
+                                      denominator = prediction.passer(denominator0, .SD, params, "denominator"))
                     ][tx_lag == 0 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                      denominator = 1 - denominator)
-                      ][tx_lag == 1, `:=`(numerator = inline.pred(numerator1, .SD, params, "numerator"),
-                                          denominator = inline.pred(denominator1, .SD, params, "denominator"))
+                      ][tx_lag == 1, `:=`(numerator = prediction.passer(numerator1, .SD, params, "numerator"),
+                                          denominator = prediction.passer(denominator1, .SD, params, "denominator"))
                         ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                          denominator = 1 - denominator)]
     } else {
-          out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := inline.pred(denominator0, .SD, params, "denominator")
+          out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := prediction.passer(denominator0, .SD, params, "denominator")
                         ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
-                          ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := inline.pred(denominator1, .SD, params, "denominator")
+                          ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := prediction.passer(denominator1, .SD, params, "denominator")
                             ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
 
       if (params@pre.expansion) {
         out <- out[, numerator := 1]
       } else {
-        out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := inline.pred(numerator0, .SD, params, "numerator")
-                   ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := inline.pred(numerator1, .SD, params, "numerator")
+        out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := prediction.passer(numerator0, .SD, params, "numerator")
+                   ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := prediction.passer(numerator1, .SD, params, "numerator")
                      ][get(params@treatment) == 0, numerator := 1 - numerator]
       }
     }

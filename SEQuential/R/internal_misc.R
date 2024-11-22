@@ -17,3 +17,22 @@ create.risk <- function(data) {
 assign.global <- function(ncores, pos = 1) {
   assign("ncores", ncores, envir = as.environment(pos))
 }
+
+#' Passes data to correct model
+#'
+#' @importFrom fastglm fastglm
+#' @keywords internal
+model.passer <- function(X, y, params) {
+  if (params@multinomial) model <- multinomial(X, y) else model <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+
+  return(model)
+}
+
+#' Passes model to correct prediction method
+#'
+#' @keywords internal
+prediction.passer <- function(model, X, params, type) {
+  if (params@multinomial) pred <- multinomial.predict(model, X) else pred <- inline.pred(model, X, params, type)
+
+  return(pred)
+}
