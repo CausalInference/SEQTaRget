@@ -26,6 +26,7 @@ internal.survival <- function(params) {
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
+    if (params@multinomial) DT <- DT[get(params@treatment) %in% params@treat.level]
     if (!is.na(params@compevent)) {
       ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
       ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
