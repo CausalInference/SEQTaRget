@@ -24,6 +24,8 @@
 #' @param cense2 String: TODO
 #' @param eligible_cense String: TODO
 #' @param eligible_cense2 String: TODO
+#' @param multinomial Logical: whether or not to expect multinomial models
+#' @param treat.level List: which treatment levels to compare through survival curves
 #' @param compevent String: TODO
 #' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
@@ -40,7 +42,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
-                    compevent = NA,
+                    compevent = NA, multinomial = FALSE, treat.level = list(),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     baseline.indicator = "_bas", squared.indicator = "_sq",
                     fastglm.method = 2L) {
@@ -111,6 +113,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     surv = surv,
     baseline.indicator = baseline.indicator,
     squared.indicator = squared.indicator,
-    fastglm.method = fastglm.method
+    fastglm.method = fastglm.method,
+    treat.level = treat.level,
+    multinomial = multinomial
   )
 }

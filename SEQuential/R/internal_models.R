@@ -10,7 +10,11 @@ internal.model <- function(data, params) {
   y <- data[[params@outcome]]
 
   if(!params@weighted) {
+    if (!params@multinomial){
       model <- fastglm::fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+    } else {
+      model <- multinomial(X, y, family = quasibinomial(), method = params@fastglm.method)
+    }
   } else {
       weight <- data[['weight']]
       model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)

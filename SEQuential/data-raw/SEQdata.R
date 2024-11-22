@@ -99,5 +99,5 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
   return(data.table::rbindlist(output))
 }
 #SEQdata.multitreatment <- generate_data(1e3, 59, FALSE, 2)
-#write.csv(SEQdata.multitreatment, "SEQdata_multitreatment.csv", row.names = FALSE)
+#write.csv(SEQdata.multitreatment, "SEQdata_multitreatment2.csv", row.names = FALSE)
 #usethis::use_data(SEQdata.multitreatment, overwrite = TRUE)

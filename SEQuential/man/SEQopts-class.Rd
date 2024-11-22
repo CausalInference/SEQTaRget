@@ -69,5 +69,9 @@ An S4 class of user options to feed into the SEQuential process
 \item{\code{squared.indicator}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{\code{fasgtlm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+
+\item{\code{treat.level}}{List: List of treatments to compare for survival curves}
+
+\item{\code{multinomial}}{Logical: whether or not to preform multinomial analysis}
 }}
 

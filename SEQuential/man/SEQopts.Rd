@@ -29,6 +29,8 @@ SEQopts(
   eligible_cense = NA,
   eligible_cense2 = NA,
   compevent = NA,
+  multinomial = FALSE,
+  treat.level = list(),
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
@@ -86,6 +88,10 @@ SEQopts(
 \item{eligible_cense2}{String: TODO}
 
 \item{compevent}{String: TODO}
+
+\item{multinomial}{Logical: whether or not to expect multinomial models}
+
+\item{treat.level}{List: which treatment levels to compare through survival curves}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 

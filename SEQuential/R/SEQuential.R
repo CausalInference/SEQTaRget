@@ -44,13 +44,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQData_LTFU_2.csv")
+    data <- fread("SEQData_multitreatment2.csv")
     # data <- SEQdata
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(excused = TRUE, weighted = TRUE, compevent = "LTFU", pre.expansion = FALSE, excused.col1 = "excusedOne", excused.col0 = "excusedZero")
-    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
+    method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts()
+    #test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
   }
 
   # Parameter Setup ==================================

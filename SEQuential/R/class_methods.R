@@ -30,6 +30,8 @@
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot fasgtlm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
+#' @slot treat.level List: List of treatments to compare for survival curves
+#' @slot multinomial Logical: whether or not to preform multinomial analysis
 setClass("SEQopts",
   slots = c(
     parallel = "logical",
@@ -63,7 +65,9 @@ setClass("SEQopts",
     surv = "character",
     baseline.indicator = "character",
     squared.indicator = "character",
-    fastglm.method = "integer"
+    fastglm.method = "integer",
+    multinomial = "logical",
+    treat.level = "list"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -95,7 +99,9 @@ setClass("SEQopts",
     surv = NA_character_,
     baseline.indicator = "_bas",
     squared.indicator = "_sq",
-    fastglm.method = 2L
+    fastglm.method = 2L,
+    treat.level = list(),
+    multinomial = FALSE
   )
 )
 
