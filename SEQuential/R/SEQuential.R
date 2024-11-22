@@ -49,7 +49,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts()
+    options <- SEQopts(multinomial = TRUE)
     #test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "dose-response", options)
   }
 
