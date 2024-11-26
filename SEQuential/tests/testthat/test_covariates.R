@@ -12,10 +12,8 @@ test_that("Default Covariate Creation: ITT", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    params@fixed, paste0(params@time_varying, params@baseline.indicator),
-    paste0(params@treatment, params@baseline.indicator, "*", "followup")
-  ))
+  expected <- c("treatment_bas", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })
 
@@ -36,7 +34,8 @@ test_that("Default Covariate Creation: Pre-Expansion Dose-Response", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c("dose", "dose_sq", "followup", "followup_sq", "period", "period_sq", params@fixed))
+  expected <- c("dose", "dose_sq", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "period*dose", "period*dose_sq")
   expect_true(setequal(components, expected))
 })
 
@@ -57,10 +56,9 @@ test_that("Default Covariate Creation: Post-Expansion Dose-Response", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    "dose", "dose_sq", "followup", "followup_sq", "period", "period_sq", params@fixed,
-    paste0(params@time_varying, params@baseline.indicator)
-  ))
+  expected <- c("dose", "dose_sq", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "N_bas", "L_bas", "P_bas", "period*dose", "period*dose_sq")
+
   expect_true(setequal(components, expected))
 })
 
@@ -81,10 +79,8 @@ test_that("Default Covariate Creation: Pre-Expansion Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    params@fixed, paste0(params@treatment, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
-    paste0(params@treatment, params@baseline.indicator, "*", "followup")
-  ))
+  expected <- c("treatment_bas", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "treatment_bas*period")
   expect_true(setequal(components, expected))
 })
 
@@ -105,10 +101,8 @@ test_that("Default Covariate Creation: Post-Expansion Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
-    paste0(params@treatment, params@baseline.indicator, "*", "followup")
-  ))
+  expected <- c("treatment_bas", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "N_bas", "L_bas", "P_bas", "treatment_bas*period")
   expect_true(setequal(components, expected))
 })
 
@@ -130,10 +124,8 @@ test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    paste0(params@treatment, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
-    paste0(params@treatment, params@baseline.indicator, "*", "followup")
-  ))
+  expected <- c("treatment_bas", "period", "period_sq", "trial", "trial_sq",
+                "treatment_bas*period")
   expect_true(setequal(components, expected))
 })
 
@@ -155,9 +147,7 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- unlist(c(
-    params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq", "trial", "trial_sq",
-    paste0(params@treatment, params@baseline.indicator, "*", "followup"), paste0(params@time_varying, params@baseline.indicator)
-  ))
+  expected <- c("treatment_bas", "period", "period_sq", "trial", "trial_sq",
+                "sex", "race", "N_bas", "L_bas", "P_bas", "treatment_bas*period")
   expect_true(setequal(components, expected))
 })

@@ -45,7 +45,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (FALSE) {
     # Debugging tools ==========================================
     data <- fread("SEQData_multitreatment2.csv")
-    # data <- SEQdata
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"

@@ -30,7 +30,7 @@ SEQopts(
   eligible_cense2 = NA,
   compevent = NA,
   multinomial = FALSE,
-  treat.level = list(),
+  treat.level = c(0, 1),
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,

@@ -42,7 +42,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     covariates = NA, weighted = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
-                    compevent = NA, multinomial = FALSE, treat.level = list(),
+                    compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     baseline.indicator = "_bas", squared.indicator = "_sq",
                     fastglm.method = 2L) {
@@ -78,6 +78,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   eligible_cense <- as.character(eligible_cense)
   eligible_cense2 <- as.character(eligible_cense2)
   compevent <- as.character(compevent)
+  treat.level <- as.list(treat.level)
 
   baseline.indicator <- as.character(baseline.indicator)
   squared.indicator <- as.character(squared.indicator)

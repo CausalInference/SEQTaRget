@@ -100,7 +100,7 @@ setClass("SEQopts",
     baseline.indicator = "_bas",
     squared.indicator = "_sq",
     fastglm.method = 2L,
-    treat.level = list(),
+    treat.level = list(0, 1),
     multinomial = FALSE
   )
 )

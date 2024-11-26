@@ -5,10 +5,11 @@ test_that("ITT", {
   )
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -2.20875780252027, sex = 0.119046760181495,
-                   N_bas = 0.00351775314968957, L_bas = 0.0647008384198997,
-                   P_bas = -0.315666063832447, tx_init_bas = 0.170901420441045,
-                   followup = 0.0275952851415662, `tx_init_bas:followup` = -0.00403797501315619)
+  expected <- list(`(Intercept)` = -6.26627443639013, sex = 0.127632647053313,
+                   N_bas = 0.00336674007525289, L_bas = -0.00971230944593865,
+                   P_bas = 0.201448183755029, period = -0.00966160482864084,
+                   period_sq = 0.000474434602091899, trial = 0.033033635239569,
+                   trial_sq = 0.000335479193077798, `tx_init_bas:followup` = 0.00460177613319777)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
@@ -79,12 +80,11 @@ test_that("Post-Expansion Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -9.06477775511434, sex = 0.089885511293321,
-                   N_bas = 0.00476008107851924, L_bas = 0.0121635809492721,
-                   P_bas = 0.441266300595648, followup = 0.0161578399116783,
-                   followup_sq = 9.81440250274935e-05, trial = 0.0668234881356795,
-                   trial_sq = 0.000576688612020573, tx_init_bas = 0.396262553160296,
-                   `followup:tx_init_bas` = 0.0134658425932361)
+  expected <- list(`(Intercept)` = -8.77850126329417, sex = 0.0952139174831454,
+                   N_bas = 0.00479928263067027, L_bas = 0.0161239204223941,
+                   P_bas = 0.441140738518659, followup = -0.0159571453043091,
+                   followup_sq = -2.06632166798897e-05, trial = 0.0695842214362399,
+                   trial_sq = 0.000530823802052693, `followup:tx_init_bas` = 0.0523774093115016)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
@@ -127,12 +127,11 @@ test_that("Post-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -8.41659937254366, sex = 0.150727875314278,
-                   N_bas = 0.00151683958054173, L_bas = 0.00275340474922261,
-                   P_bas = 0.362537379931659, followup = 0.0387265194721085,
-                   followup_sq = -0.000162098583307205, trial = 0.06673537675684,
-                   trial_sq = 0.000501526880012748, tx_init_bas = 0.266541378237597,
-                   `followup:tx_init_bas` = -0.00414088735767523)
+  expected <- list(`(Intercept)` = -8.21350777019439, sex = 0.151849240310461,
+                   N_bas = 0.00160182678590164, L_bas = 0.00773401847222666,
+                   P_bas = 0.36011742436451, followup = 0.0308627357673543,
+                   followup_sq = -0.000124886225032565, trial = 0.0684296384691867,
+                   trial_sq = 0.000464686422291178, `followup:tx_init_bas` = 0.00465482408840434)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
@@ -146,10 +145,9 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
 
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -5.02942424811771, sex = -0.186503833847345,
-                   N_bas = 0.0059133633570627, L_bas = -0.41107354109782, P_bas = -0.343809466045548,
-                   tx_init_bas = -0.0383599016851488, followup = -0.00291742341595245,
-                   `tx_init_bas:followup` = 0.00377859672149782)
+  expected <- list(`(Intercept)` = -5.04322109457601, sex = -0.187152435515976,
+                   N_bas = 0.00590440085361474, L_bas = -0.411252486037057,
+                   P_bas = -0.349498295645025, `tx_init_bas:followup` = 0.00139638835609859)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
@@ -163,11 +161,10 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
 
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -21.4654805657124, sex = -0.190318475661994,
-                   N_bas = 0.00657926148709646, L_bas = -0.449024852535419,
-                   P_bas = 1.3920709427832, trial = 0.293748425298631, trial_sq = -0.00152812560581487,
-                   tx_init_bas = -0.0588007711996982, followup = -0.00179227197321662,
-                   `tx_init_bas:followup` = 0.0062424347680558)
+  expected <- list(`(Intercept)` = -21.5119227047619, sex = -0.190195216530171,
+                   N_bas = 0.00658336488940953, L_bas = -0.448962845953137,
+                   P_bas = 1.39187856559769, trial = 0.293745487674761, trial_sq = -0.00152815760657456,
+                   `tx_init_bas:followup` = 0.00405428865377567)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)
