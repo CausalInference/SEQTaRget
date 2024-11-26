@@ -45,7 +45,9 @@ parameter.setter <- function(data, DT,
     surv = opts@surv,
     baseline.indicator = opts@baseline.indicator,
     squared.indicator = opts@squared.indicator,
-    fastglm.method = opts@fastglm.method
+    fastglm.method = opts@fastglm.method,
+    multinomial = opts@multinomial,
+    treat.level = opts@treat.level
   )
 }
 
