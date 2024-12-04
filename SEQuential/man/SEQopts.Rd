@@ -12,6 +12,7 @@ SEQopts(
   nboot = 100,
   boot.sample = 0.8,
   seed = 1636,
+  min.followup = -Inf,
   max.followup = Inf,
   max.survival = Inf,
   include.period = TRUE,
@@ -25,6 +26,12 @@ SEQopts(
   denominator = NA,
   surv = NA,
   pre.expansion = TRUE,
+  elig.wts.0 = NA,
+  elig.wts.1 = NA,
+  hazard = FALSE,
+  calculate.var = FALSE,
+  random.selection = FALSE,
+  selection.prob = 0.8,
   ltfu.numerator = NA,
   ltfu.denominator = NA,
   cense = NA,
@@ -58,6 +65,8 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
+\item{min.followup}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+
 \item{max.followup}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
 \item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
@@ -83,6 +92,18 @@ SEQopts(
 \item{surv}{String: survival covariates to coerce to formula object}
 
 \item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
+
+\item{elig.wts.0}{String: TODO}
+
+\item{elig.wts.1}{String: TODO}
+
+\item{hazard}{Logical: TODO}
+
+\item{calculate.var}{Logical: TODO}
+
+\item{random.selection}{Logical: TODO}
+
+\item{selection.prob}{Numeric: TODO}
 
 \item{ltfu.numerator}{String: TODO}
 

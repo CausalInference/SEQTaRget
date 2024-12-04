@@ -50,7 +50,8 @@ SEQexpand <- function(params) {
              ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
                ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
                  ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
-                   ][followup <= params@max.followup, ]
+                   ][followup <= params@max.followup,
+                     ][followup >= params@min.followup, ]
 
   data_list <- list()
   if (length(c(vars.time, vars.sq)) > 0) {

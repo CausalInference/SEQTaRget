@@ -1,12 +1,13 @@
 #' An S4 class of user options to feed into the SEQuential process
 #'
-#' @slot parallel Logical: to run in parallel
-#' @slot nthreads Numeric: number of data.table threads to use
-#' @slot ncores Integer: number of cores to use if parallelized
+#' @slot parallel Logical: define if the SEQuential process is run in parallel, default is FALSE
+#' @slot nthreads Integer: number of threads to use for data.table processing
+#' @slot ncores Integer: number of cores to use in parallel processing, default is one less than system max
 #' @slot bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
 #' @slot nboot Integer: number of bootstraps
 #' @slot boot.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @slot seed Integer: starting seed
+#' @slot min.followup Numeric: minimum time to expand aboud, default is -Inf (no minimum)
 #' @slot max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
 #' @slot max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @slot include.period Logical: whether or not to include 'period' and 'period_squared' in the outcome model
@@ -21,20 +22,27 @@
 #' @slot lower.weight Numeric: weights truncated at lower end at this weight
 #' @slot upper.weight Numeric: weights truncated at upper end at this weight
 #' @slot p99.weight Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}
+#' @slot elig.wts.0 String: TODO
+#' @slot elig.wts.1 String: TODO
 #' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
+#' @slot calculate.var Logical: TODO
+#' @slot hazard Logical: TODO
+#' @slot random.selection Logical: TODO
+#' @slot selection.prob Numeric: TODO
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
 #' @slot cense String: TODO
 #' @slot cense2 String: TODO
 #' @slot eligible_cense String: TODO
 #' @slot eligible_cense2 String: TODO
+#' @slot multinomial Logical: whether or not to expect multinomial models
+#' @slot treat.level List: which treatment levels to compare through survival curves
+#' @slot compevent String: TODO
 #' @slot excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @slot excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
-#' @slot LTFU Logical: internal flag for LTFU weighting
+#' @slot km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
-#' @slot fasgtlm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
-#' @slot treat.level List: List of treatments to compare for survival curves
-#' @slot multinomial Logical: whether or not to preform multinomial analysis
+#' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 setClass("SEQopts",
   slots = c(
     parallel = "logical",
@@ -44,6 +52,7 @@ setClass("SEQopts",
     bootstrap = "logical",
     boot.sample = "numeric",
     seed = "integer",
+    min.followup = "numeric",
     max.followup = "numeric",
     max.survival = "numeric",
     include.trial = "logical",
@@ -52,8 +61,14 @@ setClass("SEQopts",
     lower.weight = "numeric",
     upper.weight = "numeric",
     p99.weight = "logical",
+    elig.wts.0 = "character",
+    elig.wts.1 = "character",
     pre.expansion = "logical",
     excused = "logical",
+    calculate.var = "logical",
+    hazard = "logical",
+    random.selection = "logical",
+    selection.prob = "numeric",
     cense = "character",
     cense2 = "character",
     eligible_cense = "character",
@@ -81,6 +96,7 @@ setClass("SEQopts",
     bootstrap = FALSE,
     boot.sample = 0.8,
     seed = 1636L,
+    min.followup = -Inf,
     max.followup = Inf,
     max.survival = Inf,
     include.trial = TRUE,
@@ -91,6 +107,12 @@ setClass("SEQopts",
     p99.weight = FALSE,
     pre.expansion = TRUE,
     excused = FALSE,
+    elig.wts.0 = NA_character_,
+    elig.wts.1 = NA_character_,
+    calculate.var = FALSE,
+    hazard = FALSE,
+    random.selection = FALSE,
+    selection.prob = 0.8,
     cense = NA_character_,
     cense2 = NA_character_,
     eligible_cense = NA_character_,

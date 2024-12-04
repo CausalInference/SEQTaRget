@@ -10,11 +10,11 @@ An S4 class of user options to feed into the SEQuential process
 \section{Slots}{
 
 \describe{
-\item{\code{parallel}}{Logical: to run in parallel}
+\item{\code{parallel}}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
 
-\item{\code{nthreads}}{Numeric: number of data.table threads to use}
+\item{\code{nthreads}}{Integer: number of threads to use for data.table processing}
 
-\item{\code{ncores}}{Integer: number of cores to use if parallelized}
+\item{\code{ncores}}{Integer: number of cores to use in parallel processing, default is one less than system max}
 
 \item{\code{bootstrap}}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
 
@@ -23,6 +23,8 @@ An S4 class of user options to feed into the SEQuential process
 \item{\code{boot.sample}}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
 
 \item{\code{seed}}{Integer: starting seed}
+
+\item{\code{min.followup}}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
 
 \item{\code{max.followup}}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
@@ -52,7 +54,19 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{p99.weight}}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
 
+\item{\code{elig.wts.0}}{String: TODO}
+
+\item{\code{elig.wts.1}}{String: TODO}
+
 \item{\code{pre.expansion}}{Logical: whether weighting should be done on pre-expanded data}
+
+\item{\code{calculate.var}}{Logical: TODO}
+
+\item{\code{hazard}}{Logical: TODO}
+
+\item{\code{random.selection}}{Logical: TODO}
+
+\item{\code{selection.prob}}{Numeric: TODO}
 
 \item{\code{excused}}{Logical: in the case of censoring, whether there is an excused condition}
 
@@ -64,20 +78,22 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{eligible_cense2}}{String: TODO}
 
+\item{\code{multinomial}}{Logical: whether or not to expect multinomial models}
+
+\item{\code{treat.level}}{List: which treatment levels to compare through survival curves}
+
+\item{\code{compevent}}{String: TODO}
+
 \item{\code{excused.col1}}{String: in the case of \code{excused = TRUE} the column name for Excused1}
 
 \item{\code{excused.col0}}{String: in the case of \code{excused = TRUE} the column name for Excused0}
 
-\item{\code{LTFU}}{Logical: internal flag for LTFU weighting}
+\item{\code{km.curves}}{Logical: Kaplan-Meier survival curve creation and data return}
 
 \item{\code{baseline.indicator}}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{\code{squared.indicator}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{\code{fasgtlm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
-
-\item{\code{treat.level}}{List: List of treatments to compare for survival curves}
-
-\item{\code{multinomial}}{Logical: whether or not to preform multinomial analysis}
+\item{\code{fastglm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
 }}
 

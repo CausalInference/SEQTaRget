@@ -7,6 +7,7 @@
 #' @param nboot Integer: number of bootstraps
 #' @param boot.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @param seed Integer: starting seed
+#' @param min.followup Numeric: minimum time to expand aboud, default is -Inf (no minimum)
 #' @param max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
 #' @param max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @param include.period Logical: whether or not to include 'period' and 'period_squared' in the outcome model
@@ -21,7 +22,13 @@
 #' @param lower.weight Numeric: weights truncated at lower end at this weight
 #' @param upper.weight Numeric: weights truncated at upper end at this weight
 #' @param p99.weight Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}
+#' @param elig.wts.0 String: TODO
+#' @param elig.wts.1 String: TODO
 #' @param pre.expansion Logical: whether weighting should be done on pre-expanded data
+#' @param calculate.var Logical: TODO
+#' @param hazard Logical: TODO
+#' @param random.selection Logical: TODO
+#' @param selection.prob Numeric: TODO
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
 #' @param cense String: TODO
 #' @param cense2 String: TODO
@@ -41,9 +48,10 @@
 #' @returns An object of class 'SEQOpts'
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
-                    max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
+                    min.followup = -Inf, max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
                     covariates = NA, weighted = FALSE, upper.weight = Inf, lower.weight = -Inf, p99.weight = FALSE,
-                    numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
+                    numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE, elig.wts.0 = NA, elig.wts.1 = NA, hazard = FALSE, calculate.var = FALSE,
+                    random.selection = FALSE, selection.prob = 0.8,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
@@ -56,10 +64,19 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   bootstrap <- as.logical(bootstrap)
   nboot <- as.integer(nboot)
   seed <- as.integer(seed)
+  min.followup <- as.numeric(min.followup)
   max.followup <- as.numeric(max.followup)
   max.survival <- as.numeric(max.survival)
   lower.weight <- as.numeric(lower.weight)
   upper.weight <- as.numeric(upper.weight)
+  elig.wts.0 <- as.character(elig.wts.0)
+  elig.wts.1 <- as.character(elig.wts.1)
+
+  hazard <- as.logical(hazard)
+  calculate.var <- as.logical(calculate.var)
+
+  selection.prob <- as.logical(selection.prob)
+  random.selection <- as.logical(random.selection)
 
   include.trial <- as.logical(include.trial)
   include.period <- as.logical(include.period)
@@ -98,6 +115,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     nboot = nboot,
     boot.sample = boot.sample,
     seed = seed,
+    min.followup = min.followup,
     max.followup = max.followup,
     max.survival = max.survival,
     include.trial = include.trial,
@@ -124,6 +142,10 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     squared.indicator = squared.indicator,
     fastglm.method = fastglm.method,
     treat.level = treat.level,
-    multinomial = multinomial
+    multinomial = multinomial,
+    hazard = hazard,
+    calculate.var = calculate.var,
+    elig.wts.1 = elig.wts.1,
+    elig.wts.0 = elig.wts.0
   )
 }
