@@ -18,6 +18,9 @@
 #' @slot ltfu.denominator String: TODO
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
+#' @slot lower.weight Numeric: weights truncated at lower end at this weight
+#' @slot upper.weight Numeric: weights truncated at upper end at this weight
+#' @slot p99.weight Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}
 #' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
 #' @slot cense String: TODO
@@ -46,6 +49,9 @@ setClass("SEQopts",
     include.trial = "logical",
     include.period = "logical",
     weighted = "logical",
+    lower.weight = "numeric",
+    upper.weight = "numeric",
+    p99.weight = "logical",
     pre.expansion = "logical",
     excused = "logical",
     cense = "character",
@@ -80,6 +86,9 @@ setClass("SEQopts",
     include.trial = TRUE,
     include.period = TRUE,
     weighted = FALSE,
+    lower.weight = -Inf,
+    upper.weight = Inf,
+    p99.weight = FALSE,
     pre.expansion = TRUE,
     excused = FALSE,
     cense = NA_character_,

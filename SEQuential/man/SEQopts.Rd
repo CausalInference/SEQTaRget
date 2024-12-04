@@ -18,6 +18,9 @@ SEQopts(
   include.trial = TRUE,
   covariates = NA,
   weighted = FALSE,
+  upper.weight = Inf,
+  lower.weight = -Inf,
+  p99.weight = FALSE,
   numerator = NA,
   denominator = NA,
   surv = NA,
@@ -66,6 +69,12 @@ SEQopts(
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
+
+\item{upper.weight}{Numeric: weights truncated at upper end at this weight}
+
+\item{lower.weight}{Numeric: weights truncated at lower end at this weight}
+
+\item{p99.weight}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
 
 \item{numerator}{String: numerator covariates to coerce to formula object}
 

@@ -18,6 +18,9 @@
 #' @param ltfu.denominator String: TODO
 #' @param surv String: survival covariates to coerce to formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
+#' @param lower.weight Numeric: weights truncated at lower end at this weight
+#' @param upper.weight Numeric: weights truncated at upper end at this weight
+#' @param p99.weight Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}
 #' @param pre.expansion Logical: whether weighting should be done on pre-expanded data
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
 #' @param cense String: TODO
@@ -39,7 +42,7 @@
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
                     max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
-                    covariates = NA, weighted = FALSE,
+                    covariates = NA, weighted = FALSE, upper.weight = Inf, lower.weight = -Inf, p99.weight = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
@@ -55,6 +58,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   seed <- as.integer(seed)
   max.followup <- as.numeric(max.followup)
   max.survival <- as.numeric(max.survival)
+  lower.weight <- as.numeric(lower.weight)
+  upper.weight <- as.numeric(upper.weight)
 
   include.trial <- as.logical(include.trial)
   include.period <- as.logical(include.period)
@@ -98,6 +103,9 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     include.trial = include.trial,
     include.period = include.period,
     weighted = weighted,
+    lower.weight = lower.weight,
+    upper.weight = upper.weight,
+    p99.weight = p99.weight,
     pre.expansion = pre.expansion,
     excused = excused,
     cense = cense,

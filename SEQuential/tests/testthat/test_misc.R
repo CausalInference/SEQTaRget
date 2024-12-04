@@ -1,6 +1,5 @@
 test_that("Pre-Expansion Excused Censoring - No excusedOne given", {
-  data <- SEQdata
-  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+  model <- suppressWarnings(SEQuential(SEQdata, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
     options = SEQopts(
@@ -12,7 +11,7 @@ test_that("Pre-Expansion Excused Censoring - No excusedOne given", {
 })
 
 test_that("Pre-Expansion Excused Censoring - No excusedZero given", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",

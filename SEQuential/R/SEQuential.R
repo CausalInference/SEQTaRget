@@ -15,6 +15,7 @@
 #' @importFrom methods is
 #' @importFrom future plan multisession sequential
 #' @importFrom doFuture registerDoFuture
+#' @importFrom stats complete.cases
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {

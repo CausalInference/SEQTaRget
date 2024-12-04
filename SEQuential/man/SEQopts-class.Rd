@@ -46,6 +46,12 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{weighted}}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
+\item{\code{lower.weight}}{Numeric: weights truncated at lower end at this weight}
+
+\item{\code{upper.weight}}{Numeric: weights truncated at upper end at this weight}
+
+\item{\code{p99.weight}}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
+
 \item{\code{pre.expansion}}{Logical: whether weighting should be done on pre-expanded data}
 
 \item{\code{excused}}{Logical: in the case of censoring, whether there is an excused condition}
