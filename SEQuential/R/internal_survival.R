@@ -125,7 +125,7 @@ internal.survival <- function(params) {
   if (!params@bootstrap) {
     surv.DT <- handler(params@DT, params)
     gc()
-    if(!params@compevent) {
+    if(is.na(params@compevent)) {
       surv <- melt(
         surv.DT[, list(surv.0 = mean(surv.0), surv.1 = mean(surv.1), risk.0 = mean(risk.0), risk.1 = mean(risk.1)), by = "followup"],
         id.vars = "followup"
@@ -136,12 +136,13 @@ internal.survival <- function(params) {
         id.vars = "followup"
       )
     }
+    if (TRUE) surv <- surv[!variable %in% c("risk.1", "risk.0")] #TODO
       plot <- ggplot(surv, aes(x = followup, y = value, col = variable)) +
       geom_line() +
       theme_classic() +
       labs(x = "Time", y = "Survival", color = "") +
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
-      #TODO - bootstrapping stuff
+      #TODO - bootstrapping stuff for inc0 and inc1
   } else {
     kept <- c(
       "surv0_mu", "surv0_lb", "surv0_ub",
@@ -168,12 +169,12 @@ internal.survival <- function(params) {
     rm(DT, result)
     gc()
 
-    surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
+    plot <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
       geom_line(col = "black") +
       geom_ribbon(aes(ymax = ub, ymin = lb), alpha = 0.5) +
       theme_classic() +
       labs(x = "Time", y = "Survival", fill = "") +
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
   }
-  return(surv)
+  return(plot)
 }

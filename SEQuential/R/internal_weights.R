@@ -33,8 +33,7 @@ internal.weights <- function(DT, data, params) {
       DT[followup == 0,
          ][baseline.lag, on = c(params@id, params@time), nomatch = 0],
       DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
-         ][followup != 0, ])[, paste0(params@time, params@squared.indicator) := get(params@time)^2
-                             ]
+         ][followup != 0, ])[, paste0(params@time, params@squared.indicator) := get(params@time)^2]
 
     if (params@excused) weight <- weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
@@ -45,26 +44,35 @@ internal.weights <- function(DT, data, params) {
   }
   # Modeling ======================================================
   if (params@method == "ITT" | params@LTFU) {
-    ltfu.numerator.data <- prepare.data(weight, params, type = "numerator", model = NA, case = "LTFU")
-    ltfu.denominator.data <- prepare.data(weight, params, type = "denominator", model = NA, case = "LTFU")
+    model.data <- copy(weight)
+    #if(!is.na(params@eligible.cense)) TODO
+
+    ltfu.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
+    ltfu.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
 
     ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
     ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
+    rm(model.data)
   }
   if(params@method != "ITT"){
+    model.data <- copy(weight)
+    if (!is.na(params@elig.wts.0)) model.data <- model.data[get(params@elig.wts.0) == 1 & get(params@treatment) == 0, ]
+    if (!is.na(params@elig.wts.1)) model.data <- model.data[get(params@elig.wts.1) == 1 & get(params@treatment) == 1, ]
+
     if (!(params@excused & params@pre.expansion)){
-      n0.data <- prepare.data(weight, params, type = "numerator", model = 0, case = "default")
-      n1.data <- prepare.data(weight, params, type = "numerator", model = 1, case = "default")
+      n0.data <- prepare.data(model.data, params, type = "numerator", model = 0, case = "default")
+      n1.data <- prepare.data(model.data, params, type = "numerator", model = 1, case = "default")
 
       numerator0 <- model.passer(n0.data$X, n0.data$y, params)
       numerator1 <- model.passer(n1.data$X, n1.data$y, params)
     }
-    d0.data <- prepare.data(weight, params, type = "denominator", model = 0, case = "default")
-    d1.data <- prepare.data(weight, params, type = "denominator", model = 1, case = "default")
+    d0.data <- prepare.data(model.data, params, type = "denominator", model = 0, case = "default")
+    d1.data <- prepare.data(model.data, params, type = "denominator", model = 1, case = "default")
 
     denominator0 <- model.passer(d0.data$X, d0.data$y, params)
     denominator1 <- model.passer(d1.data$X, d1.data$y, params)
+    rm(model.data)
   }
 
     # Estimating ====================================================
