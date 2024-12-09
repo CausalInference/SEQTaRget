@@ -36,3 +36,10 @@ test_that("Early Column Erroring", {
   # Output Testing ========================
   expect_error(explore(list(), 2))
 })
+
+test_that("Missing Observations in Data", {
+  md <- copy(SEQdata)[1, tx_init := NA]
+  expect_error(SEQuential(md, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                            method = "ITT",
+                            options = SEQopts()))
+})

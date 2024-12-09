@@ -24,6 +24,7 @@ parameter.setter <- function(data, DT,
     bootstrap = opts@bootstrap,
     boot.sample = opts@boot.sample,
     seed = opts@seed,
+    min.followup = opts@min.followup,
     max.followup = opts@max.followup,
     max.survival = opts@max.survival,
     weighted = opts@weighted,
@@ -31,6 +32,8 @@ parameter.setter <- function(data, DT,
     excused = opts@excused,
     cense = opts@cense,
     cense2 = opts@cense2,
+    hazard = opts@hazard,
+    calculate.var = opts@calculate.var,
     compevent = opts@compevent,
     eligible_cense = opts@eligible_cense,
     eligible_cense2 = opts@eligible_cense2,
@@ -45,7 +48,9 @@ parameter.setter <- function(data, DT,
     surv = opts@surv,
     baseline.indicator = opts@baseline.indicator,
     squared.indicator = opts@squared.indicator,
-    fastglm.method = opts@fastglm.method
+    fastglm.method = opts@fastglm.method,
+    multinomial = opts@multinomial,
+    treat.level = opts@treat.level
   )
 }
 
@@ -67,10 +72,8 @@ parameter.simplifier <- function(params) {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
     params@excused <- FALSE
   }
-  if (params@method %in% c("dose-response", "censoring") & !params@weighted) {
-    warning("Unweighted ", params@method, " is not supported, automatically changed to weighted = TRUE")
-    params@weighted <- TRUE
-  }
+
+  if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible, please select one.")
 
   if (is.na(params@excused.col0)) {
     params@excused.col0 <- "tmp0"
@@ -98,9 +101,9 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, survival_curve, risk, elapsed_time) {
+prepare.output <- function(params, outcome_model, hazard, robustSE, survival_curve, risk, elapsed_time) {
   if (!missing(outcome_model)) {
-    outcome.coefs <- lapply(1:params@nboot, function(x) outcome_model[[x]]$coefficients)
+    outcome.coefs <- lapply(1:params@nboot, function(x) coef(outcome_model[[x]]$model$model))
     weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
@@ -114,6 +117,8 @@ prepare.output <- function(params, outcome_model, survival_curve, risk, elapsed_
     numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
     denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
     outcome_model = outcome.coefs,
+    hazard = if (!params@hazard) NA_real_ else hazard,
+    robust_se = if (!params@calculate.var) list() else robustSE,
     weight_statistics = weight.stats,
     survival_curve = if (!params@km.curves) NA else survival_curve,
     survival_data = if (!params@km.curves) NA else survival_curve$data,

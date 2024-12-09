@@ -5,7 +5,7 @@
 #' @param max.time Integer: max followup time per individual
 #'
 #' @keywords internal
-generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
+generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1) {
   output <- future.apply::future_lapply(1:n, function(x) {
     sex <- as.integer(rbinom(1, 1, 0.5))
     outcome <- as.integer(rbinom(1, 1, 0.02))
@@ -31,10 +31,24 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
     }
 
     tx_vector <- numeric(max.time + 1)
-    for (j in 1:max.time + 1) {
-      if (j == 1) tx_vector[j] <- 0
-      if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(c(0, 1), prob = c(0.8, 0.2))
-      if (tx_vector[j - 1] == 1) tx_vector[j] <- sample(c(0, 1), prob = c(0.05, 0.95))
+    if(n_treatments == 1) {
+      for (j in 1:max.time + 1) {
+        if (j == 1) tx_vector[j] <- 0
+        if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(c(0, 1), prob = c(0.8, 0.2))
+        if (tx_vector[j - 1] == 1) tx_vector[j] <- sample(c(0, 1), prob = c(0.05, 0.95))
+      }
+    } else {
+      for (j in 1:max.time + 1) {
+        if (j == 1) tx_vector[j] <- 0
+        if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(0:n_treatments, 1, prob = c(0.8, rep((1 - 0.8) / n_treatments, n_treatments)))
+        if (tx_vector[j - 1] != 0) {
+          switch <- as.logical(rbinom(1, 1, 0.05))
+          if(switch) {
+            valid <- setdiff(0:n_treatments, tx_vector[j - 1])
+            tx_vector[j] <- sample(valid)
+          } else tx_vector[j] <- tx_vector[j-1]
+        }
+      }
     }
 
     excused0_vector <- numeric(max.time + 1)
@@ -84,6 +98,6 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE) {
   }, future.seed = 1636)
   return(data.table::rbindlist(output))
 }
-#SEQdata.LTFU <- generate_data(1e3, 59, TRUE)
-#write.csv(SEQdata.LTFU, "SEQdata_LTFU_4.csv", row.names = FALSE)
-#usethis::use_data(SEQdata.LTFU, overwrite = TRUE)
+#SEQdata.multitreatment <- generate_data(1e2, 59, FALSE, 2)
+#write.csv(SEQdata.multitreatment, "SEQdata_multitreatment2.csv", row.names = FALSE)
+#usethis::use_data(SEQdata.multitreatment, overwrite = TRUE)

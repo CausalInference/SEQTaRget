@@ -12,16 +12,26 @@ SEQopts(
   nboot = 100,
   boot.sample = 0.8,
   seed = 1636,
+  min.followup = -Inf,
   max.followup = Inf,
   max.survival = Inf,
   include.period = TRUE,
   include.trial = TRUE,
   covariates = NA,
   weighted = FALSE,
+  upper.weight = Inf,
+  lower.weight = -Inf,
+  p99.weight = FALSE,
   numerator = NA,
   denominator = NA,
   surv = NA,
   pre.expansion = TRUE,
+  elig.wts.0 = NA,
+  elig.wts.1 = NA,
+  hazard = FALSE,
+  calculate.var = FALSE,
+  random.selection = FALSE,
+  selection.prob = 0.8,
   ltfu.numerator = NA,
   ltfu.denominator = NA,
   cense = NA,
@@ -29,6 +39,8 @@ SEQopts(
   eligible_cense = NA,
   eligible_cense2 = NA,
   compevent = NA,
+  multinomial = FALSE,
+  treat.level = c(0, 1),
   excused = FALSE,
   excused.col1 = NA,
   excused.col0 = NA,
@@ -53,6 +65,8 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
+\item{min.followup}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+
 \item{max.followup}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
 \item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
@@ -65,6 +79,12 @@ SEQopts(
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
+\item{upper.weight}{Numeric: weights truncated at upper end at this weight}
+
+\item{lower.weight}{Numeric: weights truncated at lower end at this weight}
+
+\item{p99.weight}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
+
 \item{numerator}{String: numerator covariates to coerce to formula object}
 
 \item{denominator}{String: denominator covariates to coerce to formula object}
@@ -72,6 +92,18 @@ SEQopts(
 \item{surv}{String: survival covariates to coerce to formula object}
 
 \item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
+
+\item{elig.wts.0}{String: TODO}
+
+\item{elig.wts.1}{String: TODO}
+
+\item{hazard}{Logical: TODO}
+
+\item{calculate.var}{Logical: TODO}
+
+\item{random.selection}{Logical: TODO}
+
+\item{selection.prob}{Numeric: TODO}
 
 \item{ltfu.numerator}{String: TODO}
 
@@ -86,6 +118,10 @@ SEQopts(
 \item{eligible_cense2}{String: TODO}
 
 \item{compevent}{String: TODO}
+
+\item{multinomial}{Logical: whether or not to expect multinomial models}
+
+\item{treat.level}{List: which treatment levels to compare through survival curves}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 

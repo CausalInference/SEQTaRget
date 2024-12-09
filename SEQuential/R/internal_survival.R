@@ -12,6 +12,7 @@ internal.survival <- function(params) {
   cumsurvFALSE <- cumsurvTRUE <- NULL
   followup <- followup_sq <- NULL
   surv.0 <- surv.1 <- NULL
+  risk.0 <- risk.1 <- NULL
   inc.0 <- inc.1 <- NULL
   variable <- NULL
   surv0_mu <- surv1_mu <- NULL
@@ -26,6 +27,9 @@ internal.survival <- function(params) {
   if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
+    if (params@multinomial) {
+      DT <- DT[get(params@treatment) %in% params@treat.level]
+    }
     if (!is.na(params@compevent)) {
       ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
       ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
@@ -41,7 +45,7 @@ internal.survival <- function(params) {
                  ][rep(1:.N, each = params@max.survival + 1)
                    ][, `:=`(followup = seq(1:.N)-1,
                             followup_sq = (seq(1:.N)-1)^2), by = "trialID"
-                     ][, eval(tx_bas) := FALSE]
+                     ][, eval(tx_bas) := params@treat.level[[1]]]
 
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
 
@@ -50,7 +54,7 @@ internal.survival <- function(params) {
     if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
     if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
 
-    RMDT <- RMDT[, eval(tx_bas) := TRUE][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
+    RMDT <- RMDT[, eval(tx_bas) := params@treat.level[[2]]][, surv.predTRUE := inline.pred(surv.model, newdata = .SD, params, case = "surv")]
     if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
 
     RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
@@ -121,20 +125,24 @@ internal.survival <- function(params) {
   if (!params@bootstrap) {
     surv.DT <- handler(params@DT, params)
     gc()
-    surv <- melt(
-      surv.DT[, list(
-        surv.0 = mean(surv.0),
-        surv.1 = mean(surv.1),
-        inc.0 = mean(inc.0),
-        inc.1 = mean(inc.1)
-      ), by = "followup"],
-      id.vars = "followup"
-    ) |>
-      ggplot(aes(x = followup, y = value, col = variable)) +
+    if(is.na(params@compevent)) {
+      surv <- melt(
+        surv.DT[, list(surv.0 = mean(surv.0), surv.1 = mean(surv.1), risk.0 = mean(risk.0), risk.1 = mean(risk.1)), by = "followup"],
+        id.vars = "followup"
+      )
+    } else {
+      surv <- melt(
+        surv.DT[, list(surv.0 = mean(surv.0), surv.1 = mean(surv.1), inc.0 = mean(inc.0), inc.1 = mean(inc.1)), by = "followup"],
+        id.vars = "followup"
+      )
+    }
+    if (TRUE) surv <- surv[!variable %in% c("risk.1", "risk.0")] #TODO
+      plot <- ggplot(surv, aes(x = followup, y = value, col = variable)) +
       geom_line() +
       theme_classic() +
       labs(x = "Time", y = "Survival", color = "") +
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
+      #TODO - bootstrapping stuff for inc0 and inc1
   } else {
     kept <- c(
       "surv0_mu", "surv0_lb", "surv0_ub",
@@ -161,12 +169,12 @@ internal.survival <- function(params) {
     rm(DT, result)
     gc()
 
-    surv <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
+    plot <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
       geom_line(col = "black") +
       geom_ribbon(aes(ymax = ub, ymin = lb), alpha = 0.5) +
       theme_classic() +
       labs(x = "Time", y = "Survival", fill = "") +
       scale_color_discrete(labels = c("No Treatment", "Treatment"))
   }
-  return(surv)
+  return(plot)
 }

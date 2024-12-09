@@ -4,7 +4,15 @@
 \alias{prepare.output}
 \title{Output constructor}
 \usage{
-prepare.output(params, outcome_model, survival_curve, risk, elapsed_time)
+prepare.output(
+  params,
+  outcome_model,
+  hazard,
+  robustSE,
+  survival_curve,
+  risk,
+  elapsed_time
+)
 }
 \description{
 Output constructor

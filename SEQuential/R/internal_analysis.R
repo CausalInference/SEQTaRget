@@ -65,7 +65,6 @@ internal.analysis <- function(params) {
         }
       }
       if (params@LTFU) WDT <- WDT[, weight := weight * cense1]
-      model <- internal.model(WDT, params)
 
       percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
       stats <- list(
@@ -82,6 +81,11 @@ internal.analysis <- function(params) {
         p75 = percentile[[4]],
         p99 = percentile[[5]]
       )
+      if (params@p99.weight) {
+        params@lower.weight <- stats$p01
+        params@upper.weight <- stats$p99
+      }
+      model <- internal.model(WDT, params)
     }
     return(list(
       model = model,
@@ -111,7 +115,7 @@ internal.analysis <- function(params) {
       model <- handler(RMDT, RMdata, params)
 
       return(list(
-        coefficients = coef(model$model),
+        model = model$model,
         weight_info = model$weighted_stats
       ))
     }, future.seed = params@seed)
@@ -134,7 +138,7 @@ internal.analysis <- function(params) {
 
       model <- handler(RMDT, RMdata, params)
       return(list(
-        coefficients = coef(model$model),
+        model = model$model,
         weight_info = model$weighted_stats
       ))
     })

@@ -8,6 +8,8 @@
 #' @slot numerator numerator covariates
 #' @slot denominator denominator covariates
 #' @slot outcome_model list of length \code{nboot} containing outcome coefficients
+#' @slot hazard hazard ratio
+#' @slot robust_se robust standard errors
 #' @slot survival_curve ggplot object for the survival curves
 #' @slot survival_data data.table of survival data
 #' @slot risk_difference risk difference calculated from survival data
@@ -26,6 +28,8 @@ setClass("SEQoutput",
     numerator = "character",
     denominator = "character",
     outcome_model = "list",
+    hazard = "numeric",
+    robust_se = "list",
     survival_curve = "ANY",
     survival_data = "ANY",
     risk_difference = "numeric",
@@ -42,6 +46,8 @@ setClass("SEQoutput",
     numerator = NA_character_,
     denominator = NA_character_,
     outcome_model = list(),
+    hazard = NA_real_,
+    robust_se = list(),
     survival_curve = NA,
     survival_data = data.table(),
     risk_difference = NA_real_,
