@@ -1,4 +1,4 @@
-#' Estimate the time to run SEQuential analysis on current machine
+#' Estimate the (very rough) time to run SEQuential analysis on current machine
 #'
 #' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
@@ -11,6 +11,8 @@
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQOpts}
 #'
+#' @importFrom stats lm rbinom
+#' @export
 
 SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
   # Immediate error checking =================================
@@ -49,17 +51,6 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   )
   params <- parameter.simplifier(params)
 
-  if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if (params@weighted & params@method != "ITT") {
-    if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
-    if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
-  }
-  if (params@LTFU) {
-    if (is.na(params@ltfu.numerator)) params@ltfu.numerator <- create.default.LTFU.covariates(params, "numerator")
-    if (is.na(params@ltfu.denominator)) params@ltfu.denominator <- create.default.LTFU.covariates(params, "denominator")
-  }
-  if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
-
   # Model Timing =========================================
   uid <- unique(data[[id.col]])
   nid <- length(uid)
@@ -95,30 +86,10 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   if (params@LTFU) nmodels <- nmodels + 1
   if (params@km.curves) nmodels <- nmodels + 2
   modelTime <- modelTime * nmodels
-  if (params@bootstrap) modelTime <- modelTime*nboot
+  if (params@bootstrap) modelTime <- modelTime*params@nboot
   if (params@parallel) modelTime <- modelTime / params@ncores
 
   return(list(modelTime = format.time(modelTime),
               expansionTime = format.time(expansionTime),
               totalTime = format.time(modelTime + expansionTime)))
 }
-
-format.time <- function(seconds) {
-  if (seconds < 60) {
-    paste0(round(seconds, 2), " seconds")
-  } else if (seconds < 3600) {
-    minutes <- floor(seconds / 60)
-    remaining_seconds <- seconds %% 60
-    paste0(minutes, " minute", ifelse(minutes > 1, "s", ""),
-           " ", round(remaining_seconds, 2), " second", ifelse(remaining_seconds > 1, "s", ""))
-  } else {
-    hours <- floor(seconds / 3600)
-    remaining_seconds <- seconds %% 3600
-    minutes <- floor(remaining_seconds / 60)
-    seconds <- remaining_seconds %% 60
-    paste0(hours, " hour", ifelse(hours > 1, "s", ""),
-           " ", minutes, " minute", ifelse(minutes > 1, "s", ""),
-           " ", round(seconds, 2), " second", ifelse(seconds > 1, "s", ""))
-  }
-}
-

@@ -36,3 +36,25 @@ prediction.passer <- function(model, X, params, type) {
 
   return(pred)
 }
+
+#' Nicely cleans time for readability
+#'
+#' @keywords internal
+format.time <- function(seconds) {
+  if (seconds < 60) {
+    paste0(round(seconds, 2), " seconds")
+  } else if (seconds < 3600) {
+    minutes <- floor(seconds / 60)
+    remaining_seconds <- seconds %% 60
+    paste0(minutes, " minute", ifelse(minutes > 1, "s", ""),
+           " ", round(remaining_seconds, 2), " second", ifelse(remaining_seconds > 1, "s", ""))
+  } else {
+    hours <- floor(seconds / 3600)
+    remaining_seconds <- seconds %% 3600
+    minutes <- floor(remaining_seconds / 60)
+    seconds <- remaining_seconds %% 60
+    paste0(hours, " hour", ifelse(hours > 1, "s", ""),
+           " ", minutes, " minute", ifelse(minutes > 1, "s", ""),
+           " ", round(seconds, 2), " second", ifelse(seconds > 1, "s", ""))
+  }
+}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEQestimate.R
 \name{SEQestimate}
 \alias{SEQestimate}
-\title{Estimate the time to run SEQuential analysis on current machine}
+\title{Estimate the (very rough) time to run SEQuential analysis on current machine}
 \usage{
 SEQestimate(
   data,
@@ -39,5 +39,5 @@ SEQestimate(
 \item{options}{List: optional list of parameters from \code{SEQOpts}}
 }
 \description{
-Estimate the time to run SEQuential analysis on current machine
+Estimate the (very rough) time to run SEQuential analysis on current machine
 }
