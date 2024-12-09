@@ -12,6 +12,7 @@ create.default.covariates <- function(params) {
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
   interaction <- paste0(tx_bas, "*", "followup")
   interaction.dose <- paste0("followup*", c("dose", "dose_sq"), collapse = "+")
+  if (params@hazard) interaction <- interaction.dose <- NULL
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -41,7 +42,13 @@ create.default.covariates <- function(params) {
       if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
     }
     return(out)
-  }
+  } else {
+    #TODO - confirm with alejandro about unweighted model covariates
+    if (params@method == "dose-response") out <- paste0(c(dose, followup, trial, fixed, timeVarying_bas, interaction.dose), collapse = "+")
+    if (params@method == "censoring" & !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+    if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+    return(out)
+    }
 }
 
 # TODO - in weight covariates, does include.trial and include.period affect time?

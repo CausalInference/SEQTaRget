@@ -115,7 +115,7 @@ internal.analysis <- function(params) {
       model <- handler(RMDT, RMdata, params)
 
       return(list(
-        coefficients = coef(model$model),
+        model = model$model,
         weight_info = model$weighted_stats
       ))
     }, future.seed = params@seed)
@@ -138,7 +138,7 @@ internal.analysis <- function(params) {
 
       model <- handler(RMDT, RMdata, params)
       return(list(
-        coefficients = coef(model$model),
+        model = model$model,
         weight_info = model$weighted_stats
       ))
     })

@@ -13,10 +13,13 @@ internal.model <- function(data, params) {
 
   if(!params@weighted) {
       model <- fastglm::fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+      weight <- NULL
     } else {
       weight <- data[weight < params@lower.weight, weight := params@lower.weight
                      ][weight > params@upper.weight, weight := params@upper.weight][['weight']]
       model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
     }
-  return(model)
+  if (params@calculate.var) vcov <- fastglm.robust(model, X, y, weight) else vcov <- NA
+  return(list(model = model,
+              vcov = vcov))
 }

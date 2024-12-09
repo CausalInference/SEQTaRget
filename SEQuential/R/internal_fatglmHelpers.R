@@ -121,3 +121,23 @@ prepare.data <- function(weight, params, type, model, case){
 
   return(list(y = y, X = X))
 }
+
+fastglm.robust <- function(model, X, y, weight = NULL) {
+  coefs <- coef(model)
+  residuals <- as.vector(y - X %*% coef(model))
+
+  if (!is.null(weight)) {
+    W <- diag(weight)
+    X <- sqrt(W) %*% X
+    residuals <- sqrt(weight) * residuals
+  }
+
+  n <- nrow(X)
+  p <- ncol(X)
+
+  omega <- residuals^2 * (n / (n - p))
+  xtx.inv <- solve(t(X) %*% X)
+  robust <- xtx.inv %*% t(X) %*% sweep(X, 1, omega, `*`) %*% xtx.inv
+
+  return(sqrt(diag(robust)))
+}

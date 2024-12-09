@@ -28,6 +28,10 @@ An S4 class used to hold the outputs for the SEQuential process
 
 \item{\code{outcome_model}}{list of length \code{nboot} containing outcome coefficients}
 
+\item{\code{hazard}}{hazard ratio}
+
+\item{\code{robust_se}}{robust standard errors}
+
 \item{\code{survival_curve}}{ggplot object for the survival curves}
 
 \item{\code{survival_data}}{data.table of survival data}
