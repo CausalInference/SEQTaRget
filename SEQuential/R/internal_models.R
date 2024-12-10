@@ -2,12 +2,16 @@
 #'
 #' @importFrom fastglm fastglm
 #' @importFrom stats as.formula model.matrix
+#' @importFrom splines ns
 #'
 #' @keywords internal
 internal.model <- function(data, params) {
   data <- data[!is.na(get(params@outcome)), ]
 
   if (params@multinomial) data <- data[get(paste0(params@treatment, params@baseline.indicator)) %in% params@treat.level]
+  if (params@followup.class) data <- data["followup" := as.factor(get("followup"))]
+  if (params@followup.spline) data <- data["followup" := splines::ns(get("followup"))]
+
   X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data)
   y <- data[[params@outcome]]
 

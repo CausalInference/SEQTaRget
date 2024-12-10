@@ -43,6 +43,8 @@
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
+#' @param followup.class Logical: TODO
+#' @param followup.spline Logical: TODO
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -51,7 +53,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     min.followup = -Inf, max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
                     covariates = NA, weighted = FALSE, upper.weight = Inf, lower.weight = -Inf, p99.weight = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE, elig.wts.0 = NA, elig.wts.1 = NA, hazard = FALSE, calculate.var = FALSE,
-                    random.selection = FALSE, selection.prob = 0.8,
+                    random.selection = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
@@ -146,6 +148,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     hazard = hazard,
     calculate.var = calculate.var,
     elig.wts.1 = elig.wts.1,
-    elig.wts.0 = elig.wts.0
+    elig.wts.0 = elig.wts.0,
+    followup.class = followup.class,
+    followup.spline = followup.spline
   )
 }

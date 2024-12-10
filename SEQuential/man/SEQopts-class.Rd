@@ -98,6 +98,6 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{followup.class}}{Logical: TODO}
 
-\item{\code{followup.spline}}{Integer: TODO}
+\item{\code{followup.spline}}{Logical: TODO}
 }}
 

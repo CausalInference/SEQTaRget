@@ -32,6 +32,8 @@ SEQopts(
   calculate.var = FALSE,
   random.selection = FALSE,
   selection.prob = 0.8,
+  followup.class = FALSE,
+  followup.spline = FALSE,
   ltfu.numerator = NA,
   ltfu.denominator = NA,
   cense = NA,
@@ -104,6 +106,10 @@ SEQopts(
 \item{random.selection}{Logical: TODO}
 
 \item{selection.prob}{Numeric: TODO}
+
+\item{followup.class}{Logical: TODO}
+
+\item{followup.spline}{Logical: TODO}
 
 \item{ltfu.numerator}{String: TODO}
 

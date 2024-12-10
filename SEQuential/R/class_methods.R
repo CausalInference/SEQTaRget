@@ -44,7 +44,7 @@
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #' @slot followup.class Logical: TODO
-#' @slot followup.spline Integer: TODO
+#' @slot followup.spline Logical: TODO
 setClass("SEQopts",
   slots = c(
     parallel = "logical",
@@ -92,7 +92,7 @@ setClass("SEQopts",
     multinomial = "logical",
     treat.level = "list",
     followup.class = "logical",
-    followup.spline = "integer"
+    followup.spline = "logical"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -138,7 +138,7 @@ setClass("SEQopts",
     treat.level = list(0, 1),
     multinomial = FALSE,
     followup.class = FALSE,
-    followup.spline = 0L
+    followup.spline = FALSE
   )
 )
 
