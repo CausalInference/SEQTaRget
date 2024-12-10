@@ -132,7 +132,9 @@ setClass("SEQopts",
     squared.indicator = "_sq",
     fastglm.method = 2L,
     treat.level = list(0, 1),
-    multinomial = FALSE
+    multinomial = FALSE,
+    followup.class = FALSE,
+    followup.spline = 0L
   )
 )
 

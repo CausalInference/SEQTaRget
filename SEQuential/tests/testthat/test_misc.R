@@ -25,8 +25,10 @@ test_that("Pre-Expansion Excused Censoring - No excusedZero given", {
 
 test_that("Unweighted Censoring and Dose-Reponse", {
   data <- SEQdata
-  SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
              method = "censoring",
-             options = SEQopts(weighted = FALSE)
-  )
+             options = SEQopts(weighted = FALSE))
+
+  expect_s4_class(model, "SEQoutput")
+
 })

@@ -48,8 +48,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data <- fread("SEQData_ltfu_2.csv")
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(weighted = FALSE)
+    method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts(km.curves = TRUE, bootstrap = TRUE, nboot = 2)
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
@@ -108,10 +108,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     risk <- create.risk(survival$data)
   } else survival <- risk <- NA
 
-  if (params@hazard) hazard <- lapply(outcome, function(x) exp(x$model$model$coefficients[[2]]))
-  if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov)
+  if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$model$coefficients[[2]])), FALSE) else hazard <- NA
+  if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
 
-  out <- prepare.output(params, outcome, survival, risk,
+  out <- prepare.output(params, outcome, hazard, vcov, survival, risk,
     elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
   )
   cat("Completed")

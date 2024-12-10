@@ -99,7 +99,7 @@ internal.survival <- function(params) {
     setDTthreads(1)
 
     result <- future_lapply(1:params@nboot, function(x) {
-      id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+      id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
 
       out <- handler(RMDT, params)
@@ -109,7 +109,7 @@ internal.survival <- function(params) {
   } else {
     result <- lapply(1:params@nboot, function(x) {
       if (params@bootstrap) {
-        id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+        id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
 
         RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
       } else {
@@ -154,12 +154,12 @@ internal.survival <- function(params) {
       surv1_mu = mean(surv.1),
       se_surv0 = sd(surv.0) / sqrt(params@nboot),
       se_surv1 = sd(surv.1) / sqrt(params@nboot)
-    ), by = eval(params@time)][, `:=`(
+    ), by = "followup"][, `:=`(
       surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
       surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,
       surv1_lb = surv1_mu - qnorm(0.975) * se_surv1,
       surv1_ub = surv1_mu + qnorm(0.975) * se_surv1,
-      followup = get(params@time)
+      followup = followup
     )][, kept, with = FALSE]
 
     SDT <- rbind(
