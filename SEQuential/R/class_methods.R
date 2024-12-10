@@ -43,6 +43,8 @@
 #' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
+#' @slot followup.class Logical: TODO
+#' @slot followup.spline Integer: TODO
 setClass("SEQopts",
   slots = c(
     parallel = "logical",
@@ -88,7 +90,9 @@ setClass("SEQopts",
     squared.indicator = "character",
     fastglm.method = "integer",
     multinomial = "logical",
-    treat.level = "list"
+    treat.level = "list",
+    followup.class = "logical",
+    followup.spline = "integer"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),

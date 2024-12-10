@@ -47,8 +47,6 @@ SEQopts(
   km.curves = FALSE,
   baseline.indicator = "_bas",
   squared.indicator = "_sq",
-  followup.class = FALSE,
-  followup.spline = 0,
   fastglm.method = 2L
 )
 }
@@ -136,10 +134,6 @@ SEQopts(
 \item{baseline.indicator}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{squared.indicator}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
-
-\item{followup.class}{Logical: whether or not to treat followup as a class in models}
-
-\item{followup.spline}{Integer: degrees of freedom for natural (restricted) splines for use in trial-time}
 
 \item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
 }
