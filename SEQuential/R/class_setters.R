@@ -50,7 +50,11 @@ parameter.setter <- function(data, DT,
     squared.indicator = opts@squared.indicator,
     fastglm.method = opts@fastglm.method,
     multinomial = opts@multinomial,
-    treat.level = opts@treat.level
+    treat.level = opts@treat.level,
+    followup.class = opts@followup.class,
+    followup.spline = opts@followup.spline,
+    elig.wts.1 = opts@elig.wts.1,
+    elig.wts.0 = opts@elig.wts.0
   )
 }
 

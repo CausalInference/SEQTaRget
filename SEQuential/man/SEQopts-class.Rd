@@ -95,5 +95,9 @@ An S4 class of user options to feed into the SEQuential process
 \item{\code{squared.indicator}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{\code{fastglm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+
+\item{\code{followup.class}}{Logical: TODO}
+
+\item{\code{followup.spline}}{Integer: TODO}
 }}
 
