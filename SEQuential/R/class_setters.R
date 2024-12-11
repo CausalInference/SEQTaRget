@@ -82,11 +82,11 @@ parameter.simplifier <- function(params) {
   if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@include.followup, params@followup.class, params@followup.spline) > 1) stop("include.followup, followup.class, and followup.spline are exclusive. Please select one")
 
-  if (is.na(params@excused.col0)) {
+  if (is.na(params@excused.col0) & params@excused & params@method == "censoring") {
     params@excused.col0 <- "tmp0"
     params@data <- params@data[, tmp0 := 0]
   }
-  if (is.na(params@excused.col1)) {
+  if (is.na(params@excused.col1) & params@excused & params@method == "censoring") {
     params@excused.col1 <- "tmp1"
     params@data <- params@data[, tmp1 := 0]
   }

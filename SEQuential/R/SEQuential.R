@@ -45,11 +45,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQData_ltfu_2.csv")
+    data <- fread("SEQData_multitreatment2.csv")
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(km.curves = TRUE, bootstrap = TRUE, nboot = 2)
+    options <- SEQopts(multinomial = TRUE, treat.level = c(1,2))
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
@@ -94,11 +94,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Expansion ==================================================
   cat("Expanding Data...\n")
+  if (params@multinomial) params@data <- params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- SEQexpand(params)
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Model Dispersion ===========================================
+
   outcome <- internal.analysis(params)
   cat(method, "model created successfully\n")
 

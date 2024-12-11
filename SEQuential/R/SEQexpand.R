@@ -64,7 +64,9 @@ SEQexpand <- function(params) {
     data_list[["time"]] <- data.time[, vars.found, with = FALSE]
   }
   if (length(vars.base) > 0) {
-    data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0][, eval(params@eligible) := NULL]
+    data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0
+                      ][get(params@eligible) == 1,
+                        ][, eval(params@eligible) := NULL]
 
     vars.found <- unique(c(paste0(vars.base, params@baseline.indicator), "period", "trial", params@id))
     setnames(data.base, old = vars.base, new = paste0(vars.base, params@baseline.indicator))
