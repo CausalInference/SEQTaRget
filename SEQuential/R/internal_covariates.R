@@ -8,7 +8,6 @@ create.default.covariates <- function(params) {
   fixed <- NULL
   trial <- NULL
   tx_bas <- paste0(params@treatment, params@baseline.indicator)
-  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
   dose <- paste0("dose", c("", params@squared.indicator), collapse = "+")
   interaction <- paste0(tx_bas, "*", "followup")
   interaction.dose <- paste0("followup*", c("dose", "dose_sq"), collapse = "+")
@@ -23,8 +22,7 @@ create.default.covariates <- function(params) {
     fixed <- paste0(params@fixed, collapse = "+")
   }
   if (params@include.trial) trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
-  if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
-
+  if (params@include.followup) followup <- paste0("followup", c("", params@squared.indicator)) else if (params@followup.spline | params@followup.class) followup <- "followup"
 
   if (params@method == "ITT") {
     out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
@@ -98,8 +96,7 @@ create.default.LTFU.covariates <- function(params, type){
   timeVarying_bas <- NULL
   fixed <- NULL
   trial <- NULL
-  period <- NULL
-  followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
+  followup <- NULL
   time <- paste0(params@time, c("", params@squared.indicator), collapse = "+")
 
   if (length(params@time_varying) > 0) {
@@ -112,7 +109,7 @@ create.default.LTFU.covariates <- function(params, type){
   }
 
   if (params@include.trial) trial <- paste0("trial", c("", params@squared.indicator), collapse = "+")
-  if (params@include.period) period <- paste0("period", c("", params@squared.indicator), collapse = "+")
+  if (params@include.followup) followup <- paste0("followup", c("", params@squared.indicator), collapse = "+")
 
   if (type == "numerator") {
     if (params@pre.expansion) out <- paste0(c("tx_lag", time, fixed), collapse = "+")

@@ -24,6 +24,8 @@ parameter.setter <- function(data, DT,
     bootstrap = opts@bootstrap,
     boot.sample = opts@boot.sample,
     seed = opts@seed,
+    include.followup = opts@include.followup,
+    include.trial = opts@include.trial,
     min.followup = opts@min.followup,
     max.followup = opts@max.followup,
     max.survival = opts@max.survival,
@@ -77,7 +79,8 @@ parameter.simplifier <- function(params) {
     params@excused <- FALSE
   }
 
-  if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible, please select one.")
+  if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
+  if (sum(params@include.followup, params@followup.class, params@followup.spline) > 1) stop("include.followup, followup.class, and followup.spline are exclusive. Please select one")
 
   if (is.na(params@excused.col0)) {
     params@excused.col0 <- "tmp0"
@@ -97,6 +100,7 @@ parameter.simplifier <- function(params) {
     warning("Without LTFU, weighted ITT model is not supported, automatically changed to weighted = FALSE")
     params@weighted <- FALSE
   }
+  if (params@followup.class & params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
 
   return(params)
 }
