@@ -112,7 +112,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
 
   out <- prepare.output(params, outcome, hazard, vcov, survival, risk,
-    elapsed_time = paste(round(as.numeric(difftime(Sys.time(), time.start, units = "mins")), 2), "minutes")
+    elapsed_time = format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   )
   cat("Completed")
   plan(future::sequential())

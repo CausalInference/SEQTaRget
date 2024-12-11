@@ -10,7 +10,7 @@
 #' @param min.followup Numeric: minimum time to expand aboud, default is -Inf (no minimum)
 #' @param max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
 #' @param max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
-#' @param include.period Logical: whether or not to include 'period' and 'period_squared' in the outcome model
+#' @param include.followup Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model
 #' @param include.trial Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
 #' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @param numerator String: numerator covariates to coerce to formula object
@@ -43,15 +43,17 @@
 #' @param baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
+#' @param followup.class Logical: TODO
+#' @param followup.spline Logical: TODO
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
 SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), ncores = parallel::detectCores() - 1,
                     bootstrap = FALSE, nboot = 100, boot.sample = 0.8, seed = 1636,
-                    min.followup = -Inf, max.followup = Inf, max.survival = Inf, include.period = TRUE, include.trial = TRUE,
+                    min.followup = -Inf, max.followup = Inf, max.survival = Inf, include.followup = TRUE, include.trial = TRUE,
                     covariates = NA, weighted = FALSE, upper.weight = Inf, lower.weight = -Inf, p99.weight = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE, elig.wts.0 = NA, elig.wts.1 = NA, hazard = FALSE, calculate.var = FALSE,
-                    random.selection = FALSE, selection.prob = 0.8,
+                    random.selection = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
@@ -79,7 +81,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   random.selection <- as.logical(random.selection)
 
   include.trial <- as.logical(include.trial)
-  include.period <- as.logical(include.period)
+  include.followup <- as.logical(include.followup)
 
   covariates <- gsub("\\s", "", covariates)
   numerator <- gsub("\\s", "", numerator)
@@ -119,7 +121,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     max.followup = max.followup,
     max.survival = max.survival,
     include.trial = include.trial,
-    include.period = include.period,
+    include.followup = include.followup,
     weighted = weighted,
     lower.weight = lower.weight,
     upper.weight = upper.weight,
@@ -146,6 +148,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     hazard = hazard,
     calculate.var = calculate.var,
     elig.wts.1 = elig.wts.1,
-    elig.wts.0 = elig.wts.0
+    elig.wts.0 = elig.wts.0,
+    followup.class = followup.class,
+    followup.spline = followup.spline
   )
 }

@@ -78,7 +78,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
     data <- data[get(params@eligible) == 1, list(period = Map(seq, get(params@time), table(data[[params@id]])[.GRP] - 1)), by = eval(params@id),
                  ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
                    ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")]
-  })['elapsed'] * 10
+  })['elapsed'] * 10 * 3 #best guess on the 2x left joins
 
   # Total Time ============================================
   nmodels <- 1

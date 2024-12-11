@@ -15,7 +15,7 @@ SEQopts(
   min.followup = -Inf,
   max.followup = Inf,
   max.survival = Inf,
-  include.period = TRUE,
+  include.followup = TRUE,
   include.trial = TRUE,
   covariates = NA,
   weighted = FALSE,
@@ -32,6 +32,8 @@ SEQopts(
   calculate.var = FALSE,
   random.selection = FALSE,
   selection.prob = 0.8,
+  followup.class = FALSE,
+  followup.spline = FALSE,
   ltfu.numerator = NA,
   ltfu.denominator = NA,
   cense = NA,
@@ -71,7 +73,7 @@ SEQopts(
 
 \item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
 
-\item{include.period}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
+\item{include.followup}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
 
 \item{include.trial}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
@@ -104,6 +106,10 @@ SEQopts(
 \item{random.selection}{Logical: TODO}
 
 \item{selection.prob}{Numeric: TODO}
+
+\item{followup.class}{Logical: TODO}
+
+\item{followup.spline}{Logical: TODO}
 
 \item{ltfu.numerator}{String: TODO}
 
