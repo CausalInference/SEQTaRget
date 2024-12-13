@@ -9,10 +9,17 @@ Authors@R: c(person(given = "Ryan",
              person(given = "Alejandro",
                     family = "Szmulewicz",
                     role = c("aut"),
-                    email = "aszmulewicz@hsph.harvard.edu"))
+                    email = "aszmulewicz@hsph.harvard.edu"),
+             person(given = "Miguel",
+                    family = "Hernan",
+                    role = c("aut"),
+                    email = "mhernan@hsph.harvard.edu"))
 Maintainer: Ryan ODea <ryanodea@hsph.harvard.edu>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: A package to estimate the observational analogs of the intention-to-treat (ITT) and per-protocal effects
+             of hypothetical treatment strategies. This package is an extention of  the Initiators SAS macro built by
+             Roger Logan, Goodarz Danaei, and Miguel Hernan and is designed to analyze observational longitudinal data
+             to estimate the effect of interventions sustained over time. The premise is to emulate the design and analysis
+             of hypothetical random trials.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

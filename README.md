@@ -15,7 +15,7 @@ A package to estimate the observational analogs of the intention-to-treat and pe
 
 
 ## Setting up your Analysis
-`SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`
+`SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`. `SEQestimate` can also take the provided options and return a (very rough) estimated time for analysis.
 ```r
 data <- SEQdata
 myOptions <- SEQopts(excused = TRUE, nboot = 100, bootstrap = TRUE,
@@ -31,7 +31,7 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
 
 #Look at 50th bootstrap iteration
 boot50 <- explore(model, 50)
-show(boot50)
+boot50
 ```
 ### Assumptions
 This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed - 
@@ -64,8 +64,11 @@ These can be handily and easily printed to the terminal with `show(.)`
 - future
 - future.apply
 - ggplot2
-- speedglm
+- fastglm
 - methods
+
+## Finding More Information and Examples
+Further information on utilizing this package or developing it further is available with the [SEQuential Wiki](https://github.com/CausalInference/SEQuential/wiki) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
 
 ## Contributing to the package
 Community members are welcome to contribute to this package through several different avenues- 
