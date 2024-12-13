@@ -43,19 +43,21 @@ This package places several assumptions onto the input data and unexpected resul
 The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` with slots:
 1. bootstrap - TRUE/FALSE dependent if bootstrapping was done
 2. boot.sample - sample of data used in each bootstrap
-3. boot.slice - used in method `show()`
+3. boot.slice - used when exploring single bootstrap iterations
 4. seed - seeding for bootstrap sampling
 5. nboot - number of bootstraps
 6. outcome - outcome covariates
 7. numerator - numerator covariates when weighting
 8. denominator - denominator covariates when weighting
-9. survival_curve - ggplot survival curve
-10. survival_data - survival data
-11. risk_difference - risk difference
-12. risk_ratio - risk ratio
-13. elapsed_time - elapsed time for the SEQuential analysis
+9. hazard - the hazard ratio
+10. robust_se - the robust standard error estimates
+11. survival_curve - ggplot survival curve
+12. survival_data - survival data
+13. risk_difference - risk difference
+14. risk_ratio - risk ratio
+15. elapsed_time - elapsed time for the SEQuential analysis
 
-These can be handily and easily printed to the terminal with `show(.)`
+These can be handily and easily printed to the terminal with `show(.)`. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE, calculate.var = TRUE`, then the survival curves, data and associated risks will return `NA`.
 
 ## Dependencies
 - data.table
