@@ -97,3 +97,4 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 \item{\code{followup.spline}}{Logical: TODO}
 }}
 
+\keyword{internal}

@@ -21,3 +21,4 @@ An internal S4 class to help transfer weight statistics out of \code{internal_we
 \item{\code{coef.d1}}{coefficients from the denominator one model}
 }}
 
+\keyword{internal}

@@ -43,6 +43,8 @@
 #' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #' @slot followup.class Logical: TODO
 #' @slot followup.spline Logical: TODO
+#'
+#' @keywords internal
 setClass("SEQopts",
   slots = c(
     parallel = "logical",
@@ -148,6 +150,7 @@ setClass("SEQopts",
 #' @slot fixed list of fixed columns as defined by the user
 #' @slot method method of analysis as defined by the user
 #'
+#' @keywords internal
 
 setClass("SEQparams",
   contains = "SEQopts",
@@ -183,6 +186,8 @@ setClass("SEQparams",
 #' @slot coef.n1 coefficients from the numerator one model
 #' @slot coef.d0 coefficients from the denominator zero model
 #' @slot coef.d1 coefficients from the denominator one model
+#'
+#' @keywords internal
 setClass("SEQweights",
   slots = c(
     weights = "data.table",

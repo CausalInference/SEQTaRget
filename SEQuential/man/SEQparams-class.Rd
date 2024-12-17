@@ -29,3 +29,4 @@ An internal S4 class to carry around parameters during the SEQuential process - 
 \item{\code{method}}{method of analysis as defined by the user}
 }}
 
+\keyword{internal}
