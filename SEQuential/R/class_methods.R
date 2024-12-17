@@ -1,4 +1,4 @@
-#' An S4 class of user options to feed into the SEQuential process
+#' An S4 class of user options to feed into the SEQuential processes and estimates
 #'
 #' @slot parallel Logical: define if the SEQuential process is run in parallel, default is FALSE
 #' @slot nthreads Integer: number of threads to use for data.table processing
@@ -10,7 +10,7 @@
 #' @slot min.followup Numeric: minimum time to expand aboud, default is -Inf (no minimum)
 #' @slot max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
 #' @slot max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
-#' @slot include.period Logical: whether or not to include 'period' and 'period_squared' in the outcome model
+#' @slot include.followup Logical: whether or not to include 'period' and 'period_squared' in the outcome model
 #' @slot include.trial Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @slot numerator String: numerator covariates to coerce to formula object

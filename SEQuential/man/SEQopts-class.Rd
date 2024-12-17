@@ -3,9 +3,9 @@
 \docType{class}
 \name{SEQopts-class}
 \alias{SEQopts-class}
-\title{An S4 class of user options to feed into the SEQuential process}
+\title{An S4 class of user options to feed into the SEQuential processes and estimates}
 \description{
-An S4 class of user options to feed into the SEQuential process
+An S4 class of user options to feed into the SEQuential processes and estimates
 }
 \section{Slots}{
 
@@ -30,7 +30,7 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{max.survival}}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
 
-\item{\code{include.period}}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
+\item{\code{include.followup}}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
 
 \item{\code{include.trial}}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
