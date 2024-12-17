@@ -37,9 +37,7 @@ SEQopts(
   ltfu.numerator = NA,
   ltfu.denominator = NA,
   cense = NA,
-  cense2 = NA,
   eligible_cense = NA,
-  eligible_cense2 = NA,
   compevent = NA,
   multinomial = FALSE,
   treat.level = c(0, 1),
@@ -117,11 +115,7 @@ SEQopts(
 
 \item{cense}{String: TODO}
 
-\item{cense2}{String: TODO}
-
 \item{eligible_cense}{String: TODO}
-
-\item{eligible_cense2}{String: TODO}
 
 \item{compevent}{String: TODO}
 

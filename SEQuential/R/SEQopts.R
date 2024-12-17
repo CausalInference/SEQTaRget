@@ -31,9 +31,7 @@
 #' @param selection.prob Numeric: TODO
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
 #' @param cense String: TODO
-#' @param cense2 String: TODO
 #' @param eligible_cense String: TODO
-#' @param eligible_cense2 String: TODO
 #' @param multinomial Logical: whether or not to expect multinomial models
 #' @param treat.level List: which treatment levels to compare through survival curves
 #' @param compevent String: TODO
@@ -54,7 +52,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     covariates = NA, weighted = FALSE, upper.weight = Inf, lower.weight = -Inf, p99.weight = FALSE,
                     numerator = NA, denominator = NA, surv = NA, pre.expansion = TRUE, elig.wts.0 = NA, elig.wts.1 = NA, hazard = FALSE, calculate.var = FALSE,
                     random.selection = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
-                    ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, cense2 = NA, eligible_cense = NA, eligible_cense2 = NA,
+                    ltfu.numerator = NA, ltfu.denominator = NA, cense = NA, eligible_cense = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     baseline.indicator = "_bas", squared.indicator = "_sq",
@@ -98,9 +96,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   excused.col0 <- as.character(excused.col0)
 
   cense <- as.character(cense)
-  cense2 <- as.character(cense2)
   eligible_cense <- as.character(eligible_cense)
-  eligible_cense2 <- as.character(eligible_cense2)
   compevent <- as.character(compevent)
   treat.level <- as.list(treat.level)
 
@@ -129,10 +125,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     pre.expansion = pre.expansion,
     excused = excused,
     cense = cense,
-    cense2 = cense2,
     compevent = compevent,
     eligible_cense = eligible_cense,
-    eligible_cense2 = eligible_cense2,
     excused.col1 = excused.col1,
     excused.col0 = excused.col0,
     km.curves = km.curves,

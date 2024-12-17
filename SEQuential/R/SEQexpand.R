@@ -33,7 +33,7 @@ SEQexpand <- function(params) {
     if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
   }
   vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
-                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2,
+                   params@treatment, params@cense, params@eligible_cense,
                    params@compevent, params@elig.wts.0, params@elig.wts.1))
   vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@squared.indicator), "tx_lag")
   vars <- vars[!is.na(vars)]
@@ -57,16 +57,14 @@ SEQexpand <- function(params) {
   data_list <- list()
   if (length(c(vars.time, vars.sq)) > 0) {
     data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time
-                      ][, eval(params@eligible) := NULL
-                        ][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
+                      ][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
     vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
     data_list[["time"]] <- data.time[, vars.found, with = FALSE]
   }
   if (length(vars.base) > 0) {
     data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0
-                      ][get(params@eligible) == 1,
-                        ][, eval(params@eligible) := NULL]
+                      ]
 
     vars.found <- unique(c(paste0(vars.base, params@baseline.indicator), "period", "trial", params@id))
     setnames(data.base, old = vars.base, new = paste0(vars.base, params@baseline.indicator))

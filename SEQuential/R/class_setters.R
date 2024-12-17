@@ -33,12 +33,10 @@ parameter.setter <- function(data, DT,
     pre.expansion = opts@pre.expansion,
     excused = opts@excused,
     cense = opts@cense,
-    cense2 = opts@cense2,
     hazard = opts@hazard,
     calculate.var = opts@calculate.var,
     compevent = opts@compevent,
     eligible_cense = opts@eligible_cense,
-    eligible_cense2 = opts@eligible_cense2,
     excused.col0 = opts@excused.col0,
     excused.col1 = opts@excused.col1,
     covariates = opts@covariates,
@@ -91,7 +89,7 @@ parameter.simplifier <- function(params) {
     params@data <- params@data[, tmp1 := 0]
   }
 
-  if(length(c(params@cense, params@cense2)[!is.na(c(params@cense, params@cense2))]) > 0) {
+  if(!is.na(params@cense)) {
     params@LTFU <- TRUE
     params@weighted <- TRUE
   }

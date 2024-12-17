@@ -72,11 +72,7 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{cense}}{String: TODO}
 
-\item{\code{cense2}}{String: TODO}
-
 \item{\code{eligible_cense}}{String: TODO}
-
-\item{\code{eligible_cense2}}{String: TODO}
 
 \item{\code{multinomial}}{Logical: whether or not to expect multinomial models}
 

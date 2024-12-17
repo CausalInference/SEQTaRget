@@ -31,9 +31,7 @@
 #' @slot selection.prob Numeric: TODO
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
 #' @slot cense String: TODO
-#' @slot cense2 String: TODO
 #' @slot eligible_cense String: TODO
-#' @slot eligible_cense2 String: TODO
 #' @slot multinomial Logical: whether or not to expect multinomial models
 #' @slot treat.level List: which treatment levels to compare through survival curves
 #' @slot compevent String: TODO
@@ -72,9 +70,7 @@ setClass("SEQopts",
     random.selection = "logical",
     selection.prob = "numeric",
     cense = "character",
-    cense2 = "character",
     eligible_cense = "character",
-    eligible_cense2 = "character",
     excused.col0 = "character",
     excused.col1 = "character",
     LTFU = "logical",
@@ -118,9 +114,7 @@ setClass("SEQopts",
     random.selection = FALSE,
     selection.prob = 0.8,
     cense = NA_character_,
-    cense2 = NA_character_,
     eligible_cense = NA_character_,
-    eligible_cense2 = NA_character_,
     excused.col0 = NA_character_,
     excused.col1 = NA_character_,
     LTFU = FALSE,
