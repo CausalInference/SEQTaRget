@@ -19,6 +19,14 @@ internal.survival <- function(params) {
   se_surv0 <- se_surv1 <- NULL
   surv0_lb <- surv1_lb <- NULL
   surv0_ub <- surv1_ub <- NULL
+  risk0_mu <- risk1_mu <- NULL
+  se_risk0 <- se_risk1 <- NULL
+  risk0_lb <- risk1_lb <- NULL
+  risk0_ub <- risk1_ub <- NULL
+  inc0_mu <- inc1_mu <- NULL
+  se_inc0 <- se_inc1 <- NULL
+  inc0_lb <- inc1_lb <- NULL
+  inc0_ub <- inc1_ub <- NULL
   mu <- lb <- ub <- NULL
   followup <- NULL
   numerator <- denominator <- NULL
@@ -136,45 +144,82 @@ internal.survival <- function(params) {
         id.vars = "followup"
       )
     }
-    if (TRUE) surv <- surv[!variable %in% c("risk.1", "risk.0")] #TODO
-      plot <- ggplot(surv, aes(x = followup, y = value, col = variable)) +
-      geom_line() +
-      theme_classic() +
-      labs(x = "Time", y = "Survival", color = "") +
-      scale_color_discrete(labels = c("No Treatment", "Treatment"))
-      #TODO - bootstrapping stuff for inc0 and inc1
   } else {
-    kept <- c(
-      "surv0_mu", "surv0_lb", "surv0_ub",
-      "surv1_mu", "surv1_lb", "surv1_ub",
-      "followup"
-    )
-    DT <- result[, list(
-      surv0_mu = mean(surv.0),
-      surv1_mu = mean(surv.1),
-      se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
-      se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot)
-    ), by = "followup"][, `:=`(
-      surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
-      surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,
-      surv1_lb = surv1_mu - qnorm(0.975) * se_surv1,
-      surv1_ub = surv1_mu + qnorm(0.975) * se_surv1,
-      followup = followup
-    )][, kept, with = FALSE]
+    if (is.na(params@compevent)) {
+      kept <- c(
+        "surv0_mu", "surv0_lb", "surv0_ub",
+        "surv1_mu", "surv1_lb", "surv1_ub",
+        "risk0_mu", "risk0_lb", "risk0_ub",
+        "risk1_mu", "risk1_lb", "risk1_ub",
+        "followup"
+      )
+      DT <- result[, list(
+        surv0_mu = mean(surv.0),
+        surv1_mu = mean(surv.1),
+        risk0_mu = mean(risk.0),
+        risk1_mu = mean(risk.1),
+        se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
+        se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot),
+        se_risk0 = sd(risk.0) / sqrt(params@bootstrap.nboot),
+        se_risk1 = sd(risk.1) / sqrt(params@bootstrap.nboot)
+      ), by = "followup"][, `:=`(
+        surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
+        surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,
+        surv1_lb = surv1_mu - qnorm(0.975) * se_surv1,
+        surv1_ub = surv1_mu + qnorm(0.975) * se_surv1,
+        risk0_lb = risk0_mu - qnorm(0.975) * se_risk0,
+        risk0_ub = risk0_mu + qnorm(0.975) * se_risk0,
+        risk1_lb = risk1_mu - qnorm(0.975) * se_risk1,
+        risk1_ub = risk1_mu + qnorm(0.975) * se_risk1,
+        followup = followup
+      )][, kept, with = FALSE]
 
-    SDT <- rbind(
-      DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "txFALSE"],
-      DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "txTRUE"]
-    )
-    rm(DT, result)
-    gc()
+      surv <- rbind(
+        DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
+        DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
+        DT[, list(followup, mu = risk0_mu, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
+        DT[, list(followup, mu = risk1_mu, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"]
+      )
+      rm(DT, result)
+      gc()
+    } else {
+      kept <- c(
+        "surv0_mu", "surv0_lb", "surv0_ub",
+        "surv1_mu", "surv1_lb", "surv1_ub",
+        "inc0_mu", "inc0_lb", "inc0_ub",
+        "inc1_mu", "inc1_lb", "inc1_ub",
+        "followup"
+      )
+      DT <- result[, list(
+        surv0_mu = mean(surv.0),
+        surv1_mu = mean(surv.1),
+        inc0_mu = mean(inc.0),
+        inc1_mu = mean(inc.1),
+        se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
+        se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot),
+        se_inc0 = sd(inc.0) / sqrt(params@bootstrap.nboot),
+        se_inc1 = sd(inc.1) / sqrt(params@bootstrap.nboot)
+      ), by = "followup"][, `:=`(
+        surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
+        surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,
+        surv1_lb = surv1_mu - qnorm(0.975) * se_surv1,
+        surv1_ub = surv1_mu + qnorm(0.975) * se_surv1,
+        inc0_lb = inc0_mu - qnorm(0.975) * se_inc0,
+        inc0_ub = inc0_mu + qnorm(0.975) * se_inc0,
+        inc1_lb = inc1_mu - qnorm(0.975) * se_inc1,
+        inc1_lb = inc1_mu + qnorm(0.975) * se_inc1,
+        followup = followup
+      )][, kept, with = FALSE]
 
-    plot <- ggplot(SDT, aes(x = followup, y = mu, fill = variable)) +
-      geom_line(col = "black") +
-      geom_ribbon(aes(ymax = ub, ymin = lb), alpha = 0.5) +
-      theme_classic() +
-      labs(x = "Time", y = "Survival", fill = "") +
-      scale_color_discrete(labels = c("No Treatment", "Treatment"))
+      surv <- rbind(
+        DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
+        DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
+        DT[, list(followup, mu = inc0_mu, lb = inc0_lb, ub = inc0_ub)][, variable := "inc0"],
+        DT[, list(followup, mu = inc1_mu, lb = inc1_lb, ub = inc1_ub)][, variable := "inc1"]
+      )
+      rm(DT, result)
+      gc()
+    }
   }
-  return(plot)
+  return(surv)
 }

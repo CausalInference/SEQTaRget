@@ -9,7 +9,8 @@ prepare.output(
   outcome_model,
   hazard,
   robustSE,
-  survival_curve,
+  survival_plot,
+  survival_data,
   risk,
   elapsed_time
 )

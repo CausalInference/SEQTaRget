@@ -47,7 +47,12 @@ SEQopts(
   km.curves = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
-  fastglm.method = 2L
+  fastglm.method = 2L,
+  plot.title = NA,
+  plot.subtitle = NA,
+  plot.labels = NA,
+  plot.colors = c("#F8766D", "#00BFC4"),
+  plot.type = "survival"
 )
 }
 \arguments{
@@ -136,6 +141,16 @@ SEQopts(
 \item{indicator.squared}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+
+\item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
+
+\item{plot.subtitle}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+
+\item{plot.labels}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+
+\item{plot.colors}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
+
+\item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)}
 }
 \value{
 An object of class 'SEQOpts'

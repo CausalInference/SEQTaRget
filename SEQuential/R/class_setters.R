@@ -54,7 +54,12 @@ parameter.setter <- function(data, DT,
     followup.class = opts@followup.class,
     followup.spline = opts@followup.spline,
     weight.eligible1 = opts@weight.eligible1,
-    weight.eligible0 = opts@weight.eligible0
+    weight.eligible0 = opts@weight.eligible0,
+    plot.type = opts@plot.type,
+    plot.title = opts@plot.title,
+    plot.subtitle = opts@plot.subtitle,
+    plot.labels = opts@plot.labels,
+    plot.colors = opts@plot.colors
   )
 }
 
@@ -99,6 +104,7 @@ parameter.simplifier <- function(params) {
     params@weighted <- FALSE
   }
   if (params@followup.class & params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
+  if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
 
   return(params)
 }
@@ -107,7 +113,7 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, hazard, robustSE, survival_curve, risk, elapsed_time) {
+prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time) {
   if (!missing(outcome_model)) {
     outcome.coefs <- lapply(1:params@bootstrap.nboot, function(x) coef(outcome_model[[x]]$model$model))
     weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
@@ -126,10 +132,10 @@ prepare.output <- function(params, outcome_model, hazard, robustSE, survival_cur
     hazard = if (!params@hazard) NA_real_ else hazard,
     robust_se = if (!params@calculate.var) list() else robustSE,
     weight_statistics = weight.stats,
-    survival_curve = if (!params@km.curves) NA else survival_curve,
-    survival_data = if (!params@km.curves) NA else survival_curve$data,
-    risk_difference = if (!params@km.curves) NA_real_ else risk$rd,
-    risk_ratio = if (!params@km.curves) NA_real_ else risk$rr,
+    survival_curve = if (!params@km.curves) NA else survival_plot,
+    survival_data = if (!params@km.curves) NA else survival_data,
+    risk_difference = NA_real_, # TODO
+    risk_ratio = NA_real_,
     elapsed_time = elapsed_time
   )
 }

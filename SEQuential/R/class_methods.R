@@ -43,6 +43,11 @@
 #' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #' @slot followup.class Logical: TODO
 #' @slot followup.spline Logical: TODO
+#' @slot plot.title Character: Title for output plot if \code{km.curves = TRUE}
+#' @slot plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
+#' @slot plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
+#' @slot plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
+#' @slot plot.type Character: Type of plot to create if \code{km.curves = TRUE}
 #'
 #' @keywords internal
 setClass("SEQopts",
@@ -90,7 +95,12 @@ setClass("SEQopts",
     multinomial = "logical",
     treat.level = "list",
     followup.class = "logical",
-    followup.spline = "logical"
+    followup.spline = "logical",
+    plot.title = "character",
+    plot.subtitle = "character",
+    plot.labels = "character",
+    plot.colors = "character",
+    plot.type = "character"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -134,7 +144,12 @@ setClass("SEQopts",
     treat.level = list(0, 1),
     multinomial = FALSE,
     followup.class = FALSE,
-    followup.spline = FALSE
+    followup.spline = FALSE,
+    plot.title = NA_character_,
+    plot.subtitle = NA_character_,
+    plot.labels = NA_character_,
+    plot.colors = NA_character_,
+    plot.type = NA_character_
   )
 )
 

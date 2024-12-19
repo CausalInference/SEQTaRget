@@ -95,6 +95,16 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 \item{\code{followup.class}}{Logical: TODO}
 
 \item{\code{followup.spline}}{Logical: TODO}
+
+\item{\code{plot.title}}{Character: Title for output plot if \code{km.curves = TRUE}}
+
+\item{\code{plot.subtitle}}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+
+\item{\code{plot.labels}}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+
+\item{\code{plot.colors}}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
+
+\item{\code{plot.type}}{Character: Type of plot to create if \code{km.curves = TRUE}}
 }}
 
 \keyword{internal}

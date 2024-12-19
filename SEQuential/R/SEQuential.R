@@ -106,14 +106,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (params@km.curves) {
     cat("Creating survival curves\n")
-    survival <- internal.survival(params)
-    risk <- create.risk(survival$data)
-  } else survival <- risk <- NA
+    survival.data <- internal.survival(params)
+    survival.plot <- internal.plot(survival.data, params)
+    if(!params@LTFU) risk <- create.risk(survival.data) else risk <- NA
+  } else survival.data <- survival.plot <- risk <- NA
 
   if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$model$coefficients[[2]])), FALSE) else hazard <- NA
   if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
 
-  out <- prepare.output(params, outcome, hazard, vcov, survival, risk,
+  out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk,
     elapsed_time = format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   )
   cat("Completed")

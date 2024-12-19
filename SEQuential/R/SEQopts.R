@@ -43,6 +43,11 @@
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #' @param followup.class Logical: TODO
 #' @param followup.spline Logical: TODO
+#' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
+#' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
+#' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
+#' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
+#' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -56,7 +61,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
                     excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
                     indicator.baseline = "_bas", indicator.squared = "_sq",
-                    fastglm.method = 2L) {
+                    fastglm.method = 2L,
+                    plot.title = NA, plot.subtitle = NA, plot.labels = NA, plot.colors = c("#F8766D", "#00BFC4"), plot.type = "survival") {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -105,6 +111,13 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
 
   fastglm.method <- as.integer(fastglm.method)
 
+  plot.title <- as.character(plot.title)
+  plot.subtitle <- as.character(plot.subtitle)
+  plot.labels <- as.character(plot.labels)
+  plot.colors <- as.character(plot.colors)
+  plot.type <- as.character(plot.type)
+
+
   new("SEQopts",
     parallel = parallel,
     nthreads = nthreads,
@@ -144,6 +157,11 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     weight.eligible1 = weight.eligible1,
     weight.eligible0 = weight.eligible0,
     followup.class = followup.class,
-    followup.spline = followup.spline
+    followup.spline = followup.spline,
+    plot.title = plot.title,
+    plot.subtitle = plot.subtitle,
+    plot.labels = plot.labels,
+    plot.colors = plot.colors,
+    plot.type = plot.type
   )
 }
