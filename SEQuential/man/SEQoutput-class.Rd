@@ -12,13 +12,13 @@ An S4 class used to hold the outputs for the SEQuential process
 \describe{
 \item{\code{boostrap}}{if the process was bootstrapped}
 
-\item{\code{boot.sample}}{how much of the data was sampled during bootstrapping}
+\item{\code{bootstrap.sample}}{how much of the data was sampled during bootstrapping}
 
 \item{\code{boot.slice}}{when using method 'show' defines what to print}
 
 \item{\code{seed}}{seeding any random sampling occuring in bootstrap process}
 
-\item{\code{nboot}}{number of bootstraps}
+\item{\code{bootstrap.nboot}}{number of bootstraps}
 
 \item{\code{outcome}}{outcome covariates}
 
@@ -26,7 +26,7 @@ An S4 class used to hold the outputs for the SEQuential process
 
 \item{\code{denominator}}{denominator covariates}
 
-\item{\code{outcome_model}}{list of length \code{nboot} containing outcome coefficients}
+\item{\code{outcome_model}}{list of length \code{bootstrap.nboot} containing outcome coefficients}
 
 \item{\code{hazard}}{hazard ratio}
 

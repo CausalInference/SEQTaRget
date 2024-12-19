@@ -20,41 +20,41 @@ parameter.setter <- function(data, DT,
     parallel = opts@parallel,
     nthreads = opts@nthreads,
     ncores = opts@ncores,
-    nboot = opts@nboot,
+    bootstrap.nboot = opts@bootstrap.nboot,
     bootstrap = opts@bootstrap,
-    boot.sample = opts@boot.sample,
+    bootstrap.sample = opts@bootstrap.sample,
     seed = opts@seed,
-    include.followup = opts@include.followup,
-    include.trial = opts@include.trial,
-    min.followup = opts@min.followup,
-    max.followup = opts@max.followup,
-    max.survival = opts@max.survival,
+    followup.include = opts@followup.include,
+    trial.include = opts@trial.include,
+    followup.min = opts@followup.min,
+    followup.max = opts@followup.max,
+    survival.max = opts@survival.max,
     weighted = opts@weighted,
-    pre.expansion = opts@pre.expansion,
+    weight.preexpansion = opts@weight.preexpansion,
     excused = opts@excused,
     cense = opts@cense,
     hazard = opts@hazard,
     calculate.var = opts@calculate.var,
     compevent = opts@compevent,
-    eligible_cense = opts@eligible_cense,
+    cense.eligible = opts@cense.eligible,
     excused.col0 = opts@excused.col0,
     excused.col1 = opts@excused.col1,
     covariates = opts@covariates,
     numerator = opts@numerator,
     denominator = opts@denominator,
-    ltfu.numerator = opts@ltfu.numerator,
-    ltfu.denominator = opts@ltfu.denominator,
+    cense.numerator = opts@cense.numerator,
+    cense.denominator = opts@cense.denominator,
     km.curves = opts@km.curves,
     surv = opts@surv,
-    baseline.indicator = opts@baseline.indicator,
-    squared.indicator = opts@squared.indicator,
+    indicator.baseline = opts@indicator.baseline,
+    indicator.squared = opts@indicator.squared,
     fastglm.method = opts@fastglm.method,
     multinomial = opts@multinomial,
     treat.level = opts@treat.level,
     followup.class = opts@followup.class,
     followup.spline = opts@followup.spline,
-    elig.wts.1 = opts@elig.wts.1,
-    elig.wts.0 = opts@elig.wts.0
+    weight.eligible1 = opts@weight.eligible1,
+    weight.eligible0 = opts@weight.eligible0
   )
 }
 
@@ -67,8 +67,8 @@ parameter.simplifier <- function(params) {
   tmp0 <- NULL
 
   if (!params@bootstrap) {
-    params@nboot <- 1L
-    params@boot.sample <- 1
+    params@bootstrap.nboot <- 1L
+    params@bootstrap.sample <- 1
     params@parallel <- FALSE
   }
 
@@ -78,7 +78,7 @@ parameter.simplifier <- function(params) {
   }
 
   if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
-  if (sum(params@include.followup, params@followup.class, params@followup.spline) > 1) stop("include.followup, followup.class, and followup.spline are exclusive. Please select one")
+  if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
 
   if (is.na(params@excused.col0) & params@excused & params@method == "censoring") {
     params@excused.col0 <- "tmp0"
@@ -109,16 +109,16 @@ parameter.simplifier <- function(params) {
 #' @keywords internal
 prepare.output <- function(params, outcome_model, hazard, robustSE, survival_curve, risk, elapsed_time) {
   if (!missing(outcome_model)) {
-    outcome.coefs <- lapply(1:params@nboot, function(x) coef(outcome_model[[x]]$model$model))
-    weight.stats <- lapply(1:params@nboot, function(x) outcome_model[[x]]$weight_info)
+    outcome.coefs <- lapply(1:params@bootstrap.nboot, function(x) coef(outcome_model[[x]]$model$model))
+    weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
   new("SEQoutput",
     bootstrap = params@bootstrap,
-    boot.sample = params@boot.sample,
+    bootstrap.sample = params@bootstrap.sample,
     boot.slice = 1L,
     seed = params@seed,
-    nboot = params@nboot,
+    bootstrap.nboot = params@bootstrap.nboot,
     outcome = paste0(params@outcome, "~", params@covariates),
     numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
     denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),

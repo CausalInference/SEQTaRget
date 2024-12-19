@@ -4,42 +4,42 @@
 #' @slot nthreads Integer: number of threads to use for data.table processing
 #' @slot ncores Integer: number of cores to use in parallel processing, default is one less than system max
 #' @slot bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
-#' @slot nboot Integer: number of bootstraps
-#' @slot boot.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
+#' @slot bootstrap.nboot Integer: number of bootstraps
+#' @slot bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @slot seed Integer: starting seed
-#' @slot min.followup Numeric: minimum time to expand aboud, default is -Inf (no minimum)
-#' @slot max.followup Numeric: maximum time to expand about, default is Inf (no maximum)
-#' @slot max.survival Numeric: maximum time for survival curves, default is Inf (no maximum)
-#' @slot include.followup Logical: whether or not to include 'period' and 'period_squared' in the outcome model
-#' @slot include.trial Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
+#' @slot followup.min Numeric: minimum time to expand aboud, default is -Inf (no minimum)
+#' @slot followup.max Numeric: maximum time to expand about, default is Inf (no maximum)
+#' @slot survival.max Numeric: maximum time for survival curves, default is Inf (no maximum)
+#' @slot followup.include Logical: whether or not to include 'period' and 'period_squared' in the outcome model
+#' @slot trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
 #' @slot numerator String: numerator covariates to coerce to formula object
 #' @slot denominator String: denominator covariates to coerce to formula object
-#' @slot ltfu.numerator String: TODO
-#' @slot ltfu.denominator String: TODO
+#' @slot cense.numerator String: TODO
+#' @slot cense.denominator String: TODO
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
-#' @slot lower.weight Numeric: weights truncated at lower end at this weight
-#' @slot upper.weight Numeric: weights truncated at upper end at this weight
-#' @slot p99.weight Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}
-#' @slot elig.wts.0 String: TODO
-#' @slot elig.wts.1 String: TODO
-#' @slot pre.expansion Logical: whether weighting should be done on pre-expanded data
+#' @slot weight.lower Numeric: weights truncated at lower end at this weight
+#' @slot weight.upper Numeric: weights truncated at upper end at this weight
+#' @slot weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
+#' @slot weight.eligible0 String: TODO
+#' @slot weight.eligible1 String: TODO
+#' @slot weight.preexpansion Logical: whether weighting should be done on pre-expanded data
 #' @slot calculate.var Logical: TODO
 #' @slot hazard Logical: TODO
-#' @slot random.selection Logical: TODO
+#' @slot selection.random Logical: TODO
 #' @slot selection.prob Numeric: TODO
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
 #' @slot cense String: TODO
-#' @slot eligible_cense String: TODO
+#' @slot cense.eligible String: TODO
 #' @slot multinomial Logical: whether or not to expect multinomial models
 #' @slot treat.level List: which treatment levels to compare through survival curves
 #' @slot compevent String: TODO
 #' @slot excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @slot excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
 #' @slot km.curves Logical: Kaplan-Meier survival curve creation and data return
-#' @slot baseline.indicator String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
-#' @slot squared.indicator String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
+#' @slot indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
+#' @slot indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
 #' @slot followup.class Logical: TODO
 #' @slot followup.spline Logical: TODO
@@ -50,42 +50,42 @@ setClass("SEQopts",
     parallel = "logical",
     nthreads = "numeric",
     ncores = "integer",
-    nboot = "integer",
+    bootstrap.nboot = "integer",
     bootstrap = "logical",
-    boot.sample = "numeric",
+    bootstrap.sample = "numeric",
     seed = "integer",
-    min.followup = "numeric",
-    max.followup = "numeric",
-    max.survival = "numeric",
-    include.trial = "logical",
-    include.followup = "logical",
+    followup.min = "numeric",
+    followup.max = "numeric",
+    survival.max = "numeric",
+    trial.include = "logical",
+    followup.include = "logical",
     weighted = "logical",
-    lower.weight = "numeric",
-    upper.weight = "numeric",
-    p99.weight = "logical",
-    elig.wts.0 = "character",
-    elig.wts.1 = "character",
-    pre.expansion = "logical",
+    weight.lower = "numeric",
+    weight.upper = "numeric",
+    weight.p99 = "logical",
+    weight.eligible0 = "character",
+    weight.eligible1 = "character",
+    weight.preexpansion = "logical",
     excused = "logical",
     calculate.var = "logical",
     hazard = "logical",
-    random.selection = "logical",
+    selection.random = "logical",
     selection.prob = "numeric",
     cense = "character",
-    eligible_cense = "character",
+    cense.eligible = "character",
     excused.col0 = "character",
     excused.col1 = "character",
     LTFU = "logical",
     covariates = "character",
     numerator = "character",
     denominator = "character",
-    ltfu.numerator = "character",
-    ltfu.denominator = "character",
+    cense.numerator = "character",
+    cense.denominator = "character",
     km.curves = "logical",
     compevent = "character",
     surv = "character",
-    baseline.indicator = "character",
-    squared.indicator = "character",
+    indicator.baseline = "character",
+    indicator.squared = "character",
     fastglm.method = "integer",
     multinomial = "logical",
     treat.level = "list",
@@ -96,27 +96,27 @@ setClass("SEQopts",
     nthreads = data.table::getDTthreads(),
     ncores = parallel::detectCores(),
     bootstrap = FALSE,
-    boot.sample = 0.8,
+    bootstrap.sample = 0.8,
     seed = 1636L,
-    min.followup = -Inf,
-    max.followup = Inf,
-    max.survival = Inf,
-    include.trial = TRUE,
-    include.followup = TRUE,
+    followup.min = -Inf,
+    followup.max = Inf,
+    survival.max = Inf,
+    trial.include = TRUE,
+    followup.include = TRUE,
     weighted = FALSE,
-    lower.weight = -Inf,
-    upper.weight = Inf,
-    p99.weight = FALSE,
-    pre.expansion = TRUE,
+    weight.lower = -Inf,
+    weight.upper = Inf,
+    weight.p99 = FALSE,
+    weight.preexpansion = TRUE,
     excused = FALSE,
-    elig.wts.0 = NA_character_,
-    elig.wts.1 = NA_character_,
+    weight.eligible0 = NA_character_,
+    weight.eligible1 = NA_character_,
     calculate.var = FALSE,
     hazard = FALSE,
-    random.selection = FALSE,
+    selection.random = FALSE,
     selection.prob = 0.8,
     cense = NA_character_,
-    eligible_cense = NA_character_,
+    cense.eligible = NA_character_,
     excused.col0 = NA_character_,
     excused.col1 = NA_character_,
     LTFU = FALSE,
@@ -124,12 +124,12 @@ setClass("SEQopts",
     covariates = NA_character_,
     numerator = NA_character_,
     denominator = NA_character_,
-    ltfu.numerator = NA_character_,
-    ltfu.denominator = NA_character_,
+    cense.numerator = NA_character_,
+    cense.denominator = NA_character_,
     compevent = NA_character_,
     surv = NA_character_,
-    baseline.indicator = "_bas",
-    squared.indicator = "_sq",
+    indicator.baseline = "_bas",
+    indicator.squared = "_sq",
     fastglm.method = 2L,
     treat.level = list(0, 1),
     multinomial = FALSE,

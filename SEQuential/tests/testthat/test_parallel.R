@@ -3,7 +3,7 @@ test_that("Parallelism, Bootstrapping, Output Class Methods", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
     method = "dose-response", options = SEQopts(
       parallel = TRUE, weighted = TRUE,
-      bootstrap = TRUE, nboot = 2, ncores = 2
+      bootstrap = TRUE, bootstrap.nboot = 2, ncores = 2
     )
   ))
 
@@ -20,7 +20,7 @@ test_that("Non-Parallel Bootstrapping", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
     method = "dose-response", options = SEQopts(
       parallel = FALSE, weighted = TRUE,
-      bootstrap = TRUE, nboot = 2, ncores = 2
+      bootstrap = TRUE, bootstrap.nboot = 2, ncores = 2
     )
   ))
 

@@ -89,7 +89,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
     if (LTFU) {
       if (LTFU.ind == 1) ID <- ID[time <= LTFU.time, ]
       ID <- cbind(ID, LTFU = LTFU_vector)
-      ID <- cbind(ID, eligible_cense = rep(1, nrow(ID)))
+      ID <- cbind(ID, cense.eligible = rep(1, nrow(ID)))
 #      ID <- ID[outcome == 1, LTFU := NA]
     }
     if (outcome == 1) ID <- ID[time <= outcome_time]

@@ -39,7 +39,7 @@ test_that("Post-Expansion Dose-Response", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "dose-response",
-    options = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    options = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -78,7 +78,7 @@ test_that("Post-Expansion Censoring", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
-    options = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    options = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -122,7 +122,7 @@ test_that("Post-Expansion Excused Censoring", {
       weighted = TRUE, excused = TRUE,
       excused.col1 = "excusedOne",
       excused.col0 = "excusedZero",
-      pre.expansion = FALSE)
+      weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -140,7 +140,7 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
   data <- SEQdata.LTFU
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(cense = "LTFU", pre.expansion = TRUE, fastglm.method = 1))
+                      options = SEQopts(cense = "LTFU", weight.preexpansion = TRUE, fastglm.method = 1))
 
   expect_s4_class(model, "SEQoutput")
 
@@ -158,7 +158,7 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
   data <- SEQdata.LTFU
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(cense = "LTFU", pre.expansion = FALSE, fastglm.method = 1))
+                      options = SEQopts(cense = "LTFU", weight.preexpansion = FALSE, fastglm.method = 1))
 
   expect_s4_class(model, "SEQoutput")
 

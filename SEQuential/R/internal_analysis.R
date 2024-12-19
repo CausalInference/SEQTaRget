@@ -21,7 +21,7 @@ internal.analysis <- function(params) {
     } else if (params@weighted) {
       WT <- internal.weights(DT, data, params)
 
-      if (params@pre.expansion) {
+      if (params@weight.preexpansion) {
         if (params@excused) {
           params@time <- "period"
           WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
@@ -81,9 +81,9 @@ internal.analysis <- function(params) {
         p75 = percentile[[4]],
         p99 = percentile[[5]]
       )
-      if (params@p99.weight) {
-        params@lower.weight <- stats$p01
-        params@upper.weight <- stats$p99
+      if (params@weight.p99) {
+        params@weight.lower <- stats$p01
+        params@weight.upper <- stats$p99
       }
       model <- internal.model(WDT, params)
     }
@@ -93,16 +93,16 @@ internal.analysis <- function(params) {
     ))
   }
 
-  if (params@bootstrap) cat("Bootstrapping with", params@boot.sample * 100, "% of data", params@nboot, "times\n")
+  if (params@bootstrap) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
   UIDs <- unique(params@DT[[params@id]])
   lnID <- length(UIDs)
 
   if (params@parallel) {
     setDTthreads(1)
 
-    result <- future_lapply(1:params@nboot, function(x) {
-      if (params@nboot > 1) {
-        id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+    result <- future_lapply(1:params@bootstrap.nboot, function(x) {
+      if (params@bootstrap.nboot > 1) {
+        id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
       } else {
         id.sample <- UIDs
       }
@@ -120,10 +120,10 @@ internal.analysis <- function(params) {
       ))
     }, future.seed = params@seed)
   } else {
-    result <- lapply(1:params@nboot, function(x) {
+    result <- lapply(1:params@bootstrap.nboot, function(x) {
       if (params@bootstrap) {
-        if (params@nboot > 1) {
-          id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = TRUE)
+        if (params@bootstrap.nboot > 1) {
+          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
         } else {
           id.sample <- UIDs
         }

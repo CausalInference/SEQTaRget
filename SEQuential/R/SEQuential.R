@@ -71,8 +71,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
   if (params@LTFU) {
-    if (is.na(params@ltfu.numerator)) params@ltfu.numerator <- create.default.LTFU.covariates(params, "numerator")
-    if (is.na(params@ltfu.denominator)) params@ltfu.denominator <- create.default.LTFU.covariates(params, "denominator")
+    if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")
+    if (is.na(params@cense.denominator)) params@cense.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
   if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
 

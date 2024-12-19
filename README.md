@@ -18,7 +18,7 @@ A package to estimate the observational analogs of the intention-to-treat and pe
 `SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`
 ```r
 data <- SEQdata
-myOptions <- SEQopts(excused = TRUE, nboot = 100, bootstrap = TRUE,
+myOptions <- SEQopts(excused = TRUE, bootstrap.nboot = 100, bootstrap = TRUE,
                      excused.col1 = "ExcusedOne", excused.col0 = "ExcusedZero")
 
 model <- SEQuential(data, id.col = "ID", time.col = "time",
@@ -42,10 +42,10 @@ This package places several assumptions onto the input data and unexpected resul
 ## Return
 The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` with slots:
 1. bootstrap - TRUE/FALSE dependent if bootstrapping was done
-2. boot.sample - sample of data used in each bootstrap
+2. bootstrap.sample - sample of data used in each bootstrap
 3. boot.slice - used in method `show()`
 4. seed - seeding for bootstrap sampling
-5. nboot - number of bootstraps
+5. bootstrap.nboot - number of bootstraps
 6. outcome - outcome covariates
 7. numerator - numerator covariates when weighting
 8. denominator - denominator covariates when weighting

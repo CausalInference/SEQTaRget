@@ -18,7 +18,7 @@ internal.weights <- function(DT, data, params) {
   isExcused <- NULL
 
   # Setting up weight data ====================================
-  if (!params@pre.expansion) {
+  if (!params@weight.preexpansion) {
     subtable.kept <- c(params@treatment, params@id, params@time)
     params@time <- "period"
 
@@ -33,7 +33,7 @@ internal.weights <- function(DT, data, params) {
       DT[followup == 0,
          ][baseline.lag, on = c(params@id, params@time), nomatch = 0],
       DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
-         ][followup != 0, ])[, paste0(params@time, params@squared.indicator) := get(params@time)^2]
+         ][followup != 0, ])[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
 
     if (params@excused) weight <- weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
@@ -47,20 +47,20 @@ internal.weights <- function(DT, data, params) {
     model.data <- copy(weight)
     #if(!is.na(params@eligible.cense)) TODO
 
-    ltfu.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
-    ltfu.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
+    cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
+    cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
 
-    ltfu.numerator <- fastglm::fastglm(ltfu.numerator.data$X, ltfu.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
-    ltfu.denominator <- fastglm::fastglm(ltfu.denominator.data$X, ltfu.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+    cense.numerator <- fastglm::fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+    cense.denominator <- fastglm::fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
     rm(model.data)
   }
   if(params@method != "ITT"){
     model.data <- copy(weight)
-    if (!is.na(params@elig.wts.0)) model.data <- model.data[get(params@elig.wts.0) == 1 & get(params@treatment) == 0, ]
-    if (!is.na(params@elig.wts.1)) model.data <- model.data[get(params@elig.wts.1) == 1 & get(params@treatment) == 1, ]
+    if (!is.na(params@weight.eligible0)) model.data <- model.data[get(params@weight.eligible0) == 1 & get(params@treatment) == 0, ]
+    if (!is.na(params@weight.eligible1)) model.data <- model.data[get(params@weight.eligible1) == 1 & get(params@treatment) == 1, ]
 
-    if (!(params@excused & params@pre.expansion)){
+    if (!(params@excused & params@weight.preexpansion)){
       n0.data <- prepare.data(model.data, params, type = "numerator", model = 0, case = "default")
       n1.data <- prepare.data(model.data, params, type = "numerator", model = 1, case = "default")
 
@@ -92,7 +92,7 @@ internal.weights <- function(DT, data, params) {
                           ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := prediction.passer(denominator1, .SD, params, "denominator")
                             ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
 
-      if (params@pre.expansion) {
+      if (params@weight.preexpansion) {
         out <- out[, numerator := 1]
       } else {
         out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := prediction.passer(numerator0, .SD, params, "numerator")
@@ -107,8 +107,8 @@ internal.weights <- function(DT, data, params) {
       out <- out[, `:=` (numerator = 1,
                          denominator = 1)]
     }
-    out <- out[, `:=` (cense1.numerator = inline.pred(ltfu.numerator, .SD, params, "numerator", "LTFU"),
-                       cense1.denominator = inline.pred(ltfu.denominator, .SD, params, "denominator", "LTFU"))
+    out <- out[, `:=` (cense1.numerator = inline.pred(cense.numerator, .SD, params, "numerator", "LTFU"),
+                       cense1.denominator = inline.pred(cense.denominator, .SD, params, "denominator", "LTFU"))
                ][, cense1 := cense1.numerator / cense1.denominator]
   }
 
@@ -119,8 +119,8 @@ internal.weights <- function(DT, data, params) {
 
   weight.info <- new("SEQweights",
     weights = out,
-    coef.n0 = if (!(params@excused & params@pre.expansion) & params@method != "ITT") coef(numerator0) else NA_real_,
-    coef.n1 = if (!(params@excused & params@pre.expansion) & params@method != "ITT") coef(numerator1) else NA_real_,
+    coef.n0 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") coef(numerator0) else NA_real_,
+    coef.n1 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") coef(numerator1) else NA_real_,
     coef.d0 = if (params@method != "ITT") coef(denominator0) else NA_real_,
     coef.d1 = if (params@method != "ITT") coef(denominator1) else NA_real_
   )

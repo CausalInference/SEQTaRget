@@ -10,7 +10,7 @@
 #' @export
 explore <- function(obj, n) {
   if (!is(obj, "SEQoutput")) stop("Object is not of class SEQoutput")
-  if (n > obj@nboot & obj@bootstrap) stop("Out of bounds bootstrap iteration")
+  if (n > obj@bootstrap.nboot & obj@bootstrap) stop("Out of bounds bootstrap iteration")
 
   coef_iteration <- slot(obj, "outcome_model")[n]
   weight_iteration <- slot(obj, "weight_statistics")[n]

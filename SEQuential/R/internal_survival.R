@@ -23,8 +23,8 @@ internal.survival <- function(params) {
   followup <- NULL
   numerator <- denominator <- NULL
 
-  tx_bas <- paste0(params@treatment, params@baseline.indicator)
-  if (is.infinite(params@max.survival)) params@max.survival <- max(params@DT[["followup"]])
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  if (is.infinite(params@survival.max)) params@survival.max <- max(params@DT[["followup"]])
 
   handler <- function(DT, params) {
     if (params@multinomial) {
@@ -42,7 +42,7 @@ internal.survival <- function(params) {
 
     RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
                ][get("followup") == 0,
-                 ][rep(1:.N, each = params@max.survival + 1)
+                 ][rep(1:.N, each = params@survival.max + 1)
                    ][, `:=`(followup = seq(1:.N)-1,
                             followup_sq = (seq(1:.N)-1)^2), by = "trialID"
                      ][, eval(tx_bas) := params@treat.level[[1]]]
@@ -98,8 +98,8 @@ internal.survival <- function(params) {
   if (params@parallel) {
     setDTthreads(1)
 
-    result <- future_lapply(1:params@nboot, function(x) {
-      id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
+    result <- future_lapply(1:params@bootstrap.nboot, function(x) {
+      id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = FALSE)
       RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
 
       out <- handler(RMDT, params)
@@ -107,9 +107,9 @@ internal.survival <- function(params) {
       return(out)
     }, future.seed = params@seed)
   } else {
-    result <- lapply(1:params@nboot, function(x) {
+    result <- lapply(1:params@bootstrap.nboot, function(x) {
       if (params@bootstrap) {
-        id.sample <- sample(UIDs, round(params@boot.sample * lnID), replace = FALSE)
+        id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = FALSE)
 
         RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
       } else {
@@ -152,8 +152,8 @@ internal.survival <- function(params) {
     DT <- result[, list(
       surv0_mu = mean(surv.0),
       surv1_mu = mean(surv.1),
-      se_surv0 = sd(surv.0) / sqrt(params@nboot),
-      se_surv1 = sd(surv.1) / sqrt(params@nboot)
+      se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
+      se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot)
     ), by = "followup"][, `:=`(
       surv0_lb = surv0_mu - qnorm(0.975) * se_surv0,
       surv0_ub = surv0_mu + qnorm(0.975) * se_surv0,

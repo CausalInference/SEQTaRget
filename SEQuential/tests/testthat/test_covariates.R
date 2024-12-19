@@ -27,7 +27,7 @@ test_that("Default Covariate Creation: Pre-Expansion Dose-Response", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "dose-response", opts = SEQopts(
-      pre.expansion = TRUE,
+      weight.preexpansion = TRUE,
       weighted = TRUE
     )
   )
@@ -49,7 +49,7 @@ test_that("Default Covariate Creation: Post-Expansion Dose-Response", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "dose-response", opts = SEQopts(
-      pre.expansion = FALSE,
+      weight.preexpansion = FALSE,
       weighted = TRUE
     )
   )
@@ -72,7 +72,7 @@ test_that("Default Covariate Creation: Pre-Expansion Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring", opts = SEQopts(
-      pre.expansion = TRUE,
+      weight.preexpansion = TRUE,
       weighted = TRUE
     )
   )
@@ -94,7 +94,7 @@ test_that("Default Covariate Creation: Post-Expansion Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring", opts = SEQopts(
-      pre.expansion = FALSE,
+      weight.preexpansion = FALSE,
       weighted = TRUE
     )
   )
@@ -116,7 +116,7 @@ test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring", opts = SEQopts(
-      pre.expansion = TRUE,
+      weight.preexpansion = TRUE,
       excused = TRUE,
       weighted = TRUE
     )
@@ -139,7 +139,7 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring", opts = SEQopts(
-      pre.expansion = FALSE,
+      weight.preexpansion = FALSE,
       excused = TRUE,
       weighted = TRUE
     )

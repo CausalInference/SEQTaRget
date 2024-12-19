@@ -54,7 +54,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   # Model Timing =========================================
   uid <- unique(data[[id.col]])
   nid <- length(uid)
-  if (is.infinite(params@max.followup)) maxtime <- max(data[[time.col]]) else maxtime <- params@max.followup
+  if (is.infinite(params@followup.max)) maxtime <- max(data[[time.col]]) else maxtime <- params@followup.max
   expandedrows <- ((maxtime+1)^2 + (maxtime+1)) / 2
   maxrows <- nid * expandedrows
 
@@ -86,7 +86,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   if (params@LTFU) nmodels <- nmodels + 1
   if (params@km.curves) nmodels <- nmodels + 2
   modelTime <- modelTime * nmodels
-  if (params@bootstrap) modelTime <- modelTime*params@nboot
+  if (params@bootstrap) modelTime <- modelTime*params@bootstrap.nboot
   if (params@parallel) modelTime <- modelTime / params@ncores
 
   return(list(modelTime = format.time(modelTime),
