@@ -45,11 +45,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQData_ltfu_2.csv")
+    data <- fread("SEQData_multitreatment2.csv")
     #need to enforce that compevent is kept in the expanded dataframe
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(km.curves = TRUE, bootstrap = TRUE, nboot = 2)
+    options <- SEQopts(multinomial = TRUE, treat.level = c(1,2))
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
@@ -71,8 +71,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
   if (params@LTFU) {
-    if (is.na(params@ltfu.numerator)) params@ltfu.numerator <- create.default.LTFU.covariates(params, "numerator")
-    if (is.na(params@ltfu.denominator)) params@ltfu.denominator <- create.default.LTFU.covariates(params, "denominator")
+    if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")
+    if (is.na(params@cense.denominator)) params@cense.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
   if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
 
@@ -94,24 +94,27 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Expansion ==================================================
   cat("Expanding Data...\n")
+  if (params@multinomial) params@data <- params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- SEQexpand(params)
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Model Dispersion ===========================================
+
   outcome <- internal.analysis(params)
   cat(method, "model created successfully\n")
 
   if (params@km.curves) {
     cat("Creating survival curves\n")
-    survival <- internal.survival(params)
-    risk <- create.risk(survival$data)
-  } else survival <- risk <- NA
+    survival.data <- internal.survival(params)
+    survival.plot <- internal.plot(survival.data, params)
+    if(!params@LTFU) risk <- create.risk(survival.data) else risk <- NA
+  } else survival.data <- survival.plot <- risk <- NA
 
   if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$model$coefficients[[2]])), FALSE) else hazard <- NA
   if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
 
-  out <- prepare.output(params, outcome, hazard, vcov, survival, risk,
+  out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk,
     elapsed_time = format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   )
   cat("Completed")

@@ -15,59 +15,52 @@ SEQexpand <- function(params) {
   excused_tmp <- NULL
   firstSwitch <- NULL
   trialID <- NULL
+  DT <- copy(params@data)
 
-  # Pre-Processing =============================================
-  cols <- c(params@id, params@eligible)
-  eligible_ids <- unique(params@data[, cols, with = FALSE
-                                     ][, sum_elig := sum(.SD[[params@eligible]]), by = eval(params@id)
-                                       ][sum_elig != 0,
-                                         ][[params@id]])
-
-  DT <- params@data[params@data[[params@id]] %in% eligible_ids, ]
   # Expansion =======================================================
   if (!params@weighted) {
     vars.intake <- c(params@covariates, params@surv)
   } else {
     vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv,
-                     params@ltfu.denominator, params@ltfu.numerator)
-    if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@baseline.indicator), params@surv)
+                     params@cense.denominator, params@cense.numerator)
+    if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline), params@surv)
   }
   vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
-                   params@treatment, params@cense, params@cense2, params@eligible_cense, params@eligible_cense2,
-                   params@compevent, params@elig.wts.0, params@elig.wts.1))
-  vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@squared.indicator), "tx_lag")
+                   params@treatment, params@cense, params@cense.eligible,
+                   params@compevent, params@weight.eligible0, params@weight.eligible1))
+  vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag")
   vars <- vars[!is.na(vars)]
   vars <- vars[!vars %in% vars.nin]
-  vars.base <- vars[grep(params@baseline.indicator, vars)]
-  vars.sq <- vars[grep(params@squared.indicator, vars)]
+  vars.base <- vars[grep(params@indicator.baseline, vars)]
+  vars.sq <- vars[grep(params@indicator.squared, vars)]
   vars.time <- c(vars[!vars %in% vars.base], params@excused.col0, params@excused.col1)
   vars.time <- vars.time[!is.na(vars.time)]
-  vars.base <- unique(gsub(params@baseline.indicator, "", vars.base))
-  vars.base <- vars.base[!vars.base %in% params@time]
-  vars.sq <- unique(sub(params@squared.indicator, "", vars.sq))
+  vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
+  vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
+  vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
   vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
-  data <- DT[get(params@eligible) == 1, list(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id),
+  data <- DT[, list(period = Map(seq, get(params@time), table(DT[[params@id]])[.GRP] - 1)), by = eval(params@id),
              ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
                ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
                  ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
-                   ][followup <= params@max.followup,
-                     ][followup >= params@min.followup, ]
+                   ][followup <= params@followup.max,
+                     ][followup >= params@followup.min, ]
 
   data_list <- list()
   if (length(c(vars.time, vars.sq)) > 0) {
     data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time
-                      ][, eval(params@eligible) := NULL
-                        ][, (paste0(vars.sq, params@squared.indicator)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
+                      ][, (paste0(vars.sq, params@indicator.squared)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
     vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
     data_list[["time"]] <- data.time[, vars.found, with = FALSE]
   }
   if (length(vars.base) > 0) {
-    data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0][, eval(params@eligible) := NULL]
+    data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0
+                      ]
 
-    vars.found <- unique(c(paste0(vars.base, params@baseline.indicator), "period", "trial", params@id))
-    setnames(data.base, old = vars.base, new = paste0(vars.base, params@baseline.indicator))
+    vars.found <- unique(c(paste0(vars.base, params@indicator.baseline), "period", "trial", params@id))
+    setnames(data.base, old = vars.base, new = paste0(vars.base, params@indicator.baseline))
     data_list[["base"]] <- data.base[, vars.found, with = FALSE]
   }
   if (length(data_list) > 1) {
@@ -75,6 +68,9 @@ SEQexpand <- function(params) {
   } else if (length(data_list) == 1) {
     out <- data_list[[1]]
   }
+
+  out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
+             ][, paste0(params@eligible, params@indicator.baseline) := NULL]
 
   if (params@method == "dose-response") {
     out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
@@ -104,11 +100,11 @@ SEQexpand <- function(params) {
                    firstSwitch = NULL,
                    switch = NULL)]
   }
-  if (params@random.selection) {
+  if (params@selection.random) {
     set.seed(params@seed)
     out <- out[, "trialID" := paste0(params@id, "-", trial)]
-    IDs <- unique(out[get(paste0(params@treatment, params@baseline.indicator)) != 0, ][["trialID"]])
-    set <- unique(out[get(paste0(params@treatment, params@baseline.indicator)) == 0, ][["trialID"]])
+    IDs <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) != 0, ][["trialID"]])
+    set <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) == 0, ][["trialID"]])
     subset <- sample(set, round(length(set) * params@selection.prob))
     out <- out[trialID %in% c(IDs, subset),
                ][, trialID := NULL]

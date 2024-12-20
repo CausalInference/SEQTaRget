@@ -9,37 +9,35 @@ SEQopts(
   nthreads = data.table::getDTthreads(),
   ncores = parallel::detectCores() - 1,
   bootstrap = FALSE,
-  nboot = 100,
-  boot.sample = 0.8,
+  bootstrap.nboot = 100,
+  bootstrap.sample = 0.8,
   seed = 1636,
-  min.followup = -Inf,
-  max.followup = Inf,
-  max.survival = Inf,
-  include.followup = TRUE,
-  include.trial = TRUE,
+  followup.min = -Inf,
+  followup.max = Inf,
+  survival.max = Inf,
+  followup.include = TRUE,
+  trial.include = TRUE,
   covariates = NA,
   weighted = FALSE,
-  upper.weight = Inf,
-  lower.weight = -Inf,
-  p99.weight = FALSE,
+  weight.upper = Inf,
+  weight.lower = -Inf,
+  weight.p99 = FALSE,
   numerator = NA,
   denominator = NA,
   surv = NA,
-  pre.expansion = TRUE,
-  elig.wts.0 = NA,
-  elig.wts.1 = NA,
+  weight.preexpansion = TRUE,
+  weight.eligible0 = NA,
+  weight.eligible1 = NA,
   hazard = FALSE,
   calculate.var = FALSE,
-  random.selection = FALSE,
+  selection.random = FALSE,
   selection.prob = 0.8,
   followup.class = FALSE,
   followup.spline = FALSE,
-  ltfu.numerator = NA,
-  ltfu.denominator = NA,
+  cense.numerator = NA,
+  cense.denominator = NA,
   cense = NA,
-  cense2 = NA,
-  eligible_cense = NA,
-  eligible_cense2 = NA,
+  cense.eligible = NA,
   compevent = NA,
   multinomial = FALSE,
   treat.level = c(0, 1),
@@ -47,9 +45,14 @@ SEQopts(
   excused.col1 = NA,
   excused.col0 = NA,
   km.curves = FALSE,
-  baseline.indicator = "_bas",
-  squared.indicator = "_sq",
-  fastglm.method = 2L
+  indicator.baseline = "_bas",
+  indicator.squared = "_sq",
+  fastglm.method = 2L,
+  plot.title = NA,
+  plot.subtitle = NA,
+  plot.labels = NA,
+  plot.colors = c("#F8766D", "#00BFC4"),
+  plot.type = "survival"
 )
 }
 \arguments{
@@ -61,31 +64,31 @@ SEQopts(
 
 \item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
 
-\item{nboot}{Integer: number of bootstraps}
+\item{bootstrap.nboot}{Integer: number of bootstraps}
 
-\item{boot.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
+\item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
 
 \item{seed}{Integer: starting seed}
 
-\item{min.followup}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+\item{followup.min}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
 
-\item{max.followup}{Numeric: maximum time to expand about, default is Inf (no maximum)}
+\item{followup.max}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
-\item{max.survival}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
+\item{survival.max}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
 
-\item{include.followup}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
+\item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
 
-\item{include.trial}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
+\item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
 \item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
-\item{upper.weight}{Numeric: weights truncated at upper end at this weight}
+\item{weight.upper}{Numeric: weights truncated at upper end at this weight}
 
-\item{lower.weight}{Numeric: weights truncated at lower end at this weight}
+\item{weight.lower}{Numeric: weights truncated at lower end at this weight}
 
-\item{p99.weight}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
+\item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 
 \item{numerator}{String: numerator covariates to coerce to formula object}
 
@@ -93,17 +96,17 @@ SEQopts(
 
 \item{surv}{String: survival covariates to coerce to formula object}
 
-\item{pre.expansion}{Logical: whether weighting should be done on pre-expanded data}
+\item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
 
-\item{elig.wts.0}{String: TODO}
+\item{weight.eligible0}{String: TODO}
 
-\item{elig.wts.1}{String: TODO}
+\item{weight.eligible1}{String: TODO}
 
 \item{hazard}{Logical: TODO}
 
 \item{calculate.var}{Logical: TODO}
 
-\item{random.selection}{Logical: TODO}
+\item{selection.random}{Logical: TODO}
 
 \item{selection.prob}{Numeric: TODO}
 
@@ -111,17 +114,13 @@ SEQopts(
 
 \item{followup.spline}{Logical: TODO}
 
-\item{ltfu.numerator}{String: TODO}
+\item{cense.numerator}{String: TODO}
 
-\item{ltfu.denominator}{String: TODO}
+\item{cense.denominator}{String: TODO}
 
 \item{cense}{String: TODO}
 
-\item{cense2}{String: TODO}
-
-\item{eligible_cense}{String: TODO}
-
-\item{eligible_cense2}{String: TODO}
+\item{cense.eligible}{String: TODO}
 
 \item{compevent}{String: TODO}
 
@@ -137,11 +136,21 @@ SEQopts(
 
 \item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
 
-\item{baseline.indicator}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
+\item{indicator.baseline}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{squared.indicator}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
+\item{indicator.squared}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+
+\item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
+
+\item{plot.subtitle}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+
+\item{plot.labels}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+
+\item{plot.colors}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
+
+\item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)}
 }
 \value{
 An object of class 'SEQOpts'

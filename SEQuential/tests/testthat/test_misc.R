@@ -35,7 +35,7 @@ test_that("ITT - Followup Class", {
   data <- SEQdata
   model <- SEQuential(data[time <= 5], "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(followup.class = TRUE, include.followup = FALSE))
+                      options = SEQopts(followup.class = TRUE, followup.include = FALSE))
   expect_s4_class(model, "SEQoutput")
 })
 
@@ -43,6 +43,6 @@ test_that("ITT - Followup Spline", {
   data <- SEQdata
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(followup.spline = TRUE, include.followup = FALSE))
+                      options = SEQopts(followup.spline = TRUE, followup.include = FALSE))
   expect_s4_class(model, "SEQoutput")
 })

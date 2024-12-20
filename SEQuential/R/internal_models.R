@@ -8,7 +8,6 @@
 internal.model <- function(data, params) {
   data <- data[!is.na(get(params@outcome)), ]
 
-  if (params@multinomial) data <- data[get(paste0(params@treatment, params@baseline.indicator)) %in% params@treat.level]
   if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
   if (params@followup.spline) data <- data[, "followup" := splines::ns(get("followup"))]
 
@@ -19,8 +18,8 @@ internal.model <- function(data, params) {
       model <- fastglm::fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
       weight <- NULL
     } else {
-      weight <- data[weight < params@lower.weight, weight := params@lower.weight
-                     ][weight > params@upper.weight, weight := params@upper.weight][['weight']]
+      weight <- data[weight < params@weight.lower, weight := params@weight.lower
+                     ][weight > params@weight.upper, weight := params@weight.upper][['weight']]
       model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
     }
   if (params@calculate.var) vcov <- fastglm.robust(model, X, y, weight) else vcov <- NA

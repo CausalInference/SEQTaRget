@@ -1,13 +1,13 @@
 #' An S4 class used to hold the outputs for the SEQuential process
 #' @slot boostrap if the process was bootstrapped
-#' @slot boot.sample how much of the data was sampled during bootstrapping
+#' @slot bootstrap.sample how much of the data was sampled during bootstrapping
 #' @slot boot.slice when using method 'show' defines what to print
 #' @slot seed seeding any random sampling occuring in bootstrap process
-#' @slot nboot number of bootstraps
+#' @slot bootstrap.nboot number of bootstraps
 #' @slot outcome outcome covariates
 #' @slot numerator numerator covariates
 #' @slot denominator denominator covariates
-#' @slot outcome_model list of length \code{nboot} containing outcome coefficients
+#' @slot outcome_model list of length \code{bootstrap.nboot} containing outcome coefficients
 #' @slot hazard hazard ratio
 #' @slot robust_se robust standard errors
 #' @slot survival_curve ggplot object for the survival curves
@@ -20,10 +20,10 @@
 setClass("SEQoutput",
   slots = c(
     bootstrap = "logical",
-    boot.sample = "numeric",
+    bootstrap.sample = "numeric",
     boot.slice = "integer",
     seed = "integer",
-    nboot = "integer",
+    bootstrap.nboot = "integer",
     outcome = "character",
     numerator = "character",
     denominator = "character",
@@ -38,10 +38,10 @@ setClass("SEQoutput",
     weight_statistics = "list"
   ), prototype = c(
     bootstrap = FALSE,
-    boot.sample = NA_real_,
+    bootstrap.sample = NA_real_,
     boot.slice = 1L,
     seed = NA_integer_,
-    nboot = NA_integer_,
+    bootstrap.nboot = NA_integer_,
     outcome = NA_character_,
     numerator = NA_character_,
     denominator = NA_character_,
@@ -63,7 +63,7 @@ setMethod("show", "SEQoutput", function(object) {
   numerator <- slot(object, "numerator")
   denominator <- slot(object, "denominator")
   bootstrap <- slot(object, "bootstrap")
-  nboot <- slot(object, "nboot")
+  bootstrap.nboot <- slot(object, "bootstrap.nboot")
   boot_slice <- slot(object, "boot.slice")
   outcome_model <- slot(object, "outcome_model")[[1]][[1]]
   weight_statistics <- slot(object, "weight_statistics")[[1]][[1]]
@@ -77,7 +77,7 @@ setMethod("show", "SEQoutput", function(object) {
   cat("Denominator covariates:", denominator, "\n\n")
 
   if (bootstrap) {
-    cat("Bootstrapped", nboot, "times\n")
+    cat("Bootstrapped", bootstrap.nboot, "times\n")
     cat("Coefficients and Weighting for bootstrap slice", boot_slice, ":\n")
   } else {
     cat("Coefficients and Weighting:\n")

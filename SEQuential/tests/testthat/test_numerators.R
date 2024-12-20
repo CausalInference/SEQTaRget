@@ -8,7 +8,7 @@ test_that("Default Numerator Creation: Pre-Expansion Dose-Response", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "dose-response",
-    opts = SEQopts(weighted = TRUE, pre.expansion = TRUE)
+    opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
   covariates <- create.default.weight.covariates(params, type = "numerator")
@@ -28,7 +28,7 @@ test_that("Default Numerator Creation: Post-Expansion Dose-Response", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "dose-response",
-    opts = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
   covariates <- create.default.weight.covariates(params, type = "numerator")
@@ -36,7 +36,7 @@ test_that("Default Numerator Creation: Post-Expansion Dose-Response", {
 
   expected <- unlist(c(
     params@fixed, "followup", "followup_sq", "trial", "trial_sq",
-    paste0(params@time_varying, params@baseline.indicator)
+    paste0(params@time_varying, params@indicator.baseline)
   ))
   expect_true(setequal(components, expected))
 })
@@ -51,7 +51,7 @@ test_that("Default Numerator Creation: Pre-Expansion Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring",
-    opts = SEQopts(weighted = TRUE, pre.expansion = TRUE)
+    opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
   covariates <- create.default.weight.covariates(params, type = "numerator")
@@ -71,14 +71,14 @@ test_that("Default Numerator Creation: Post-Expansion Censoring", {
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
     method = "censoring",
-    opts = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
   covariates <- create.default.weight.covariates(params, type = "numerator")
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- unlist(c(
-    params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq",
+    params@fixed, paste0(params@time_varying, params@indicator.baseline), "followup", "followup_sq",
     "trial", "trial_sq"
   ))
   expect_true(setequal(components, expected))
@@ -95,7 +95,7 @@ test_that("Default Numerator Creation: Post-Expansion Excused Censoring", {
     fixed.cols = list("sex", "race"),
     method = "censoring",
     opts = SEQopts(
-      weighted = TRUE, pre.expansion = FALSE,
+      weighted = TRUE, weight.preexpansion = FALSE,
       excused = TRUE
     )
   )
@@ -104,7 +104,7 @@ test_that("Default Numerator Creation: Post-Expansion Excused Censoring", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- unlist(c(
-    params@fixed, paste0(params@time_varying, params@baseline.indicator), "followup", "followup_sq",
+    params@fixed, paste0(params@time_varying, params@indicator.baseline), "followup", "followup_sq",
     "trial", "trial_sq"
   ))
   expect_true(setequal(components, expected))

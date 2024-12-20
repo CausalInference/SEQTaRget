@@ -39,7 +39,7 @@ test_that("Post-Expansion Dose-Response", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "dose-response",
-    options = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    options = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -78,7 +78,7 @@ test_that("Post-Expansion Censoring", {
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
-    options = SEQopts(weighted = TRUE, pre.expansion = FALSE)
+    options = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -122,7 +122,7 @@ test_that("Post-Expansion Excused Censoring", {
       weighted = TRUE, excused = TRUE,
       excused.col1 = "excusedOne",
       excused.col0 = "excusedZero",
-      pre.expansion = FALSE)
+      weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -140,7 +140,7 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
   data <- SEQdata.LTFU
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(cense = "LTFU", pre.expansion = TRUE, fastglm.method = 1))
+                      options = SEQopts(cense = "LTFU", weight.preexpansion = TRUE, fastglm.method = 1))
 
   expect_s4_class(model, "SEQoutput")
 
@@ -158,7 +158,7 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
   data <- SEQdata.LTFU
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(cense = "LTFU", pre.expansion = FALSE, fastglm.method = 1))
+                      options = SEQopts(cense = "LTFU", weight.preexpansion = FALSE, fastglm.method = 1))
 
   expect_s4_class(model, "SEQoutput")
 
@@ -167,6 +167,24 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
                    trial = 0.285516825890481, trial_sq = -0.00136620665011392,
                    sex = -0.190220229415778, N_bas = 0.00658300214440885, L_bas = -0.448958593335045,
                    P_bas = 1.38913912261648, `tx_init_bas:followup` = 0.00383774199912364)
+
+  test <- as.list(model@outcome_model[[1]])
+  expect_equal(test, expected, tolerance = 1e-2)
+})
+
+test_that("ITT - Multinomial, Treatment Levels 1,2", {
+  data <- SEQdata.multitreatment
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(multinomial = TRUE, treat.level = c(1,2)))
+
+  expect_s4_class(model, "SEQoutput")
+
+  expected <- list(`(Intercept)` = -25.4995812185046, tx_init_bas = -12.8546300966185,
+                     followup = -1.84645713547047, followup_sq = -0.023387257908664,
+                     trial = 0.272450214929289, trial_sq = -0.00390896317632053, sex = 17.495483770532,
+                     N_bas = 0.0548857956131868, L_bas = 0.809008246889685, P_bas = 1.45718621133478,
+                     `tx_init_bas:followup` = 1.48015622295032)
 
   test <- as.list(model@outcome_model[[1]])
   expect_equal(test, expected, tolerance = 1e-2)

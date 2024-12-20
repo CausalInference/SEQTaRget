@@ -3,9 +3,9 @@
 \docType{class}
 \name{SEQopts-class}
 \alias{SEQopts-class}
-\title{An S4 class of user options to feed into the SEQuential process}
+\title{An S4 class of user options to feed into the SEQuential processes and estimates}
 \description{
-An S4 class of user options to feed into the SEQuential process
+An S4 class of user options to feed into the SEQuential processes and estimates
 }
 \section{Slots}{
 
@@ -18,21 +18,21 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{bootstrap}}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
 
-\item{\code{nboot}}{Integer: number of bootstraps}
+\item{\code{bootstrap.nboot}}{Integer: number of bootstraps}
 
-\item{\code{boot.sample}}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
+\item{\code{bootstrap.sample}}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
 
 \item{\code{seed}}{Integer: starting seed}
 
-\item{\code{min.followup}}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+\item{\code{followup.min}}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
 
-\item{\code{max.followup}}{Numeric: maximum time to expand about, default is Inf (no maximum)}
+\item{\code{followup.max}}{Numeric: maximum time to expand about, default is Inf (no maximum)}
 
-\item{\code{max.survival}}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
+\item{\code{survival.max}}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
 
-\item{\code{include.period}}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
+\item{\code{followup.include}}{Logical: whether or not to include 'period' and 'period_squared' in the outcome model}
 
-\item{\code{include.trial}}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
+\item{\code{trial.include}}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
 \item{\code{covariates}}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
@@ -40,31 +40,31 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{denominator}}{String: denominator covariates to coerce to formula object}
 
-\item{\code{ltfu.numerator}}{String: TODO}
+\item{\code{cense.numerator}}{String: TODO}
 
-\item{\code{ltfu.denominator}}{String: TODO}
+\item{\code{cense.denominator}}{String: TODO}
 
 \item{\code{surv}}{String: survival covariates to coerce to formula object}
 
 \item{\code{weighted}}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
-\item{\code{lower.weight}}{Numeric: weights truncated at lower end at this weight}
+\item{\code{weight.lower}}{Numeric: weights truncated at lower end at this weight}
 
-\item{\code{upper.weight}}{Numeric: weights truncated at upper end at this weight}
+\item{\code{weight.upper}}{Numeric: weights truncated at upper end at this weight}
 
-\item{\code{p99.weight}}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{upper.weight} and \code{lower.weight}}
+\item{\code{weight.p99}}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 
-\item{\code{elig.wts.0}}{String: TODO}
+\item{\code{weight.eligible0}}{String: TODO}
 
-\item{\code{elig.wts.1}}{String: TODO}
+\item{\code{weight.eligible1}}{String: TODO}
 
-\item{\code{pre.expansion}}{Logical: whether weighting should be done on pre-expanded data}
+\item{\code{weight.preexpansion}}{Logical: whether weighting should be done on pre-expanded data}
 
 \item{\code{calculate.var}}{Logical: TODO}
 
 \item{\code{hazard}}{Logical: TODO}
 
-\item{\code{random.selection}}{Logical: TODO}
+\item{\code{selection.random}}{Logical: TODO}
 
 \item{\code{selection.prob}}{Numeric: TODO}
 
@@ -72,11 +72,7 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{cense}}{String: TODO}
 
-\item{\code{cense2}}{String: TODO}
-
-\item{\code{eligible_cense}}{String: TODO}
-
-\item{\code{eligible_cense2}}{String: TODO}
+\item{\code{cense.eligible}}{String: TODO}
 
 \item{\code{multinomial}}{Logical: whether or not to expect multinomial models}
 
@@ -90,14 +86,25 @@ An S4 class of user options to feed into the SEQuential process
 
 \item{\code{km.curves}}{Logical: Kaplan-Meier survival curve creation and data return}
 
-\item{\code{baseline.indicator}}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
+\item{\code{indicator.baseline}}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{\code{squared.indicator}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
+\item{\code{indicator.squared}}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{\code{fastglm.method}}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
 
 \item{\code{followup.class}}{Logical: TODO}
 
 \item{\code{followup.spline}}{Logical: TODO}
+
+\item{\code{plot.title}}{Character: Title for output plot if \code{km.curves = TRUE}}
+
+\item{\code{plot.subtitle}}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+
+\item{\code{plot.labels}}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+
+\item{\code{plot.colors}}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
+
+\item{\code{plot.type}}{Character: Type of plot to create if \code{km.curves = TRUE}}
 }}
 
+\keyword{internal}
