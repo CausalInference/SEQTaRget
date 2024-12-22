@@ -66,13 +66,15 @@ internal.weights <- function(DT, data, params) {
 
       numerator0 <- model.passer(n0.data$X, n0.data$y, params)
       numerator1 <- model.passer(n1.data$X, n1.data$y, params)
+
+      rm(n0.data, n1.data)
     }
     d0.data <- prepare.data(model.data, params, type = "denominator", model = 0, case = "default")
     d1.data <- prepare.data(model.data, params, type = "denominator", model = 1, case = "default")
 
     denominator0 <- model.passer(d0.data$X, d0.data$y, params)
     denominator1 <- model.passer(d1.data$X, d1.data$y, params)
-    rm(model.data)
+    rm(model.data, d0.data, d1.data)
   }
 
     # Estimating ====================================================

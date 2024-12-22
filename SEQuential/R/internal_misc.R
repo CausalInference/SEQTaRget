@@ -25,7 +25,7 @@ assign.global <- function(ncores, pos = 1) {
 #' @importFrom fastglm fastglm
 #' @keywords internal
 model.passer <- function(X, y, params) {
-  if (params@multinomial) model <- multinomial(X, y) else model <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+  if (params@multinomial) model <- multinomial(X, y, method = params@fastglm.method) else model <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
 
   return(model)
 }

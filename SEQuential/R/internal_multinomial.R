@@ -12,7 +12,7 @@ multinomial <- function(X, y, family = quasibinomial(), method) {
 
   for (class in ylevels[-1]) {
     ybin <- ifelse(y == class, 1, 0)
-    model <- fastglm(X, ybin, family, method)
+    model <- fastglm(X, ybin, family, method = method)
 
     models[[class]] <- model
   }
@@ -27,8 +27,12 @@ multinomial.predict <- function(model, X) {
   models <- model$models
   baseline <- model$baseline
   levels <- model$levels
+  X <- apply(as.matrix(X), 2, as.numeric)
 
-  pred <- sapply(models, function(x) as.vector(X %*% coef(x)))
+  pred <- sapply(models, function(x) {
+    coefs <- as.numeric(coef(x))
+    as.vector(as.matrix(X) %*% coefs)
+  })
   exppred <- exp(cbind(0, pred))
 
   return(exppred / rowSums(exppred))
