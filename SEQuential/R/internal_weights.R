@@ -55,60 +55,82 @@ internal.weights <- function(DT, data, params) {
 
     rm(model.data)
   }
-  if(params@method != "ITT"){
-    model.data <- copy(weight)
-    if (!is.na(params@weight.eligible0)) model.data <- model.data[get(params@weight.eligible0) == 1 & get(params@treatment) == 0, ]
-    if (!is.na(params@weight.eligible1)) model.data <- model.data[get(params@weight.eligible1) == 1 & get(params@treatment) == 1, ]
+  if (!params@multinomial) {
+    if(params@method != "ITT"){
+      model.data <- copy(weight)
+      if (!is.na(params@weight.eligible0)) model.data <- model.data[get(params@weight.eligible0) == 1 & get(params@treatment) == 0, ]
+      if (!is.na(params@weight.eligible1)) model.data <- model.data[get(params@weight.eligible1) == 1 & get(params@treatment) == 1, ]
 
-    if (!(params@excused & params@weight.preexpansion)){
-      n0.data <- prepare.data(model.data, params, type = "numerator", model = 0, case = "default")
-      n1.data <- prepare.data(model.data, params, type = "numerator", model = 1, case = "default")
+      if (!(params@excused & params@weight.preexpansion)){
+        n0.data <- prepare.data(model.data, params, type = "numerator", model = 0, case = "default")
+        n1.data <- prepare.data(model.data, params, type = "numerator", model = 1, case = "default")
 
-      numerator0 <- model.passer(n0.data$X, n0.data$y, params)
-      numerator1 <- model.passer(n1.data$X, n1.data$y, params)
+        numerator0 <- model.passer(n0.data$X, n0.data$y, params)
+        numerator1 <- model.passer(n1.data$X, n1.data$y, params)
 
-      rm(n0.data, n1.data)
+        rm(n0.data, n1.data)
+      }
+      d0.data <- prepare.data(model.data, params, type = "denominator", model = 0, case = "default")
+      d1.data <- prepare.data(model.data, params, type = "denominator", model = 1, case = "default")
+
+      denominator0 <- model.passer(d0.data$X, d0.data$y, params)
+      denominator1 <- model.passer(d1.data$X, d1.data$y, params)
+      rm(model.data, d0.data, d1.data)
     }
-    d0.data <- prepare.data(model.data, params, type = "denominator", model = 0, case = "default")
-    d1.data <- prepare.data(model.data, params, type = "denominator", model = 1, case = "default")
 
-    denominator0 <- model.passer(d0.data$X, d0.data$y, params)
-    denominator1 <- model.passer(d1.data$X, d1.data$y, params)
-    rm(model.data, d0.data, d1.data)
+      # Estimating ====================================================
+    if(params@method != "ITT") {
+      if (!params@excused) {
+        out <- weight[tx_lag == 0, `:=`(numerator = prediction.passer(numerator0, .SD, params, "numerator"),
+                                        denominator = prediction.passer(denominator0, .SD, params, "denominator"))
+                      ][tx_lag == 0 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
+                                                                       denominator = 1 - denominator)
+                        ][tx_lag == 1, `:=`(numerator = prediction.passer(numerator1, .SD, params, "numerator"),
+                                            denominator = prediction.passer(denominator1, .SD, params, "denominator"))
+                          ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
+                                                                           denominator = 1 - denominator)]
+      } else {
+            out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := prediction.passer(denominator0, .SD, params, "denominator")
+                          ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
+                            ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := prediction.passer(denominator1, .SD, params, "denominator")
+                              ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
+
+        if (params@weight.preexpansion) {
+          out <- out[, numerator := 1]
+        } else {
+          out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := prediction.passer(numerator0, .SD, params, "numerator")
+                     ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := prediction.passer(numerator1, .SD, params, "numerator")
+                       ][get(params@treatment) == 0, numerator := 1 - numerator]
+        }
+      }
+    } else out <- weight
+  } else {
+    if (FALSE) {
+      model.data <- weight[tx_lag %in% params@treat.level & get(params@treatment) %in% params@treat.level, ]
+      # model 1 test - assigning y = 1 where tx_init is 1 and zero otherwise
+      numerator.data <- prepare.data(model.data, params, "numerator", params@treat.level[[1]], "multinomial")
+      denominator.data <- prepare.data(model.data, params, "denominator", params@treat.level[[1]], "multinomial")
+
+      numerator.data$y <- abs(numerator.data$y - 2)
+      denominator.data$y <- abs(denominator.data$y - 2)
+
+      numerator.model <- fastglm(numerator.data$X, numerator.data$y, family = quasibinomial())
+      denominator.model <- fastglm(denominator.data$X, denominator.data$y, family = quasibinomial())
+
+      #model 2 test - assigning y = 1 where tx_init is 2 and zero otherwise
+      numerator2.data <- prepare.data(model.data, params, "numerator", params@treat.level[[2]], "multinomial")
+      denominator2.data <- prepare.data(model.data, params, "denominator", params@treat.level[[2]], "multinomial")
+
+      numerator2.data$y <- numerator2.data$y - 1
+      denominator2.data$y <- denominator2.data$y - 1
+
+      numerator2.model <- fastglm(numerator2.data$X, numerator2.data$y, family = quasibinomial())
+      denominator2.model <- fastglm(denominator2.data$X, denominator2.data$y, family = quasibinomial())
+    }
   }
 
-    # Estimating ====================================================
-  if(params@method != "ITT") {
-    if (!params@excused) {
-      out <- weight[tx_lag == 0, `:=`(numerator = prediction.passer(numerator0, .SD, params, "numerator"),
-                                      denominator = prediction.passer(denominator0, .SD, params, "denominator"))
-                    ][tx_lag == 0 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
-                                                                     denominator = 1 - denominator)
-                      ][tx_lag == 1, `:=`(numerator = prediction.passer(numerator1, .SD, params, "numerator"),
-                                          denominator = prediction.passer(denominator1, .SD, params, "denominator"))
-                        ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
-                                                                         denominator = 1 - denominator)]
-    } else {
-          out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := prediction.passer(denominator0, .SD, params, "denominator")
-                        ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
-                          ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := prediction.passer(denominator1, .SD, params, "denominator")
-                            ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
-
-      if (params@weight.preexpansion) {
-        out <- out[, numerator := 1]
-      } else {
-        out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := prediction.passer(numerator0, .SD, params, "numerator")
-                   ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := prediction.passer(numerator1, .SD, params, "numerator")
-                     ][get(params@treatment) == 0, numerator := 1 - numerator]
-      }
-    }
-  } else out <- weight
-
   if (params@LTFU) {
-    if (params@method == "ITT") {
-      out <- out[, `:=` (numerator = 1,
-                         denominator = 1)]
-    }
+    if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
     out <- out[, `:=` (cense1.numerator = inline.pred(cense.numerator, .SD, params, "numerator", "LTFU"),
                        cense1.denominator = inline.pred(cense.denominator, .SD, params, "denominator", "LTFU"))
                ][, cense1 := cense1.numerator / cense1.denominator]
