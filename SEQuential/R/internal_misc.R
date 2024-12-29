@@ -1,3 +1,6 @@
+#' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
+#'
+#' @keywords internal
 create.risk <- function(data) {
   variable <- NULL
   table <- data[, .SD[.N], by = "variable"
@@ -11,32 +14,13 @@ create.risk <- function(data) {
   ))
 }
 
-#' function loading ncores in global environment
+#' Internal function loading ncores in global environment
 #' @param pos defaults to 1 which equals an assignment to global environment
 #' @param ncores ncores to assign to global
 #'
 #' @keywords internal
 assign.global <- function(ncores, pos = 1) {
   assign("ncores", ncores, envir = as.environment(pos))
-}
-
-#' Passes data to correct model
-#'
-#' @importFrom fastglm fastglm
-#' @keywords internal
-model.passer <- function(X, y, params) {
-  if (params@multinomial) model <- multinomial(X, y, method = params@fastglm.method) else model <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
-
-  return(model)
-}
-
-#' Passes model to correct prediction method
-#'
-#' @keywords internal
-prediction.passer <- function(model, X, params, type) {
-  if (params@multinomial) pred <- multinomial.predict(model, X) else pred <- inline.pred(model, X, params, type)
-
-  return(pred)
 }
 
 #' Nicely cleans time for readability

@@ -50,8 +50,8 @@ internal.weights <- function(DT, data, params) {
     cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
     cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
 
-    cense.numerator <- fastglm::fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
-    cense.denominator <- fastglm::fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+    cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+    cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
     rm(model.data)
   }
@@ -65,41 +65,41 @@ internal.weights <- function(DT, data, params) {
         n0.data <- prepare.data(model.data, params, type = "numerator", model = 0, case = "default")
         n1.data <- prepare.data(model.data, params, type = "numerator", model = 1, case = "default")
 
-        numerator0 <- model.passer(n0.data$X, n0.data$y, params)
-        numerator1 <- model.passer(n1.data$X, n1.data$y, params)
+        numerator0 <- fastglm(n0.data$X, n0.data$y, family = quasibinomial(), method = params@fastglm.method)
+        numerator1 <- fastglm(n1.data$X, n1.data$y, family = quasibinomial(), method = params@fastglm.method)
 
         rm(n0.data, n1.data)
       }
       d0.data <- prepare.data(model.data, params, type = "denominator", model = 0, case = "default")
       d1.data <- prepare.data(model.data, params, type = "denominator", model = 1, case = "default")
 
-      denominator0 <- model.passer(d0.data$X, d0.data$y, params)
-      denominator1 <- model.passer(d1.data$X, d1.data$y, params)
+      denominator0 <- fastglm(d0.data$X, d0.data$y, family = quasibinomial(), method = params@fastglm.method)
+      denominator1 <- fastglm(d1.data$X, d1.data$y, family = quasibinomial(), method = params@fastglm.method)
       rm(model.data, d0.data, d1.data)
     }
 
       # Estimating ====================================================
     if(params@method != "ITT") {
       if (!params@excused) {
-        out <- weight[tx_lag == 0, `:=`(numerator = prediction.passer(numerator0, .SD, params, "numerator"),
-                                        denominator = prediction.passer(denominator0, .SD, params, "denominator"))
+        out <- weight[tx_lag == 0, `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator"),
+                                        denominator = inline.pred(denominator0, .SD, params, "denominator"))
                       ][tx_lag == 0 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                        denominator = 1 - denominator)
-                        ][tx_lag == 1, `:=`(numerator = prediction.passer(numerator1, .SD, params, "numerator"),
-                                            denominator = prediction.passer(denominator1, .SD, params, "denominator"))
+                        ][tx_lag == 1, `:=`(numerator = inline.pred(numerator1, .SD, params, "numerator"),
+                                            denominator = inline.pred(denominator1, .SD, params, "denominator"))
                           ][tx_lag == 1 & get(params@treatment) == 0, `:=`(numerator = 1 - numerator,
                                                                            denominator = 1 - denominator)]
       } else {
-            out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := prediction.passer(denominator0, .SD, params, "denominator")
+            out <- weight[tx_lag == 0 & get(params@excused.col0) != 1, denominator := inline.pred(denominator0, .SD, params, "denominator")
                           ][tx_lag == 0 & get(params@treatment) == 0 & get(params@excused.col0) != 1, denominator := 1 - denominator
-                            ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := prediction.passer(denominator1, .SD, params, "denominator")
+                            ][tx_lag == 1 & get(params@excused.col1) != 1, denominator := inline.pred(denominator1, .SD, params, "denominator")
                               ][tx_lag == 1 & get(params@treatment) == 0 & get(params@excused.col1) != 1, denominator := 1 - denominator]
 
         if (params@weight.preexpansion) {
           out <- out[, numerator := 1]
         } else {
-          out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := prediction.passer(numerator0, .SD, params, "numerator")
-                     ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := prediction.passer(numerator1, .SD, params, "numerator")
+          out <- out[get(params@treatment) == 1 & get(params@excused.col0) == 0, numerator := inline.pred(numerator0, .SD, params, "numerator")
+                     ][get(params@treatment) == 1 & get(params@excused.col1) == 0, numerator := inline.pred(numerator1, .SD, params, "numerator")
                        ][get(params@treatment) == 0, numerator := 1 - numerator]
         }
       }

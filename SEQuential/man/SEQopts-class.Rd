@@ -36,13 +36,13 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 
 \item{\code{covariates}}{String: covariates to coerce into a formula object, eg. "A+B*C"}
 
-\item{\code{numerator}}{String: numerator covariates to coerce to formula object}
+\item{\code{numerator}}{String: numerator covariates to coerce to formula object for default weight models}
 
-\item{\code{denominator}}{String: denominator covariates to coerce to formula object}
+\item{\code{denominator}}{String: denominator covariates to coerce to formula object for default weight models}
 
-\item{\code{cense.numerator}}{String: TODO}
+\item{\code{cense.numerator}}{String: numerator covariates to coerce to formula object for censoring weight models}
 
-\item{\code{cense.denominator}}{String: TODO}
+\item{\code{cense.denominator}}{String: denominator covariates to coerce to formula object for censoring weight models}
 
 \item{\code{surv}}{String: survival covariates to coerce to formula object}
 
@@ -54,7 +54,7 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 
 \item{\code{weight.p99}}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 
-\item{\code{weight.eligible0}}{String: TODO}
+\item{\code{weight.eligible0}}{String: Column name for}
 
 \item{\code{weight.eligible1}}{String: TODO}
 
@@ -70,7 +70,7 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 
 \item{\code{excused}}{Logical: in the case of censoring, whether there is an excused condition}
 
-\item{\code{cense}}{String: TODO}
+\item{\code{cense}}{String: Column name for an additional censoring variable, for example, loss-to-followup indication}
 
 \item{\code{cense.eligible}}{String: TODO}
 
@@ -80,9 +80,9 @@ An S4 class of user options to feed into the SEQuential processes and estimates
 
 \item{\code{compevent}}{String: TODO}
 
-\item{\code{excused.col1}}{String: in the case of \code{excused = TRUE} the column name for Excused1}
+\item{\code{excused.col1}}{String: Column name for Excused 1 in the case of \code{excused = TRUE}}
 
-\item{\code{excused.col0}}{String: in the case of \code{excused = TRUE} the column name for Excused0}
+\item{\code{excused.col0}}{String: Column name for Excused 0 in the case of \code{excused = TRUE}}
 
 \item{\code{km.curves}}{Logical: Kaplan-Meier survival curve creation and data return}
 
