@@ -13,16 +13,16 @@
 #' @slot followup.include Logical: whether or not to include 'period' and 'period_squared' in the outcome model
 #' @slot trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
 #' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
-#' @slot numerator String: numerator covariates to coerce to formula object
-#' @slot denominator String: denominator covariates to coerce to formula object
-#' @slot cense.numerator String: TODO
-#' @slot cense.denominator String: TODO
+#' @slot numerator String: numerator covariates to coerce to formula object for default weight models
+#' @slot denominator String: denominator covariates to coerce to formula object for default weight models
+#' @slot cense.numerator String: numerator covariates to coerce to formula object for censoring weight models
+#' @slot cense.denominator String: denominator covariates to coerce to formula object for censoring weight models
 #' @slot surv String: survival covariates to coerce to formula object
 #' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @slot weight.lower Numeric: weights truncated at lower end at this weight
 #' @slot weight.upper Numeric: weights truncated at upper end at this weight
 #' @slot weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
-#' @slot weight.eligible0 String: TODO
+#' @slot weight.eligible0 String: Column name for
 #' @slot weight.eligible1 String: TODO
 #' @slot weight.preexpansion Logical: whether weighting should be done on pre-expanded data
 #' @slot calculate.var Logical: TODO
@@ -30,13 +30,13 @@
 #' @slot selection.random Logical: TODO
 #' @slot selection.prob Numeric: TODO
 #' @slot excused Logical: in the case of censoring, whether there is an excused condition
-#' @slot cense String: TODO
+#' @slot cense String: Column name for an additional censoring variable, for example, loss-to-followup indication
 #' @slot cense.eligible String: TODO
 #' @slot multinomial Logical: whether or not to expect multinomial models
 #' @slot treat.level List: which treatment levels to compare through survival curves
 #' @slot compevent String: TODO
-#' @slot excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
-#' @slot excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @slot excused.col1 String: Column name for Excused 1 in the case of \code{excused = TRUE}
+#' @slot excused.col0 String: Column name for Excused 0 in the case of \code{excused = TRUE}
 #' @slot km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @slot indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @slot indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
