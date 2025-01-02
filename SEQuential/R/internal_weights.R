@@ -106,22 +106,34 @@ internal.weights <- function(DT, data, params) {
     } else out <- weight
   } else {
     if (FALSE) {
-      model.data <- weight[tx_lag %in% params@treat.level & get(params@treatment) %in% params@treat.level, ]
-      # model 1 test - assigning y = 1 where tx_init is 1 and zero otherwise
-      numerator.data <- prepare.data(model.data, params, "numerator", params@treat.level[[1]], "multinomial")
+      model.data <- copy(weight)
+      table(model.data$tx_init)
+      form = paste0("tx_init~", params@numerator)
+      table(model.data[tx_lag == 0][eligible == 1]$tx_init)
+      VGAM::vglm(form, family = VGAM::multinomial(refLevel = '2'), data = model.data[tx_lag == 1])
+      nnet::multinom(form, data = model.data[, tx_init := factor(tx_init, levels = c(2, 1, 0), ordered = TRUE)], trace = FALSE)
+
+      library(speedglm)
+      speedglm::speedglm(form, model.data[tx_init_bas == 1][tx_init %in% c(1,2)][, tx_init := tx_init-1], family = quasibinomial())
+      speedglm(form, model.data[tx_lag == 1][tx_init %in% c(1,2)][, tx_init := tx_init -1], family = binomial())
+      speed
+      num1 <- nnet::multinom(paste0("tx_init~", params@numerator), model.data[tx_lag == 0, ])
+      num2 <- nnet::multinom(paste0("tx_init~", params@numerator), model.data[tx_lag == 0, ])
+
+      numerator.data <- prepare.data(weight, params, "numerator", params@treat.level[[1]], "multinomial")
       denominator.data <- prepare.data(model.data, params, "denominator", params@treat.level[[1]], "multinomial")
 
       numerator.data$y <- abs(numerator.data$y - 2)
       denominator.data$y <- abs(denominator.data$y - 2)
 
-      numerator.model <- fastglm(numerator.data$X, numerator.data$y, family = quasibinomial())
+      numerator.model <- multinomial(numerator.data$X, numerator.data$y, family = quasibinomial(), method = 2)
       denominator.model <- fastglm(denominator.data$X, denominator.data$y, family = quasibinomial())
 
       #model 2 test - assigning y = 1 where tx_init is 2 and zero otherwise
       numerator2.data <- prepare.data(model.data, params, "numerator", params@treat.level[[2]], "multinomial")
       denominator2.data <- prepare.data(model.data, params, "denominator", params@treat.level[[2]], "multinomial")
 
-      numerator2.data$y <- numerator2.data$y - 1
+      numerator2.data$y <- numerator.data2$y
       denominator2.data$y <- denominator2.data$y - 1
 
       numerator2.model <- fastglm(numerator2.data$X, numerator2.data$y, family = quasibinomial())
