@@ -1,54 +1,5 @@
 #' An S4 class of user options to feed into the SEQuential processes and estimates
-#'
-#' @slot parallel Logical: define if the SEQuential process is run in parallel, default is FALSE
-#' @slot nthreads Integer: number of threads to use for data.table processing
-#' @slot ncores Integer: number of cores to use in parallel processing, default is one less than system max
-#' @slot bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
-#' @slot bootstrap.nboot Integer: number of bootstraps
-#' @slot bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
-#' @slot seed Integer: starting seed
-#' @slot followup.min Numeric: minimum time to expand aboud, default is -Inf (no minimum)
-#' @slot followup.max Numeric: maximum time to expand about, default is Inf (no maximum)
-#' @slot survival.max Numeric: maximum time for survival curves, default is Inf (no maximum)
-#' @slot followup.include Logical: whether or not to include 'period' and 'period_squared' in the outcome model
-#' @slot trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
-#' @slot covariates String: covariates to coerce into a formula object, eg. "A+B*C"
-#' @slot numerator String: numerator covariates to coerce to formula object for default weight models
-#' @slot denominator String: denominator covariates to coerce to formula object for default weight models
-#' @slot cense.numerator String: numerator covariates to coerce to formula object for censoring weight models
-#' @slot cense.denominator String: denominator covariates to coerce to formula object for censoring weight models
-#' @slot surv String: survival covariates to coerce to formula object
-#' @slot weighted Logical: whether or not to preform weighted analysis, default is FALSE
-#' @slot weight.lower Numeric: weights truncated at lower end at this weight
-#' @slot weight.upper Numeric: weights truncated at upper end at this weight
-#' @slot weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
-#' @slot weight.eligible0 String: Column name for
-#' @slot weight.eligible1 String: TODO
-#' @slot weight.preexpansion Logical: whether weighting should be done on pre-expanded data
-#' @slot calculate.var Logical: TODO
-#' @slot hazard Logical: TODO
-#' @slot selection.random Logical: TODO
-#' @slot selection.prob Numeric: TODO
-#' @slot excused Logical: in the case of censoring, whether there is an excused condition
-#' @slot cense String: Column name for an additional censoring variable, for example, loss-to-followup indication
-#' @slot cense.eligible String: TODO
-#' @slot multinomial Logical: whether or not to expect multinomial models
-#' @slot treat.level List: which treatment levels to compare through survival curves
-#' @slot compevent String: TODO
-#' @slot excused.col1 String: Column name for Excused 1 in the case of \code{excused = TRUE}
-#' @slot excused.col0 String: Column name for Excused 0 in the case of \code{excused = TRUE}
-#' @slot km.curves Logical: Kaplan-Meier survival curve creation and data return
-#' @slot indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
-#' @slot indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
-#' @slot fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
-#' @slot followup.class Logical: TODO
-#' @slot followup.spline Logical: TODO
-#' @slot plot.title Character: Title for output plot if \code{km.curves = TRUE}
-#' @slot plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
-#' @slot plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
-#' @slot plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
-#' @slot plot.type Character: Type of plot to create if \code{km.curves = TRUE}
-#'
+#' This class should match \code{SEQopts} in file \code{SEQopts.R}
 #' @keywords internal
 setClass("SEQopts",
   slots = c(

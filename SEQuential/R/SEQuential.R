@@ -45,10 +45,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (FALSE) {
     # Debugging tools ==========================================
-    data <- fread("SEQData_multitreatment2.csv")
+    data <- fread("SEQdata_ltfu_2.csv")
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
     method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(multinomial = TRUE, treat.level = c(1,2), weighted = TRUE, weight.preexpansion = FALSE)
+    options <- SEQopts()
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
