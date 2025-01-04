@@ -45,7 +45,7 @@ internal.weights <- function(DT, data, params) {
   # Modeling ======================================================
   if (params@method == "ITT" | params@LTFU) {
     model.data <- copy(weight)
-    if(!is.na(params@eligible.cense)) model.data <- model.data[get(params@eligible.cense) == 1, ]
+    if(!is.na(params@cense.eligible)) model.data <- model.data[get(params@eligible.cense) == 1, ]
 
     cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
     cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
