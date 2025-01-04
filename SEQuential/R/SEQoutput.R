@@ -65,12 +65,12 @@ setMethod("show", "SEQoutput", function(object) {
   bootstrap <- slot(object, "bootstrap")
   bootstrap.nboot <- slot(object, "bootstrap.nboot")
   boot_slice <- slot(object, "boot.slice")
-  outcome_model <- slot(object, "outcome_model")[[1]][[1]]
-  weight_statistics <- slot(object, "weight_statistics")[[1]][[1]]
+  outcome_model <- slot(object, "outcome_model")[[1]]
+  weight_statistics <- slot(object, "weight_statistics")[[1]]
   risk_ratio <- slot(object, "risk_ratio")
   risk_difference <- slot(object, "risk_difference")
 
-  cat("SEQoutput process completed in", elapsed_time, ":\n")
+  cat("SEQuential process completed in", elapsed_time, ":\n")
   cat("Initialized with:\n")
   cat("Outcome covariates:", outcome, "\n")
   cat("Numerator covariates:", numerator, "\n")
@@ -84,29 +84,38 @@ setMethod("show", "SEQoutput", function(object) {
   }
 
   outcome_model <- paste0(names(outcome_model), ": ", outcome_model, "\n")
-  if (!is.na(weight_statistics$max)) {
-    n0.coef <- paste0(names(weight_statistics$n0.coef), ": ", weight_statistics$n0.coef, "\n")
-    n1.coef <- paste0(names(weight_statistics$n1.coef), ": ", weight_statistics$n1.coef, "\n")
-    d0.coef <- paste0(names(weight_statistics$d0.coef), ": ", weight_statistics$d0.coef, "\n")
-    d1.coef <- paste0(names(weight_statistics$d1.coef), ": ", weight_statistics$d1.coef, "\n")
+  if (!is.na(weight_statistics)) {
+    n0.coef <- paste0(names(weight_statistics@n0.coef), ": ", weight_statistics@n0.coef, "\n")
+    n1.coef <- paste0(names(weight_statistics@n1.coef), ": ", weight_statistics@n1.coef, "\n")
+    d0.coef <- paste0(names(weight_statistics@d0.coef), ": ", weight_statistics@d0.coef, "\n")
+    d1.coef <- paste0(names(weight_statistics@d1.coef), ": ", weight_statistics@d1.coef, "\n")
   } else {
     n0.coef <- n1.coef <- d0.coef <- d1.coef <- NA
   }
 
   cat("\nOutcome Model: ", outcome_model, "\n")
-  cat("Numerator 0 Model: ", n0.coef, "\n")
-  cat("Numerator 1 Model: ", n1.coef, "\n")
-  cat("Denominator 0 Model: ", d0.coef, "\n")
-  cat("Denominator 1 Model: ", d1.coef, "\n\n")
 
-  cat("Weights:\n")
-  cat("Min: ", weight_statistics$min, "\n")
-  cat("Max: ", weight_statistics$max, "\n")
-  cat("StDev: ", weight_statistics$sd, "\n")
-  cat("P25: ", weight_statistics$p25, "\n")
-  cat("P50: ", weight_statistics$p50, "\n")
-  cat("P75: ", weight_statistics$p75, "\n\n")
+  if (!is.na(weight_statistics)) {
+    n0.coef <- paste0(names(weight_statistics@n0.coef), ": ", weight_statistics@n0.coef, "\n")
+    n1.coef <- paste0(names(weight_statistics@n1.coef), ": ", weight_statistics@n1.coef, "\n")
+    d0.coef <- paste0(names(weight_statistics@d0.coef), ": ", weight_statistics@d0.coef, "\n")
+    d1.coef <- paste0(names(weight_statistics@d1.coef), ": ", weight_statistics@d1.coef, "\n")
 
+    cat("Numerator 0 Model: ", n0.coef, "\n")
+    cat("Numerator 1 Model: ", n1.coef, "\n")
+    cat("Denominator 0 Model: ", d0.coef, "\n")
+    cat("Denominator 1 Model: ", d1.coef, "\n\n")
+
+    cat("Weights:\n")
+    cat("Min: ", weight_statistics@min, "\n")
+    cat("Max: ", weight_statistics@max, "\n")
+    cat("StDev: ", weight_statistics@sd, "\n")
+    cat("P25: ", weight_statistics@p25, "\n")
+    cat("P50: ", weight_statistics@p50, "\n")
+    cat("P75: ", weight_statistics@p75, "\n\n")
+  } else {
+    n0.coef <- n1.coef <- d0.coef <- d1.coef <- NA
+  }
   cat("Risk Ratio:\n", risk_ratio, "\n\n")
   cat("Risk Difference:\n", risk_difference, "\n")
 })

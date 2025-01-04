@@ -1,4 +1,4 @@
-#' Parameter Builder - passing defaults to \code{SEQuential}
+#' Parameter Builder for SEQuential Model and Estimates
 #'
 #' @param parallel Logical: define if the SEQuential process is run in parallel, default is FALSE
 #' @param nthreads Integer: number of threads to use for data.table processing
@@ -12,37 +12,37 @@
 #' @param survival.max Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model
 #' @param trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
-#' @param covariates String: covariates to coerce into a formula object, eg. "A+B*C"
-#' @param numerator String: numerator covariates to coerce to formula object
-#' @param denominator String: denominator covariates to coerce to formula object
-#' @param cense.numerator String: TODO
-#' @param cense.denominator String: TODO
-#' @param surv String: survival covariates to coerce to formula object
+#' @param covariates String: covariates to the right hand side of a formula object
+#' @param numerator String: numerator covariates to the right hand side of a  to formula object
+#' @param denominator String: denominator covariates to the right hand side of a  to formula object
+#' @param cense.numerator String: censoring numerator covariates to the right hand side of a formula object
+#' @param cense.denominator String: censoring denominator covariates to the right hand side of a formula object
+#' @param surv String: survival covariates to the right hand side of a formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param weight.lower Numeric: weights truncated at lower end at this weight
 #' @param weight.upper Numeric: weights truncated at upper end at this weight
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
-#' @param weight.eligible0 String: TODO
-#' @param weight.eligible1 String: TODO
+#' @param weight.eligible0 String: column name for indicator column defining which weights are eligible for the 'zero' model
+#' @param weight.eligible1 String: column name for indicator column defining which weights are eligible for the 'one' model
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data
-#' @param calculate.var Logical: TODO
-#' @param hazard Logical: TODO
-#' @param selection.random Logical: TODO
-#' @param selection.prob Numeric: TODO
+#' @param calculate.var Logical: robust standard error calculation instead of survival bootstrapping
+#' @param hazard Logical: hazard error calculation instead of survival estimation
+#' @param selection.random Logical: randomly selects IDs with replacement to run analysis
+#' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
-#' @param cense String: TODO
-#' @param cense.eligible String: TODO
-#' @param multinomial Logical: whether or not to expect multinomial models
-#' @param treat.level List: which treatment levels to compare through survival curves
-#' @param compevent String: TODO
+#' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
+#' @param cense.eligible String: column name for indicator column defining which rows to use for censoring model
+#' @param multinomial NOT CURRENTLY IMPLEMENTED - WIP
+#' @param treat.level NOT CURRENTLY IMPLEMENTED - WIP
+#' @param compevent String: column name for competing event indicator
 #' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
 #' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
-#' @param followup.class Logical: TODO
-#' @param followup.spline Logical: TODO
+#' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column
+#' @param followup.spline Logical: treat followup as a cubic spline
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}

@@ -6,14 +6,11 @@
 internal.analysis <- function(params) {
   # Variable pre-definition ===================================
   trial <- NULL
-  denominator <- NULL
-  numerator <- NULL
-  wt <- NULL
+  numerator <- denominator <- NULL
+  wt <- weight <- cense1 <- NULL
   tmp <- NULL
-  weight <- cense1 <- NULL
   followup <- NULL
   isExcused <- NULL
-  #TODO cleanup unused columns before they go to internal.analysis
 
   handler <- function(DT, data, params) {
     if (!params@weighted) {

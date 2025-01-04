@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_misc.R
 \name{assign.global}
 \alias{assign.global}
-\title{function loading ncores in global environment}
+\title{Internal function loading ncores in global environment}
 \usage{
 assign.global(ncores, pos = 1)
 }
@@ -12,6 +12,6 @@ assign.global(ncores, pos = 1)
 \item{pos}{defaults to 1 which equals an assignment to global environment}
 }
 \description{
-function loading ncores in global environment
+Internal function loading ncores in global environment
 }
 \keyword{internal}

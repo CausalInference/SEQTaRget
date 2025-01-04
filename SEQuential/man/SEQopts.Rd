@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEQopts.R
 \name{SEQopts}
 \alias{SEQopts}
-\title{Parameter Builder - passing defaults to \code{SEQuential}}
+\title{Parameter Builder for SEQuential Model and Estimates}
 \usage{
 SEQopts(
   parallel = FALSE,
@@ -80,7 +80,7 @@ SEQopts(
 
 \item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
-\item{covariates}{String: covariates to coerce into a formula object, eg. "A+B*C"}
+\item{covariates}{String: covariates to the right hand side of a formula object}
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 
@@ -90,43 +90,43 @@ SEQopts(
 
 \item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 
-\item{numerator}{String: numerator covariates to coerce to formula object}
+\item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
 
-\item{denominator}{String: denominator covariates to coerce to formula object}
+\item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
 
-\item{surv}{String: survival covariates to coerce to formula object}
+\item{surv}{String: survival covariates to the right hand side of a formula object}
 
 \item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
 
-\item{weight.eligible0}{String: TODO}
+\item{weight.eligible0}{String: column name for indicator column defining which weights are eligible for the 'zero' model}
 
-\item{weight.eligible1}{String: TODO}
+\item{weight.eligible1}{String: column name for indicator column defining which weights are eligible for the 'one' model}
 
-\item{hazard}{Logical: TODO}
+\item{hazard}{Logical: hazard error calculation instead of survival estimation}
 
-\item{calculate.var}{Logical: TODO}
+\item{calculate.var}{Logical: robust standard error calculation instead of survival bootstrapping}
 
-\item{selection.random}{Logical: TODO}
+\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
 
-\item{selection.prob}{Numeric: TODO}
+\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]}
 
-\item{followup.class}{Logical: TODO}
+\item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column}
 
-\item{followup.spline}{Logical: TODO}
+\item{followup.spline}{Logical: treat followup as a cubic spline}
 
-\item{cense.numerator}{String: TODO}
+\item{cense.numerator}{String: censoring numerator covariates to the right hand side of a formula object}
 
-\item{cense.denominator}{String: TODO}
+\item{cense.denominator}{String: censoring denominator covariates to the right hand side of a formula object}
 
-\item{cense}{String: TODO}
+\item{cense}{String: column name for additional censoring variable, e.g. loss-to-follow-up}
 
-\item{cense.eligible}{String: TODO}
+\item{cense.eligible}{String: column name for indicator column defining which rows to use for censoring model}
 
-\item{compevent}{String: TODO}
+\item{compevent}{String: column name for competing event indicator}
 
-\item{multinomial}{Logical: whether or not to expect multinomial models}
+\item{multinomial}{NOT CURRENTLY IMPLEMENTED - WIP}
 
-\item{treat.level}{List: which treatment levels to compare through survival curves}
+\item{treat.level}{NOT CURRENTLY IMPLEMENTED - WIP}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 
@@ -156,5 +156,5 @@ SEQopts(
 An object of class 'SEQOpts'
 }
 \description{
-Parameter Builder - passing defaults to \code{SEQuential}
+Parameter Builder for SEQuential Model and Estimates
 }

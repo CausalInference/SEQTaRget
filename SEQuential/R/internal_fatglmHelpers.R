@@ -45,7 +45,7 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 #' @param model model number, e.g. d0 = "zero model"
 #'
 #' @keywords internal
-
+# TODO - this can be simplified to intake model as a integer and match tx lag to it
 prepare.data <- function(weight, params, type, model, case){
   followup <- NULL
   isExcused <- NULL
@@ -117,6 +117,14 @@ prepare.data <- function(weight, params, type, model, case){
     if (type == "compevent") y <- weight[[params@compevent]] else y <- weight[[params@outcome]]
     X <- model.matrix(as.formula(paste0("~", covs)), data = weight[!is.na(get(params@outcome))]
                       [, cols, with = FALSE])
+
+  } else if (case == "multinomial") {
+    if (type == "numerator") covs <- params@numerator else covs <- params@denominator
+    cols <- unlist(strsplit(covs, "\\+|\\*"))
+    weight <- weight[tx_lag == model, ]
+
+    X <- model.matrix(as.formula(paste0("~", covs)), data = weight[, cols, with = FALSE])
+    y <- weight[[params@treatment]]
   }
 
   return(list(y = y, X = X))
