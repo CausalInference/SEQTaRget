@@ -134,8 +134,8 @@ prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plo
     weight_statistics = weight.stats,
     survival_curve = if (!params@km.curves) NA else survival_plot,
     survival_data = if (!params@km.curves) NA else survival_data,
-    risk_difference = NA_real_, # TODO
-    risk_ratio = NA_real_,
+    risk_difference = risk$rd,
+    risk_ratio = risk$rr,
     elapsed_time = elapsed_time
   )
 }
