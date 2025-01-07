@@ -175,10 +175,10 @@ internal.survival <- function(params) {
       )][, kept, with = FALSE]
 
       surv <- rbind(
-        DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
-        DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
-        DT[, list(followup, mu = risk0_mu, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
-        DT[, list(followup, mu = risk1_mu, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"]
+        DT[, list(followup, value = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
+        DT[, list(followup, value = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
+        DT[, list(followup, value = risk0_mu, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
+        DT[, list(followup, value = risk1_mu, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"]
       )
       rm(DT, result)
       gc()
@@ -212,10 +212,10 @@ internal.survival <- function(params) {
       )][, kept, with = FALSE]
 
       surv <- rbind(
-        DT[, list(followup, mu = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
-        DT[, list(followup, mu = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
-        DT[, list(followup, mu = inc0_mu, lb = inc0_lb, ub = inc0_ub)][, variable := "inc0"],
-        DT[, list(followup, mu = inc1_mu, lb = inc1_lb, ub = inc1_ub)][, variable := "inc1"]
+        DT[, list(followup, value = surv0_mu, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
+        DT[, list(followup, value = surv1_mu, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
+        DT[, list(followup, value = inc0_mu, lb = inc0_lb, ub = inc0_ub)][, variable := "inc0"],
+        DT[, list(followup, value = inc1_mu, lb = inc1_lb, ub = inc1_ub)][, variable := "inc1"]
       )
       rm(DT, result)
       gc()
