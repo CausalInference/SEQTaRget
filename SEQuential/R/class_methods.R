@@ -1,171 +1,158 @@
-#' An S4 class of user options to feed into the SEQuential processes and estimates
-#' This class should match \code{SEQopts} in file \code{SEQopts.R}
-#' @keywords internal
-setClass("SEQopts",
-  slots = c(
-    parallel = "logical",
-    nthreads = "numeric",
-    ncores = "integer",
-    bootstrap.nboot = "integer",
-    bootstrap = "logical",
-    bootstrap.sample = "numeric",
-    seed = "integer",
-    followup.min = "numeric",
-    followup.max = "numeric",
-    survival.max = "numeric",
-    trial.include = "logical",
-    followup.include = "logical",
-    weighted = "logical",
-    weight.lower = "numeric",
-    weight.upper = "numeric",
-    weight.p99 = "logical",
-    weight.eligible0 = "character",
-    weight.eligible1 = "character",
-    weight.preexpansion = "logical",
-    excused = "logical",
-    calculate.var = "logical",
-    hazard = "logical",
-    selection.random = "logical",
-    selection.prob = "numeric",
-    cense = "character",
-    cense.eligible = "character",
-    excused.col0 = "character",
-    excused.col1 = "character",
-    LTFU = "logical",
-    covariates = "character",
-    numerator = "character",
-    denominator = "character",
-    cense.numerator = "character",
-    cense.denominator = "character",
-    km.curves = "logical",
-    compevent = "character",
-    surv = "character",
-    indicator.baseline = "character",
-    indicator.squared = "character",
-    fastglm.method = "integer",
-    multinomial = "logical",
-    treat.level = "list",
-    followup.class = "logical",
-    followup.spline = "logical",
-    plot.title = "character",
-    plot.subtitle = "character",
-    plot.labels = "character",
-    plot.colors = "character",
-    plot.type = "character"
-  ), prototype = list(
-    parallel = FALSE,
-    nthreads = data.table::getDTthreads(),
-    ncores = parallel::detectCores(),
-    bootstrap = FALSE,
-    bootstrap.sample = 0.8,
-    seed = 1636L,
-    followup.min = -Inf,
-    followup.max = Inf,
-    survival.max = Inf,
-    trial.include = TRUE,
-    followup.include = TRUE,
-    weighted = FALSE,
-    weight.lower = -Inf,
-    weight.upper = Inf,
-    weight.p99 = FALSE,
-    weight.preexpansion = TRUE,
-    excused = FALSE,
-    weight.eligible0 = NA_character_,
-    weight.eligible1 = NA_character_,
-    calculate.var = FALSE,
-    hazard = FALSE,
-    selection.random = FALSE,
-    selection.prob = 0.8,
-    cense = NA_character_,
-    cense.eligible = NA_character_,
-    excused.col0 = NA_character_,
-    excused.col1 = NA_character_,
-    LTFU = FALSE,
-    km.curves = FALSE,
-    covariates = NA_character_,
-    numerator = NA_character_,
-    denominator = NA_character_,
-    cense.numerator = NA_character_,
-    cense.denominator = NA_character_,
-    compevent = NA_character_,
-    surv = NA_character_,
-    indicator.baseline = "_bas",
-    indicator.squared = "_sq",
-    fastglm.method = 2L,
-    treat.level = list(0, 1),
-    multinomial = FALSE,
-    followup.class = FALSE,
-    followup.spline = FALSE,
-    plot.title = NA_character_,
-    plot.subtitle = NA_character_,
-    plot.labels = NA_character_,
-    plot.colors = NA_character_,
-    plot.type = NA_character_
-  )
-)
+setMethod("show", "SEQoutput", function(object) {
+  elapsed_time <- slot(object, "time")
+  params <- slot(object, "params")
+  bootstrap <- slot(params, "bootstrap")
+  bootstrap.nboot <- slot(params, "bootstrap.nboot")
+  outcome <- slot(object, "outcome")
+  numerator <- slot(object, "numerator")
+  denominator <- slot(object, "denominator")
+  outcome_model <- slot(object, "outcome.model")[[1]]
+  weight_statistics <- slot(object, "weight.statistics")[[1]]
+  risk_ratio <- slot(object, "risk.ratio")
+  risk_difference <- slot(object, "risk.difference")
 
-#' An internal S4 class to carry around parameters during the SEQuential process - inherits user facing parameters from \code{SEQopts}
-#'
-#' @slot data pre expansion data
-#' @slot DT post expansion data
-#' @slot id id column as defined by the user
-#' @slot time time column as defined by the user
-#' @slot eligible eligible column as defined by the user
-#' @slot treatment treatment column as defined by the user
-#' @slot time_varying list of time varying columns as defined by the user
-#' @slot fixed list of fixed columns as defined by the user
-#' @slot method method of analysis as defined by the user
-#'
-#' @keywords internal
+  cat("SEQuential process completed in", elapsed_time, ":\n")
+  cat("Initialized with:\n")
+  cat("Outcome covariates:", outcome, "\n")
+  cat("Numerator covariates:", numerator, "\n")
+  cat("Denominator covariates:", denominator, "\n\n")
 
-setClass("SEQparams",
-  contains = "SEQopts",
-  slots = c(
-    data = "data.table",
-    DT = "data.table",
-    id = "character",
-    time = "character",
-    eligible = "character",
-    treatment = "character",
-    outcome = "character",
-    time_varying = "list",
-    fixed = "list",
-    method = "character"
-  ), prototype = list(
-    data = NA,
-    DT = NA,
-    id = NA_character_,
-    time = NA_character_,
-    eligible = NA_character_,
-    treatment = NA_character_,
-    outcome = NA_character_,
-    time_varying = list(),
-    fixed = list(),
-    method = NA_character_
-  )
-)
+  if (bootstrap) {
+    cat("Bootstrapped", bootstrap.nboot, "times\n")
+    cat("First Model Information ========================================== \n")
+  } else {
+    cat("Coefficients and Weighting:\n")
+  }
+  cat("\nOutcome Model ==================================================== \n")
+  print(summary(outcome_model))
 
-#' An internal S4 class to help transfer weight statistics out of \code{internal_weights}
+  if (length(weight_statistics) > 0) {
+    cat("\nWeight Information ============================================= \n")
+    cat("Treatment Lag = 0 Model ========================================== \n")
+    cat("Numerator 0: \n")
+    print(summary(weight_statistics$n0.coef))
+    cat("Denominator: \n")
+    print(summary(weight_statistics$d0.coef))
+
+    cat("Treatment Lag = 1 Model ========================================== \n")
+    cat("Numerator: \n")
+    print(summary(weight_statistics$n1.coef))
+    cat("Denominator: \n")
+    print(summary(weight_statistics$d1.coef))
+
+    cat("Weights:\n")
+    cat("Min: ", weight_statistics$min, "\n")
+    cat("Max: ", weight_statistics$max, "\n")
+    cat("StDev: ", weight_statistics$sd, "\n")
+    cat("P01: ", weight_statistics$p01, "\n")
+    cat("P25: ", weight_statistics$p25, "\n")
+    cat("P50: ", weight_statistics$p50, "\n")
+    cat("P75: ", weight_statistics$p75, "\n")
+    cat("P99: ", weight_statistics$p99, "\n\n")
+  }
+  cat("End of Followup Risk Ratio:\n", risk_ratio, "\n\n")
+  cat("End of Followup Risk Difference:\n", risk_difference, "\n")
+})
+
+#' Retrieves Numerator Models from SEQuential object
+#' @param object object of class SEQoutput
 #'
-#' @slot weights a data.table containing the estimated weights, either pre or post expansion
-#' @slot coef.n0 coefficients from the numerator zero model
-#' @slot coef.n1 coefficients from the numerator one model
-#' @slot coef.d0 coefficients from the denominator zero model
-#' @slot coef.d1 coefficients from the denominator one model
+#' @returns List of both numerator models
+#' @importFrom methods is slot
 #'
-#' @keywords internal
-setClass("SEQweights",
-  slots = c(
-    weights = "data.table",
-    coef.n0 = "numeric",
-    coef.n1 = "numeric",
-    coef.d0 = "numeric",
-    coef.d1 = "numeric"
-  ), prototype = c(
-    weights = NA,
-    coef.n0 = NA_real_,
-    coef.n1 = NA_real_,
-    coef.d0 = NA_real_,
-    coef.d1 = NA_real_
-  )
-)
+#' @export
+numerator <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  weight_statistics <- slot(object, "weight_statistics")[[1]]
+  return(list(numerator0 = weight_statistics$n0.coef,
+              numerator1 = weight_statistics$n1.coef))
+}
+
+#' Retrieves Denominator Models from SEQuential object
+#' @param object object of class SEQoutput
+#'
+#' @returns List of both numerator models
+#' @importFrom methods is slot
+#'
+#' @export
+denominator <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  weight_statistics <- slot(object, "weight_statistics")[[1]]
+  return(list(denominator0 = weight_statistics$d0.coef,
+              denominator1 = weight_statistics$d1.coef))
+}
+
+#' Retrieves Outcome Models from SEQuential object
+#' @param object object of class SEQoutput
+#'
+#' @returns List of all outcome models
+#' @importFrom methods is slot
+#'
+#' @export
+outcome <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  return(object@outcome.model)
+}
+#' Retrieves Outcome, Numerator, and Denominator Covariates
+#' @param object object of class SEQoutput
+#'
+#' @returns list of SEQuential covariates
+#' @importFrom methods is slot
+#'
+#' @export
+covariates <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  return(list(Outcome = object@outcome,
+              Numerator = object@numerator,
+              Denominator = object@denominator))
+}
+
+#' Function to print kaplan-meier curves
+#'
+#' @param object SEQoutput object to plot
+#' @param plot.type character: type of plot to print
+#' @param plot.title character: defines the title of the plot
+#' @param plot.subtitle character: plot subtitle
+#' @param plot.labels length 2 character: plot labels
+#' @param plot.colors length 2 character: plot colors
+#'
+#' @importFrom methods is slot slot<-
+#' @returns ggplot object of plot \code{plot.type}
+#' @export
+km.curve <- function(object, plot.type = c("survival", "risk", "inc"),
+                     plot.title, plot.subtitle, plot.labels, plot.colors) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  params <- slot(object, "params")
+  slot(params, "plot.type") <- plot.type
+  slot(params, "plot.colors") <- plot.colors
+  slot(params, "plot.title") <- plot.title
+  slot(params, "plot.subtitle") <- plot.subtitle
+  slot(params, "plot.labels") <- plot.labels
+
+  out <- internal.plot(object@survival.data, params)
+  return(out)
+}
+
+#' Function to return survival data from a SEQuential object
+#'
+#' @param object SEQoutput object
+#'
+#' @importFrom methods is slot
+#' @returns dataframe of survival values
+#' @export
+km.data <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  return(slot(object, "survival.data"))
+}
+
+#' Function to return diagnostic tables from a SEQuential object
+#'
+#' @param object SEQoutput object
+#'
+#' @importFrom methods is slot
+#' @returns list of diagnostic tables
+#' @export
+diagnostics <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  return(slot(object, "info"))
+}

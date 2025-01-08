@@ -113,29 +113,26 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time) {
+prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info) {
   if (!missing(outcome_model)) {
-    outcome.coefs <- lapply(1:params@bootstrap.nboot, function(x) coef(outcome_model[[x]]$model$model))
+    outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model$model)
     weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
   new("SEQoutput",
-    bootstrap = params@bootstrap,
-    bootstrap.sample = params@bootstrap.sample,
-    boot.slice = 1L,
-    seed = params@seed,
-    bootstrap.nboot = params@bootstrap.nboot,
-    outcome = paste0(params@outcome, "~", params@covariates),
-    numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
-    denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
-    outcome_model = outcome.coefs,
-    hazard = if (!params@hazard) NA_real_ else hazard,
-    robust_se = if (!params@calculate.var) list() else robustSE,
-    weight_statistics = weight.stats,
-    survival_curve = if (!params@km.curves) NA else survival_plot,
-    survival_data = if (!params@km.curves) NA else survival_data,
-    risk_difference = NA_real_, # TODO
-    risk_ratio = NA_real_,
-    elapsed_time = elapsed_time
+      params = params,
+      outcome = paste0(params@outcome, "~", params@covariates),
+      numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
+      denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
+      outcome.model = outcome,
+      hazard = if (!params@hazard) NA_real_ else hazard,
+      robust.se = if (!params@calculate.var) list() else robustSE,
+      weight.statistics = weight.stats,
+      survival.curve = if (!params@km.curves) NA else survival_plot,
+      survival.data = if (!params@km.curves) NA else survival_data,
+      risk.difference = if(length(risk) > 1) risk$rd else NA_real_,
+      risk.ratio = if(length(risk) > 1) risk$rr else NA_real_,
+      time = elapsed_time,
+      info = info
   )
 }

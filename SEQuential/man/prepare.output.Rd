@@ -12,7 +12,8 @@ prepare.output(
   survival_plot,
   survival_data,
   risk,
-  elapsed_time
+  elapsed_time,
+  info
 )
 }
 \description{

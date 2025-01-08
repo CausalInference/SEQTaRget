@@ -10,8 +10,11 @@
 
 internal.plot <- function(survival.data, params) {
   variable <- followup <- NULL
+  lb <- ub <- NULL
 
   if (params@plot.type == "survival") subset <- "surv" else subset <- params@plot.type
+  if (!is.na(params@plot.labels)) guide <- params@plot.labels else guide <- waiver()
+
   data <- survival.data[variable %like% subset, ]
   p <- ggplot(data,
               aes(x = followup, y = value, col = variable)) +
@@ -20,10 +23,15 @@ internal.plot <- function(survival.data, params) {
     labs(x = "Followup",
          y = stringr::str_to_title(params@plot.type),
          col = "")
+  if (params@bootstrap) {
+    p <- p + geom_ribbon(aes(ymax = ub, ymin = lb, fill = variable), alpha = 0.5) +
+      scale_fill_manual(labels = guide, values = params@plot.colors) +
+      labs(fill = "") +
+      guides(col = "none")
+  }
 
   if (!is.na(params@plot.title)) p <- p + labs(title = params@plot.title)
   if (!is.na(params@plot.subtitle)) p <- p + labs(title = params@plot.subtitle)
-  if (!is.na(params@plot.labels)) guide <- params@plot.labels else guide <- waiver()
   p <- p + scale_color_manual(labels = guide, values = params@plot.colors)
 
   return(p)

@@ -11,7 +11,7 @@ test_that("ITT", {
                    sex = 0.127045833687237, N_bas = 0.00328670775503307, L_bas = -0.0138508823648217,
                    P_bas = 0.200928902773364, `tx_init_bas:followup` = -0.00170402147034585)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -30,7 +30,7 @@ test_that("Pre-Expansion Dose-Response", {
                    trial_sq = 0.000777410850631594, sex = 0.143071081126181,
                    `dose:followup` = 0.000410848850309337, `dose_sq:followup` = 6.47486169924423e-06)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -51,7 +51,7 @@ test_that("Post-Expansion Dose-Response", {
                    P_bas = 0.148759071019851, `dose:followup` = 0.00016411135430163,
                    `dose_sq:followup` = 9.06019295358436e-06)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -69,7 +69,7 @@ test_that("Pre-Expansion Censoring", {
                    trial = -0.0137282592316101, trial_sq = 0.00113039188898435,
                    sex = 0.0484052979031332, `tx_init_bas:followup` = 0.0172102945332125)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -88,7 +88,7 @@ test_that("Post-Expansion Censoring", {
                    sex = 0.0898855112932864, N_bas = 0.00476008107851383, L_bas = 0.0121635809493038,
                    P_bas = 0.441266300593487, `tx_init_bas:followup` = 0.0134658425932256)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -109,7 +109,7 @@ test_that("Pre-Expansion Excused Censoring", {
                    trial = 0.01046106282765, trial_sq = 0.000813014415799579,
                    `tx_init_bas:followup` = 0.00297084310612163)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -132,7 +132,7 @@ test_that("Post-Expansion Excused Censoring", {
                    sex = 0.150727875314015, N_bas = 0.00151683958054008, L_bas = 0.00275340474918396,
                    P_bas = 0.362537379927435, `tx_init_bas:followup` = -0.0041408873576683)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -150,7 +150,7 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
                    sex = -0.190092831118129, N_bas = 0.00658683930721275, L_bas = -0.448911874075032,
                    P_bas = 1.38926265916341, `tx_init_bas:followup` = 0.00383613762896999)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -168,7 +168,7 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
                    sex = -0.190220229415778, N_bas = 0.00658300214440885, L_bas = -0.448958593335045,
                    P_bas = 1.38913912261648, `tx_init_bas:followup` = 0.00383774199912364)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
@@ -186,6 +186,6 @@ test_that("ITT - Multinomial, Treatment Levels 1,2", {
                      N_bas = 0.0548857956131868, L_bas = 0.809008246889685, P_bas = 1.45718621133478,
                      `tx_init_bas:followup` = 1.48015622295032)
 
-  test <- as.list(model@outcome_model[[1]])
+  test <- as.list(coef(model@outcome.model[[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
