@@ -123,10 +123,10 @@ internal.weights <- function(DT, data, params) {
 
   weight.info <- new("SEQweights",
     weights = out,
-    coef.n0 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") coef(numerator0) else NA_real_,
-    coef.n1 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") coef(numerator1) else NA_real_,
-    coef.d0 = if (params@method != "ITT") coef(denominator0) else NA_real_,
-    coef.d1 = if (params@method != "ITT") coef(denominator1) else NA_real_
+    coef.n0 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") numerator0 else NA_real_,
+    coef.n1 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") numerator1 else NA_real_,
+    coef.d0 = if (params@method != "ITT") denominator0 else NA_real_,
+    coef.d1 = if (params@method != "ITT") denominator1 else NA_real_
   )
   return(weight.info)
 }

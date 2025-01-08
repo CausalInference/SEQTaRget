@@ -115,7 +115,7 @@ parameter.simplifier <- function(params) {
 #' @keywords internal
 prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time) {
   if (!missing(outcome_model)) {
-    outcome.coefs <- lapply(1:params@bootstrap.nboot, function(x) coef(outcome_model[[x]]$model$model))
+    outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model$model)
     weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
   }
 
@@ -128,7 +128,7 @@ prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plo
     outcome = paste0(params@outcome, "~", params@covariates),
     numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
     denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
-    outcome_model = outcome.coefs,
+    outcome_model = outcome,
     hazard = if (!params@hazard) NA_real_ else hazard,
     robust_se = if (!params@calculate.var) list() else robustSE,
     weight_statistics = weight.stats,

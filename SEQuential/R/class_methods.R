@@ -1,171 +1,82 @@
-#' An S4 class of user options to feed into the SEQuential processes and estimates
-#' This class should match \code{SEQopts} in file \code{SEQopts.R}
-#' @keywords internal
-setClass("SEQopts",
-  slots = c(
-    parallel = "logical",
-    nthreads = "numeric",
-    ncores = "integer",
-    bootstrap.nboot = "integer",
-    bootstrap = "logical",
-    bootstrap.sample = "numeric",
-    seed = "integer",
-    followup.min = "numeric",
-    followup.max = "numeric",
-    survival.max = "numeric",
-    trial.include = "logical",
-    followup.include = "logical",
-    weighted = "logical",
-    weight.lower = "numeric",
-    weight.upper = "numeric",
-    weight.p99 = "logical",
-    weight.eligible0 = "character",
-    weight.eligible1 = "character",
-    weight.preexpansion = "logical",
-    excused = "logical",
-    calculate.var = "logical",
-    hazard = "logical",
-    selection.random = "logical",
-    selection.prob = "numeric",
-    cense = "character",
-    cense.eligible = "character",
-    excused.col0 = "character",
-    excused.col1 = "character",
-    LTFU = "logical",
-    covariates = "character",
-    numerator = "character",
-    denominator = "character",
-    cense.numerator = "character",
-    cense.denominator = "character",
-    km.curves = "logical",
-    compevent = "character",
-    surv = "character",
-    indicator.baseline = "character",
-    indicator.squared = "character",
-    fastglm.method = "integer",
-    multinomial = "logical",
-    treat.level = "list",
-    followup.class = "logical",
-    followup.spline = "logical",
-    plot.title = "character",
-    plot.subtitle = "character",
-    plot.labels = "character",
-    plot.colors = "character",
-    plot.type = "character"
-  ), prototype = list(
-    parallel = FALSE,
-    nthreads = data.table::getDTthreads(),
-    ncores = parallel::detectCores(),
-    bootstrap = FALSE,
-    bootstrap.sample = 0.8,
-    seed = 1636L,
-    followup.min = -Inf,
-    followup.max = Inf,
-    survival.max = Inf,
-    trial.include = TRUE,
-    followup.include = TRUE,
-    weighted = FALSE,
-    weight.lower = -Inf,
-    weight.upper = Inf,
-    weight.p99 = FALSE,
-    weight.preexpansion = TRUE,
-    excused = FALSE,
-    weight.eligible0 = NA_character_,
-    weight.eligible1 = NA_character_,
-    calculate.var = FALSE,
-    hazard = FALSE,
-    selection.random = FALSE,
-    selection.prob = 0.8,
-    cense = NA_character_,
-    cense.eligible = NA_character_,
-    excused.col0 = NA_character_,
-    excused.col1 = NA_character_,
-    LTFU = FALSE,
-    km.curves = FALSE,
-    covariates = NA_character_,
-    numerator = NA_character_,
-    denominator = NA_character_,
-    cense.numerator = NA_character_,
-    cense.denominator = NA_character_,
-    compevent = NA_character_,
-    surv = NA_character_,
-    indicator.baseline = "_bas",
-    indicator.squared = "_sq",
-    fastglm.method = 2L,
-    treat.level = list(0, 1),
-    multinomial = FALSE,
-    followup.class = FALSE,
-    followup.spline = FALSE,
-    plot.title = NA_character_,
-    plot.subtitle = NA_character_,
-    plot.labels = NA_character_,
-    plot.colors = NA_character_,
-    plot.type = NA_character_
-  )
-)
+#' Function to explore bootstrapped results of a SEQuential object
+#'
+#' @param obj SEQuential object to explore
+#' @param n bootstrap iteration to return
+#'
+#' @returns a SEQuential object where outcome_model and weight_statistics are limited to the bootstrap \code{n}
+#'
+#' @importFrom methods is slot slot<-
+#'
+#' @export
+explore <- function(obj, n) {
+  if (!is(obj, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (n > obj@bootstrap.nboot & obj@bootstrap) stop("Out of bounds bootstrap iteration")
 
-#' An internal S4 class to carry around parameters during the SEQuential process - inherits user facing parameters from \code{SEQopts}
-#'
-#' @slot data pre expansion data
-#' @slot DT post expansion data
-#' @slot id id column as defined by the user
-#' @slot time time column as defined by the user
-#' @slot eligible eligible column as defined by the user
-#' @slot treatment treatment column as defined by the user
-#' @slot time_varying list of time varying columns as defined by the user
-#' @slot fixed list of fixed columns as defined by the user
-#' @slot method method of analysis as defined by the user
-#'
-#' @keywords internal
+  coef_iteration <- slot(obj, "outcome_model")[n]
+  weight_iteration <- slot(obj, "weight_statistics")[n]
 
-setClass("SEQparams",
-  contains = "SEQopts",
-  slots = c(
-    data = "data.table",
-    DT = "data.table",
-    id = "character",
-    time = "character",
-    eligible = "character",
-    treatment = "character",
-    outcome = "character",
-    time_varying = "list",
-    fixed = "list",
-    method = "character"
-  ), prototype = list(
-    data = NA,
-    DT = NA,
-    id = NA_character_,
-    time = NA_character_,
-    eligible = NA_character_,
-    treatment = NA_character_,
-    outcome = NA_character_,
-    time_varying = list(),
-    fixed = list(),
-    method = NA_character_
-  )
-)
+  slot(obj, "outcome_model") <- list(coef_iteration)
+  slot(obj, "weight_statistics") <- list(weight_iteration)
+  slot(obj, "boot.slice") <- as.integer(n)
 
-#' An internal S4 class to help transfer weight statistics out of \code{internal_weights}
-#'
-#' @slot weights a data.table containing the estimated weights, either pre or post expansion
-#' @slot coef.n0 coefficients from the numerator zero model
-#' @slot coef.n1 coefficients from the numerator one model
-#' @slot coef.d0 coefficients from the denominator zero model
-#' @slot coef.d1 coefficients from the denominator one model
-#'
-#' @keywords internal
-setClass("SEQweights",
-  slots = c(
-    weights = "data.table",
-    coef.n0 = "numeric",
-    coef.n1 = "numeric",
-    coef.d0 = "numeric",
-    coef.d1 = "numeric"
-  ), prototype = c(
-    weights = NA,
-    coef.n0 = NA_real_,
-    coef.n1 = NA_real_,
-    coef.d0 = NA_real_,
-    coef.d1 = NA_real_
-  )
-)
+  return(obj)
+}
+
+#' SEQoutput 'show' generic method
+setMethod("show", "SEQoutput", function(object) {
+  elapsed_time <- slot(object, "elapsed_time")
+  outcome <- slot(object, "outcome")
+  numerator <- slot(object, "numerator")
+  denominator <- slot(object, "denominator")
+  bootstrap <- slot(object, "bootstrap")
+  bootstrap.nboot <- slot(object, "bootstrap.nboot")
+  boot_slice <- slot(object, "boot.slice")
+  outcome_model <- slot(object, "outcome_model")[[1]]
+  weight_statistics <- slot(object, "weight_statistics")[[1]]
+  risk_ratio <- slot(object, "risk_ratio")
+  risk_difference <- slot(object, "risk_difference")
+
+  cat("SEQuential process completed in", elapsed_time, ":\n")
+  cat("Initialized with:\n")
+  cat("Outcome covariates:", outcome, "\n")
+  cat("Numerator covariates:", numerator, "\n")
+  cat("Denominator covariates:", denominator, "\n\n")
+
+  if (bootstrap) {
+    cat("Bootstrapped", bootstrap.nboot, "times\n")
+    cat("Coefficients and Weighting for bootstrap slice", boot_slice, ":\n")
+  } else {
+    cat("Coefficients and Weighting:\n")
+  }
+  cat("\nOutcome Model =================== \n")
+  print(summary(outcome_model))
+
+  if (!is.na(weight_statistics)) {
+    cat("\nWeight Information ================ \n")
+    n0.coef <- paste0(names(weight_statistics$n0.coef), ": ", weight_statistics$n0.coef, "\n")
+    n1.coef <- paste0(names(weight_statistics$n1.coef), ": ", weight_statistics$n1.coef, "\n")
+    d0.coef <- paste0(names(weight_statistics$d0.coef), ": ", weight_statistics$d0.coef, "\n")
+    d1.coef <- paste0(names(weight_statistics$d1.coef), ": ", weight_statistics$d1.coef, "\n")
+
+    cat("Numerator 0 Model: \n", n0.coef, "\n")
+    cat("Numerator 1 Model: \n", n1.coef, "\n")
+    cat("Denominator 0 Model: \n", d0.coef, "\n")
+    cat("Denominator 1 Model: \n", d1.coef, "\n\n")
+
+    cat("Weights:\n")
+    cat("Min: ", weight_statistics$min, "\n")
+    cat("Max: ", weight_statistics$max, "\n")
+    cat("StDev: ", weight_statistics$sd, "\n")
+    cat("P01: ", weight_statistics$p01, "\n")
+    cat("P25: ", weight_statistics$p25, "\n")
+    cat("P50: ", weight_statistics$p50, "\n")
+    cat("P75: ", weight_statistics$p75, "\n")
+    cat("P99: ", weight_statistics$p99, "\n\n")
+  }
+  cat("Risk Ratio:\n", risk_ratio, "\n\n")
+  cat("Risk Difference:\n", risk_difference, "\n")
+})
+
+#setMethod("summary", "SEQoutput", function(object) {
+#
+#})
