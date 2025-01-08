@@ -148,25 +148,25 @@ setClass("SEQparams",
 #' An internal S4 class to help transfer weight statistics out of \code{internal_weights}
 #'
 #' @slot weights a data.table containing the estimated weights, either pre or post expansion
-#' @slot coef.n0 coefficients from the numerator zero model
-#' @slot coef.n1 coefficients from the numerator one model
-#' @slot coef.d0 coefficients from the denominator zero model
-#' @slot coef.d1 coefficients from the denominator one model
+#' @slot coef.n0 numerator zero model
+#' @slot coef.n1 numerator one model
+#' @slot coef.d0 denominator zero model
+#' @slot coef.d1 denominator one model
 #'
 #' @keywords internal
 setClass("SEQweights",
   slots = c(
     weights = "data.table",
-    coef.n0 = "numeric",
-    coef.n1 = "numeric",
-    coef.d0 = "numeric",
-    coef.d1 = "numeric"
+    coef.n0 = "ANY",
+    coef.n1 = "ANY",
+    coef.d0 = "ANY",
+    coef.d1 = "ANY"
   ), prototype = c(
     weights = NA,
-    coef.n0 = NA_real_,
-    coef.n1 = NA_real_,
-    coef.d0 = NA_real_,
-    coef.d1 = NA_real_
+    coef.n0 = NA,
+    coef.n1 = NA,
+    coef.d0 = NA,
+    coef.d1 = NA
   )
 )
 
@@ -191,40 +191,32 @@ setClass("SEQweights",
 #'
 setClass("SEQoutput",
          slots = c(
-           bootstrap = "logical",
-           bootstrap.sample = "numeric",
-           boot.slice = "integer",
-           seed = "integer",
-           bootstrap.nboot = "integer",
+           params = "SEQparams",
            outcome = "character",
            numerator = "character",
            denominator = "character",
-           outcome_model = "list",
+           outcome.model = "list",
            hazard = "numeric",
-           robust_se = "list",
-           survival_curve = "ANY",
-           survival_data = "ANY",
-           risk_difference = "numeric",
-           risk_ratio = "numeric",
-           elapsed_time = "character",
-           weight_statistics = "list"
+           robust.se = "list",
+           survival.curve = "ANY",
+           survival.data = "ANY",
+           risk.difference = "numeric",
+           risk.ratio = "numeric",
+           time = "character",
+           weight.statistics = "list"
          ), prototype = c(
-           bootstrap = FALSE,
-           bootstrap.sample = NA_real_,
-           boot.slice = 1L,
-           seed = NA_integer_,
-           bootstrap.nboot = NA_integer_,
+           params = new("SEQparams"),
            outcome = NA_character_,
            numerator = NA_character_,
            denominator = NA_character_,
            outcome_model = list(),
            hazard = NA_real_,
            robust_se = list(),
-           survival_curve = NA,
-           survival_data = data.table(),
-           risk_difference = NA_real_,
-           risk_ratio = NA_real_,
-           elapsed_time = NA_character_,
-           weight_statistics = list()
+           survival.curve = NA,
+           survival.data = data.table(),
+           risk.difference = NA_real_,
+           risk.ratio = NA_real_,
+           time = NA_character_,
+           weight.statistics = list()
          )
 )

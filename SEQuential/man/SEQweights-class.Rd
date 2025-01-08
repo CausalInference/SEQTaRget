@@ -12,13 +12,13 @@ An internal S4 class to help transfer weight statistics out of \code{internal_we
 \describe{
 \item{\code{weights}}{a data.table containing the estimated weights, either pre or post expansion}
 
-\item{\code{coef.n0}}{coefficients from the numerator zero model}
+\item{\code{coef.n0}}{numerator zero model}
 
-\item{\code{coef.n1}}{coefficients from the numerator one model}
+\item{\code{coef.n1}}{numerator one model}
 
-\item{\code{coef.d0}}{coefficients from the denominator zero model}
+\item{\code{coef.d0}}{denominator zero model}
 
-\item{\code{coef.d1}}{coefficients from the denominator one model}
+\item{\code{coef.d1}}{denominator one model}
 }}
 
 \keyword{internal}
