@@ -47,8 +47,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # Debugging tools ==========================================
     data <- fread("SEQdata_ltfu_2.csv")
     id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts()
+    method <- "ITT"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
+    options <- SEQopts(km.curves = TRUE, bootstrap.nboot = 2, bootstrap = TRUE, weighted = TRUE)
     test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
   }
 
@@ -112,6 +112,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$model$coefficients[[2]])), FALSE) else hazard <- NA
   if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
 
+  info.outcome <- list(outcome.unique = table(!is.na(data$outcome)),
+                       outcome.nonunique = table(!is.na(params@DT$outcome)))
+
+  params@DT <- params@data <- data.table()
   out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk,
     elapsed_time = format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   )
