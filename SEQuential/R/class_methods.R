@@ -145,3 +145,14 @@ km.data <- function(object) {
   return(slot(object, "survival.data"))
 }
 
+#' Function to return diagnostic tables from a SEQuential object
+#'
+#' @param object SEQoutput object
+#'
+#' @importFrom methods is slot
+#' @returns list of diagnostic tables
+#' @export
+diagnostics <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  return(slot(object, "info"))
+}

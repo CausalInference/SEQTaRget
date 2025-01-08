@@ -171,23 +171,20 @@ setClass("SEQweights",
 )
 
 #' An S4 class used to hold the outputs for the SEQuential process
-#' @slot boostrap if the process was bootstrapped
-#' @slot bootstrap.sample how much of the data was sampled during bootstrapping
-#' @slot boot.slice when using method 'show' defines what to print
-#' @slot seed seeding any random sampling occuring in bootstrap process
-#' @slot bootstrap.nboot number of bootstraps
+#' @slot params SEQparams object
 #' @slot outcome outcome covariates
 #' @slot numerator numerator covariates
 #' @slot denominator denominator covariates
-#' @slot outcome_model list of length \code{bootstrap.nboot} containing outcome coefficients
+#' @slot outcome.model list of length \code{bootstrap.nboot} containing outcome coefficients
 #' @slot hazard hazard ratio
-#' @slot robust_se robust standard errors
-#' @slot survival_curve ggplot object for the survival curves
-#' @slot survival_data data.table of survival data
-#' @slot risk_difference risk difference calculated from survival data
-#' @slot risk_ratio risk ratio calculated from survival data
-#' @slot elapsed_time time in minutes used for the SEQuential process
-#' @slot weight_statistics information from the weighting process, containing weight coefficients and weight statistics
+#' @slot robust.se robust standard errors
+#' @slot survival.curve ggplot object for the survival curves
+#' @slot survival.data data.table of survival data
+#' @slot risk.difference risk difference calculated from survival data
+#' @slot risk.ratio risk ratio calculated from survival data
+#' @slot time time in minutes used for the SEQuential process
+#' @slot weight.statistics information from the weighting process, containing weight coefficients and weight statistics
+#' @slot info list of outcome and switch information (if applicable)
 #'
 setClass("SEQoutput",
          slots = c(
@@ -203,7 +200,8 @@ setClass("SEQoutput",
            risk.difference = "numeric",
            risk.ratio = "numeric",
            time = "character",
-           weight.statistics = "list"
+           weight.statistics = "list",
+           info = "list"
          ), prototype = c(
            params = new("SEQparams"),
            outcome = NA_character_,
@@ -217,6 +215,7 @@ setClass("SEQoutput",
            risk.difference = NA_real_,
            risk.ratio = NA_real_,
            time = NA_character_,
-           weight.statistics = list()
+           weight.statistics = list(),
+           info = list()
          )
 )

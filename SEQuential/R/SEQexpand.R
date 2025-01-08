@@ -97,7 +97,7 @@ SEQexpand <- function(params) {
     }
     out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1
                ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
-                 ][, `:=`(switch = NULL)]
+                 ][, `:=`(firstSwitch = NULL)]
   }
   if (params@selection.random) {
     set.seed(params@seed)

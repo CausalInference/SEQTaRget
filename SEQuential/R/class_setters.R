@@ -113,7 +113,7 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time) {
+prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info) {
   if (!missing(outcome_model)) {
     outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model$model)
     weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
@@ -132,6 +132,7 @@ prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plo
       survival.data = if (!params@km.curves) NA else survival_data,
       risk.difference = if(length(risk) > 1) risk$rd else NA_real_,
       risk.ratio = if(length(risk) > 1) risk$rr else NA_real_,
-      time = elapsed_time
+      time = elapsed_time,
+      info = info
   )
 }
