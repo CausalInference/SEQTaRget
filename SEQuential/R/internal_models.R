@@ -23,6 +23,6 @@ internal.model <- function(data, params) {
       model <- fastglm::fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
     }
   if (params@calculate.var) vcov <- fastglm.robust(model, X, y, weight) else vcov <- NA
-  return(list(model = model,
+  return(list(model = fastglm.clean(model),
               vcov = vcov))
 }

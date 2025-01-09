@@ -149,3 +149,10 @@ fastglm.robust <- function(model, X, y, weight = NULL) {
 
   return(sqrt(diag(robust)))
 }
+
+fastglm.clean <- function(model) {
+  model$x <- NULL
+  model$y <- NULL
+  model$model <- NULL
+  return(model)
+}
