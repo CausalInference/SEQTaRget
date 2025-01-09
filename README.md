@@ -7,18 +7,16 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-
-
-<img align="right" src="SEQuential/SEQuential.png" style="float" width="200">
+<img align="right" src="SEQuential.png" style="float" width="200">
 
 A package to estimate the observational analogs of the intention-to-treat and per-protocol effects of hypothetical treatment strategies. Built from the [INITIATORS SAS macro](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3613145/) built by Roger Logan, Goodarz Danaei, and Miguel Hernan, this tool is designed to analyze observational longitudinal data to estimate the effect of interventions sustained over time. The premise is to emulate the design and analysis of a hypothetical randomized trial. This software is capable of conducting the observational analogs of intention-to-treat, per-protocol, and as-treated analyses. All analyses are conducted using pooled logistic regression to approximate the hazard ratio from a proportional hazard Cox model.
 
 
 ## Setting up your Analysis
-`SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`
+`SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`. `SEQestimate` can also take the provided options and return a (very rough) estimated time for analysis.
 ```r
 data <- SEQdata
-myOptions <- SEQopts(excused = TRUE, bootstrap.nboot = 100, bootstrap = TRUE,
+myOptions <- SEQopts(excused = TRUE, nboot = 100, bootstrap = TRUE,
                      excused.col1 = "ExcusedOne", excused.col0 = "ExcusedZero")
 
 model <- SEQuential(data, id.col = "ID", time.col = "time",
@@ -28,10 +26,8 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
                     fixed.cols = "race",
                     method = "censoring",
                     options = myOptions)
-
-#Look at 50th bootstrap iteration
-boot50 <- explore(model, 50)
-show(boot50)
+model           # Will show the first bootstrap iteration
+outcome(model)  # Will return a list of all outcome models over the course of bootstrapping
 ```
 ### Assumptions
 This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed - 
@@ -41,21 +37,19 @@ This package places several assumptions onto the input data and unexpected resul
 
 ## Return
 The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` with slots:
-1. bootstrap - TRUE/FALSE dependent if bootstrapping was done
-2. bootstrap.sample - sample of data used in each bootstrap
-3. boot.slice - used in method `show()`
-4. seed - seeding for bootstrap sampling
-5. bootstrap.nboot - number of bootstraps
-6. outcome - outcome covariates
-7. numerator - numerator covariates when weighting
-8. denominator - denominator covariates when weighting
-9. survival_curve - ggplot survival curve
-10. survival_data - survival data
-11. risk_difference - risk difference
-12. risk_ratio - risk ratio
-13. elapsed_time - elapsed time for the SEQuential analysis
+1. params - the SEQparams object created through the SEQuential process
+2. outcome - outcome covariates
+3. numerator - numerator covariates when weighting
+4. denominator - denominator covariates when weighting
+5. hazard - the hazard ratio
+6. robust.se - the robust standard error estimates
+7. survival.curve - ggplot survival curve
+8. survival.data - survival and risk data for all points of followup 
+9. risk.difference - risk difference at end of followup
+10. risk.ratio - risk ratio at end of followup
+11. time - elapsed time for the SEQuential analysis
 
-These can be handily and easily printed to the terminal with `show(.)`
+These can be handily and easily printed to the terminal with by calling the object as `mySequential`. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE, calculate.var = TRUE`, then the survival curves, data and associated risks will return `NA`.
 
 ## Dependencies
 - data.table
@@ -64,8 +58,11 @@ These can be handily and easily printed to the terminal with `show(.)`
 - future
 - future.apply
 - ggplot2
-- speedglm
+- fastglm
 - methods
+
+## Finding More Information and Examples
+Further information on utilizing this package or developing it further is available with the [SEQuential Wiki](https://github.com/CausalInference/SEQuential/wiki) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
 
 ## Contributing to the package
 Community members are welcome to contribute to this package through several different avenues- 
