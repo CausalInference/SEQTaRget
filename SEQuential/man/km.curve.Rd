@@ -6,7 +6,7 @@
 \usage{
 km.curve(
   object,
-  plot.type = c("survival", "risk", "inc"),
+  plot.type = "survival",
   plot.title,
   plot.subtitle,
   plot.labels,

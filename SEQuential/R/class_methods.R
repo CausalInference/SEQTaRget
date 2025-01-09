@@ -26,7 +26,7 @@ setMethod("show", "SEQoutput", function(object) {
   cat("\nOutcome Model ==================================================== \n")
   print(summary(outcome_model))
 
-  if (length(weight_statistics) > 0) {
+  if (params@weighted) {
     cat("\nWeight Information ============================================= \n")
     cat("Treatment Lag = 0 Model ========================================== \n")
     cat("Numerator 0: \n")
@@ -63,9 +63,9 @@ setMethod("show", "SEQoutput", function(object) {
 #' @export
 numerator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
-  weight_statistics <- slot(object, "weight_statistics")[[1]]
-  return(list(numerator0 = weight_statistics$n0.coef,
-              numerator1 = weight_statistics$n1.coef))
+  weight_statistics <- slot(object, "weight.statistics")
+  return(list(numerator0 = lapply(object@weight.statistics, function(x) x$n0.coef),
+              numerator1 = lapply(object@weight.statistics, function(x) x$n1.coef)))
 }
 
 #' Retrieves Denominator Models from SEQuential object
@@ -77,9 +77,9 @@ numerator <- function(object) {
 #' @export
 denominator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
-  weight_statistics <- slot(object, "weight_statistics")[[1]]
-  return(list(denominator0 = weight_statistics$d0.coef,
-              denominator1 = weight_statistics$d1.coef))
+  weight_statistics <- slot(object, "weight.statistics")
+  return(list(denominator0 = lapply(object@weight.statistics, function(x) x$d0.coef),
+              denominator1 = lapply(object@weight.statistics, function(x) x$d1.coef)))
 }
 
 #' Retrieves Outcome Models from SEQuential object
@@ -119,15 +119,18 @@ covariates <- function(object) {
 #' @importFrom methods is slot slot<-
 #' @returns ggplot object of plot \code{plot.type}
 #' @export
-km.curve <- function(object, plot.type = c("survival", "risk", "inc"),
+km.curve <- function(object, plot.type = "survival",
                      plot.title, plot.subtitle, plot.labels, plot.colors) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!plot.type %in% c("survival", "risk", "inc")) stop("plot.type should be 'survival', 'risk', or 'inc'")
+  if (!object@params@km.curves) stop("Survival Curves were not created as a result of 'km.curves=FALSE'")
   params <- slot(object, "params")
-  slot(params, "plot.type") <- plot.type
-  slot(params, "plot.colors") <- plot.colors
-  slot(params, "plot.title") <- plot.title
-  slot(params, "plot.subtitle") <- plot.subtitle
-  slot(params, "plot.labels") <- plot.labels
+  
+  if (!missing(plot.type)) slot(params, "plot.type") <- plot.type
+  if (!missing(plot.colors)) slot(params, "plot.colors") <- plot.colors
+  if (!missing(plot.title)) slot(params, "plot.title") <- plot.title
+  if (!missing(plot.title)) slot(params, "plot.subtitle") <- plot.subtitle
+  if (!missing(plot.labels)) slot(params, "plot.labels") <- plot.labels
 
   out <- internal.plot(object@survival.data, params)
   return(out)
