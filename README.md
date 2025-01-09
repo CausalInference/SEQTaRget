@@ -28,10 +28,8 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
                     fixed.cols = "race",
                     method = "censoring",
                     options = myOptions)
-
-#Look at 50th bootstrap iteration
-boot50 <- explore(model, 50)
-boot50
+model           # Will show the first bootstrap iteration
+outcome(model)  # Will return a list of all outcome models over the course of bootstrapping
 ```
 ### Assumptions
 This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed - 
@@ -41,23 +39,19 @@ This package places several assumptions onto the input data and unexpected resul
 
 ## Return
 The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` with slots:
-1. bootstrap - TRUE/FALSE dependent if bootstrapping was done
-2. boot.sample - sample of data used in each bootstrap
-3. boot.slice - used when exploring single bootstrap iterations
-4. seed - seeding for bootstrap sampling
-5. nboot - number of bootstraps
-6. outcome - outcome covariates
-7. numerator - numerator covariates when weighting
-8. denominator - denominator covariates when weighting
-9. hazard - the hazard ratio
-10. robust_se - the robust standard error estimates
-11. survival_curve - ggplot survival curve
-12. survival_data - survival data
-13. risk_difference - risk difference
-14. risk_ratio - risk ratio
-15. elapsed_time - elapsed time for the SEQuential analysis
+1. params - the SEQparams object created through the SEQuential process
+2. outcome - outcome covariates
+3. numerator - numerator covariates when weighting
+4. denominator - denominator covariates when weighting
+5. hazard - the hazard ratio
+6. robust.se - the robust standard error estimates
+7. survival.curve - ggplot survival curve
+8. survival.data - survival and risk data for all points of followup 
+9. risk.difference - risk difference at end of followup
+10. risk.ratio - risk ratio at end of followup
+11. time - elapsed time for the SEQuential analysis
 
-These can be handily and easily printed to the terminal with `show(.)`. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE, calculate.var = TRUE`, then the survival curves, data and associated risks will return `NA`.
+These can be handily and easily printed to the terminal with by calling the object as `mySequential`. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE, calculate.var = TRUE`, then the survival curves, data and associated risks will return `NA`.
 
 ## Dependencies
 - data.table
