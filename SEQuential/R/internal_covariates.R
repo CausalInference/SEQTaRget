@@ -49,7 +49,6 @@ create.default.covariates <- function(params) {
     }
 }
 
-# TODO - in weight covariates, does trial.include and include.period affect time?
 create.default.weight.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL

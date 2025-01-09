@@ -43,15 +43,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
-  if (FALSE) {
-    # Debugging tools ==========================================
-    data <- fread("SEQdata_ltfu_2.csv")
-    id.col <- "ID"; time.col <- "time"; eligible.col <- "eligible"; outcome.col <- "outcome"; treatment.col <- "tx_init"
-    method <- "censoring"; time_varying.cols <- c("N", "L", "P"); fixed.cols <- "sex"
-    options <- SEQopts(km.curves = TRUE, bootstrap.nboot = 2, bootstrap = TRUE, weighted = TRUE)
-    test <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", c("N", "L", "P"), "sex", method = "censoring", options)
-  }
-
   # Parameter Setup ==================================
   if (!is(options, "SEQopts")) stop("Options should be built from SEQopts()")
   time_varying.cols <- as.list(time_varying.cols)
