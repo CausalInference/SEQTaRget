@@ -13,7 +13,7 @@ internal.plot <- function(survival.data, params) {
   lb <- ub <- NULL
 
   if (params@plot.type == "survival") subset <- "surv" else subset <- params@plot.type
-  if (!is.na(params@plot.labels)) guide <- params@plot.labels else guide <- waiver()
+  if (all(!is.na(params@plot.labels))) guide <- params@plot.labels else guide <- waiver()
 
   data <- survival.data[variable %like% subset, ]
   p <- ggplot(data,

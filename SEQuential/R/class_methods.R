@@ -52,6 +52,17 @@ setMethod("show", "SEQoutput", function(object) {
   }
   cat("End of Followup Risk Ratio:\n", risk_ratio, "\n\n")
   cat("End of Followup Risk Difference:\n", risk_difference, "\n")
+  
+  cat("Diagnostic Tables ================================================== \n")
+  if (slot(slot(object, "params"), "method") == "ITT") {
+    cat("Unique Outcome Table: ")
+    print(slot(object, "info")$outcome.unique)
+    cat("Non-Unique Outcome Table: ")
+    print(slot(object, "info")$outcome.nonunique)
+  } else {
+    cat("Switch Table: ")
+    print(slot(object, "info")$switch.unique)
+  }
 })
 
 #' Retrieves Numerator Models from SEQuential object
@@ -63,6 +74,7 @@ setMethod("show", "SEQoutput", function(object) {
 #' @export
 numerator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@weighted) stop("SEQuential process was not weighted")
   weight_statistics <- slot(object, "weight.statistics")
   return(list(numerator0 = lapply(object@weight.statistics, function(x) x$n0.coef),
               numerator1 = lapply(object@weight.statistics, function(x) x$n1.coef)))
@@ -77,6 +89,7 @@ numerator <- function(object) {
 #' @export
 denominator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@weighted) stop("SEQuential process was not weighted")
   weight_statistics <- slot(object, "weight.statistics")
   return(list(denominator0 = lapply(object@weight.statistics, function(x) x$d0.coef),
               denominator1 = lapply(object@weight.statistics, function(x) x$d1.coef)))
