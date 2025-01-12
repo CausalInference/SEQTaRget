@@ -50,8 +50,8 @@ setMethod("show", "SEQoutput", function(object) {
     cat("P75: ", weight_statistics$p75, "\n")
     cat("P99: ", weight_statistics$p99, "\n\n")
   }
-  cat("End of Followup Risk Ratio:\n", risk_ratio, "\n\n")
-  cat("End of Followup Risk Difference:\n", risk_difference, "\n")
+  cat("End of Followup Risk Ratio:\n", risk_ratio[1], "(", risk_ratio[2], ",", risk_ratio[3], ")", "\n\n")
+  cat("End of Followup Risk Difference:\n", risk_difference[1], "(", risk_difference[2], ",", risk_difference[3], ")", "\n\n")
   
   cat("Diagnostic Tables ================================================== \n")
   if (slot(slot(object, "params"), "method") == "ITT") {
