@@ -1,7 +1,7 @@
 Package: SEQuential
 Type: Package
 Title: Target Trial Emulation
-Version: 0.1.0
+Version: 0.1.3
 Authors@R: c(person(given = "Ryan",
                     family = "O\'Dea",
                     role = c("aut", "cre"),
@@ -9,7 +9,11 @@ Authors@R: c(person(given = "Ryan",
              person(given = "Alejandro",
                     family = "Szmulewicz",
                     role = c("aut"),
-                    email = "aszmulewicz@hsph.harvard.edu"))
+                    email = "aszmulewicz@hsph.harvard.edu"),
+             person(given = "Miguel",
+                    family = "Hernan",
+                    role = c("aut"),
+                    email = "mhernan@hsph.harvard.edu"))
 Maintainer: Ryan ODea <ryanodea@hsph.harvard.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.

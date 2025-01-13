@@ -7,10 +7,18 @@ create.risk <- function(data) {
                 ][variable %like% "risk", ]
   rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
   rr <- round(as.numeric(table[2, 3] / table[1, 3]), 4)
+  
+  if ("lb" %in% names(table) & "ub" %in% names(table)) {
+    rd.ub <- round(as.numeric(table[2, 4] - table[1, 4]), 4)
+    rd.lb <- round(as.numeric(table[2, 5] - table[1, 5]), 4)
+    
+    rr.ub <- round(as.numeric(table[2, 4] / table[1, 4]), 4)
+    rr.lb <- round(as.numeric(table[2, 5] / table[1, 5]), 4)
+  } else rd.lb <- rd.ub <- rr.lb <- rr.ub <- NA_real_
 
   return(list(
-    rd = rd,
-    rr = rr
+    difference = c(difference = rd, LCI = rd.lb, UCI = rd.ub),
+    ratio = c(ratio = rr, LCI = rr.lb, UCI = rr.ub)
   ))
 }
 
