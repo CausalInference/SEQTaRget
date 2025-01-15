@@ -36,9 +36,7 @@ internal.survival <- function(params) {
     mu <- lb <- ub <- NULL
     followup <- NULL
     numerator <- denominator <- NULL
-
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
-    if (is.infinite(params@survival.max)) params@survival.max <- max(params@DT[["followup"]])
 
     handler <- function(DT, params) {
       if (params@multinomial) {
