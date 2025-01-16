@@ -104,7 +104,6 @@ internal.survival <- function(params) {
       return(out)
     }
 
-    # Handling parallel or sequential execution
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 

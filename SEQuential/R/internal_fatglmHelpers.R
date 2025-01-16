@@ -45,88 +45,59 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 #' @param model model number, e.g. d0 = "zero model"
 #'
 #' @keywords internal
-# TODO - this can be simplified to intake model as a integer and match tx lag to it
-prepare.data <- function(weight, params, type, model, case){
-  followup <- NULL
-  isExcused <- NULL
-  tx_lag <- NULL
-
+prepare.data <- function(weight, params, type, model, case) {
   weight <- weight[!is.na(get(params@outcome))]
+  cols <- covs <- y <- X <- isExcused <- followup <- tx_lag <- NULL
+  
   if (case == "default") {
-    if (type == "numerator") {
-      cols <- unlist(strsplit(params@numerator, "\\+|\\*"))
-      covs <- params@numerator
-      if(!params@excused) {
-        if(model == 0) weight <- weight[tx_lag == 0, ]
-        if(model == 1) weight <- weight[tx_lag == 1, ]
-
+    if (type %in% c("numerator", "denominator")) {
+      cols <- unlist(strsplit(ifelse(type == "numerator", params@numerator, params@denominator), "\\+|\\*"))
+      covs <- ifelse(type == "numerator", params@numerator, params@denominator)
+      
+      if (!params@excused) {
+        weight <- weight[tx_lag == model, ]
       } else {
-        if (model == 0) weight <- weight[get(paste0(params@treatment, params@indicator.baseline)) == 0 &
-                                           get(params@excused.col0) == 0 &
-                                           isExcused < 1 &
-                                           followup != 0, ]
-        if(model == 1) weight <- weight[get(paste0(params@treatment, params@indicator.baseline)) == 1 &
-                                          get(params@excused.col1) == 0 &
-                                          isExcused < 1 &
-                                          followup != 0, ]
-      }
-    } else if (type == "denominator"){
-      cols <- unlist(strsplit(params@denominator, "\\+|\\*"))
-      covs <- params@denominator
-      if(!params@excused) {
-        if (model == 0) weight <- weight[tx_lag == 0, ]
-        if (model == 1) weight <- weight[tx_lag == 1, ]
-      } else {
-        if(!params@weight.preexpansion){
-          if (model == 0) weight <- weight[tx_lag == 0 &
-                                             get(params@excused.col0) == 0 &
-                                             isExcused < 1 &
-                                             followup != 0, ]
-          if (model == 1) weight <- weight[tx_lag == 1 &
-                                             get(params@excused.col1) == 0 &
-                                             isExcused < 1 &
-                                             followup != 0, ]
+        base_filter <- weight[tx_lag == model &
+                                get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0 &
+                                isExcused < 1 &
+                                followup != 0, ]
+        
+        if (type == "denominator" && params@weight.preexpansion) {
+          weight <- weight[tx_lag == model & get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0, ]
         } else {
-          if (model == 0) weight <- weight[tx_lag == 0 & get(params@excused.col0) == 0, ]
-          if (model == 1) weight <- weight[tx_lag == 1 & get(params@excused.col1) == 0, ]
+          weight <- base_filter
         }
       }
+      
+      y <- weight[[params@treatment]]
+      X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     }
-    y <- weight[[params@treatment]]
-    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
-
+    
   } else if (case == "LTFU") {
-    weight <- weight[!is.na(get(params@cense)), ]
-    if (type == "numerator") {
-      cols <- unlist(strsplit(params@cense.numerator, "\\+|\\*"))
-      covs <- params@cense.numerator
-      }
-    if (type == "denominator") {
-      cols <- unlist(strsplit(params@cense.denominator, "\\+|\\*"))
-      covs <- params@cense.denominator
-      }
-    ykept <- c(params@cense)
-
+    weight <- weight[!is.na(get(params@cense))]
+    cols <- unlist(strsplit(ifelse(type == "numerator", params@cense.numerator, params@cense.denominator), "\\+|\\*"))
+    covs <- ifelse(type == "numerator", params@cense.numerator, params@cense.denominator)
+    
+    weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
     y <- abs(weight[[params@cense]] - 1)
-    X <- model.matrix(as.formula(paste0("~", covs)), weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2
-                                                            ][, cols, with = FALSE])
+    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
+    
   } else if (case == "surv") {
     cols <- unlist(strsplit(params@surv, "\\+|\\*"))
     covs <- params@surv
-
-    if (type == "compevent") y <- weight[[params@compevent]] else y <- weight[[params@outcome]]
-    X <- model.matrix(as.formula(paste0("~", covs)), data = weight[!is.na(get(params@outcome))]
-                      [, cols, with = FALSE])
-
+    
+    y <- if (type == "compevent") weight[[params@compevent]] else weight[[params@outcome]]
+    X <- model.matrix(as.formula(paste0("~", covs)), weight[!is.na(get(params@outcome))][, cols, with = FALSE])
+    
   } else if (case == "multinomial") {
-    if (type == "numerator") covs <- params@numerator else covs <- params@denominator
+    covs <- ifelse(type == "numerator", params@numerator, params@denominator)
     cols <- unlist(strsplit(covs, "\\+|\\*"))
     weight <- weight[tx_lag == model, ]
-
-    X <- model.matrix(as.formula(paste0("~", covs)), data = weight[, cols, with = FALSE])
+    
     y <- weight[[params@treatment]]
+    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
   }
-
+  
   return(list(y = y, X = X))
 }
 
