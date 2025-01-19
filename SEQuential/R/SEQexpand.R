@@ -25,11 +25,11 @@ SEQexpand <- function(params) {
 
     # Expansion =======================================================
     if (!params@weighted) {
-      vars.intake <- c(params@covariates, params@surv)
+      vars.intake <- c(params@covariates)
     } else {
-      vars.intake <- c(params@covariates, params@numerator, params@denominator, params@surv,
+      vars.intake <- c(params@covariates, params@numerator, params@denominator,
                        params@cense.denominator, params@cense.numerator)
-      if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline), params@surv)
+      if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline))
     }
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
                      params@treatment, params@cense, params@cense.eligible,

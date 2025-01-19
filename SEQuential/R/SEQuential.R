@@ -39,7 +39,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
 
-  setDT(data)
+    setDT(data)
   setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
@@ -64,7 +64,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")
     if (is.na(params@cense.denominator)) params@cense.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
-  if (is.na(params@surv)) params@surv <- create.default.survival.covariates(params)
 
   # Parallel Setup ==================================
   if (options@parallel) {
@@ -104,13 +103,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Survival Information =======================================
   if (params@km.curves) {
     cat("Creating survival curves\n")
-    survival.data <- internal.survival(params)
+    survival.data <- internal.survival(params, outcome)
     survival.plot <- internal.plot(survival.data, params)
     if(!params@LTFU) risk <- create.risk(survival.data) else risk <- NA
   } else survival.data <- survival.plot <- risk <- NA
 
-  if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$model$coefficients[[2]])), FALSE) else hazard <- NA
-  if (params@calculate.var) vcov <- lapply(outcome, function(x) x$model$vcov) else vcov <- NA
+  if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$coefficients[[2]])), FALSE) else hazard <- NA
+  if (params@calculate.var) vcov <- lapply(outcome, function(x) x$vcov) else vcov <- NA
 
   # Output ======================================================
   info <- list(outcome.unique = table(data$outcome),

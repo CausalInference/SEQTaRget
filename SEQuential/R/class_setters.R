@@ -45,7 +45,6 @@ parameter.setter <- function(data, DT,
     cense.numerator = opts@cense.numerator,
     cense.denominator = opts@cense.denominator,
     km.curves = opts@km.curves,
-    surv = opts@surv,
     indicator.baseline = opts@indicator.baseline,
     indicator.squared = opts@indicator.squared,
     fastglm.method = opts@fastglm.method,
@@ -76,6 +75,12 @@ parameter.simplifier <- function(params) {
     params@bootstrap.sample <- 1
     params@parallel <- FALSE
   }
+  if (params@survival.max > params@followup.max) {
+    warning("Maximum followup for survival curves cannot be greater than the maximum for followup")
+    params@survival.max <- params@followup.max
+  }
+  if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
+  if (is.infinite(params@survival.max)) params@survival.max <- params@followup.max
 
   if (is.na(params@excused.col0) & is.na(params@excused.col1) & params@excused & params@method == "censoring") {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
@@ -94,7 +99,7 @@ parameter.simplifier <- function(params) {
     params@data <- params@data[, tmp1 := 0]
   }
 
-  if(!is.na(params@cense)) {
+  if (!is.na(params@cense)) {
     params@LTFU <- TRUE
     params@weighted <- TRUE
   }
@@ -115,7 +120,7 @@ parameter.simplifier <- function(params) {
 #' @keywords internal
 prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info) {
   if (!missing(outcome_model)) {
-    outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model$model)
+    outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model)
     weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
   }
 

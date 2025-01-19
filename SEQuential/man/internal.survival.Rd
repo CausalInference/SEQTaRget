@@ -4,7 +4,7 @@
 \alias{internal.survival}
 \title{Internal function for creating survival curves}
 \usage{
-internal.survival(params)
+internal.survival(params, outcome)
 }
 \description{
 Internal function for creating survival curves

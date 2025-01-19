@@ -5,13 +5,11 @@
 #' @keywords internal
 internal.analysis <- function(params) {
   result <- local({
-    # Ensure cleanup happens on exit
     on.exit({
       rm(list = setdiff(ls(), "result"))
       gc()
     }, add = TRUE)
 
-    # Variable pre-definition ===================================
     trial <- NULL
     numerator <- denominator <- NULL
     wt <- weight <- cense1 <- NULL
@@ -40,8 +38,7 @@ internal.analysis <- function(params) {
           } else {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
-                      ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1,
-                                                                 denominator = 1)
+                      ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1, denominator = 1)
                         ][, wt := numerator / denominator
                           ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
@@ -49,8 +46,7 @@ internal.analysis <- function(params) {
           if (params@excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
-                      ][followup == 0, `:=`(numerator = 1,
-                                            denominator = 1)
+                      ][followup == 0, `:=`(numerator = 1, denominator = 1)
                         ][denominator < 1e-15, denominator := 1
                           ][numerator < 1e-15, numerator := 1
                             ][is.na(get(params@outcome)), denominator := 1
@@ -62,8 +58,7 @@ internal.analysis <- function(params) {
           } else {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
-                      ][followup == 0, `:=`(numerator = 1,
-                                            denominator = 1)
+                      ][followup == 0, `:=`(numerator = 1, denominator = 1)
                         ][, wt := numerator / denominator
                           ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
@@ -92,62 +87,49 @@ internal.analysis <- function(params) {
         model <- internal.model(WDT, params)
       }
       return(list(
-        model = model,
+        model = model$model,
+        vcov = model$vcov,
         weighted_stats = if (params@weighted) stats else NA
       ))
     }
+
+    full <- handler(copy(params@DT), copy(params@data), params)
 
     if (params@bootstrap) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 
-    if (params@parallel) {
-      setDTthreads(1)
-
-      result <- future_lapply(1:params@bootstrap.nboot, function(x) {
-        if (params@bootstrap.nboot > 1) {
+    bootstrap <- if (params@bootstrap) {
+      if (params@parallel) {
+        setDTthreads(1)
+        future_lapply(1:params@bootstrap.nboot, function(x) {
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-        } else {
-          id.sample <- UIDs
-        }
-
-        RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
-                                                                             ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-        RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
-                                                                                 ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-
-        model <- handler(RMDT, RMdata, params)
-
-        return(list(
-          model = model$model,
-          weight_info = model$weighted_stats
-        ))
-      }, future.seed = params@seed)
-    } else {
-      result <- lapply(1:params@bootstrap.nboot, function(x) {
-        if (params@bootstrap) {
-          if (params@bootstrap.nboot > 1) {
-            id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          } else {
-            id.sample <- UIDs
-          }
           RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
                                                                                ][, eval(params@id) := paste0(get(params@id), "_", x)]))
           RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
                                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-        } else {
-          RMDT <- params@DT
-          RMdata <- params@data
-        }
-
-        model <- handler(RMDT, RMdata, params)
-        return(list(
-          model = model$model,
-          weight_info = model$weighted_stats
-        ))
-      })
+          out <- handler(RMDT, RMdata, params)
+          return(out)
+        }, future.seed = params@seed)
+      } else {
+        lapply(1:params@bootstrap.nboot, function(x) {
+          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
+          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
+                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
+                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+          handler(RMDT, RMdata, params)
+        })
+      }
+    } else {
+      list()
     }
+
+    result <- c(list(full), bootstrap)
+
     return(result)
   })
   return(result)
 }
+
+

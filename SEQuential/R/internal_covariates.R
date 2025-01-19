@@ -41,7 +41,6 @@ create.default.covariates <- function(params) {
     }
     return(out)
   } else {
-    #TODO - confirm with alejandro about unweighted model covariates
     if (params@method == "dose-response") out <- paste0(c(dose, followup, trial, fixed, timeVarying_bas, interaction.dose), collapse = "+")
     if (params@method == "censoring" & !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
     if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
@@ -116,39 +115,6 @@ create.default.LTFU.covariates <- function(params, type){
   } else if (type == "denominator") {
     if (params@weight.preexpansion) out <- paste0(c("tx_lag", time, fixed, timeVarying), collapse = "+")
     if (!params@weight.preexpansion) out <- paste0(c("tx_lag", trial, followup, fixed, timeVarying, timeVarying_bas), collapse = "+")
-  }
-
-  return(out)
-}
-
-create.default.survival.covariates <- function(params) {
-  timeVarying <- NULL
-  timeVarying_bas <- NULL
-  fixed <- NULL
-  tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  followup <- paste0("followup", c("", params@indicator.squared), collapse = "+")
-  period <- paste0("period", c("", params@indicator.squared), collapse = "+")
-  trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
-  dose <- paste0("dose", c("", params@indicator.squared), collapse = "+")
-  interaction <- paste0(tx_bas, "*", "followup")
-
-  if (length(params@time_varying) > 0) {
-    timeVarying <- paste0(params@time_varying, collapse = "+")
-    timeVarying_bas <- paste0(params@time_varying, params@indicator.baseline, collapse = "+")
-  }
-
-  if (length(params@fixed) > 0) {
-    fixed <- paste0(params@fixed, collapse = "+")
-  }
-
-  if (params@method == "ITT") out <- paste0(c(tx_bas, interaction, followup, trial, timeVarying_bas, fixed), collapse = "+")
-  if (params@method == "censoring") {
-    if (!params@weight.preexpansion) out <- paste0(c(tx_bas, interaction, followup, trial, timeVarying_bas, fixed), collapse = "+")
-    if (params@weight.preexpansion) out <- paste0(c(fixed, tx_bas, followup, trial, interaction), collapse = "+")
-  }
-  if (params@method == "dose-response") {
-    if (!params@weight.preexpansion) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
-    if (params@weight.preexpansion) out <- paste0(c(fixed, followup, period, dose), collapse = "+")
   }
 
   return(out)
