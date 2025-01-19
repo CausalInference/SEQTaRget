@@ -24,7 +24,6 @@ SEQopts(
   weight.p99 = FALSE,
   numerator = NA,
   denominator = NA,
-  surv = NA,
   weight.preexpansion = TRUE,
   weight.eligible0 = NA,
   weight.eligible1 = NA,
@@ -93,8 +92,6 @@ SEQopts(
 \item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
 
 \item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
-
-\item{surv}{String: survival covariates to the right hand side of a formula object}
 
 \item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
 

@@ -28,8 +28,8 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
     }
   }
   if(case == "surv") {
-    cols <- unlist(strsplit(params@surv, "\\+"))
-    covs <- params@surv
+    cols <- unlist(strsplit(params@covariates, "\\+"))
+    covs <- params@covariates
   }
 
   cols <- unlist(strsplit(covs, "\\*|\\+"))
@@ -83,8 +83,8 @@ prepare.data <- function(weight, params, type, model, case) {
     X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     
   } else if (case == "surv") {
-    cols <- unlist(strsplit(params@surv, "\\+|\\*"))
-    covs <- params@surv
+    cols <- unlist(strsplit(params@covariates, "\\+|\\*"))
+    covs <- params@covariates
     
     y <- if (type == "compevent") weight[[params@compevent]] else weight[[params@outcome]]
     X <- model.matrix(as.formula(paste0("~", covs)), weight[!is.na(get(params@outcome))][, cols, with = FALSE])

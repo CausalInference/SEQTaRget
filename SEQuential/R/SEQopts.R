@@ -17,7 +17,6 @@
 #' @param denominator String: denominator covariates to the right hand side of a  to formula object
 #' @param cense.numerator String: censoring numerator covariates to the right hand side of a formula object
 #' @param cense.denominator String: censoring denominator covariates to the right hand side of a formula object
-#' @param surv String: survival covariates to the right hand side of a formula object
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #' @param weight.lower Numeric: weights truncated at lower end at this weight
 #' @param weight.upper Numeric: weights truncated at upper end at this weight
@@ -55,7 +54,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8, seed = 1636,
                     followup.min = -Inf, followup.max = Inf, survival.max = Inf, followup.include = TRUE, trial.include = TRUE,
                     covariates = NA, weighted = FALSE, weight.upper = Inf, weight.lower = -Inf, weight.p99 = FALSE,
-                    numerator = NA, denominator = NA, surv = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, hazard = FALSE, calculate.var = FALSE,
+                    numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, hazard = FALSE, calculate.var = FALSE,
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
@@ -92,7 +91,6 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   denominator <- gsub("\\s", "", denominator)
   cense.numerator <- gsub("\\s", "", cense.numerator)
   cense.denominator <- gsub("\\s", "", cense.denominator)
-  surv <- gsub("\\s", "", surv)
 
   weighted <- as.logical(weighted)
   weight.preexpansion <- as.logical(weight.preexpansion)
@@ -146,7 +144,6 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     covariates = covariates,
     numerator = numerator,
     denominator = denominator,
-    surv = surv,
     indicator.baseline = indicator.baseline,
     indicator.squared = indicator.squared,
     fastglm.method = fastglm.method,
