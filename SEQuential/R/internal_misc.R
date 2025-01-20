@@ -2,9 +2,8 @@
 #'
 #' @keywords internal
 create.risk <- function(data) {
-  variable <- NULL
   table <- data[, .SD[.N], by = "variable"
-                ][variable %like% "risk", ]
+                ][get("variable") %like% "risk", ]
   rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
   rr <- round(as.numeric(table[2, 3] / table[1, 3]), 4)
   
