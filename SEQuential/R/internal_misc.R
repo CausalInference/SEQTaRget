@@ -2,23 +2,25 @@
 #'
 #' @keywords internal
 create.risk <- function(data) {
-  variable <- NULL
   table <- data[, .SD[.N], by = "variable"
-                ][variable %like% "risk", ]
+                ][get("variable") %like% "risk", ]
   rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
   rr <- round(as.numeric(table[2, 3] / table[1, 3]), 4)
   
   if ("lb" %in% names(table) & "ub" %in% names(table)) {
-    rd.ub <- round(as.numeric(table[2, 4] - table[1, 4]), 4)
-    rd.lb <- round(as.numeric(table[2, 5] - table[1, 5]), 4)
+    rd.b1 <- round(as.numeric(table[2, 4] - table[1, 4]), 4)
+    rd.b2 <- round(as.numeric(table[2, 5] - table[1, 5]), 4)
     
-    rr.ub <- round(as.numeric(table[2, 4] / table[1, 4]), 4)
-    rr.lb <- round(as.numeric(table[2, 5] / table[1, 5]), 4)
-  } else rd.lb <- rd.ub <- rr.lb <- rr.ub <- NA_real_
-
+    rr.b1 <- round(as.numeric(table[2, 4] / table[1, 4]), 4)
+    rr.b2 <- round(as.numeric(table[2, 5] / table[1, 5]), 4)
+  } else rd.b1 <- rd.b2 <- rr.b1 <- rr.b2 <- NA_real_
+    
+  rr.bounds <- sort(c(rr.b1, rr.b2))
+  rd.bounds <- sort(c(rd.b1, rd.b2))
+    
   return(list(
-    difference = c(difference = rd, LCI = rd.lb, UCI = rd.ub),
-    ratio = c(ratio = rr, LCI = rr.lb, UCI = rr.ub)
+    difference = c(difference = rd, LCI = rd.bounds[1], UCI = rd.bounds[2]),
+    ratio = c(ratio = rr, LCI = rr.bounds[1], UCI = rr.bounds[2])
   ))
 }
 

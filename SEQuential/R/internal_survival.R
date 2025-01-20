@@ -68,37 +68,31 @@ internal.survival <- function(params, outcome) {
       if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
 
       RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
-                          surv.1 = cumprod(1 - surv.predTRUE)), by = "trialID"
-                   ][, `:=`(risk0 = 1 - surv.0,
-                            risk1 = 1 - surv.1)]
+                          surv.1 = cumprod(1 - surv.predTRUE)), by = "trialID"]
 
       if (!is.na(params@compevent)) {
         RMDT <- RMDT[, `:=` (cumsurvTRUE = cumprod((1 - surv.predTRUE) * (1 - ce.predTRUE)),
                              cumsurvFALSE = cumprod((1 - surv.predFALSE) * (1 - ce.predFALSE))), by = "trialID"
                       ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
-                                inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"
-                        ]
+                                inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
 
         RMDT <- RMDT[, list(
           surv.0 = mean(surv.0),
           surv.1 = mean(surv.1),
           inc.0 = mean(inc.0),
-          inc.1 = mean(inc.1)), by = "followup"
-          ]
+          inc.1 = mean(inc.1)), by = "followup"]
 
         fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1, inc.0 = 0, inc.1 = 0)
       } else {
         RMDT <- RMDT[, list(
           surv.0 = mean(surv.0),
-          surv.1 = mean(surv.1)), by = "followup"
-          ]
+          surv.1 = mean(surv.1)), by = "followup"]
 
         fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1)
       }
 
       out <- rbind(fup0, RMDT[, followup := followup + 1])[, `:=` (risk.0 = 1 - surv.0,
                                                                    risk.1 = 1 - surv.1)]
-
       return(out)
     }
 
@@ -129,23 +123,25 @@ internal.survival <- function(params, outcome) {
         })
       }
       DT <- rbindlist(result)[, `:=` (se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
-                                      se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot)), by = "followup"
-                              ][, `:=` (surv.0 = NULL, surv.1 = NULL)]
+                                      se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot),
+                                      se_risk0 = sd(risk.0) / sqrt(params@bootstrap.nboot),
+                                      se_risk1 = sd(risk.1) / sqrt(params@bootstrap.nboot)), by = "followup"
+                              ][, `:=` (surv.0 = NULL, surv.1 = NULL, risk.0 = NULL, risk.1 = NULL)]
       
       if (!is.na(params@compevent)) {
         DT <- DT[, `:=` (se_inc0 = sd(inc.0) / sqrt(params@bootstrap.nboot),
                          se_inc1 = sd(inc.1) / sqrt(params@bootstrap.nboot)), by = "followup"
                  ][, `:=` (inc.0 = NULL, inc.1 = NULL)]
-      } else {
-        DT <- DT[, `:=` (se_risk0 = sd(risk.0) / sqrt(params@bootstrap.nboot),
-                         se_risk1 = sd(risk.1) / sqrt(params@bootstrap.nboot)), by = "followup"
-                 ][, `:=` (risk.0 = NULL, risk.1 = NULL)]
-      }
+      } 
       surv <- unique(full[DT, on = "followup"
                           ][, `:=` (surv0_ub = surv.0 + qnorm(0.975) * se_surv0,
                                     surv0_lb = surv.0 - qnorm(0.975) * se_surv0,
                                     surv1_ub = surv.1 + qnorm(0.975) * se_surv1,
-                                    surv1_lb = surv.1 - qnorm(0.975) * se_surv1)])
+                                    surv1_lb = surv.1 - qnorm(0.975) * se_surv1,
+                                    risk0_ub = risk.0 + qnorm(0.975) * se_risk0,
+                                    risk0_lb = risk.0 - qnorm(0.975) * se_risk0,
+                                    risk1_ub = risk.1 + qnorm(0.975) * se_risk1,
+                                    risk1_lb = risk.1 - qnorm(0.975) * se_risk1)])
       
       if (!is.na(params@compevent)) {
         surv <- surv[, `:=` (inc0_ub = inc.0 + qnorm(0.975) * se_inc0,
@@ -155,27 +151,18 @@ internal.survival <- function(params, outcome) {
         
         surv <- rbind(surv[, list(followup, value = surv.0, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
                       surv[, list(followup, value = surv.1, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
+                      surv[, list(followup, value = risk.0, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
+                      surv[, list(followup, value = risk.1, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"],
                       surv[, list(followup, value = inc.0, lb = inc0_lb, ub = inc0_ub)][, variable := "inc0"],
                       surv[, list(followup, value = inc.1, lb = inc1_lb, ub = inc1_ub)][, variable := "inc1"])
       } else {
-        surv <- surv[, `:=` (risk0_ub = risk.0 + qnorm(0.975) * se_risk0,
-                             risk0_lb = risk.0 - qnorm(0.975) * se_risk0,
-                             risk1_ub = risk.1 + qnorm(0.975) * se_risk1,
-                             risk1_lb = risk.1 - qnorm(0.975) * se_risk1)]
-        
         surv <- rbind(surv[, list(followup, value = surv.0, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
                       surv[, list(followup, value = surv.1, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
                       surv[, list(followup, value = risk.0, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
                       surv[, list(followup, value = risk.1, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"])
       }
       
-    } else {
-      if (!is.na(params@compevent)) {
-        surv <- melt(full[, list(survival0 = surv.0, survival1 = surv.1, inc0 = inc.0, inc1 = inc.1, followup)], id.vars = "followup")
-      } else {
-        surv <- melt(full[, list(survival0 = surv.0, survival1 = surv.1, risk0 = risk.0, risk1 = risk.1, followup)], id.vars = "followup")
-      }
-    }
+    } else  surv <- melt(full, id.vars = "followup")
     return(surv)
   })
   return(result)
