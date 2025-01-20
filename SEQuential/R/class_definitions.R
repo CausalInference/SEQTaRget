@@ -150,6 +150,8 @@ setClass("SEQparams",
 #' @slot coef.n1 numerator one model
 #' @slot coef.d0 denominator zero model
 #' @slot coef.d1 denominator one model
+#' @slot coef.ncense numerator censoring model
+#' @slot coef.dcense denominator censoring model
 #'
 #' @keywords internal
 setClass("SEQweights",
@@ -158,13 +160,17 @@ setClass("SEQweights",
     coef.n0 = "ANY",
     coef.n1 = "ANY",
     coef.d0 = "ANY",
-    coef.d1 = "ANY"
+    coef.d1 = "ANY",
+    coef.ncense = "ANY",
+    coef.dcense = "ANY"
   ), prototype = c(
     weights = NA,
     coef.n0 = NA,
     coef.n1 = NA,
     coef.d0 = NA,
-    coef.d1 = NA
+    coef.d1 = NA,
+    coef.ncense = NA,
+    coef.dcense = NA
   )
 )
 

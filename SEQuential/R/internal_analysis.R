@@ -71,6 +71,8 @@ internal.analysis <- function(params) {
           n1.coef = WT@coef.n1,
           d0.coef = WT@coef.d0,
           d1.coef = WT@coef.d1,
+          ncense.coef = WT@coef.ncense,
+          dcense.coef = WT@coef.dcense,
           min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
           max = max(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
           sd = sd(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),

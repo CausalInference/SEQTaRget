@@ -52,7 +52,7 @@ internal.weights <- function(DT, data, params) {
     # Modeling ======================================================
     if (params@method == "ITT" | params@LTFU) {
       model.data <- copy(weight)
-      if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@eligible.cense) == 1, ]
+      if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
 
       cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
       cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
@@ -135,7 +135,9 @@ internal.weights <- function(DT, data, params) {
       coef.n0 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") fastglm.clean(numerator0) else NA_real_,
       coef.n1 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") fastglm.clean(numerator1) else NA_real_,
       coef.d0 = if (params@method != "ITT") fastglm.clean(denominator0) else NA_real_,
-      coef.d1 = if (params@method != "ITT") fastglm.clean(denominator1) else NA_real_
+      coef.d1 = if (params@method != "ITT") fastglm.clean(denominator1) else NA_real_,
+      coef.ncense = if (params@LTFU) fastglm.clean(cense.numerator) else NA_real_,
+      coef.dcense = if (params@LTFU) fastglm.clean(cense.denominator) else NA_real_
     )
 
     return(weight.info)

@@ -19,6 +19,10 @@ An internal S4 class to help transfer weight statistics out of \code{internal_we
 \item{\code{coef.d0}}{denominator zero model}
 
 \item{\code{coef.d1}}{denominator one model}
+
+\item{\code{coef.ncense}}{numerator censoring model}
+
+\item{\code{coef.dcense}}{denominator censoring model}
 }}
 
 \keyword{internal}

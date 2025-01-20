@@ -28,28 +28,36 @@ setMethod("show", "SEQoutput", function(object) {
 
   if (params@weighted) {
     cat("\nWeight Information ============================================= \n")
-    cat("Treatment Lag = 0 Model ========================================== \n")
-    cat("Numerator 0: \n")
-    print(summary(weight_statistics$n0.coef))
-    cat("Denominator: \n")
-    print(summary(weight_statistics$d0.coef))
-
-    cat("Treatment Lag = 1 Model ========================================== \n")
-    cat("Numerator: \n")
-    print(summary(weight_statistics$n1.coef))
-    cat("Denominator: \n")
-    print(summary(weight_statistics$d1.coef))
-
-    cat("Weights:\n")
-    cat("Min: ", weight_statistics$min, "\n")
-    cat("Max: ", weight_statistics$max, "\n")
-    cat("StDev: ", weight_statistics$sd, "\n")
-    cat("P01: ", weight_statistics$p01, "\n")
-    cat("P25: ", weight_statistics$p25, "\n")
-    cat("P50: ", weight_statistics$p50, "\n")
-    cat("P75: ", weight_statistics$p75, "\n")
-    cat("P99: ", weight_statistics$p99, "\n\n")
-  }
+    if (params@method != "ITT") {
+      cat("Treatment Lag = 0 Model ========================================== \n")
+      cat("Numerator 0: \n")
+      print(summary(weight_statistics$n0.coef))
+      cat("Denominator: \n")
+      print(summary(weight_statistics$d0.coef))
+      
+      cat("Treatment Lag = 1 Model ========================================== \n")
+      cat("Numerator: \n")
+      print(summary(weight_statistics$n1.coef))
+      cat("Denominator: \n")
+      print(summary(weight_statistics$d1.coef))
+      
+      cat("Weights:\n")
+      cat("Min: ", weight_statistics$min, "\n")
+      cat("Max: ", weight_statistics$max, "\n")
+      cat("StDev: ", weight_statistics$sd, "\n")
+      cat("P01: ", weight_statistics$p01, "\n")
+      cat("P25: ", weight_statistics$p25, "\n")
+      cat("P50: ", weight_statistics$p50, "\n")
+      cat("P75: ", weight_statistics$p75, "\n")
+      cat("P99: ", weight_statistics$p99, "\n\n")
+    }
+    if (params@LTFU) {
+      cat("LTFU Numerator: \n")
+      print(summary(weight_statistics$coef.ncense))
+      cat("LTFU Denominator: ")
+      print(summary(weight_statistics$coef.dcense))
+      }
+    }
   cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[1], "(", risk_ratio[2], ",", risk_ratio[3], ")", "\n\n")
   cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[1], "(", risk_difference[2], ",", risk_difference[3], ")", "\n\n")
   

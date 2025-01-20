@@ -120,8 +120,8 @@ parameter.simplifier <- function(params) {
 #' @keywords internal
 prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info) {
   if (!missing(outcome_model)) {
-    outcome <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$model)
-    weight.stats <- lapply(1:params@bootstrap.nboot, function(x) outcome_model[[x]]$weight_info)
+    outcome <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$model)
+    weight.stats <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$weighted_stats)
   }
 
   new("SEQoutput",

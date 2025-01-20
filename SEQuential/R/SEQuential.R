@@ -39,7 +39,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
 
-    setDT(data)
+  setDT(data)
   setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 
@@ -105,7 +105,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     cat("Creating survival curves\n")
     survival.data <- internal.survival(params, outcome)
     survival.plot <- internal.plot(survival.data, params)
-    if(!params@LTFU) risk <- create.risk(survival.data) else risk <- NA
+    risk <- create.risk(survival.data)
   } else survival.data <- survival.plot <- risk <- NA
 
   if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$coefficients[[2]])), FALSE) else hazard <- NA
