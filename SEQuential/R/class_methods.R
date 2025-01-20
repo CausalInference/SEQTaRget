@@ -53,9 +53,9 @@ setMethod("show", "SEQoutput", function(object) {
     }
     if (params@LTFU) {
       cat("LTFU Numerator: \n")
-      print(summary(weight_statistics$coef.ncense))
+      print(summary(weight_statistics$ncense.coef))
       cat("LTFU Denominator: ")
-      print(summary(weight_statistics$coef.dcense))
+      print(summary(weight_statistics$dcense.coef))
       }
     }
   cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[1], "(", risk_ratio[2], ",", risk_ratio[3], ")", "\n\n")
