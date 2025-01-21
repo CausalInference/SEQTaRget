@@ -3,6 +3,7 @@
 export(SEQestimate)
 export(SEQopts)
 export(SEQuential)
+export(compevent)
 export(covariates)
 export(denominator)
 export(diagnostics)

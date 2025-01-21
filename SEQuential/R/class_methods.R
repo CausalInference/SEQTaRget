@@ -56,8 +56,13 @@ setMethod("show", "SEQoutput", function(object) {
       print(summary(weight_statistics$ncense.coef))
       cat("LTFU Denominator: ")
       print(summary(weight_statistics$dcense.coef))
-      }
     }
+  }
+  if (!is.na(params@compevent)) {
+    cat("Competing Event Model ============================================ \n")
+    print(summary(slot(object, "ce.model")[[1]]))
+  }
+  
   cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[1], "(", risk_ratio[2], ",", risk_ratio[3], ")", "\n\n")
   cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[1], "(", risk_difference[2], ",", risk_difference[3], ")", "\n\n")
   
@@ -167,6 +172,19 @@ km.curve <- function(object, plot.type = "survival",
 km.data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   return(slot(object, "survival.data"))
+}
+
+#' Function to return competing event models from a SEQuential object
+#' 
+#' @param object SEQoutput object
+#' 
+#' @importFrom methods is slot
+#' @returns list of fastglm objects
+#' @export
+compevent <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (is.na(object@params@compevent)) stop("No competing event was specified during SEQuential process")
+  return(slot(object, "ce.model"))
 }
 
 #' Function to return diagnostic tables from a SEQuential object

@@ -37,5 +37,7 @@ An S4 class used to hold the outputs for the SEQuential process
 \item{\code{weight.statistics}}{information from the weighting process, containing weight coefficients and weight statistics}
 
 \item{\code{info}}{list of outcome and switch information (if applicable)}
+
+\item{\code{ce.model}}{list of competing event models if \code{compevent} is specified, NA otherwise}
 }}
 

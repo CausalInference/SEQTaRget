@@ -44,7 +44,7 @@ internal.survival <- function(params, outcome) {
       }
       if (!is.na(params@compevent)) {
         ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
-        ce.model <- fastglm::fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+        ce.model <- fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
         rm(ce.data)
       }
       kept <- c("followup", "risk0", "risk1", "surv.0", "surv.1", "inc.1", "inc.0")
@@ -93,10 +93,11 @@ internal.survival <- function(params, outcome) {
 
       out <- rbind(fup0, RMDT[, followup := followup + 1])[, `:=` (risk.0 = 1 - surv.0,
                                                                    risk.1 = 1 - surv.1)]
-      return(out)
+      return(list(data = out,
+                  ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    full <- handler(params@DT, params, outcome[[1]]$model)
+    full <- handler(copy(params@DT), params, outcome[[1]]$model)
     
     if (params@bootstrap) {
       UIDs <- unique(params@DT[[params@id]])
@@ -122,7 +123,10 @@ internal.survival <- function(params, outcome) {
           return(out)
         })
       }
-      DT <- rbindlist(result)[, `:=` (se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
+      data <- lapply(seq_along(result), function(x) result[[x]]$data)
+      ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
+      
+      DT <- rbindlist(data)[, `:=` (se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
                                       se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot),
                                       se_risk0 = sd(risk.0) / sqrt(params@bootstrap.nboot),
                                       se_risk1 = sd(risk.1) / sqrt(params@bootstrap.nboot)), by = "followup"
@@ -133,7 +137,7 @@ internal.survival <- function(params, outcome) {
                          se_inc1 = sd(inc.1) / sqrt(params@bootstrap.nboot)), by = "followup"
                  ][, `:=` (inc.0 = NULL, inc.1 = NULL)]
       } 
-      surv <- unique(full[DT, on = "followup"
+      surv <- unique(full$data[DT, on = "followup"
                           ][, `:=` (surv0_ub = surv.0 + qnorm(0.975) * se_surv0,
                                     surv0_lb = surv.0 - qnorm(0.975) * se_surv0,
                                     surv1_ub = surv.1 + qnorm(0.975) * se_surv1,
@@ -162,8 +166,10 @@ internal.survival <- function(params, outcome) {
                       surv[, list(followup, value = risk.1, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"])
       }
       
-    } else  surv <- melt(full, id.vars = "followup")
-    return(surv)
+    } else  surv <- melt(full$data, id.vars = "followup")
+    out <- list(data = surv, 
+                ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
+    return(out)
   })
   return(result)
 }

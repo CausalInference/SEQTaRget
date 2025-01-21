@@ -13,7 +13,8 @@ prepare.output(
   survival_data,
   risk,
   elapsed_time,
-  info
+  info,
+  other_models
 )
 }
 \description{

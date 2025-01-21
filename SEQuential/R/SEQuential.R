@@ -90,11 +90,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
-    info.switch <- table(copy(params@DT)[, .SD[.N], by = c(params@id, "trial")
+    switch.unique <- table(params@DT[, .SD[.N], by = c(params@id, "trial")
                                          ][get("trial") == 0,
                                            ][['switch']])
+    switch.nonunique <- table(params@DT[['switch']])
     params@DT <- params@DT[, "switch" := NULL]
-  } else info.switch <- NA
+  } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
   outcome <- internal.analysis(params)
@@ -103,10 +104,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Survival Information =======================================
   if (params@km.curves) {
     cat("Creating survival curves\n")
-    survival.data <- internal.survival(params, outcome)
+    survival <- internal.survival(params, outcome)
+    survival.data <- survival$data
+    survival.ce <- survival$ce.model
     survival.plot <- internal.plot(survival.data, params)
     risk <- create.risk(survival.data)
-  } else survival.data <- survival.plot <- risk <- NA
+  } else {
+    survival.data <- survival.plot <- risk <- NA
+    survival.ce <- list()
+    }
 
   if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$coefficients[[2]])), FALSE) else hazard <- NA
   if (params@calculate.var) vcov <- lapply(outcome, function(x) x$vcov) else vcov <- NA
@@ -114,11 +120,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Output ======================================================
   info <- list(outcome.unique = table(data$outcome),
                outcome.nonunique = table(params@DT$outcome),
-               switch.unique = info.switch)
+               switch.unique = switch.unique,
+               switch.nonunique = switch.nonunique)
   params@DT <- params@data <- data.table()
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
 
-  out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk, runtime, info)
+  out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk, runtime, info, survival.ce)
 
   cat("Completed")
   plan(future::sequential())
