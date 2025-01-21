@@ -93,7 +93,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     switch.unique <- table(params@DT[, .SD[.N], by = c(params@id, "trial")
                                          ][get("trial") == 0,
                                            ][['switch']])
-    switch.nonunique <- table(params@DT[['switch']])
+    switch.nonunique <- table(params@DT[, .SD[.N], by = c(params@id, "trial")
+                                        ][['switch']])
     params@DT <- params@DT[, "switch" := NULL]
   } else switch.unique <- switch.nonunique <- NA
 

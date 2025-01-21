@@ -67,14 +67,16 @@ setMethod("show", "SEQoutput", function(object) {
   cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[1], "(", risk_difference[2], ",", risk_difference[3], ")", "\n\n")
   
   cat("Diagnostic Tables ================================================== \n")
-  if (slot(params, "method") == "ITT") {
-    cat("Unique Outcome Table: ")
-    print(slot(object, "info")$outcome.unique)
-    cat("Non-Unique Outcome Table: ")
-    print(slot(object, "info")$outcome.nonunique)
-  } else {
-    cat("Switch Table: ")
+  cat("Unique Outcome Table: ")
+  print(slot(object, "info")$outcome.unique)
+  cat("Non-Unique Outcome Table: ")
+  print(slot(object, "info")$outcome.nonunique)
+    
+  if (slot(params, "method") == "censoring"){
+    cat("Unique Switch Table: ")
     print(slot(object, "info")$switch.unique)
+    cat("Non-Unique Switch Table: ")
+    print(slot(object, "info")$switch.nonunique)
   }
 })
 
