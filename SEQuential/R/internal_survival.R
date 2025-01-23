@@ -39,6 +39,7 @@ internal.survival <- function(params, outcome) {
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
     handler <- function(DT, params, model) {
+      DT <- DT[!is.na(get(params@outcome)), ]
       if (params@multinomial) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }

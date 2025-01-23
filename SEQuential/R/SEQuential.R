@@ -126,7 +126,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk, runtime, info, survival.ce)
 
-  cat("Completed")
+  cat("Completed\n")
   plan(future::sequential())
   return(out)
 }

@@ -30,14 +30,18 @@ setMethod("show", "SEQoutput", function(object) {
     cat("\nWeight Information ============================================= \n")
     if (params@method != "ITT") {
       cat("Treatment Lag = 0 Model ========================================== \n")
-      cat("Numerator 0: \n")
-      print(summary(weight_statistics$n0.coef))
+      if (length(weight_statistics$n0.coef) > 1) {
+        cat("Numerator 0: \n")
+        print(summary(weight_statistics$n0.coef)) 
+      }
       cat("Denominator: \n")
       print(summary(weight_statistics$d0.coef))
       
       cat("Treatment Lag = 1 Model ========================================== \n")
-      cat("Numerator: \n")
-      print(summary(weight_statistics$n1.coef))
+      if (length(weight_statistics$n1.coef) > 1) {
+        cat("Numerator 0: \n")
+        print(summary(weight_statistics$n1.coef)) 
+      }
       cat("Denominator: \n")
       print(summary(weight_statistics$d1.coef))
       
