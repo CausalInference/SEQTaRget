@@ -46,7 +46,6 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 #'
 #' @keywords internal
 prepare.data <- function(weight, params, type, model, case) {
-  weight <- weight[!is.na(get(params@outcome))]
   cols <- covs <- y <- X <- isExcused <- followup <- tx_lag <- NULL
   
   if (case == "default") {

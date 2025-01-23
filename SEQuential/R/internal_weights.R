@@ -60,12 +60,13 @@ internal.weights <- function(DT, data, params) {
       cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
       cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
-      rm(model.data)
+      rm(cense.numerator.data, cense.denominator.data)
     }
 
     if (!params@multinomial) {
       if (params@method != "ITT") {
         model.data <- copy(weight)
+        if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
         if (!is.na(params@weight.eligible0)) model.data <- model.data[get(params@weight.eligible0) == 1 & get(params@treatment) == 0, ]
         if (!is.na(params@weight.eligible1)) model.data <- model.data[get(params@weight.eligible1) == 1 & get(params@treatment) == 1, ]
 
@@ -87,6 +88,7 @@ internal.weights <- function(DT, data, params) {
 
         rm(model.data, d0.data, d1.data)
       }
+      gc()
 
       # Estimating ====================================================
       if (params@method != "ITT") {
@@ -115,7 +117,7 @@ internal.weights <- function(DT, data, params) {
         }
       } else out <- weight
     } else {
-      # Multinomial case can be handled here if needed
+      # Multinomial case can be handled here when approached
     }
 
     if (params@LTFU) {
