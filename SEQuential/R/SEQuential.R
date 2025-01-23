@@ -90,11 +90,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
-    switch.unique <- table(params@DT[, .SD[.N], by = c(params@id, "trial")
-                                         ][get("trial") == 0,
-                                           ][['switch']])
-    switch.nonunique <- table(params@DT[, .SD[.N], by = c(params@id, "trial")
-                                        ][['switch']])
+    switch.unique <- table(data[, 'switch' := (get(params@treatment) != shift(get(params@treatment),
+                                                                              fill = get(params@treatment)[1])), by = eval(params@id)]$switch)
+    switch.nonunique <- table(params@DT[['switch']])
     params@DT <- params@DT[, "switch" := NULL]
   } else switch.unique <- switch.nonunique <- NA
 
