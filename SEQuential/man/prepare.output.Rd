@@ -6,15 +6,16 @@
 \usage{
 prepare.output(
   params,
-  outcome_model,
+  outcome,
+  weights,
   hazard,
-  robustSE,
-  survival_plot,
-  survival_data,
+  vcov,
+  survival.plot,
+  survival.data,
+  survival.ce,
   risk,
-  elapsed_time,
-  info,
-  other_models
+  runtime,
+  info
 )
 }
 \description{

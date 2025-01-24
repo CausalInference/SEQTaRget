@@ -29,6 +29,7 @@ SEQopts(
   weight.eligible1 = NA,
   hazard = FALSE,
   calculate.var = FALSE,
+  subgroup = NA,
   selection.random = FALSE,
   selection.prob = 0.8,
   followup.class = FALSE,
@@ -102,6 +103,8 @@ SEQopts(
 \item{hazard}{Logical: hazard error calculation instead of survival estimation}
 
 \item{calculate.var}{Logical: robust standard error calculation instead of survival bootstrapping}
+
+\item{subgroup}{Character: Column name to stratify outcome models on}
 
 \item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
 

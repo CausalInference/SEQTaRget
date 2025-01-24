@@ -89,8 +89,7 @@ internal.analysis <- function(params) {
         model <- internal.model(WDT, params)
       }
       return(list(
-        model = model$model,
-        vcov = model$vcov,
+        model = model,
         weighted_stats = if (params@weighted) stats else NA
       ))
     }

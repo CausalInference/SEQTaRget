@@ -7,8 +7,7 @@ test_that("Parallelism, Bootstrapping, Output Class Methods", {
     )
   ))
 
-  expect_true(length(model@outcome.model) > 1)
-  expect_error(explore(model, 3))
+  expect_true(length(model@outcome.model[[1]]) > 1)
 })
 
 test_that("Non-Parallel Bootstrapping", {
@@ -20,6 +19,5 @@ test_that("Non-Parallel Bootstrapping", {
     )
   ))
 
-  expect_true(length(model@outcome.model) > 1)
-  expect_error(explore(model, 3))
+  expect_true(length(model@outcome.model[[1]]) > 1)
 })

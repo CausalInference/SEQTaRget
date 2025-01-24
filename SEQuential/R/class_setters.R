@@ -58,7 +58,8 @@ parameter.setter <- function(data, DT,
     plot.title = opts@plot.title,
     plot.subtitle = opts@plot.subtitle,
     plot.labels = opts@plot.labels,
-    plot.colors = opts@plot.colors
+    plot.colors = opts@plot.colors,
+    subgroup = opts@subgroup
   )
 }
 
@@ -66,15 +67,17 @@ parameter.setter <- function(data, DT,
 #'
 #' @keywords internal
 parameter.simplifier <- function(params) {
-  # Variable pre-definition ===================================
-  tmp1 <- NULL
-  tmp0 <- NULL
-
   if (!params@bootstrap) {
     params@bootstrap.nboot <- 1L
     params@bootstrap.sample <- 1
     params@parallel <- FALSE
   }
+  
+  if (!is.na(params@subgroup)) {
+    if (!params@subgroup %in% params@fixed) stop("subgroup not found in provided fixed cols")
+    params@fixed <- params@fixed[!params@subgroup %in% params@fixed]
+  } 
+  
   if (params@survival.max > params@followup.max) {
     warning("Maximum followup for survival curves cannot be greater than the maximum for followup")
     params@survival.max <- params@followup.max
@@ -86,17 +89,21 @@ parameter.simplifier <- function(params) {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
     params@excused <- FALSE
   }
+  if ((!is.na(params@excused.col0) || !is.na(params@excused.col1)) & !params@excused) {
+    warning("Excused variables given, but excused was set to FALSE, automatically changed to excused = TRUE")
+    params@excused <- TRUE
+  }
 
   if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
 
   if (is.na(params@excused.col0) & params@excused & params@method == "censoring") {
     params@excused.col0 <- "tmp0"
-    params@data <- params@data[, tmp0 := 0]
+    params@data <- params@data[, "tmp0" := 0]
   }
   if (is.na(params@excused.col1) & params@excused & params@method == "censoring") {
     params@excused.col1 <- "tmp1"
-    params@data <- params@data[, tmp1 := 0]
+    params@data <- params@data[, "tmp1" := 0]
   }
 
   if (!is.na(params@cense)) {
@@ -118,27 +125,24 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info, other_models) {
-  if (!missing(outcome_model)) {
-    outcome <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$model)
-    weight.stats <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$weighted_stats)
-  }
-
+prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+  risk.difference <- lapply(risk, function(x) x$difference)
+  risk.ratio <- lapply(risk, function(x) x$ratio)
   new("SEQoutput",
       params = params,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
-      hazard = if (!params@hazard) NA_real_ else hazard,
-      robust.se = if (!params@calculate.var) list() else robustSE,
-      weight.statistics = weight.stats,
-      survival.curve = if (!params@km.curves) NA else survival_plot,
-      survival.data = if (!params@km.curves) NA else survival_data,
-      risk.difference = if(length(risk) > 1) risk$difference else NA_real_,
-      risk.ratio = if(length(risk) > 1) risk$ratio else NA_real_,
-      time = elapsed_time,
+      hazard = if (!params@hazard) list() else hazard,
+      robust.se = if (!params@calculate.var) list() else vcov,
+      weight.statistics = weights,
+      survival.curve = if (!params@km.curves) list() else survival.plot,
+      survival.data = if (!params@km.curves) list() else survival.data,
+      risk.difference = if (!params@km.curves) list() else risk.difference,
+      risk.ratio = if (!params@km.curves) list() else risk.ratio,
+      time = runtime,
       info = info,
-      ce.model = other_models
+      ce.model = survival.ce
   )
 }
