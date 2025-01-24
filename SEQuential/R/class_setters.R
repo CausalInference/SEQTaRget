@@ -58,7 +58,8 @@ parameter.setter <- function(data, DT,
     plot.title = opts@plot.title,
     plot.subtitle = opts@plot.subtitle,
     plot.labels = opts@plot.labels,
-    plot.colors = opts@plot.colors
+    plot.colors = opts@plot.colors,
+    subgroup = opts@subgroup
   )
 }
 
@@ -122,27 +123,24 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome_model, hazard, robustSE, survival_plot, survival_data, risk, elapsed_time, info, other_models) {
-  if (!missing(outcome_model)) {
-    outcome <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$model)
-    weight.stats <- lapply(1:length(outcome_model), function(x) outcome_model[[x]]$weighted_stats)
-  }
-
+prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+  risk.difference <- lapply(risk, function(x) x$difference)
+  risk.ratio <- lapply(risk, function(x) x$ratio)
   new("SEQoutput",
       params = params,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
-      hazard = if (!params@hazard) NA_real_ else hazard,
-      robust.se = if (!params@calculate.var) list() else robustSE,
-      weight.statistics = weight.stats,
-      survival.curve = if (!params@km.curves) NA else survival_plot,
-      survival.data = if (!params@km.curves) NA else survival_data,
-      risk.difference = if(length(risk) > 1) risk$difference else NA_real_,
-      risk.ratio = if(length(risk) > 1) risk$ratio else NA_real_,
-      time = elapsed_time,
+      hazard = if (!params@hazard) list() else hazard,
+      robust.se = if (!params@calculate.var) list() else vcov,
+      weight.statistics = weights,
+      survival.curve = if (!params@km.curves) list() else survival.plot,
+      survival.data = if (!params@km.curves) list() else survival.data,
+      risk.difference = if (!params@km.curves) list() else risk.difference,
+      risk.ratio = if (!params@km.curves) list() else risk.ratio,
+      time = runtime,
       info = info,
-      ce.model = other_models
+      ce.model = survival.ce
   )
 }

@@ -47,6 +47,7 @@
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
 #' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
+#' @param subgroup Character: Column name to stratify outcome models on
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -54,7 +55,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8, seed = 1636,
                     followup.min = -Inf, followup.max = Inf, survival.max = Inf, followup.include = TRUE, trial.include = TRUE,
                     covariates = NA, weighted = FALSE, weight.upper = Inf, weight.lower = -Inf, weight.p99 = FALSE,
-                    numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, hazard = FALSE, calculate.var = FALSE,
+                    numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
+                    hazard = FALSE, calculate.var = FALSE, subgroup = NA,
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
@@ -79,6 +81,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
 
   hazard <- as.logical(hazard)
   calculate.var <- as.logical(calculate.var)
+  
+  subgroup <- as.character(subgroup)
 
   selection.prob <- as.logical(selection.prob)
   selection.random <- as.logical(selection.random)
@@ -159,6 +163,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     plot.subtitle = plot.subtitle,
     plot.labels = plot.labels,
     plot.colors = plot.colors,
-    plot.type = plot.type
+    plot.type = plot.type,
+    subgroup = subgroup
   )
 }

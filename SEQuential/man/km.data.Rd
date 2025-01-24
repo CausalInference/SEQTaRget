@@ -10,7 +10,7 @@ km.data(object)
 \item{object}{SEQoutput object}
 }
 \value{
-dataframe of survival values
+list of dataframes of survival values
 }
 \description{
 Function to return survival data from a SEQuential object

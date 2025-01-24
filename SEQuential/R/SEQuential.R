@@ -97,25 +97,29 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
-  outcome <- internal.analysis(params)
+  analytic <- internal.analysis(params)
   cat(method, "model created successfully\n")
 
   # Survival Information =======================================
-  if (params@km.curves) {
-    cat("Creating survival curves\n")
-    survival <- internal.survival(params, outcome)
-    survival.data <- survival$data
-    survival.ce <- survival$ce.model
-    survival.plot <- internal.plot(survival.data, params)
-    risk <- create.risk(survival.data)
-  } else {
-    survival.data <- survival.plot <- risk <- NA
-    survival.ce <- list()
+  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
+  subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
+  for (i in seq_along(subgroups)) {
+    label <- subgroups[[i]]
+    models <- lapply(analytic, function(x) x$model[[i]])
+      
+    if (params@km.curves) {
+      if (is.na(params@subgroup)) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+      survival <- internal.survival(params, models)
+      survival.data[[label]] <- survival$data
+      survival.ce[[label]] <- survival$ce.model
+      survival.plot[[label]] <- internal.plot(survival$data, params)
+      risk[[label]] <- create.risk(survival$data) 
     }
-
-  if (params@hazard) hazard <- unlist(lapply(outcome, function(x) exp(x$model$coefficients[[2]])), FALSE) else hazard <- NA
-  if (params@calculate.var) vcov <- lapply(outcome, function(x) x$vcov) else vcov <- NA
-
+    if (params@hazard) hazard[[label]] <- unlist(exp(models[[i]]$model$coefficients[[2]]))
+    if (params@calculate.var) vcov[[label]] <- models[[i]]$vcov
+    outcome[[label]] <- lapply(models, function(x) x$model)
+    weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
+  }
   # Output ======================================================
   info <- list(outcome.unique = table(data$outcome),
                outcome.nonunique = table(params@DT$outcome),
@@ -124,7 +128,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- params@data <- data.table()
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
 
-  out <- prepare.output(params, outcome, hazard, vcov, survival.plot, survival.data, risk, runtime, info, survival.ce)
+  out <- prepare.output(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
   cat("Completed\n")
   plan(future::sequential())
