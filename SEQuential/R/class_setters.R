@@ -67,15 +67,17 @@ parameter.setter <- function(data, DT,
 #'
 #' @keywords internal
 parameter.simplifier <- function(params) {
-  # Variable pre-definition ===================================
-  tmp1 <- NULL
-  tmp0 <- NULL
-
   if (!params@bootstrap) {
     params@bootstrap.nboot <- 1L
     params@bootstrap.sample <- 1
     params@parallel <- FALSE
   }
+  
+  if (!is.na(params@subgroup)) {
+    if (!params@subgroup %in% params@fixed) stop("subgroup not found in provided fixed cols")
+    params@fixed <- params@fixed[!params@subgroup %in% params@fixed]
+  } 
+  
   if (params@survival.max > params@followup.max) {
     warning("Maximum followup for survival curves cannot be greater than the maximum for followup")
     params@survival.max <- params@followup.max
@@ -97,11 +99,11 @@ parameter.simplifier <- function(params) {
 
   if (is.na(params@excused.col0) & params@excused & params@method == "censoring") {
     params@excused.col0 <- "tmp0"
-    params@data <- params@data[, tmp0 := 0]
+    params@data <- params@data[, "tmp0" := 0]
   }
   if (is.na(params@excused.col1) & params@excused & params@method == "censoring") {
     params@excused.col1 <- "tmp1"
-    params@data <- params@data[, tmp1 := 0]
+    params@data <- params@data[, "tmp1" := 0]
   }
 
   if (!is.na(params@cense)) {
