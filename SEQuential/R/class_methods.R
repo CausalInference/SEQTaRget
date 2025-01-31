@@ -68,7 +68,10 @@ setMethod("show", "SEQoutput", function(object) {
   }
   if (!is.na(params@compevent)) {
     cat("Competing Event Model ============================================ \n")
-    print(summary(slot(object, "ce.model")[[1]]))
+    for (i in seq_along(slot(object, "ce.model"))) {
+      if (!is.na(params@subgroup)) cat("For subgroup: ", names(ce.model)[[i]])
+      print(summary(slot(object, "ce.model")[[i]][[1]])) 
+    }
   }
   
   if (params@km.curves) {
