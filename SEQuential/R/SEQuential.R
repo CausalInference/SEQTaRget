@@ -122,10 +122,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   # Output ======================================================
-  info <- list(outcome.unique = table(data$outcome),
-               outcome.nonunique = table(params@DT$outcome),
+  info <- list(outcome.unique = table(data[[params@outcome]]),
+               outcome.nonunique = table(params@DT[[params@outcome]]),
                switch.unique = switch.unique,
-               switch.nonunique = switch.nonunique)
+               switch.nonunique = switch.nonunique,
+               compevent.unique = if (!is.na(params@compevent)) table(data[[params@compevent]]) else NA,
+               compevent.nonunique = if(!is.na(params@compevent)) table(params@DT[!is.na(get(params@outcome)), 
+                                                                                  ][[params@compevent]]) else NA)
   params@DT <- params@data <- data.table()
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
 

@@ -69,7 +69,7 @@ setMethod("show", "SEQoutput", function(object) {
   if (!is.na(params@compevent)) {
     cat("Competing Event Model ============================================ \n")
     for (i in seq_along(slot(object, "ce.model"))) {
-      if (!is.na(params@subgroup)) cat("For subgroup: ", names(ce.model)[[i]])
+      if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]])
       print(summary(slot(object, "ce.model")[[i]][[1]])) 
     }
   }
@@ -102,6 +102,13 @@ setMethod("show", "SEQoutput", function(object) {
     print(slot(object, "info")$switch.unique)
     cat("\nNon-Unique Switch Table: ")
     print(slot(object, "info")$switch.nonunique)
+  }
+  
+  if (!is.na(slot(params, "compevent"))) {
+    cat("\nUnique Competing Event Table: ")
+    print(slot(object, "info")$compevent.unique)
+    cat("\nNon-Unique Competing Event Table: ")
+    print(slot(object, "info")$compevent.nonunique)
   }
 })
 
