@@ -4,16 +4,12 @@
 \alias{hazard}
 \title{Function to return hazard ratios from a SEQuential object}
 \usage{
-hazard(data, params, type = "cox")
+hazard(params)
 
-hazard(data, params, type = "cox")
+hazard(params)
 }
 \arguments{
-\item{data}{Data table containing survival data}
-
 \item{params}{SEQuential params}
-
-\item{type}{Hazard ratio calculation method: "cox" (cause-specific) or "finegray" (competing risks)}
 
 \item{object}{SEQoutput object}
 }

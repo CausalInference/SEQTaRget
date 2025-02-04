@@ -115,7 +115,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       survival.plot[[label]] <- internal.plot(survival$data, params)
       risk[[label]] <- create.risk(survival$data) 
     }
-    if (params@hazard) hazard[[label]] <- unlist(exp(models[[1]]$model$coefficients[[2]]))
+    if (params@hazard) hazard[[label]] <- hazard(params)
     if (params@calculate.var) vcov[[label]] <- models[[1]]$vcov
     outcome[[label]] <- lapply(models, function(x) x$model)
     weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
