@@ -4,11 +4,13 @@
 \alias{hazard}
 \title{Function to return hazard ratios from a SEQuential object}
 \usage{
-hazard(params)
+hazard(data, params)
 
-hazard(params)
+hazard(data, params)
 }
 \arguments{
+\item{data}{expanded data}
+
 \item{params}{SEQuential params}
 
 \item{object}{SEQoutput object}

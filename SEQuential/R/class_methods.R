@@ -6,11 +6,13 @@ setMethod("show", "SEQoutput", function(object) {
   outcome <- slot(object, "outcome")
   numerator <- slot(object, "numerator")
   denominator <- slot(object, "denominator")
-  outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
-  weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
   risk_ratio <- slot(object, "risk.ratio")
   risk_difference <- slot(object, "risk.difference")
   hazard <- slot(object, "hazard")
+  if (!params@hazard) {
+    outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
+    weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
+  }
 
   cat("SEQuential process completed in", elapsed_time, ":\n")
   cat("Initialized with:\n")
@@ -20,70 +22,70 @@ setMethod("show", "SEQoutput", function(object) {
 
   if (bootstrap) {
     cat("Bootstrapped", bootstrap.nboot, "times\n")
+  } 
+  if (!params@hazard) {
     cat("Full Model Information ========================================== \n")
-  } else {
+    cat("\nOutcome Model ==================================================== \n")
     cat("Coefficients and Weighting:\n")
-  }
-  cat("\nOutcome Model ==================================================== \n")
-  for (i in seq_along(outcome_model)) {
-    if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
-    print(summary(outcome_model[[1]]))
-  }
-
-  if (params@weighted) {
-    cat("\nWeight Information ============================================= \n")
-    if (params@method != "ITT") {
-      cat("Treatment Lag = 0 Model ========================================== \n")
-      if (length(weight_statistics$n0.coef) > 1) {
-        cat("Numerator: \n")
-        print(summary(weight_statistics$n0.coef)) 
-      }
-      cat("Denominator: \n")
-      print(summary(weight_statistics$d0.coef))
-      
-      cat("Treatment Lag = 1 Model ========================================== \n")
-      if (length(weight_statistics$n1.coef) > 1) {
-        cat("Numerator: \n")
-        print(summary(weight_statistics$n1.coef)) 
-      }
-      cat("Denominator: \n")
-      print(summary(weight_statistics$d1.coef))
-      
-      cat("Weights:\n")
-      cat("Min: ", weight_statistics$min, "\n")
-      cat("Max: ", weight_statistics$max, "\n")
-      cat("StDev: ", weight_statistics$sd, "\n")
-      cat("P01: ", weight_statistics$p01, "\n")
-      cat("P25: ", weight_statistics$p25, "\n")
-      cat("P50: ", weight_statistics$p50, "\n")
-      cat("P75: ", weight_statistics$p75, "\n")
-      cat("P99: ", weight_statistics$p99, "\n\n")
+    for (i in seq_along(outcome_model)) {
+      if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
+      print(summary(outcome_model[[1]]))
     }
-    if (params@LTFU) {
-      cat("LTFU Numerator: \n")
-      print(summary(weight_statistics$ncense.coef))
-      cat("LTFU Denominator: ")
-      print(summary(weight_statistics$dcense.coef))
-    }
-  }
-  if (!is.na(params@compevent)) {
-    cat("Competing Event Model ============================================ \n")
-    for (i in seq_along(slot(object, "ce.model"))) {
-      if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]])
-      print(summary(slot(object, "ce.model")[[i]][[1]])) 
-    }
-  }
   
-  if (params@km.curves) {
-    cat("Risk ==============================================================\n")
-    for(i in seq_along(risk_difference)) {
-      if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk_difference)[[i]])
-      cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[[i]][1], "(", risk_ratio[[i]][2], ",", risk_ratio[[i]][3], ")", "\n\n")
-      cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[[i]][1], "(", risk_difference[[i]][2], ",", risk_difference[[i]][3], ")", "\n\n")
+    if (params@weighted) {
+      cat("\nWeight Information ============================================= \n")
+      if (params@method != "ITT") {
+        cat("Treatment Lag = 0 Model ========================================== \n")
+        if (length(weight_statistics$n0.coef) > 1) {
+          cat("Numerator: \n")
+          print(summary(weight_statistics$n0.coef)) 
+        }
+        cat("Denominator: \n")
+        print(summary(weight_statistics$d0.coef))
+        
+        cat("Treatment Lag = 1 Model ========================================== \n")
+        if (length(weight_statistics$n1.coef) > 1) {
+          cat("Numerator: \n")
+          print(summary(weight_statistics$n1.coef)) 
+        }
+        cat("Denominator: \n")
+        print(summary(weight_statistics$d1.coef))
+        
+        cat("Weights:\n")
+        cat("Min: ", weight_statistics$min, "\n")
+        cat("Max: ", weight_statistics$max, "\n")
+        cat("StDev: ", weight_statistics$sd, "\n")
+        cat("P01: ", weight_statistics$p01, "\n")
+        cat("P25: ", weight_statistics$p25, "\n")
+        cat("P50: ", weight_statistics$p50, "\n")
+        cat("P75: ", weight_statistics$p75, "\n")
+        cat("P99: ", weight_statistics$p99, "\n\n")
+      }
+      if (params@LTFU) {
+        cat("LTFU Numerator: \n")
+        print(summary(weight_statistics$ncense.coef))
+        cat("LTFU Denominator: ")
+        print(summary(weight_statistics$dcense.coef))
+      }
     }
-  }
+    if (!is.na(params@compevent)) {
+      cat("Competing Event Model ============================================ \n")
+      for (i in seq_along(slot(object, "ce.model"))) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]])
+        print(summary(slot(object, "ce.model")[[i]][[1]])) 
+      }
+    }
+    
+    if (params@km.curves) {
+      cat("Risk ==============================================================\n")
+      for(i in seq_along(risk_difference)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk_difference)[[i]])
+        cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[[i]][1], "(", risk_ratio[[i]][2], ",", risk_ratio[[i]][3], ")", "\n\n")
+        cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[[i]][1], "(", risk_difference[[i]][2], ",", risk_difference[[i]][3], ")", "\n\n")
+      }
+    }
   
-  if (params@hazard) {
+  } else {
     cat("Hazard ============================================================\n")
     for (i in seq_along(hazard)) {
       if (!is.na(params@subgroup)) cat("For subgroup:", names(hazard)[[i]], "\n")

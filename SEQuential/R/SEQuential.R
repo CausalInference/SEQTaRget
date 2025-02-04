@@ -97,28 +97,36 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
-  analytic <- internal.analysis(params)
-  cat(method, "model created successfully\n")
-
-  # Survival Information =======================================
   survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
-  subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
-  for (i in seq_along(subgroups)) {
-    label <- subgroups[[i]]
-    models <- lapply(analytic, function(x) x$model[[i]])
-      
-    if (params@km.curves) {
-      if (is.na(params@subgroup)) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
-      survival <- internal.survival(params, models)
-      survival.data[[label]] <- survival$data
-      survival.ce[[label]] <- survival$ce.model
-      survival.plot[[label]] <- internal.plot(survival$data, params)
-      risk[[label]] <- create.risk(survival$data) 
+  if (!params@hazard) {
+    analytic <- internal.analysis(params)
+    cat(method, "model created successfully\n")
+
+    # Survival Information =======================================
+    subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
+    for (i in seq_along(subgroups)) {
+      label <- subgroups[[i]]
+      models <- lapply(analytic, function(x) x$model[[i]])
+        
+      if (params@km.curves) {
+        if (is.na(params@subgroup)) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+        survival <- internal.survival(params, models)
+        survival.data[[label]] <- survival$data
+        survival.ce[[label]] <- survival$ce.model
+        survival.plot[[label]] <- internal.plot(survival$data, params)
+        risk[[label]] <- create.risk(survival$data) 
+      }
+      if (params@calculate.var) vcov[[label]] <- models[[1]]$vcov
+      outcome[[label]] <- lapply(models, function(x) x$model)
+      weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
-    if (params@hazard) hazard[[label]] <- hazard(params)
-    if (params@calculate.var) vcov[[label]] <- models[[1]]$vcov
-    outcome[[label]] <- lapply(models, function(x) x$model)
-    weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
+  } else {
+    subgroups <- if (is.na(params@subgroup)) 1L else unique(params@data[[params@subgroup]])
+    for (i in seq_along(subgroups)) {
+      label <- paste0(params@subgroup, "_", subgroups[[i]])
+      subDT <- if (!is.na(params@subgroup)) copy(params@DT)[get(params@subgroup) == subgroups[[i]], ] else params@DT
+      hazard[[label]] <- hazard(subDT, params)
+    }
   }
   
   # Output ======================================================
