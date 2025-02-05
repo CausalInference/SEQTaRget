@@ -11,7 +11,7 @@ hazard <- function(data, params) {
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   kept <- c("followup", "trial", tx_bas, params@id, params@outcome, params@compevent)
   kept <- kept[kept %in% names(params@DT)]
-  subDT <- copy(data)[, kept, with = FALSE][, .SD[.N], by = c("followup", "trial", params@id)
+  subDT <- copy(data)[, kept, with = FALSE][, .SD[.N], by = c("trial", params@id)
                                             ][, event := 0
                                               ][get(params@outcome) == 1, event := 1]
   if (!is.na(params@compevent)) subDT <- subDT[get(params@compevent) == 1, event := 2]
@@ -21,9 +21,9 @@ hazard <- function(data, params) {
     tryCatch({
       if (!is.na(params@compevent)) {
         hr.data <- finegray(Surv(followup, event) ~ ., data, etype = 1)
-        hr.res <- coxph(Surv(fgstart, fgstop, fgstatus) ~ get(tx_bas), data = hr.data)
+        hr.res <- coxph(Surv(fgstart, fgstop, fgstatus) ~ get(tx_bas), data = hr.data, ties="breslow")
       } else {
-        hr.res <- coxph(Surv(followup, event == 1) ~ get(tx_bas), data)
+        hr.res <- coxph(Surv(followup, event == "1") ~ get(tx_bas), data, ties="breslow")
       }
       exp(hr.res$coefficients)
     }, error = function(e) {
