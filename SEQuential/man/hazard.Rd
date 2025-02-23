@@ -4,16 +4,16 @@
 \alias{hazard}
 \title{Function to return hazard ratios from a SEQuential object}
 \usage{
-hazard(data, params)
+hazard(model, params)
 
-hazard(data, params)
+hazard(model, params)
 }
 \arguments{
-\item{data}{expanded data}
-
 \item{params}{SEQuential params}
 
 \item{object}{SEQoutput object}
+
+\item{data}{expanded data}
 }
 \value{
 list of hazard ratios

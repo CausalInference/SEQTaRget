@@ -26,6 +26,8 @@
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data
 #' @param calculate.var Logical: robust standard error calculation instead of survival bootstrapping
 #' @param hazard Logical: hazard error calculation instead of survival estimation
+#' @param hazard.fixed.dist List of lists: list of length \code{unique(subgroup)} containing list of length \code{fixed.cols}, providing generator functions for hazard simulation. Function argument should contain 'n'
+#' @param hazard.time_varying.dist List of lists: list of length \code{unique(subgroup)} containing  list of length \code{time_varying.cols}, providing generator functions for hazard simulation. Function argument should contain 'n'
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
@@ -56,7 +58,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     followup.min = -Inf, followup.max = Inf, survival.max = Inf, followup.include = TRUE, trial.include = TRUE,
                     covariates = NA, weighted = FALSE, weight.upper = Inf, weight.lower = -Inf, weight.p99 = FALSE,
                     numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
-                    hazard = FALSE, calculate.var = FALSE, subgroup = NA,
+                    hazard = FALSE, hazard.fixed.dist = NA, hazard.time_varying.dist = NA,
+                    calculate.var = FALSE, subgroup = NA,
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
@@ -80,6 +83,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   weight.eligible1 <- as.character(weight.eligible1)
 
   hazard <- as.logical(hazard)
+  hazard.fixed.dist <- as.list(hazard.fixed.dist)
+  hazard.time_varying.dist <- as.list(hazard.time_varying.dist)
   calculate.var <- as.logical(calculate.var)
   
   subgroup <- as.character(subgroup)
@@ -154,6 +159,8 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     treat.level = treat.level,
     multinomial = multinomial,
     hazard = hazard,
+    hazard.fixed.dist = hazard.fixed.dist,
+    hazard.time_varying.dist = hazard.time_varying.dist,
     calculate.var = calculate.var,
     weight.eligible1 = weight.eligible1,
     weight.eligible0 = weight.eligible0,

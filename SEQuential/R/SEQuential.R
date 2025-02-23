@@ -38,6 +38,17 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (length(missing.cols) > 0) {
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
+  
+  if (FALSE) {
+    data <- fread("SEQdata_LTFU_randElig.csv")
+    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
+    fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
+    options = SEQopts(hazard = TRUE,
+                      hazard.fixed.dist = list(list('sex' = function(n) rbinom(n, 1, 0.5))),
+                      hazard.time_varying.dist = list(list('N' = function(n) rnorm(n, 10, 1),
+                                                           'L' = function(n) rnorm(n, 10, 1),
+                                                           'P' = function(n) rnorm(n, 10, 1))))
+  }
 
   setDT(data)
   setorderv(data, c(id.col, time.col))
@@ -98,8 +109,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Model Dispersion ===========================================
   survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
+  analytic <- internal.analysis(params)
   if (!params@hazard) {
-    analytic <- internal.analysis(params)
     cat(method, "model created successfully\n")
 
     # Survival Information =======================================
@@ -121,11 +132,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
-    subgroups <- if (is.na(params@subgroup)) 1L else unique(params@data[[params@subgroup]])
+    subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
     for (i in seq_along(subgroups)) {
       label <- paste0(params@subgroup, "_", subgroups[[i]])
       subDT <- if (!is.na(params@subgroup)) copy(params@DT)[get(params@subgroup) == subgroups[[i]], ] else params@DT
-      hazard[[label]] <- hazard(subDT, params)
+      hazard[[label]] <- hazard(analytic, params)
     }
   }
   

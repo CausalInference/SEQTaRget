@@ -28,6 +28,8 @@ SEQopts(
   weight.eligible0 = NA,
   weight.eligible1 = NA,
   hazard = FALSE,
+  hazard.fixed.dist = NA,
+  hazard.time_varying.dist = NA,
   calculate.var = FALSE,
   subgroup = NA,
   selection.random = FALSE,
@@ -101,6 +103,10 @@ SEQopts(
 \item{weight.eligible1}{String: column name for indicator column defining which weights are eligible for the 'one' model}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation}
+
+\item{hazard.fixed.dist}{List of lists: list of length \code{unique(subgroup)} containing list of length \code{fixed.cols}, providing generator functions for hazard simulation. Function argument should contain 'n'}
+
+\item{hazard.time_varying.dist}{List of lists: list of length \code{unique(subgroup)} containing  list of length \code{time_varying.cols}, providing generator functions for hazard simulation. Function argument should contain 'n'}
 
 \item{calculate.var}{Logical: robust standard error calculation instead of survival bootstrapping}
 

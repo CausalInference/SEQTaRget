@@ -100,7 +100,7 @@ internal.analysis <- function(params) {
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 
-    bootstrap <- if (params@bootstrap) {
+    bootstrap <- if (params@bootstrap & !params@hazard) {
       if (params@parallel) {
         setDTthreads(1)
         future_lapply(1:params@bootstrap.nboot, function(x) {
