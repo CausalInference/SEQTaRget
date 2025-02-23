@@ -16,6 +16,10 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
       cols <- unlist(strsplit(params@denominator, "\\+"))
       covs <- params@denominator
     }
+    if (type == "outcome") {
+      cols <- unlist(strsplit(params@covariates, "\\+"))
+      covs <- params@covariates
+    }
   }
   if(case == "LTFU") {
     if (type == "numerator") {
@@ -139,7 +143,9 @@ fastglm.robust <- function(model, X, y, weight = NULL) {
   return(full)
 }
 
-
+#' Function to clean out non needed elements from fastglm return
+#' @param model a fastglm model
+#' @keywords internal
 fastglm.clean <- function(model) {
   model$x <- NULL
   model$y <- NULL
