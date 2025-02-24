@@ -1,7 +1,7 @@
 Package: SEQuential
 Type: Package
 Title: Sequential Target Trial Emulation
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(person(given = "Ryan",
                     family = "O\'Dea",
                     role = c("aut", "cre"),
