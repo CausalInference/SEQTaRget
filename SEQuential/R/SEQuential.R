@@ -43,11 +43,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data <- fread("SEQdata_LTFU_randElig.csv")
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(hazard = TRUE,
-                      hazard.fixed.dist = list(list('sex' = function(n) rbinom(n, 1, 0.5))),
-                      hazard.time_varying.dist = list(list('N' = function(n) rnorm(n, 10, 1),
-                                                           'L' = function(n) rnorm(n, 10, 1),
-                                                           'P' = function(n) rnorm(n, 10, 1))))
+    options = SEQopts(hazard = TRUE, compevent = "LTFU")
   }
 
   setDT(data)
