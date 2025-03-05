@@ -94,10 +94,15 @@ setMethod("show", "SEQoutput", function(object) {
   }
   
   cat("\nDiagnostic Tables ================================================== \n")
-  cat("Unique Outcome Table: ")
-  print(slot(object, "info")$outcome.unique)
-  cat("\nNon-Unique Outcome Table: ")
-  print(slot(object, "info")$outcome.nonunique)
+  outcome.unique <- slot(object, "info")$outcome.unique
+  outcome.nonunique <- slot(object, "info")$outcome.nonunique
+  for (i in seq_along(outcome.unique)) {
+    if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome.unique)[[i]], "\n")
+    cat("Unique Outcome Table: ")
+    print(outcome.unique[[i]])
+    cat("\nNon-Unique Outcome Table: ")
+    print(outcome.nonunique[[i]])
+  }
     
   if (slot(params, "method") == "censoring"){
     cat("\nUnique Switch Table: ")

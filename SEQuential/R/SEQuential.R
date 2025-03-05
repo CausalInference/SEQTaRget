@@ -41,9 +41,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   
   if (FALSE) {
     data <- fread("SEQdata_LTFU_randElig.csv")
-    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
+    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(weighted = TRUE, subgroup = "sex")
+    options = SEQopts(weighted = FALSE, subgroup = "sex")
   }
 
   setDT(data)
@@ -106,11 +106,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Model Dispersion ===========================================
   survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
   analytic <- internal.analysis(params)
+  
+  subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
   if (!params@hazard) {
     cat(method, "model created successfully\n")
 
     # Survival Information =======================================
-    subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
       models <- lapply(analytic, function(x) x$model[[i]])
@@ -128,17 +129,23 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
-    subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
     for (i in seq_along(subgroups)) {
       label <- paste0(params@subgroup, "_", subgroups[[i]])
-      subDT <- if (!is.na(params@subgroup)) copy(params@DT)[get(params@subgroup) == subgroups[[i]], ] else params@DT
       hazard[[label]] <- hazard(analytic, params)
     }
   }
   
+  outcome.unique  <- outcome.nonunique <- c()
+  for (i in seq_along(subgroups)) {
+    label <- subgroups[[i]]
+    filter <- sort(unique(data[[params@subgroup]]))
+    outcome.unique[[label]] <- if (!is.na(params@subgroup)) table(copy(data)[get(params@subgroup) == filter[[i]], ][[params@outcome]]) else table(copy(data)[[params@outcome]])
+    outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) table(copy(params@DT)[get(params@subgroup) == filter[[i]], ][[params@outcome]]) else table(copy(params@DT)[[params@outcome]])
+  }
+  
   # Output ======================================================
-  info <- list(outcome.unique = table(data[[params@outcome]]),
-               outcome.nonunique = table(params@DT[[params@outcome]]),
+  info <- list(outcome.unique = outcome.unique,
+               outcome.nonunique = outcome.nonunique,
                switch.unique = switch.unique,
                switch.nonunique = switch.nonunique,
                compevent.unique = if (!is.na(params@compevent)) table(data[[params@compevent]]) else NA,
