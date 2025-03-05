@@ -73,10 +73,7 @@ parameter.simplifier <- function(params) {
     params@parallel <- FALSE
   }
   
-  if (!is.na(params@subgroup)) {
-    if (!params@subgroup %in% params@fixed) stop("subgroup not found in provided fixed cols")
-    params@fixed <- params@fixed[!params@subgroup %in% params@fixed]
-  } 
+  if (!is.na(params@subgroup) && !params@subgroup %in% params@fixed) stop("subgroup not found in provided fixed cols")
   
   if (params@survival.max > params@followup.max) {
     warning("Maximum followup for survival curves cannot be greater than the maximum for followup")

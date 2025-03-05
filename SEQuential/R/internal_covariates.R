@@ -19,7 +19,8 @@ create.default.covariates <- function(params) {
   }
 
   if (length(params@fixed) > 0) {
-    fixed <- paste0(params@fixed, collapse = "+")
+    if (!is.na(params@subgroup)) fixed <- params@fixed[!params@subgroup %in% params@fixed] else fixed <- params@fixed
+    fixed <- if(length(fixed) > 0) paste0(fixed, collapse = "+") else NULL
   }
   if (params@trial.include) trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
   if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared)) else if (params@followup.spline | params@followup.class) followup <- "followup"

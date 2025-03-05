@@ -41,9 +41,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   
   if (FALSE) {
     data <- fread("SEQdata_LTFU_randElig.csv")
-    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
+    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(hazard = TRUE, compevent = "LTFU")
+    options = SEQopts(weighted = TRUE, subgroup = "sex")
   }
 
   setDT(data)
