@@ -29,7 +29,7 @@ setMethod("show", "SEQoutput", function(object) {
     cat("Coefficients and Weighting:\n")
     for (i in seq_along(outcome_model)) {
       if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
-      print(summary(outcome_model[[1]]))
+      print(summary(outcome_model[[i]]))
     }
   
     if (params@weighted) {
@@ -71,7 +71,7 @@ setMethod("show", "SEQoutput", function(object) {
     if (!is.na(params@compevent)) {
       cat("Competing Event Model ============================================ \n")
       for (i in seq_along(slot(object, "ce.model"))) {
-        if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]])
+        if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]], "\n")
         print(summary(slot(object, "ce.model")[[i]][[1]])) 
       }
     }
@@ -79,7 +79,7 @@ setMethod("show", "SEQoutput", function(object) {
     if (params@km.curves) {
       cat("Risk ==============================================================\n")
       for(i in seq_along(risk_difference)) {
-        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk_difference)[[i]])
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk_difference)[[i]], "\n")
         cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[[i]][1], "(", risk_ratio[[i]][2], ",", risk_ratio[[i]][3], ")", "\n\n")
         cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[[i]][1], "(", risk_difference[[i]][2], ",", risk_difference[[i]][3], ")", "\n\n")
       }

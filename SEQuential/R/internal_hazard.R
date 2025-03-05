@@ -31,7 +31,7 @@ hazard <- function(model, params) {
       out <- lapply(list(txTRUE = copy(trials)[, eval(tx_bas) := 1],
                       txFALSE = copy(trials)[, eval(tx_bas) := 0]), 
                     function(x) {
-                      out <- x[, "outcomeProb" := inline.pred(model[[1]]$model[[i]]$model, newdata = .SD, params, type = "outcome")
+                      out <- x[, "outcomeProb" := inline.pred(model[[i]]$model[[1]]$model, newdata = .SD, params, type = "outcome")
                                ][, "outcome" := rbinom(.N, 1, outcomeProb)]
                       if (!is.na(params@compevent)) {
                         out <- out[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv", type = "compevent")
