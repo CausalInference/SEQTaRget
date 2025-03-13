@@ -40,10 +40,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   if (FALSE) {
-    data <- fread("SEQdata_LTFU_randElig.csv")
-    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
+    data <- fread("SEQdata_multitreatment2.csv")
+    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(weighted = FALSE, subgroup = "sex")
+    options = SEQopts(treat.level = c(1,2), multinomial = TRUE, weighted = TRUE, weight.preexpansion = TRUE)
   }
 
   setDT(data)
@@ -90,7 +90,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Expansion ==================================================
   cat("Expanding Data...\n")
-  if (params@multinomial) params@data <- params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
+  if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- SEQexpand(params)
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
@@ -100,7 +100,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     switch.unique <- table(data[, 'switch' := (get(params@treatment) != shift(get(params@treatment),
                                                                               fill = get(params@treatment)[1])), by = eval(params@id)]$switch)
     switch.nonunique <- table(params@DT[['switch']])
+    
     params@DT <- params@DT[, "switch" := NULL]
+    params@data <- params@data[get("switch"), eval(params@outcome) := NA]
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================

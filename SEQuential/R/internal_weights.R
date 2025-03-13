@@ -44,7 +44,7 @@ internal.weights <- function(DT, data, params) {
       if (params@excused) weight <- weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
     } else {
-      weight <- data[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
+      weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
                      ][get(params@time) == 0, tx_lag := 0
                        ][, paste0(params@time, "_sq") := get(params@time)^2]
     }
@@ -63,7 +63,6 @@ internal.weights <- function(DT, data, params) {
       rm(cense.numerator.data, cense.denominator.data)
     }
 
-    if (!params@multinomial) {
       if (params@method != "ITT") {
         model.data <- copy(weight)
         if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
@@ -116,9 +115,6 @@ internal.weights <- function(DT, data, params) {
           }
         }
       } else out <- weight
-    } else {
-      # Multinomial case can be handled here when approached
-    }
 
     if (params@LTFU) {
       if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]

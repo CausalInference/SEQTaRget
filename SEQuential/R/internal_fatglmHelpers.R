@@ -51,7 +51,7 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 #' @keywords internal
 prepare.data <- function(weight, params, type, model, case) {
   cols <- covs <- y <- X <- isExcused <- followup <- tx_lag <- NULL
-  
+
   if (case == "default") {
     if (type %in% c("numerator", "denominator")) {
       cols <- unlist(strsplit(ifelse(type == "numerator", params@numerator, params@denominator), "\\+|\\*"))
@@ -92,15 +92,7 @@ prepare.data <- function(weight, params, type, model, case) {
     y <- if (type == "compevent") weight[[params@compevent]] else weight[[params@outcome]]
     X <- model.matrix(as.formula(paste0("~", covs)), weight[!is.na(get(params@outcome))][, cols, with = FALSE])
     
-  } else if (case == "multinomial") {
-    covs <- ifelse(type == "numerator", params@numerator, params@denominator)
-    cols <- unlist(strsplit(covs, "\\+|\\*"))
-    weight <- weight[tx_lag == model, ]
-    
-    y <- weight[[params@treatment]]
-    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
   }
-  
   return(list(y = y, X = X))
 }
 
