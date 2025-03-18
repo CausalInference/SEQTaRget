@@ -44,7 +44,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
     options = SEQopts(treat.level = c(1,2), multinomial = TRUE, weighted = TRUE, weight.preexpansion = TRUE)
-    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
+    model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
   }
 
   setDT(data)
