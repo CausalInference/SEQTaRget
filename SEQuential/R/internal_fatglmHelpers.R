@@ -6,7 +6,7 @@
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default"){
+inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL){
   if (case == "default") {
     if(type == "numerator") {
       cols <- unlist(strsplit(params@numerator, "\\+"))
@@ -38,7 +38,7 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 
   cols <- unlist(strsplit(covs, "\\*|\\+"))
   X <- model.matrix(as.formula(paste0("~", covs)), data = newdata[, cols, with = FALSE])
-  pred <- predict(model, X, "response")
+  pred <-  if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
 }
 

@@ -23,20 +23,30 @@ multinomial <- function(X, y, family = quasibinomial(), method) {
 #' Helper to predict from the nested logistic
 #'
 #' @keywords internal
-multinomial.predict <- function(model, X) {
+multinomial.predict <- function(model, X, target = NULL) {
   models <- model$models
-  baseline <- model$baseline
   levels <- model$levels
-  X <- apply(as.matrix(X), 2, as.numeric)
+  X <- as.matrix(X)
   
   pred <- sapply(models, function(x) {
     coefs <- as.numeric(coef(x))
-    as.vector(as.matrix(X) %*% coefs)
+    as.vector(X %*% coefs)
   })
-  exppred <- exp(cbind(0, pred))
   
-  return(exppred / rowSums(exppred))
+  exppred <- exp(cbind(0, pred))
+  probabilities <- exppred / rowSums(exppred)
+  
+  if (!is.null(target)) {
+    target <- as.character(target)
+    col_idx <- match(target, levels)
+    if (is.na(col_idx)) {
+      stop("Target class not found.")
+    }
+    return(probabilities[, col_idx])
+  }
+  return(probabilities)
 }
+
 
 #' Helper function to get the summary table from multinomial
 #'
@@ -72,4 +82,12 @@ multinomial.summary <- function(model) {
     P.Value = NA
   )
   return(rbind(baseline, summarytable))
+}
+
+model.passer <- function(X, y, params) {
+  model <- if (!params@multinomial) {
+    fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+  } else multinomial(X, y, family = quasibinomial(), method = params@fastglm.method)
+  
+  return(model)
 }
