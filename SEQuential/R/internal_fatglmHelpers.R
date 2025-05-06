@@ -7,38 +7,29 @@
 #' @keywords internal
 
 inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL){
-  if (case == "default") {
-    if(type == "numerator") {
-      cols <- unlist(strsplit(params@numerator, "\\+"))
-      covs <- params@numerator
-    }
-    if(type == "denominator") {
-      cols <- unlist(strsplit(params@denominator, "\\+"))
-      covs <- params@denominator
-    }
-    if (type == "outcome") {
-      cols <- unlist(strsplit(params@covariates, "\\+"))
-      covs <- params@covariates
-    }
-  }
-  if(case == "LTFU") {
-    if (type == "numerator") {
-      cols <- unlist(strsplit(params@cense.numerator, "\\+"))
-      covs <- params@cense.numerator
-    }
-    if (type == "denominator") {
-      cols <- unlist(strsplit(params@cense.denominator, "\\+"))
-      covs <- params@cense.denominator
-    }
-  }
-  if(case == "surv") {
-    cols <- unlist(strsplit(params@covariates, "\\+"))
-    covs <- params@covariates
-  }
-
-  cols <- unlist(strsplit(covs, "\\*|\\+"))
-  X <- model.matrix(as.formula(paste0("~", covs)), data = newdata[, cols, with = FALSE])
-  pred <-  if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
+  covs <- switch(
+    case,
+    "default" = switch(
+      type,
+      "numerator" = params@numerator,
+      "denominator" = params@denominator
+    ),
+    "LTFU" = switch(
+      type,
+      "numerator" = params@cense.numerator,
+      "denominator" = params@cense.denominator
+    ),
+    "surv" = params@covariates
+  )
+  cols <- unique(unlist(strsplit(covs, "\\*|\\+")))
+  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline)))
+  contrasts <- setNames(lapply(encodes, function(x) contrasts(newdata[[x]], contrasts = FALSE)), encodes)
+  
+  X <- model.matrix(as.formula(paste0("~", covs)),
+                    data = newdata[, cols, with = FALSE],
+                    contrasts.arg = contrasts)
+  
+  pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
 }
 

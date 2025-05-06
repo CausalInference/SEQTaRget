@@ -13,13 +13,6 @@ internal.survival <- function(params, outcome) {
 
     # Variable pre-definition ===================================
     trialID <- trial <- NULL
-    surv.predTRUE <- surv.predFALSE <- NULL
-    ce.predTRUE <- ce.predFALSE <- NULL
-    cumsurvFALSE <- cumsurvTRUE <- NULL
-    followup <- followup_sq <- NULL
-    surv.0 <- surv.1 <- NULL
-    risk.0 <- risk.1 <- NULL
-    inc.0 <- inc.1 <- NULL
     variable <- NULL
     surv0_mu <- surv1_mu <- NULL
     se_surv0 <- se_surv1 <- NULL
@@ -48,54 +41,57 @@ internal.survival <- function(params, outcome) {
         ce.model <- fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
         rm(ce.data)
       }
-      kept <- c("followup", "risk0", "risk1", "surv.0", "surv.1", "inc.1", "inc.0")
-
-      RMDT <- DT[, trialID := paste0(get(params@id), "_", trial)
-                 ][get("followup") == 0,
-                   ][rep(1:.N, each = params@survival.max + 1)
-                     ][, `:=`(followup = seq(1:.N) - 1,
-                              followup_sq = (seq(1:.N) - 1)^2), by = "trialID"
-                       ][, eval(tx_bas) := params@treat.level[[1]]]
-
-      if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)]
-
-      RMDT <- RMDT[, surv.predFALSE := inline.pred(model, newdata = .SD, params, case = "surv")]
-
-      if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predFALSE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
-      if (params@method == "dose-response") RMDT <- RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
-
-      RMDT <- RMDT[, eval(tx_bas) := params@treat.level[[2]]
-                   ][, surv.predTRUE := inline.pred(model, newdata = .SD, params, case = "surv")]
-      if (!is.na(params@compevent)) RMDT <- RMDT[, ce.predTRUE := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
-
-      RMDT <- RMDT[, `:=`(surv.0 = cumprod(1 - surv.predFALSE),
-                          surv.1 = cumprod(1 - surv.predTRUE)), by = "trialID"]
-
-      if (!is.na(params@compevent)) {
-        RMDT <- RMDT[, `:=` (cumsurvTRUE = cumprod((1 - surv.predTRUE) * (1 - ce.predTRUE)),
-                             cumsurvFALSE = cumprod((1 - surv.predFALSE) * (1 - ce.predFALSE))), by = "trialID"
-                      ][, `:=` (inc.0 = cumsum(surv.predFALSE * (1 - ce.predFALSE) * cumsurvFALSE),
-                                inc.1 = cumsum(surv.predTRUE * (1 - ce.predTRUE) * cumsurvTRUE)), by = "trialID"]
-
-        RMDT <- RMDT[, list(
-          surv.0 = mean(surv.0),
-          surv.1 = mean(surv.1),
-          inc.0 = mean(inc.0),
-          inc.1 = mean(inc.1)), by = "followup"]
-
-        fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1, inc.0 = 0, inc.1 = 0)
-      } else {
-        RMDT <- RMDT[, list(
-          surv.0 = mean(surv.0),
-          surv.1 = mean(surv.1)), by = "followup"]
-
-        fup0 <- data.table(followup = 0, surv.0 = 1, surv.1 = 1)
+      
+      out_list <- c()
+      for (i in seq_along(params@treat.level)) {
+        psurv <- paste0("predsurv_", params@treat.level[[i]])
+        csurv <- paste0("cumsurv_", params@treat.level[[i]])
+        surv <- paste0("surv_", params@treat.level[[i]])
+        pce <- paste0("predce_", params@treat.level[[i]])
+        cce <- paste0("ce_", params@treat.level[[i]])
+        inc <- paste0("inc_", params@treat.level[[i]])
+        risk <- paste0("risk_", params@treat.level[[i]])
+        
+        
+        RMDT <- copy(DT)[, trialID := paste0(get(params@id), "_", trial)
+                   ][get("followup") == 0,
+                     ][rep(1:.N, each = params@survival.max + 1)
+                       ][, `:=`(followup = seq(1:.N) - 1,
+                                followup_sq = (seq(1:.N) - 1)^2), by = "trialID"
+                         ][, eval(tx_bas) := as.character(params@treat.level[[i]])]
+        if (params@method == "dose-response" & i == 1) { 
+          RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)] 
+          } else {
+            RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
+            }
+        RMDT[, (psurv) := inline.pred(model, newdata = .SD, params, case = "surv")]
+        
+        if (!is.na(params@compevent)) RMDT[, eval(ce) := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+        RMDT[, eval(surv) := cumprod(1 - get(psurv)), by = "trialID"]
+        
+        if (!is.na(params@compevent)) {
+          RMDT[, eval(cce) := cumprod((1 - get(psurv)) * (1 - get(pce))), by = "trialID"
+               ][, eval(inc) := cumsum(get(psurv) * (1 - get(pce)) * get(cce)), by = "trialID"]
+          
+          RMDT <- RMDT[, setNames(list(mean(get(csurv)), mean(get(inc))), c(surv, inc)), by = "followup"]
+          fup0 <- data.table(followup = 0)[, (surv) := 1][, (inc) := 0]
+          } else {
+            RMDT <- RMDT[, setNames(list(mean(get(surv))), surv), by = "followup"]
+            fup0 <- data.table(followup = 0)[, (surv) := 1]
+            }
+        keep <- list("followup", inc, surv)
+        kept <- intersect(keep, names(RMDT))
+        
+        out_list[[i]] <- rbind(fup0, RMDT[, followup := followup + 1
+                                          ][, c(unlist(kept)), with = FALSE]
+                               )[, eval(risk) := 1 - get(surv)]
+        rm(RMDT)
       }
-
-      out <- rbind(fup0, RMDT[, followup := followup + 1])[, `:=` (risk.0 = 1 - surv.0,
-                                                                   risk.1 = 1 - surv.1)]
-      return(list(data = out,
-                  ce.model = if (!is.na(params@compevent)) ce.model else NA))
+      
+      out <- Reduce(function(x, y) merge(x, y, by = "followup"), out_list) |>
+        melt(id.vars = "followup")
+      
+      return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
     full <- handler(copy(params@DT), params, outcome[[1]]$model)
