@@ -1,7 +1,8 @@
 #' Internal function for creating survival curves
 #'
-#' @import ggplot2 data.table future doFuture doRNG future.apply
+#' @import data.table future doFuture doRNG future.apply
 #' @importFrom fastglm fastglm
+#' @importFrom stats setNames
 #'
 #' @keywords internal
 internal.survival <- function(params, outcome) {
@@ -12,23 +13,7 @@ internal.survival <- function(params, outcome) {
     }, add = TRUE)
 
     # Variable pre-definition ===================================
-    trialID <- trial <- NULL
-    variable <- NULL
-    surv0_mu <- surv1_mu <- NULL
-    se_surv0 <- se_surv1 <- NULL
-    surv0_lb <- surv1_lb <- NULL
-    surv0_ub <- surv1_ub <- NULL
-    risk0_mu <- risk1_mu <- NULL
-    se_risk0 <- se_risk1 <- NULL
-    risk0_lb <- risk1_lb <- NULL
-    risk0_ub <- risk1_ub <- NULL
-    inc0_mu <- inc1_mu <- NULL
-    se_inc0 <- se_inc1 <- NULL
-    inc0_lb <- inc1_lb <- NULL
-    inc0_ub <- inc1_ub <- NULL
-    mu <- lb <- ub <- NULL
-    followup <- NULL
-    numerator <- denominator <- NULL
+    ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
     handler <- function(DT, params, model) {
@@ -123,47 +108,13 @@ internal.survival <- function(params, outcome) {
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       
-      DT <- rbindlist(data)[, `:=` (se_surv0 = sd(surv.0) / sqrt(params@bootstrap.nboot),
-                                      se_surv1 = sd(surv.1) / sqrt(params@bootstrap.nboot),
-                                      se_risk0 = sd(risk.0) / sqrt(params@bootstrap.nboot),
-                                      se_risk1 = sd(risk.1) / sqrt(params@bootstrap.nboot)), by = "followup"
-                              ][, `:=` (surv.0 = NULL, surv.1 = NULL, risk.0 = NULL, risk.1 = NULL)]
+      DT <- rbindlist(data)[, list(se = sd(value) / sqrt(params@bootstrap.nboot)),
+                             by = c("followup", "variable")]
+
+      surv <- full$data[DT, on = c("followup", "variable")][, `:=` (LCI = value - se, UCI = value + se)
+                                                            ][, se := NULL]
       
-      if (!is.na(params@compevent)) {
-        DT <- DT[, `:=` (se_inc0 = sd(inc.0) / sqrt(params@bootstrap.nboot),
-                         se_inc1 = sd(inc.1) / sqrt(params@bootstrap.nboot)), by = "followup"
-                 ][, `:=` (inc.0 = NULL, inc.1 = NULL)]
-      } 
-      surv <- unique(full$data[DT, on = "followup"
-                          ][, `:=` (surv0_ub = surv.0 + qnorm(0.975) * se_surv0,
-                                    surv0_lb = surv.0 - qnorm(0.975) * se_surv0,
-                                    surv1_ub = surv.1 + qnorm(0.975) * se_surv1,
-                                    surv1_lb = surv.1 - qnorm(0.975) * se_surv1,
-                                    risk0_ub = risk.0 + qnorm(0.975) * se_risk0,
-                                    risk0_lb = risk.0 - qnorm(0.975) * se_risk0,
-                                    risk1_ub = risk.1 + qnorm(0.975) * se_risk1,
-                                    risk1_lb = risk.1 - qnorm(0.975) * se_risk1)])
-      
-      if (!is.na(params@compevent)) {
-        surv <- surv[, `:=` (inc0_ub = inc.0 + qnorm(0.975) * se_inc0,
-                             inc0_lb = inc.0 - qnorm(0.975) * se_inc0,
-                             inc1_ub = inc.1 + qnorm(0.975) * se_inc1,
-                             inc1_lb = inc.1 - qnorm(0.975) * se_inc1)]
-        
-        surv <- rbind(surv[, list(followup, value = surv.0, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
-                      surv[, list(followup, value = surv.1, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
-                      surv[, list(followup, value = risk.0, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
-                      surv[, list(followup, value = risk.1, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"],
-                      surv[, list(followup, value = inc.0, lb = inc0_lb, ub = inc0_ub)][, variable := "inc0"],
-                      surv[, list(followup, value = inc.1, lb = inc1_lb, ub = inc1_ub)][, variable := "inc1"])
-      } else {
-        surv <- rbind(surv[, list(followup, value = surv.0, lb = surv0_lb, ub = surv0_ub)][, variable := "survival0"],
-                      surv[, list(followup, value = surv.1, lb = surv1_lb, ub = surv1_ub)][, variable := "survival1"],
-                      surv[, list(followup, value = risk.0, lb = risk0_lb, ub = risk0_ub)][, variable := "risk0"],
-                      surv[, list(followup, value = risk.1, lb = risk1_lb, ub = risk1_ub)][, variable := "risk1"])
-      }
-      
-    } else  surv <- melt(full$data, id.vars = "followup")
+    } else  surv <- full
     out <- list(data = surv, 
                 ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
     return(out)

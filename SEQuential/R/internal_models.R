@@ -8,7 +8,7 @@
 internal.model <- function(data, params) {
   data[!is.na(get(params@outcome)), ]
   encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline)))
-  contrasts <- setNames(lapply(encodes, function(x) contrasts(data[[x]], contrasts = FALSE)), encodes)
+  contrasts <- setNames(lapply(encodes, function(x) contrasts(data[[x]], contrasts = TRUE)), encodes)
 
   if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
   if (params@followup.spline) data <- data[, "followup" := splines::ns(get("followup"))]

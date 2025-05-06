@@ -41,9 +41,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   
   if (FALSE) {
     data <- fread("SEQdata_multitreatment2.csv")
-    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "ITT"
+    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(treat.level = c(0, 1 ,2), multinomial = TRUE, weighted = TRUE, weight.preexpansion = TRUE)
+    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = TRUE, bootstrap.nboot = 10, weighted = TRUE, weight.preexpansion = FALSE)
     model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
   }
 
