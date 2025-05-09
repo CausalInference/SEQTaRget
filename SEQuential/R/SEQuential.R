@@ -43,7 +43,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data <- fread("SEQdata_multitreatment2.csv")
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = TRUE, bootstrap.nboot = 10, weighted = TRUE, weight.preexpansion = FALSE)
+    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = TRUE, bootstrap.nboot = 10, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
     model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
   }
 
@@ -92,8 +92,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Expansion ==================================================
   cat("Expanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, c(params@indicator.baseline, ""))))
-  params@DT <- SEQexpand(params)[, (encodes) := lapply(.SD, as.factor), .SDcols = encodes]
+  params@DT <- factorize(SEQexpand(params), params)
+  params@data <- factorize(params@data, params)
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 

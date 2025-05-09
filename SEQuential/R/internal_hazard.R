@@ -1,12 +1,10 @@
 #' Generic function to format a dataset for hazard ratio calculation
-#' @param data expanded data
-#' @param params SEQuential params
 #'
 #' @keywords internal
 #' @import data.table
 #' @importFrom survival finegray coxph Surv
 
-hazard <- function(model, params) {
+internal.hazard <- function(model, params) {
   event <- firstEvent <- outcomeProb <- ce <- ceProb <- trial <- NULL
   subgroups <- if (!is.na(params@subgroup)) unique(params@data[[params@subgroup]]) else 1L
   tx_bas <- paste0(params@treatment, params@indicator.baseline)

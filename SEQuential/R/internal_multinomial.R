@@ -85,6 +85,7 @@ multinomial.summary <- function(model) {
 }
 
 model.passer <- function(X, y, params) {
+  y <- as.numeric(as.character(y))
   model <- if (!params@multinomial) {
     fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
   } else  {

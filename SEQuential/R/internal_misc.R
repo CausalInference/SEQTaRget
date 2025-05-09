@@ -26,6 +26,14 @@ create.risk <- function(data) {
   ))
 }
 
+factorize <- function(data, params) {
+  encodes <- unlist(c(params@fixed, paste0(params@treatment, c(params@indicator.baseline, ""))))
+  coercion <- encodes[encodes %in% names(data)]
+  
+  out <- data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
+  return(out)
+}
+
 #' Internal function loading ncores in global environment
 #' @param pos defaults to 1 which equals an assignment to global environment
 #' @param ncores ncores to assign to global
@@ -56,3 +64,8 @@ format.time <- function(seconds) {
            " ", round(seconds, 2), " second", ifelse(seconds > 1, "s", ""))
   }
 }
+
+allNA <- function(x) {
+  all(sapply(x, function(y) is.na(y)))
+}
+

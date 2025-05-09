@@ -37,8 +37,7 @@ parameter.setter <- function(data, DT,
     calculate.var = opts@calculate.var,
     compevent = opts@compevent,
     cense.eligible = opts@cense.eligible,
-    excused.col0 = opts@excused.col0,
-    excused.col1 = opts@excused.col1,
+    excused.cols = opts@excused.cols,
     covariates = opts@covariates,
     numerator = opts@numerator,
     denominator = opts@denominator,
@@ -82,26 +81,22 @@ parameter.simplifier <- function(params) {
   if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
   if (is.infinite(params@survival.max)) params@survival.max <- params@followup.max
 
-  if (is.na(params@excused.col0) & is.na(params@excused.col1) & params@excused & params@method == "censoring") {
+  if (allNA(params@excused.cols) & params@excused & params@method == "censoring") {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
     params@excused <- FALSE
   }
-  if ((!is.na(params@excused.col0) || !is.na(params@excused.col1)) & !params@excused) {
+  if (!allNA(params@excused.cols) & !params@excused) {
     warning("Excused variables given, but excused was set to FALSE, automatically changed to excused = TRUE")
     params@excused <- TRUE
+  }
+  
+  if (length(params@excused.cols) < length(params@treat.level)) {
+    params@excused.cols <- c(params@excused.cols, 
+                             rep(NA, length(params@treat.level) - length(params@excused.cols)))
   }
 
   if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
-
-  if (is.na(params@excused.col0) & params@excused & params@method == "censoring") {
-    params@excused.col0 <- "tmp0"
-    params@data <- params@data[, "tmp0" := 0]
-  }
-  if (is.na(params@excused.col1) & params@excused & params@method == "censoring") {
-    params@excused.col1 <- "tmp1"
-    params@data <- params@data[, "tmp1" := 0]
-  }
 
   if (!is.na(params@cense)) {
     params@LTFU <- TRUE

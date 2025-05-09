@@ -31,11 +31,10 @@
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
 #' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
 #' @param cense.eligible String: column name for indicator column defining which rows to use for censoring model
-#' @param multinomial NOT CURRENTLY IMPLEMENTED - WIP
-#' @param treat.level NOT CURRENTLY IMPLEMENTED - WIP
+#' @param multinomial Logical:
+#' @param treat.level List: treatment levels to compare
 #' @param compevent String: column name for competing event indicator
-#' @param excused.col1 String: in the case of \code{excused = TRUE} the column name for Excused1
-#' @param excused.col0 String: in the case of \code{excused = TRUE} the column name for Excused0
+#' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
@@ -61,7 +60,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
-                    excused = FALSE, excused.col1 = NA, excused.col0 = NA, km.curves = FALSE,
+                    excused = FALSE, excused.cols = c(NA, NA), km.curves = FALSE,
                     indicator.baseline = "_bas", indicator.squared = "_sq",
                     fastglm.method = 2L,
                     plot.title = NA, plot.subtitle = NA, plot.labels = NA, plot.colors = c("#F8766D", "#00BFC4"), plot.type = "survival") {
@@ -101,8 +100,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   weight.preexpansion <- as.logical(weight.preexpansion)
 
   excused <- as.logical(excused)
-  excused.col1 <- as.character(excused.col1)
-  excused.col0 <- as.character(excused.col0)
+  excused.cols <- as.list(excused.cols)
 
   cense <- as.character(cense)
   cense.eligible <- as.character(cense.eligible)
@@ -143,8 +141,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     cense = cense,
     compevent = compevent,
     cense.eligible = cense.eligible,
-    excused.col1 = excused.col1,
-    excused.col0 = excused.col0,
+    excused.cols = excused.cols,
     km.curves = km.curves,
     covariates = covariates,
     numerator = numerator,

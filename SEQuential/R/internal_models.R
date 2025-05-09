@@ -7,14 +7,14 @@
 #' @keywords internal
 internal.model <- function(data, params) {
   data[!is.na(get(params@outcome)), ]
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline)))
   contrasts <- setNames(lapply(encodes, function(x) contrasts(data[[x]], contrasts = TRUE)), encodes)
 
   if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
   if (params@followup.spline) data <- data[, "followup" := splines::ns(get("followup"))]
 
   handler <- function(data, params) {
-    X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data, contrasts.arg = contrasts)
+    X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data, 
+                      contrasts.arg = contrasts)
     y <- data[[params@outcome]]
     
     if(!params@weighted) {

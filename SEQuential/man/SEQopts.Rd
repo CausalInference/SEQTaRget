@@ -42,8 +42,7 @@ SEQopts(
   multinomial = FALSE,
   treat.level = c(0, 1),
   excused = FALSE,
-  excused.col1 = NA,
-  excused.col0 = NA,
+  excused.cols = c(NA, NA),
   km.curves = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -124,15 +123,13 @@ SEQopts(
 
 \item{compevent}{String: column name for competing event indicator}
 
-\item{multinomial}{NOT CURRENTLY IMPLEMENTED - WIP}
+\item{multinomial}{Logical:}
 
-\item{treat.level}{NOT CURRENTLY IMPLEMENTED - WIP}
+\item{treat.level}{List: treatment levels to compare}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 
-\item{excused.col1}{String: in the case of \code{excused = TRUE} the column name for Excused1}
-
-\item{excused.col0}{String: in the case of \code{excused = TRUE} the column name for Excused0}
+\item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
 
 \item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
 
