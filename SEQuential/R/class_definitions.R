@@ -161,18 +161,14 @@ setClass("SEQparams",
 setClass("SEQweights",
   slots = c(
     weights = "data.table",
-    coef.n0 = "ANY",
-    coef.n1 = "ANY",
-    coef.d0 = "ANY",
-    coef.d1 = "ANY",
+    coef.numerator = "ANY",
+    coef.denominator = "ANY",
     coef.ncense = "ANY",
     coef.dcense = "ANY"
   ), prototype = c(
     weights = NA,
-    coef.n0 = NA,
-    coef.n1 = NA,
-    coef.d0 = NA,
-    coef.d1 = NA,
+    coef.numerator = NA,
+    coef.denominator = NA,
     coef.ncense = NA,
     coef.dcense = NA
   )

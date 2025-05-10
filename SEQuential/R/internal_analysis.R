@@ -71,10 +71,8 @@ internal.analysis <- function(params) {
 
         percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
         stats <- list(
-          n0.coef = WT@coef.n0,
-          n1.coef = WT@coef.n1,
-          d0.coef = WT@coef.d0,
-          d1.coef = WT@coef.d1,
+          coef.numerator = WT@coef.numerator,
+          coef.denominator = WT@coef.denominator,
           ncense.coef = WT@coef.ncense,
           dcense.coef = WT@coef.dcense,
           min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),

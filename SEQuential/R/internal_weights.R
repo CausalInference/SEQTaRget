@@ -30,7 +30,7 @@ internal.weights <- function(DT, data, params) {
 
       baseline.lag <- data[, subtable.kept, with = FALSE
                            ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                             ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := 0
+                             ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := '1'
                                ][, eval(params@treatment) := NULL]
 
       setnames(baseline.lag, 2, params@time)
@@ -45,86 +45,119 @@ internal.weights <- function(DT, data, params) {
 
     } else {
       weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                     ][get(params@time) == 0, tx_lag := 0
+                     ][get(params@time) == 0, tx_lag := '1'
                        ][, paste0(params@time, "_sq") := get(params@time)^2]
     }
 
     # Modeling ======================================================
-      if (params@method == "ITT" | params@LTFU) {
-        model.data <- copy(weight)
-        if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
-  
-        cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
-        cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
-  
-        cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
-        cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
-  
-        rm(cense.numerator.data, cense.denominator.data)
-      }
-  
-      if (params@method != "ITT") {
-        model.data <- copy(weight)
-        if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
-        if (!is.na(params@weight.eligible0)) model.data <- model.data[get(params@weight.eligible0) == 1 & get(params@treatment) == params@treat.level[[1]], ]
-        if (!is.na(params@weight.eligible1)) model.data <- model.data[get(params@weight.eligible1) == 1 & get(params@treatment) == params@treat.level[[2]], ]
+    if (params@method == "ITT" | params@LTFU) {
+      model.data <- copy(weight)
+      if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
 
-        if (!(params@excused & params@weight.preexpansion)) {
-          n0.data <- prepare.data(model.data, params, type = "numerator", model = params@treat.level[[1]], case = "default")
-          n1.data <- prepare.data(model.data, params, type = "numerator", model = params@treat.level[[2]], case = "default")
+      cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
+      cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
 
-          numerator0 <- model.passer(n0.data$X, n0.data$y, params)
-          numerator1 <- model.passer(n1.data$X, n1.data$y, params)
+      cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+      cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
 
-          rm(n0.data, n1.data)
+      rm(cense.numerator.data, cense.denominator.data)
+    }
+
+    # Initialize storage for all models
+    numerator_models <- list()
+    denominator_models <- list()
+    
+    if (params@method != "ITT") {
+      model.data <- copy(weight)
+      if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
+      
+      # Handle weight eligibility criteria for each treatment level if specified TODO
+      #for (i in seq_along(params@treat.level)) {
+
+      #}
+
+      # Fit models for each treatment level
+      if (!(params@excused & params@weight.preexpansion)) {
+        for (i in seq_along(params@treat.level)) {
+          level <- params@treat.level[[i]]
+          n.data <- prepare.data(model.data, params, type = "numerator", model = level, case = "default")
+          numerator_models[[i]] <- model.passer(n.data$X, n.data$y, params)
+          rm(n.data)
         }
-
-        d0.data <- prepare.data(model.data, params, type = "denominator", params@treat.level[[1]], case = "default")
-        d1.data <- prepare.data(model.data, params, type = "denominator", params@treat.level[[2]], case = "default")
-
-        denominator0 <- model.passer(d0.data$X, d0.data$y, params)
-        denominator1 <- model.passer(d1.data$X, d1.data$y, params)
-
-        rm(model.data, d0.data, d1.data)
       }
+
+      for (i in seq_along(params@treat.level)) {
+        level <- params@treat.level[[i]]
+        d.data <- prepare.data(model.data, params, type = "denominator", level, case = "default")
+        denominator_models[[i]] <- model.passer(d.data$X, d.data$y, params)
+        rm(d.data)
+      }
+
+      rm(model.data)
       gc()
+    }
 
-      # Estimating ====================================================
-      if (params@method != "ITT") {
-        if (!params@excused) {
-          out <- weight[tx_lag == params@treat.level[[1]], `:=`(numerator = inline.pred(numerator0, .SD, params, "numerator", multi = params@multinomial, target = params@treat.level[[1]]),
-                                          denominator = inline.pred(denominator0, .SD, params, "denominator", multi = params@multinomial, target = params@treat.level[[1]]))
-                        ][tx_lag == params@treat.level[[1]] & 
-                            get(params@treatment) == params@treat.level[[1]], `:=`(numerator = 1 - numerator,
-                                                                                   denominator = 1 - denominator)
-                          ][tx_lag == params@treat.level[[2]], `:=`(numerator = inline.pred(numerator1, .SD, params, "numerator", multi = params@multinomial, target = params@treat.level[[2]]),
-                                              denominator = inline.pred(denominator1, .SD, params, "denominator", multi = params@multinomial, target = params@treat.level[[2]]))
-                            ][tx_lag == params@treat.level[[2]] 
-                              & get(params@treatment) == params@treat.level[[1]], `:=`(numerator = 1 - numerator,
-                                                                                       denominator = 1 - denominator)]
-        } else {
-          out <- weight[tx_lag == params@treat.level[[1]] & 
-                          get(params@excused.col0) != 1, denominator := inline.pred(denominator0, .SD, params, "denominator")
-                        ][tx_lag == params@treat.level[[1]] & 
-                            get(params@treatment) == params@treat.level[[1]] & 
-                            get(params@excused.col0) != 1, denominator := 1 - denominator
-                          ][tx_lag == params@treat.level[[2]] & 
-                              get(params@excused.col1) != 1, denominator := inline.pred(denominator1, .SD, params, "denominator")
-                            ][tx_lag == params@treat.level[[2]] & 
-                                get(params@treatment) == params@treat.level[[1]] & 
-                                get(params@excused.col1) != 1, denominator := 1 - denominator]
-
-          if (params@weight.preexpansion) {
-            out <- out[, numerator := 1]
-          } else {
-            out <- out[get(params@treatment) == params@treat.level[[1]] 
-                       & get(params@excused.col0) == 0, numerator := inline.pred(numerator0, .SD, params, "numerator", multi = params@multinomial, target = params@treat.level[[1]])
-                       ][get(params@treatment) == params@treat.level[[2]] 
-                         & get(params@excused.col1) == 0, numerator := inline.pred(numerator1, .SD, params, "numerator", multi = params@multinomial, target = params@treat.level[[2]])
-                         ][get(params@treatment) == params@treat.level[[1]], numerator := 1 - numerator]
+    # Estimating ====================================================
+    if (params@method != "ITT") {
+      out <- copy(weight)
+      
+      if (!params@excused) {
+        out[, `:=`(numerator = NA_real_, denominator = NA_real_)]
+        
+        for (i in seq_along(params@treat.level)) {
+          level <- params@treat.level[[i]]
+          out[tx_lag == level, `:=`(
+            numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level),
+            denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level))]
+          
+          for (j in seq_along(params@treat.level)) {
+            if (j != i) {
+              curr <- params@treat.level[[j]]
+              out[tx_lag == level & get(params@treatment) == curr, `:=`(
+                numerator = 1 - numerator,
+                denominator = 1 - denominator
+              )]
+            }
           }
         }
-      } else out <- weight
+      } else {
+        out[, `:=`(numerator = NA_real_, denominator = NA_real_)]
+        
+        for (i in seq_along(params@treat.level)) {
+          level <- params@treat.level[[i]]
+          
+          if (!is.na(params@excused.cols[[i]])) {
+            out[tx_lag == level & get(params@excused.cols[[i]]) != 1, 
+                denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level)]
+            
+            for (j in seq_along(params@treat.level)) {
+              if (j != i) {
+                curr <- params@treat.level[[j]]
+                out[tx_lag == level & get(params@treatment) == curr & get(params@excused.cols[[i]]) != 1, denominator := 1 - denominator]
+              }
+            }
+          }
+        }
+
+        if (params@weight.preexpansion) {
+          out[, numerator := 1]
+        } else {
+          for (i in seq_along(params@treat.level)) {
+            level <- params@treat.level[[i]]
+            if (!is.na(params@excused.cols[[i]])) {
+              out[get(params@treatment) == level & get(params@excused.cols[[i]]) == 0, 
+                  numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)]
+            }
+          }
+          
+          if (!params@multinomial) {}
+          ref_level <- params@treat.level[[1]]
+          out[get(params@treatment) == ref_level, numerator := 1 - numerator]
+        }
+      }
+    } else {
+      out <- weight
+    }
 
     if (params@LTFU) {
       if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
@@ -138,19 +171,30 @@ internal.weights <- function(DT, data, params) {
     kept <- kept[kept %in% names(out)]
     out <- out[, kept, with = FALSE]
 
-    weight.info <- new("SEQweights",
-      weights = out,
-      coef.n0 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") fastglm.clean(numerator0) else NA_real_,
-      coef.n1 = if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") fastglm.clean(numerator1) else NA_real_,
-      coef.d0 = if (params@method != "ITT") fastglm.clean(denominator0) else NA_real_,
-      coef.d1 = if (params@method != "ITT") fastglm.clean(denominator1) else NA_real_,
-      coef.ncense = if (params@LTFU) fastglm.clean(cense.numerator) else NA_real_,
-      coef.dcense = if (params@LTFU) fastglm.clean(cense.denominator) else NA_real_
-    )
-
+    weight.info <- new("SEQweights", weights = out)
+    
+    if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") {
+      coef.numerator <- c()
+      for (i in seq_along(params@treat.level)) {
+        coef.numerator[[i]] <- fastglm.clean(coef.numerator[[i]])
+      }
+      weight.info@coef.numerator <- coef.numerator
+    }
+    
+    if (params@method != "ITT") {
+      coef.denominator <- c()
+      for (i in seq_along(params@treat.level)) {
+        coef.denominator[[i]] <- fastglm.clean(denominator_models[[i]])
+      }
+      weight.info@coef.denominator <- coef.denominator
+    }
+    
+    if (params@LTFU) {
+      slot(weight.info, "coef.ncense") <- fastglm.clean(cense.numerator)
+      slot(weight.info, "coef.dcense") <- fastglm.clean(cense.denominator)
+    }
     return(weight.info)
   })
-
   return(result)
 }
 

@@ -22,12 +22,8 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
     "surv" = params@covariates
   )
   cols <- unique(unlist(strsplit(covs, "\\*|\\+")))
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline)))
-  contrasts <- setNames(lapply(encodes, function(x) contrasts(newdata[[x]], contrasts = TRUE)), encodes)
-  
   X <- model.matrix(as.formula(paste0("~", covs)),
-                    data = newdata[, cols, with = FALSE],
-                    contrasts.arg = contrasts)
+                    data = newdata[, cols, with = FALSE])
   
   pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)

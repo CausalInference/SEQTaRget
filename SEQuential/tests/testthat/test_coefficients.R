@@ -99,8 +99,7 @@ test_that("Pre-Expansion Excused Censoring", {
     method = "censoring",
     options = SEQopts(
       weighted = TRUE, excused = TRUE,
-      excused.col1 = "excusedOne",
-      excused.col0 = "excusedZero")
+      excused.cols = c("excusedZero", "excusedOne"))
   ))
   expect_s4_class(model, "SEQoutput")
 
@@ -120,8 +119,7 @@ test_that("Post-Expansion Excused Censoring", {
     method = "censoring",
     options = SEQopts(
       weighted = TRUE, excused = TRUE,
-      excused.col1 = "excusedOne",
-      excused.col0 = "excusedZero",
+      excused.cols = c("excusedZero", "excusedOne"),
       weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
