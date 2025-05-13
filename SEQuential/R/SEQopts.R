@@ -63,7 +63,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     excused = FALSE, excused.cols = c(NA, NA), km.curves = FALSE,
                     indicator.baseline = "_bas", indicator.squared = "_sq",
                     fastglm.method = 2L,
-                    plot.title = NA, plot.subtitle = NA, plot.labels = NA, plot.colors = c("#F8766D", "#00BFC4"), plot.type = "survival") {
+                    plot.title = NA, plot.subtitle = NA, plot.labels = NA, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.type = "survival") {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)

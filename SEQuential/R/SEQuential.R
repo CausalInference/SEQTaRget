@@ -43,7 +43,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data <- fread("SEQdata_multitreatment2.csv")
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = TRUE, bootstrap.nboot = 10, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
+    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = FALSE, bootstrap.nboot = 2, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
     model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
   }
 
@@ -134,7 +134,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else {
     for (i in seq_along(subgroups)) {
       label <- paste0(params@subgroup, "_", subgroups[[i]])
-      hazard[[label]] <- hazard(analytic, params)
+      hazard[[label]] <- internal.hazard(analytic, params)
     }
   }
   

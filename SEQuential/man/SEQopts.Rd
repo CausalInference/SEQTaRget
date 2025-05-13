@@ -50,7 +50,7 @@ SEQopts(
   plot.title = NA,
   plot.subtitle = NA,
   plot.labels = NA,
-  plot.colors = c("#F8766D", "#00BFC4"),
+  plot.colors = c("#F8766D", "#00BFC4", "#555555"),
   plot.type = "survival"
 )
 }

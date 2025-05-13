@@ -47,15 +47,15 @@ prepare.data <- function(weight, params, type, model, case) {
       if (!params@excused) {
         weight <- weight[tx_lag == model, ]
       } else {
-        base_filter <- weight[tx_lag == model &
-                                get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0 &
-                                isExcused < 1 &
-                                followup != 0, ]
-        
+        target <- match(model, unlist(params@treat.level))
         if (type == "denominator" && params@weight.preexpansion) {
-          weight <- weight[tx_lag == model & get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0, ]
+          weight <- weight[tx_lag == model, ]
+          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         } else {
-          weight <- base_filter
+          weight <- weight[tx_lag == model &
+                                  isExcused < 1 &
+                                  followup != 0, ]
+          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         }
       }
       

@@ -111,10 +111,11 @@ internal.survival <- function(params, outcome) {
       DT <- rbindlist(data)[, list(se = sd(value) / sqrt(params@bootstrap.nboot)),
                              by = c("followup", "variable")]
 
-      surv <- full$data[DT, on = c("followup", "variable")][, `:=` (LCI = value - se, UCI = value + se)
-                                                            ][, se := NULL]
+      surv <- full$data[DT, on = c("followup", "variable")
+                        ][, `:=` (LCI = value - se, UCI = value + se)
+                          ][, se := NULL]
       
-    } else  surv <- full
+    } else  surv <- full$data
     out <- list(data = surv, 
                 ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
     return(out)
