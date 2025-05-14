@@ -2,28 +2,40 @@
 #'
 #' @keywords internal
 create.risk <- function(data) {
-  variable <- NULL
+  variable <- followup <- V1 <- V2 <- NULL
+  i.value <- i.LCI <- i.UCI <- NULL
+  UCI <- LCI <- NULL
+  rd_lb <- rd_ub <- rr_lb <- rr_ub <- NULL
   var <- if ("inc0" %in% data[["variable"]]) "inc" else "risk"
   table <- data[, .SD[.N], by = "variable"
-                ][variable %like% var, ]
-  rd <- round(as.numeric(table[2, 3] - table[1, 3]), 4)
-  rr <- round(as.numeric(table[2, 3] / table[1, 3]), 4)
+                ][variable %like% var, 
+                  ][, followup := NULL]
   
-  if ("lb" %in% names(table) & "ub" %in% names(table)) {
-    rd.b1 <- round(as.numeric(table[2, 4] - table[1, 4]), 4)
-    rd.b2 <- round(as.numeric(table[2, 5] - table[1, 5]), 4)
+  out <- CJ(table$variable, table$variable)[table, on = c("V2" = "variable")
+                                            ][table, on = c("V1" = "variable")][V1 != V2, ]
+  
+  out[, `:=` (rr = value / i.value, rd = value - i.value)
+      ][, `:=` (value = NULL, i.value = NULL)]
+  
+  if (all(c("LCI", "UCI") %in% names(out))) {
+    out[, `:=` (
+      rd_lb = LCI - i.LCI,
+      rd_ub = UCI - i.UCI,
+      rr_lb = LCI / i.LCI,
+      rr_ub = UCI / i.UCI
+      )][, `:=` (
+      rd_lci = pmin(rd_lb, rd_ub),
+      rd_uci = pmax(rd_lb, rd_ub),
+      rr_lci = pmin(rr_lb, rr_ub),
+      rr_uci = pmax(rr_lb, rr_ub))
+      ][, `:=` (LCI = NULL, UCI = NULL, i.LCI = NULL, i.UCI = NULL,
+                rd_lb = NULL, rd_ub = NULL, rr_lb = NULL, rr_ub = NULL)]
     
-    rr.b1 <- round(as.numeric(table[2, 4] / table[1, 4]), 4)
-    rr.b2 <- round(as.numeric(table[2, 5] / table[1, 5]), 4)
-  } else rd.b1 <- rd.b2 <- rr.b1 <- rr.b2 <- NA_real_
-    
-  rr.bounds <- sort(c(rr.b1, rr.b2))
-  rd.bounds <- sort(c(rd.b1, rd.b2))
-    
-  return(list(
-    difference = c(difference = rd, LCI = rd.bounds[1], UCI = rd.bounds[2]),
-    ratio = c(ratio = rr, LCI = rr.bounds[1], UCI = rr.bounds[2])
-  ))
+    setnames(out, names(out), c("Treatment", "Comparison", 
+                                "Risk Ratio", "Risk Differerence",
+                                "RD LCI", "RD UCI", "RR LCI", "RR UCI"))
+  } else setnames(out, names(out), c("Treatment", "Comparison", "Risk Ratio", "Risk Difference"))
+  return(out)
 }
 
 factorize <- function(data, params) {

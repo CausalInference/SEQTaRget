@@ -12,7 +12,7 @@ internal.model <- function(data, params) {
   if (params@followup.spline) data <- data[, "followup" := splines::ns(get("followup"))]
 
   handler <- function(data, params) {
-    X <- model.matrix(as.formula(paste0(params@outcome, "~", params@covariates)), data)
+    X <- model.matrix(as.formula(paste0("~", params@covariates)), data)
     y <- data[[params@outcome]]
     
     if(!params@weighted) {

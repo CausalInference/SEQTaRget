@@ -14,7 +14,7 @@ internal.hazard <- function(model, params) {
                                                       "period", params@outcome)]
     
     if (!is.na(params@compevent)) {
-      ce.data <- prepare.data(params@DT, params, case = "surv", type = "compevent")
+      ce.data <- prepare.data(params@DT, params, case = "surv")
       ce.model <- fastglm.clean(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
       rm(ce.data)
     }
@@ -32,7 +32,7 @@ internal.hazard <- function(model, params) {
                       out <- x[, "outcomeProb" := inline.pred(model[[i]]$model[[1]]$model, newdata = .SD, params, type = "outcome")
                                ][, "outcome" := rbinom(.N, 1, outcomeProb)]
                       if (!is.na(params@compevent)) {
-                        out <- out[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv", type = "compevent")
+                        out <- out[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv")
                                    ][, "ce" := rbinom(.N, 1, ceProb)
                                      ][, "firstEvent" := if (any(outcome == 1 | ce == 1)) which(outcome == 1 | ce == 1)[1] else .N, by = c(params@id, "trial")]
                       } else out <- out[, "firstEvent" := if (any(outcome == 1)) which(outcome == 1)[1] else .N, by = c(params@id, "trial")]

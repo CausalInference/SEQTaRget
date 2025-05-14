@@ -118,8 +118,6 @@ parameter.simplifier <- function(params) {
 #' @importFrom methods new
 #' @keywords internal
 prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info) {
-  risk.difference <- lapply(risk, function(x) x$difference)
-  risk.ratio <- lapply(risk, function(x) x$ratio)
   new("SEQoutput",
       params = params,
       outcome = paste0(params@outcome, "~", params@covariates),
@@ -131,8 +129,7 @@ prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot
       weight.statistics = weights,
       survival.curve = if (!params@km.curves) list() else survival.plot,
       survival.data = if (!params@km.curves) list() else survival.data,
-      risk.difference = if (!params@km.curves) list() else risk.difference,
-      risk.ratio = if (!params@km.curves) list() else risk.ratio,
+      risk = if (!params@km.curves) list() else risk,
       time = runtime,
       info = info,
       ce.model = survival.ce

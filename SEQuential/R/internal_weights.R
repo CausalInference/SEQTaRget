@@ -30,7 +30,7 @@ internal.weights <- function(DT, data, params) {
 
       baseline.lag <- data[, subtable.kept, with = FALSE
                            ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                             ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := '1'
+                             ][data[, .I[1L], by = eval(params@id)]$V1, tx_lag := as.character(params@treat.level[[1]])
                                ][, eval(params@treatment) := NULL]
 
       setnames(baseline.lag, 2, params@time)

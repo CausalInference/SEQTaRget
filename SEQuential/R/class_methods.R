@@ -1,3 +1,8 @@
+#' TODO
+#' @param object A SEQoutput object - usually generated from \code{SEQuential}
+#' @importFrom knitr kable
+#' @importMethodsFrom methods show
+#' @exportMethod show
 setMethod("show", "SEQoutput", function(object) {
   elapsed_time <- slot(object, "time")
   params <- slot(object, "params")
@@ -6,9 +11,8 @@ setMethod("show", "SEQoutput", function(object) {
   outcome <- slot(object, "outcome")
   numerator <- slot(object, "numerator")
   denominator <- slot(object, "denominator")
-  risk_ratio <- slot(object, "risk.ratio")
-  risk_difference <- slot(object, "risk.difference")
   hazard <- slot(object, "hazard")
+  risk <- slot(object, "risk")
   if (!params@hazard) {
     outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
     weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
@@ -103,10 +107,9 @@ setMethod("show", "SEQoutput", function(object) {
     
     if (params@km.curves) {
       cat("Risk ==============================================================\n")
-      for(i in seq_along(risk_difference)) {
-        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk_difference)[[i]], "\n")
-        cat("Followup time", params@survival.max, "Risk Ratio:\n", risk_ratio[[i]][1], "(", risk_ratio[[i]][2], ",", risk_ratio[[i]][3], ")", "\n\n")
-        cat("Followup time", params@survival.max, "Risk Difference:\n", risk_difference[[i]][1], "(", risk_difference[[i]][2], ",", risk_difference[[i]][3], ")", "\n\n")
+      for(i in seq_along(risk)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk)[[i]], "\n")
+        kable(risk[[i]])
       }
     }
   
@@ -258,28 +261,16 @@ compevent <- function(object) {
   return(slot(object, "ce.model"))
 }
 
-#' Function to return risk ratios from a SEQuential object
+#' Function to return risk information from a SEQuential object
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns list of risk ratios
+#' @returns a dataframe of Risk information (risk ratios, risk differences and confidence intervals, if bootstrapped)
 #' @export
-risk.ratio <- function(object) {
+risk <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
-  return(slot(object, "risk.ratio"))
-}
-
-#' Function to return risk differences from a SEQuential object
-#' 
-#' @param object SEQoutput object
-#' @importFrom methods is slot
-#' @returns list of risk differences
-#' @export
-risk.ratio <- function(object) {
-  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
-  if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
-  return(slot(object, "risk.difference"))
+  return(slot(object, "risk"))
 }
 
 #' Function to return hazard ratios from a SEQuential object

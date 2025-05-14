@@ -12,7 +12,8 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
     "default" = switch(
       type,
       "numerator" = params@numerator,
-      "denominator" = params@denominator
+      "denominator" = params@denominator,
+      "outcome" = params@covariates
     ),
     "LTFU" = switch(
       type,
