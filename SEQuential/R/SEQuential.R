@@ -1,4 +1,11 @@
-#' SEQuential processing per (paper here?)
+#' @title SEQuential trial emulation
+#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on the wiki at https://github.com/CausalInference/SEQuential/wiki
+#' 
+#' @details Implemention of sequential trial emulation for the analysis of observational databases. 
+#' The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
+#' and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
+#' can be used to estimate observational analogs of intention-to-treat 
+#' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
 #' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
@@ -16,6 +23,21 @@
 #' @importFrom future plan multisession sequential
 #' @importFrom doFuture registerDoFuture
 #' @importFrom stats complete.cases
+#' 
+#' @returns An S4 object of class SEQoutput
+#' @examples
+#' \dontrun{
+#' data <- SEQdata
+#' model <- SEQuential(data, id.col = "ID", 
+#'                           time.col = "time", 
+#'                           eligible.col = "eligible",
+#'                           treatment.col = "tx_init",
+#'                           outcome.col = "outcome",
+#'                           time_varying.cols = c("N", "L", "P")
+#'                           fixed.cols = "sex",
+#'                           method = "ITT", 
+#'                           options = SEQopts())
+#' }
 #'
 #' @export
 SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
@@ -43,7 +65,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data <- fread("SEQdata_multitreatment2.csv")
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(treat.level = c(0, 1 ,2), bootstrap = TRUE, km.curves = TRUE, bootstrap.nboot = 2, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
+    options = SEQopts(treat.level = c(0, 1), bootstrap = TRUE, km.curves = TRUE, bootstrap.nboot = 2, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
     model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
   }
 

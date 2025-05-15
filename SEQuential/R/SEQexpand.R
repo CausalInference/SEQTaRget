@@ -21,6 +21,7 @@ SEQexpand <- function(params) {
     excused_tmp <- NULL
     firstSwitch <- NULL
     trialID <- NULL
+    lag <- NULL
     DT <- copy(params@data)
 
     # Expansion =======================================================
@@ -75,8 +76,8 @@ SEQexpand <- function(params) {
       out <- data_list[[1]]
     }
 
-    out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
-        ][, paste0(params@eligible, params@indicator.baseline) := NULL]
+    out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
+               ][, paste0(params@eligible, params@indicator.baseline) := NULL]
 
     if (params@method == "dose-response") {
       out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
@@ -87,13 +88,13 @@ SEQexpand <- function(params) {
     }
 
     if (params@method == "censoring") {
+      out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
       if (params@excused) {
-        out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
-            ][, isExcused := 0]
+        out <- out[, switch := (get(params@treatment) != lag)]
         
         for (i in seq_along(params@treat.level)) {
           if (!is.na(params@excused.cols[[i]])) {
-            out[(switch) & get(params@treatment) == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
+            out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 0, 1)]
           }
         }
         out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")

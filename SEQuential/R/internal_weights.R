@@ -102,42 +102,40 @@ internal.weights <- function(DT, data, params) {
 
     # Estimating ====================================================
     if (params@method != "ITT") {
-      out <- copy(weight)
+      out <- copy(weight)[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
       if (!params@excused) {
-        out[, `:=`(numerator = NA_real_, denominator = NA_real_)]
-        
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           out[tx_lag == level, `:=`(
             numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level),
             denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level))]
           
-          for (j in seq_along(params@treat.level)) {
-            if (j != i) {
-              curr <- params@treat.level[[j]]
-              out[tx_lag == level & get(params@treatment) == curr, `:=`(
-                numerator = 1 - numerator,
-                denominator = 1 - denominator
-              )]
-            }
+          if (i == 1) {
+            out[tx_lag == level & get(params@treatment) == params@treat.level[[i]], 
+                `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+          } else {
+            out[tx_lag == level & get(params@treatment) != params@treat.level[[i]], 
+                `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
           }
         }
       } else {
-        out[, `:=`(numerator = NA_real_, denominator = NA_real_)]
-        
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           
           if (!is.na(params@excused.cols[[i]])) {
             out[tx_lag == level & get(params@excused.cols[[i]]) != 1, 
                 denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level)]
-            
-            for (j in seq_along(params@treat.level)) {
-              if (j != i) {
-                curr <- params@treat.level[[j]]
-                out[tx_lag == level & get(params@treatment) == curr & get(params@excused.cols[[i]]) != 1, denominator := 1 - denominator]
-              }
+            if (i == 1) {
+              out[tx_lag == level & 
+                    get(params@treatment) == params@treat.level[[i]] & 
+                    get(params@excused.cols[[i]]) == 0, 
+                  denominator := 1 - denominator]
+            } else {
+              out[tx_lag == level & 
+                    get(params@treatment) != params@treat.level[[i]] & 
+                    get(params@excused.cols[[i]]) == 0, 
+                  denominator := 1 - denominator]
             }
           }
         }
@@ -149,18 +147,14 @@ internal.weights <- function(DT, data, params) {
             level <- params@treat.level[[i]]
             if (!is.na(params@excused.cols[[i]])) {
               out[get(params@treatment) == level & get(params@excused.cols[[i]]) == 0, 
-                  numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)]
+                  numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)
+                  ]
             }
+            out[get(params@treatment) == params@treat.level[[1]], numerator := 1 - numerator]
           }
-          
-          if (!params@multinomial) {}
-          ref_level <- params@treat.level[[1]]
-          out[get(params@treatment) == ref_level, numerator := 1 - numerator]
         }
       }
-    } else {
-      out <- weight
-    }
+    } else out <- weight
 
     if (params@LTFU) {
       if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
