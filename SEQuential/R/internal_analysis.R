@@ -31,16 +31,18 @@ internal.analysis <- function(params) {
                         ][denominator < 1e-15, denominator := 1
                           ][is.na(get(params@outcome)), denominator := 1
                             ][, wt := numerator / denominator
-                              ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
-                                ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
-                                  ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                    ][, weight := weight[1], list(cumsum(!is.na(weight)))]
+                              ][followup == 0, wt := 1
+                                ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
+                                 ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
+                                   ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
+                                     ][, weight := weight[1], list(cumsum(!is.na(weight)))]
           } else {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1, denominator = 1)
                         ][, wt := numerator / denominator
-                          ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
+                          ][followup == 0, wt := 1
+                            ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
         } else {
           if (params@excused) {
@@ -51,26 +53,26 @@ internal.analysis <- function(params) {
                           ][numerator < 1e-15, numerator := 1
                             ][is.na(get(params@outcome)), denominator := 1
                               ][, wt := numerator / denominator
-                                ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
-                                  ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
-                                    ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                      ][, weight := weight[1], list(cumsum(!is.na(weight)))]
+                                ][followup == 0, wt := 1
+                                  ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
+                                    ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
+                                      ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
+                                        ][, weight := weight[1], list(cumsum(!is.na(weight)))]
           } else {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)
                         ][, wt := numerator / denominator
-                          ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
+                          ][followup == 0, wt := 1
+                            ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
         }
         if (params@LTFU) WDT <- WDT[, weight := weight * cense1]
 
         percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
         stats <- list(
-          n0.coef = WT@coef.n0,
-          n1.coef = WT@coef.n1,
-          d0.coef = WT@coef.d0,
-          d1.coef = WT@coef.d1,
+          coef.numerator = WT@coef.numerator,
+          coef.denominator = WT@coef.denominator,
           ncense.coef = WT@coef.ncense,
           dcense.coef = WT@coef.dcense,
           min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),

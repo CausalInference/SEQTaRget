@@ -4,7 +4,15 @@
 \alias{inline.pred}
 \title{Helper Function to inline predict a fastglm object}
 \usage{
-inline.pred(model, newdata, params, type, case = "default")
+inline.pred(
+  model,
+  newdata,
+  params,
+  type,
+  case = "default",
+  multi = FALSE,
+  target = NULL
+)
 }
 \arguments{
 \item{model}{a fastglm object}

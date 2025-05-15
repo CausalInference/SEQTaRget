@@ -21,6 +21,7 @@ SEQexpand <- function(params) {
     excused_tmp <- NULL
     firstSwitch <- NULL
     trialID <- NULL
+    lag <- NULL
     DT <- copy(params@data)
 
     # Expansion =======================================================
@@ -39,7 +40,7 @@ SEQexpand <- function(params) {
     vars <- vars[!vars %in% vars.nin]
     vars.base <- vars[grep(params@indicator.baseline, vars)]
     vars.sq <- vars[grep(params@indicator.squared, vars)]
-    vars.time <- c(vars[!vars %in% vars.base], params@excused.col0, params@excused.col1)
+    vars.time <- c(vars[!vars %in% vars.base], unlist(params@excused.cols))
     vars.time <- vars.time[!is.na(vars.time)]
     vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
@@ -87,16 +88,21 @@ SEQexpand <- function(params) {
     }
 
     if (params@method == "censoring") {
+      out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
       if (params@excused) {
-        out <- out[, switch := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
-                   ][(switch) & get(params@treatment) == 0, isExcused := ifelse(get(params@excused.col1) == 1, 1, 0)
-                     ][(switch) & get(params@treatment) == 1, isExcused := ifelse(get(params@excused.col0) == 1, 1, 0)
-                       ][!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
-                         ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")
-                           ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")
-                             ][, excused_tmp := NULL]
+        out <- out[, switch := (get(params@treatment) != lag)]
+        
+        for (i in seq_along(params@treat.level)) {
+          if (!is.na(params@excused.cols[[i]])) {
+            out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 0, 1)]
+          }
+        }
+        out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
+            ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")
+              ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")
+                ][, excused_tmp := NULL]
       } else {
-        out <- out[, `:=`(
+        out[, `:=`(
           trial_sq = trial^2,
           switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
           ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
@@ -107,7 +113,7 @@ SEQexpand <- function(params) {
     }
     if (params@selection.random) {
       set.seed(params@seed)
-      out <- out[, "trialID" := paste0(params@id, "-", trial)]
+      out[, "trialID" := paste0(params@id, "-", trial)]
       IDs <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) != 0, ][["trialID"]])
       set <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) == 0, ][["trialID"]])
       subset <- sample(set, round(length(set) * params@selection.prob))

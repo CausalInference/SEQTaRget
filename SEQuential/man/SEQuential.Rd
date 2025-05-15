@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEQuential.R
 \name{SEQuential}
 \alias{SEQuential}
-\title{SEQuential processing per (paper here?)}
+\title{SEQuential trial emulation}
 \usage{
 SEQuential(
   data,
@@ -38,6 +38,31 @@ SEQuential(
 
 \item{options}{List: optional list of parameters from \code{SEQOpts}}
 }
+\value{
+An S4 object of class SEQoutput
+}
 \description{
-SEQuential processing per (paper here?)
+`SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on the wiki at https://github.com/CausalInference/SEQuential/wiki
+}
+\details{
+Implemention of sequential trial emulation for the analysis of observational databases. 
+The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
+and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
+can be used to estimate observational analogs of intention-to-treat 
+and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
+}
+\examples{
+\dontrun{
+data <- SEQdata
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible",
+                          treatment.col = "tx_init",
+                          outcome.col = "outcome",
+                          time_varying.cols = c("N", "L", "P")
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = SEQopts())
+}
+
 }

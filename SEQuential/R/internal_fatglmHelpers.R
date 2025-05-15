@@ -6,39 +6,27 @@
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default"){
-  if (case == "default") {
-    if(type == "numerator") {
-      cols <- unlist(strsplit(params@numerator, "\\+"))
-      covs <- params@numerator
-    }
-    if(type == "denominator") {
-      cols <- unlist(strsplit(params@denominator, "\\+"))
-      covs <- params@denominator
-    }
-    if (type == "outcome") {
-      cols <- unlist(strsplit(params@covariates, "\\+"))
-      covs <- params@covariates
-    }
-  }
-  if(case == "LTFU") {
-    if (type == "numerator") {
-      cols <- unlist(strsplit(params@cense.numerator, "\\+"))
-      covs <- params@cense.numerator
-    }
-    if (type == "denominator") {
-      cols <- unlist(strsplit(params@cense.denominator, "\\+"))
-      covs <- params@cense.denominator
-    }
-  }
-  if(case == "surv") {
-    cols <- unlist(strsplit(params@covariates, "\\+"))
-    covs <- params@covariates
-  }
-
-  cols <- unlist(strsplit(covs, "\\*|\\+"))
-  X <- model.matrix(as.formula(paste0("~", covs)), data = newdata[, cols, with = FALSE])
-  pred <- predict(model, X, "response")
+inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL){
+  covs <- switch(
+    case,
+    "default" = switch(
+      type,
+      "numerator" = params@numerator,
+      "denominator" = params@denominator,
+      "outcome" = params@covariates
+    ),
+    "LTFU" = switch(
+      type,
+      "numerator" = params@cense.numerator,
+      "denominator" = params@cense.denominator
+    ),
+    "surv" = params@covariates
+  )
+  cols <- unique(unlist(strsplit(covs, "\\*|\\+")))
+  X <- model.matrix(as.formula(paste0("~", covs)),
+                    data = newdata[, cols, with = FALSE])
+  
+  pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
 }
 
@@ -51,7 +39,7 @@ inline.pred <- function(model, newdata, params, type, case = "default"){
 #' @keywords internal
 prepare.data <- function(weight, params, type, model, case) {
   cols <- covs <- y <- X <- isExcused <- followup <- tx_lag <- NULL
-  
+
   if (case == "default") {
     if (type %in% c("numerator", "denominator")) {
       cols <- unlist(strsplit(ifelse(type == "numerator", params@numerator, params@denominator), "\\+|\\*"))
@@ -60,15 +48,15 @@ prepare.data <- function(weight, params, type, model, case) {
       if (!params@excused) {
         weight <- weight[tx_lag == model, ]
       } else {
-        base_filter <- weight[tx_lag == model &
-                                get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0 &
-                                isExcused < 1 &
-                                followup != 0, ]
-        
+        target <- match(model, unlist(params@treat.level))
         if (type == "denominator" && params@weight.preexpansion) {
-          weight <- weight[tx_lag == model & get(ifelse(model == 0, params@excused.col0, params@excused.col1)) == 0, ]
+          weight <- weight[tx_lag == model, ]
+          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         } else {
-          weight <- base_filter
+          weight <- weight[tx_lag == model &
+                                  isExcused < 1 &
+                                  followup != 0, ]
+          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         }
       }
       
@@ -92,15 +80,7 @@ prepare.data <- function(weight, params, type, model, case) {
     y <- if (type == "compevent") weight[[params@compevent]] else weight[[params@outcome]]
     X <- model.matrix(as.formula(paste0("~", covs)), weight[!is.na(get(params@outcome))][, cols, with = FALSE])
     
-  } else if (case == "multinomial") {
-    covs <- ifelse(type == "numerator", params@numerator, params@denominator)
-    cols <- unlist(strsplit(covs, "\\+|\\*"))
-    weight <- weight[tx_lag == model, ]
-    
-    y <- weight[[params@treatment]]
-    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
   }
-  
   return(list(y = y, X = X))
 }
 
