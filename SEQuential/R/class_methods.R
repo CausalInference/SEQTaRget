@@ -109,7 +109,7 @@ setMethod("show", "SEQoutput", function(object) {
       cat("Risk ==============================================================\n")
       for(i in seq_along(risk)) {
         if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk)[[i]], "\n")
-        kable(risk[[i]])
+        print(kable(risk[[i]]))
       }
     }
   
