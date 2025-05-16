@@ -62,11 +62,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   if (FALSE) {
-    data <- fread("SEQdata_multitreatment2.csv")
+    data <- SEQdata
     id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
     fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(treat.level = c(0, 1), bootstrap = TRUE, km.curves = TRUE, bootstrap.nboot = 2, weighted = TRUE, weight.preexpansion = FALSE, multinomial = TRUE)
-    model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", time_varying.cols = c("N", "L", "P"), fixed.cols = "sex", "censoring", options)
+    options = SEQopts(weighted = TRUE, weight.preexpansion = TRUE, km.curves = TRUE)
+    model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method =  "censoring",options = options)
   }
 
   setDT(data)
@@ -147,7 +147,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
         survival.plot[[label]] <- internal.plot(survival$data, params)
-        risk[[label]] <- create.risk(survival$data) 
+        risk[[label]] <- create.risk(survival$data, params) 
       }
       if (params@calculate.var) vcov[[label]] <- models[[1]]$vcov
       outcome[[label]] <- lapply(models, function(x) x$model)

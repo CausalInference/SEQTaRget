@@ -12,7 +12,8 @@ setMethod("show", "SEQoutput", function(object) {
   numerator <- slot(object, "numerator")
   denominator <- slot(object, "denominator")
   hazard <- slot(object, "hazard")
-  risk <- slot(object, "risk")
+  risk.data <- slot(object, "risk.data")
+  risk.comparison <- slot(object, "risk.comparison")
   if (!params@hazard) {
     outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
     weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
@@ -109,7 +110,8 @@ setMethod("show", "SEQoutput", function(object) {
       cat("Risk ==============================================================\n")
       for(i in seq_along(risk)) {
         if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk)[[i]], "\n")
-        print(kable(risk[[i]]))
+        print(kable(risk.data[[i]]))
+        print(kable(risk.comparison[[i]]))
       }
     }
   
