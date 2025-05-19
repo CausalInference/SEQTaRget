@@ -1,7 +1,7 @@
 Package: SEQuential
 Type: Package
 Title: Sequential Trial Emulation
-Version: 0.8.2
+Version: 0.8.3
 Authors@R: c(person(given = "Ryan",
                     family = "O\'Dea",
                     role = c("aut", "cre"),
@@ -20,6 +20,7 @@ Description: Implemention of sequential trial emulation for the analysis of obse
     and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
     can be used to estimate observational analogs of intention-to-treat 
     and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
+    More information on specific analysis cases can be found on the SEQuential wiki <github.com/CausalInference/SEQuential/wiki>
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
