@@ -61,14 +61,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
   
-  if (FALSE) {
-    data <- SEQdata
-    id.col = "ID"; time.col = "time"; outcome.col = "outcome"; treatment.col = "tx_init"; eligible.col = "eligible"; method = "censoring"
-    fixed.cols = "sex"; time_varying.cols = c("N", "L", "P")
-    options = SEQopts(weighted = TRUE, weight.preexpansion = TRUE, km.curves = TRUE)
-    model = SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", method =  "censoring",options = options)
-  }
-
   setDT(data)
   setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
@@ -121,11 +113,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
-    switch.unique <- table(data[, 'switch' := (get(params@treatment) != shift(get(params@treatment),
-                                                                              fill = get(params@treatment)[1])), by = eval(params@id)]$switch)
-    switch.nonunique <- table(params@DT[['switch']])
+    switch.unique <- data[, 'switch' := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = eval(params@id)
+                          ][, list(n = .N), by = "switch"]
+    switch.nonunique <- params@DT[, list(n = .N), by = "switch"]
     
-    params@DT <- params@DT[, "switch" := NULL]
+    params@DT[, "switch" := NULL]
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
@@ -164,9 +156,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     filter <- sort(unique(data[[params@subgroup]]))
-    outcome.unique[[label]] <- if (!is.na(params@subgroup)) table(copy(data)[get(params@subgroup) == filter[[i]], ][[params@outcome]]) else table(copy(data)[[params@outcome]])
-    outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) table(copy(params@DT)[get(params@subgroup) == filter[[i]], ][[params@outcome]]) else table(copy(params@DT)[[params@outcome]])
+    outcome.unique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@data[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
+    outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@DT[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
   }
+  
+  kable(copy(params@data)[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)])
   
   # Output ======================================================
   info <- list(outcome.unique = outcome.unique,

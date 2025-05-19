@@ -129,16 +129,16 @@ setMethod("show", "SEQoutput", function(object) {
   for (i in seq_along(outcome.unique)) {
     if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome.unique)[[i]], "\n")
     cat("Unique Outcome Table: ")
-    print(outcome.unique[[i]])
+    print(kable(outcome.unique[[i]]))
     cat("\nNon-Unique Outcome Table: ")
-    print(outcome.nonunique[[i]])
+    print(kable(outcome.nonunique[[i]]))
   }
     
   if (slot(params, "method") == "censoring"){
     cat("\nUnique Switch Table: ")
-    print(slot(object, "info")$switch.unique)
+    print(kable(slot(object, "info")$switch.unique))
     cat("\nNon-Unique Switch Table: ")
-    print(slot(object, "info")$switch.nonunique)
+    print(kable(slot(object, "info")$switch.nonunique))
   }
   
   if (!is.na(slot(params, "compevent"))) {
