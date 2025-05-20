@@ -121,4 +121,3 @@ internal.survival <- function(params, outcome) {
   })
   return(result)
 }
-

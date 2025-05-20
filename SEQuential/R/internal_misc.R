@@ -93,4 +93,3 @@ format.time <- function(seconds) {
 allNA <- function(x) {
   all(sapply(x, function(y) is.na(y)))
 }
-

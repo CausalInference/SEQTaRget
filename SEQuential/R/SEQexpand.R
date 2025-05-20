@@ -124,4 +124,3 @@ SEQexpand <- function(params) {
   })
   return(out)
 }
-
