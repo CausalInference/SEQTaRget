@@ -15,7 +15,7 @@ internal.hazard <- function(model, params) {
     
     if (!is.na(params@compevent)) {
       ce.data <- prepare.data(params@DT, params, case = "surv")
-      ce.model <- fastglm.clean(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
+      ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
       rm(ce.data)
     }
     

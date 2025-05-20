@@ -134,5 +134,3 @@ internal.analysis <- function(params) {
   })
   return(result)
 }
-
-

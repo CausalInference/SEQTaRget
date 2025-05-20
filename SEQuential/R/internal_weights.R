@@ -173,7 +173,7 @@ internal.weights <- function(DT, data, params) {
     if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") {
       coef.numerator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.numerator[[i]] <- fastglm.clean(coef.numerator[[i]])
+        coef.numerator[[i]] <- clean_fastglm(coef.numerator[[i]])
       }
       weight.info@coef.numerator <- coef.numerator
     }
@@ -181,14 +181,14 @@ internal.weights <- function(DT, data, params) {
     if (params@method != "ITT") {
       coef.denominator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.denominator[[i]] <- fastglm.clean(denominator_models[[i]])
+        coef.denominator[[i]] <- clean_fastglm(denominator_models[[i]])
       }
       weight.info@coef.denominator <- coef.denominator
     }
     
     if (params@LTFU) {
-      slot(weight.info, "coef.ncense") <- fastglm.clean(cense.numerator)
-      slot(weight.info, "coef.dcense") <- fastglm.clean(cense.denominator)
+      slot(weight.info, "coef.ncense") <- clean_fastglm(cense.numerator)
+      slot(weight.info, "coef.dcense") <- clean_fastglm(cense.denominator)
     }
     return(weight.info)
   })

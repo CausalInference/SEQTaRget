@@ -12,6 +12,7 @@
 #' @param options List: optional list of parameters from \code{SEQOpts}
 #'
 #' @importFrom stats lm rbinom
+#' @importFrom fastglm fastglm
 #' @export
 
 SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
@@ -65,7 +66,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
     X <- matrix(as.numeric(rbinom(samples[i] * colspace, 1, 0.5)), nrow = samples[i])
     y <- rbinom(samples[i], 1, 0.5)
     times[i] <- system.time({
-      fastglm::fastglm(X, y, family = quasibinomial())
+      fastglm(X, y, family = quasibinomial())
     })['elapsed']
   }
 

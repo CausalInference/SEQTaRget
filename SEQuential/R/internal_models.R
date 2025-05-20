@@ -9,7 +9,7 @@ internal.model <- function(data, params) {
   data <- data[!is.na(get(params@outcome)), ]
 
   if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
-  if (params@followup.spline) data <- data[, "followup" := splines::ns(get("followup"))]
+  if (params@followup.spline) data <- data[, "followup" := ns(get("followup"))]
 
   handler <- function(data, params) {
     X <- model.matrix(as.formula(paste0("~", params@covariates)), data)
@@ -23,7 +23,7 @@ internal.model <- function(data, params) {
                        ][weight > params@weight.upper, weight := params@weight.upper][['weight']]
         model <- fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
       }
-    if (params@calculate.var) vcov <- fastglm.robust(model, X, y, weight) else NA
+    if (params@calculate.var) vcov <- robust_fastglm(model, X, y, weight) else NA
     return(list(model = model, vcov = vcov))
   }
   

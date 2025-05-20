@@ -73,8 +73,7 @@ internal.survival <- function(params, outcome) {
         rm(RMDT)
       }
       
-      out <- Reduce(function(x, y) merge(x, y, by = "followup"), out_list) |>
-        melt(id.vars = "followup")
+      out <- melt(Reduce(function(x, y) merge(x, y, by = "followup"), out_list), id.vars = "followup")
       
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
@@ -122,4 +121,3 @@ internal.survival <- function(params, outcome) {
   })
   return(result)
 }
-

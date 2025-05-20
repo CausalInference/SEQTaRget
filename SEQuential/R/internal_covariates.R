@@ -1,5 +1,4 @@
 #' Internal Function to create 'default' formula
-#' Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 #'
 #' @keywords internal
 create.default.covariates <- function(params) {
@@ -49,6 +48,9 @@ create.default.covariates <- function(params) {
     }
 }
 
+#' Internal Function to create 'default' weighting formula
+#'
+#' @keywords internal
 create.default.weight.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
@@ -90,6 +92,9 @@ create.default.weight.covariates <- function(params, type) {
   return(out)
 }
 
+#' Internal Function to create 'default' loss-to-followup formula
+#'
+#' @keywords internal
 create.default.LTFU.covariates <- function(params, type){
   timeVarying <- NULL
   timeVarying_bas <- NULL

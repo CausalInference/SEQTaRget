@@ -1,7 +1,7 @@
 #' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
 #'
 #' @keywords internal
-create.risk <- function(data) {
+create.risk <- function(data, params) {
   variable <- followup <- V1 <- V2 <- NULL
   i.value <- i.LCI <- i.UCI <- NULL
   UCI <- LCI <- NULL
@@ -17,6 +17,11 @@ create.risk <- function(data) {
   out[, `:=` (rr = value / i.value, rd = value - i.value)
       ][, `:=` (value = NULL, i.value = NULL)]
   
+  
+  table[, `:=` (A = sub(".*_", "", variable), 
+                Method = params@method,
+                variable = NULL)]
+  
   if (all(c("LCI", "UCI") %in% names(out))) {
     out[, `:=` (
       rd_lb = LCI - i.LCI,
@@ -31,11 +36,19 @@ create.risk <- function(data) {
       ][, `:=` (LCI = NULL, UCI = NULL, i.LCI = NULL, i.UCI = NULL,
                 rd_lb = NULL, rd_ub = NULL, rr_lb = NULL, rr_ub = NULL)]
     
-    setnames(out, names(out), c("Treatment", "Comparison", 
+    setnames(out, names(out), c("A_x", "A_y", 
                                 "Risk Ratio", "Risk Differerence",
-                                "RD LCI", "RD UCI", "RR LCI", "RR UCI"))
-  } else setnames(out, names(out), c("Treatment", "Comparison", "Risk Ratio", "Risk Difference"))
-  return(out)
+                                "RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI"))
+    
+    setnames(table, c("value", "LCI", "UCI"), c("Risk", "95% LCI", "95% UCI"))
+    setcolorder(table, c("Method", "A", "Risk", "95% LCI", "95% UCI"))
+  } else {
+    setnames(out, names(out), c("A_x", "A_y", "Risk Ratio", "Risk Difference"))
+    setnames(table, "value", "Risk")
+    setcolorder(table, c("Method", "A", "Risk"))
+    
+  }
+  return(list(risk.comparison = out, risk.data = table))
 }
 
 factorize <- function(data, params) {
@@ -80,4 +93,3 @@ format.time <- function(seconds) {
 allNA <- function(x) {
   all(sapply(x, function(y) is.na(y)))
 }
-

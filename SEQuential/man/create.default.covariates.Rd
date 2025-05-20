@@ -2,13 +2,11 @@
 % Please edit documentation in R/internal_covariates.R
 \name{create.default.covariates}
 \alias{create.default.covariates}
-\title{Internal Function to create 'default' formula
-Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'}
+\title{Internal Function to create 'default' formula}
 \usage{
 create.default.covariates(params)
 }
 \description{
 Internal Function to create 'default' formula
-Assumes every column not explicitly given in \code{SEQuential} is a covariate, concatenating them with '+'
 }
 \keyword{internal}
