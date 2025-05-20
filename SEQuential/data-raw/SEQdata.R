@@ -1,8 +1,10 @@
-## code to prepare `SEQdata` dataset goes here
+## Code to prepare `SEQdata` datasets
 #' Generation function for example data
 #'
 #' @param n Numeric: number of 'individuals' to simulate
 #' @param max.time Integer: max followup time per individual
+#' 
+#' @import data.table
 #'
 #' @keywords internal
 generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1) {
@@ -65,7 +67,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
       if (excused1_vector[j - 1] == 1) excused1_vector[j] <- 1
     }
 
-    ID <- data.table::data.table(
+    ID <- data.table(
       ID = rep(x, max.time + 1),
       time = 0:max.time,
       eligible = c(
@@ -96,7 +98,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
 
     return(ID)
   }, future.seed = 1636)
-  return(data.table::rbindlist(output))
+  return(rbindlist(output))
 }
 #SEQdata.multitreatment <- generate_data(1e2, 59, FALSE, 2)
 #write.csv(SEQdata.multitreatment, "SEQdata_multitreatment2.csv", row.names = FALSE)

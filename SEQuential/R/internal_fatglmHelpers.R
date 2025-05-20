@@ -88,7 +88,7 @@ prepare.data <- function(weight, params, type, model, case) {
 #' 
 #' @importFrom stats var
 #' @keywords internal
-fastglm.robust <- function(model, X, y, weight = NULL) {
+robust_fastglm <- function(model, X, y, weight = NULL) {
   coefs <- coef(model)
   names.var <- colnames(X)
   residuals <- as.vector(y - X %*% coefs)
@@ -126,7 +126,7 @@ fastglm.robust <- function(model, X, y, weight = NULL) {
 #' Function to clean out non needed elements from fastglm return
 #' @param model a fastglm model
 #' @keywords internal
-fastglm.clean <- function(model) {
+clean_fastglm <- function(model) {
   model$x <- NULL
   model$y <- NULL
   model$model <- NULL
