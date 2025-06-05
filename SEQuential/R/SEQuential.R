@@ -40,7 +40,7 @@
 #' }
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options, analysis = TRUE) {
   # Immediate error checking =================================
   if (missing(data)) stop("Data was not supplied")
   if (missing(id.col)) stop("ID column name was not supplied")
@@ -108,6 +108,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
+  
+  if (!analysis) return(params@DT)
+  
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
@@ -141,7 +144,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival.plot[[label]] <- internal.plot(survival$data, params)
         risk[[label]] <- create.risk(survival$data, params) 
       }
-      if (params@calculate.var) vcov[[label]] <- models[[1]]$vcov
+      if (params@calculate.var) vcov[[label]] <- lapply(models, function(x) x$vcov)
       outcome[[label]] <- lapply(models, function(x) x$model)
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
