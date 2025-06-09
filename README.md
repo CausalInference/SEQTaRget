@@ -58,12 +58,11 @@ The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` wi
 3. numerator - numerator covariates when weighting
 4. denominator - denominator covariates when weighting
 5. hazard - the hazard ratio
-6. robust.se - the robust standard error estimates
-7. survival.curve - ggplot survival curve
-8. survival.data - survival and risk data for all points of followup
-9. risk.difference - risk difference at end of followup with CIs if bootstrapped
-10. risk.ratio - risk ratio at end of followup with CIs if bootstrapped
-11. time - elapsed time for the SEQuential analysis
+6. survival.curve - ggplot survival curve
+7. survival.data - survival and risk data for all points of followup
+8. risk.difference - risk difference at end of followup with CIs if bootstrapped
+9. risk.ratio - risk ratio at end of followup with CIs if bootstrapped
+10. time - elapsed time for the SEQuential analysis
 
 These can be handily and easily printed to the terminal with by calling the object as `mySequential`. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE, calculate.var = TRUE`, then the survival curves, data, and associated risks will return `NA`.
 

@@ -84,45 +84,6 @@ prepare.data <- function(weight, params, type, model, case) {
   return(list(y = y, X = X))
 }
 
-#' Function to calculate robust standard errors from a fastglm model
-#' 
-#' @importFrom stats var
-#' @keywords internal
-robust_fastglm <- function(model, X, y, weight = NULL) {
-  coefs <- coef(model)
-  names.var <- colnames(X)
-  residuals <- as.vector(y - X %*% coefs)
-  
-  if (!is.null(weight)) {
-    X <- X * sqrt(weight)
-    residuals <- residuals * sqrt(weight)
-  }
-  
-  constant <- apply(X, 2, function(x) var(x) == 0)
-  variable <- X[, !constant, drop = FALSE]
-  
-  n <- nrow(X)
-  p <- ncol(variable)
-  
-  omega <- residuals^2 * (n / (n - p))
-  xtx <- t(variable) %*% variable
-  
-  eig <- eigen(xtx, symmetric = TRUE)
-  eValues <- eig$values
-  eVectors <- eig$vectors
-  eValues[eValues < 1e-6] <- 1e-6
-
-  xtx.inv <- eVectors %*% diag(1 / eValues) %*% t(eVectors)
-  robust <- sqrt(diag(xtx.inv %*% (t(variable) %*% (variable * omega)) %*% xtx.inv))
-  
-  full <- numeric(ncol(X))
-  names(full) <- names.var
-  full[!constant] <- robust
-  full[constant] <- 0
-  
-  return(full)
-}
-
 #' Function to clean out non needed elements from fastglm return
 #' @param model a fastglm model
 #' @keywords internal

@@ -28,7 +28,6 @@ SEQopts(
   weight.eligible0 = NA,
   weight.eligible1 = NA,
   hazard = FALSE,
-  calculate.var = FALSE,
   subgroup = NA,
   selection.random = FALSE,
   selection.prob = 0.8,
@@ -100,8 +99,6 @@ SEQopts(
 \item{weight.eligible1}{String: column name for indicator column defining which weights are eligible for the 'one' model}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation}
-
-\item{calculate.var}{Logical: robust standard error calculation instead of survival bootstrapping}
 
 \item{subgroup}{Character: Column name to stratify outcome models on}
 

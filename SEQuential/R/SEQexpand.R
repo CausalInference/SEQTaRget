@@ -90,11 +90,11 @@ SEQexpand <- function(params) {
     if (params@method == "censoring") {
       out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
       if (params@excused) {
-        out <- out[, switch := (get(params@treatment) != lag)]
+        out[, switch := (get(params@treatment) != lag)]
         
         for (i in seq_along(params@treat.level)) {
           if (!is.na(params@excused.cols[[i]])) {
-            out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 0, 1)]
+            out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
           }
         }
         out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")

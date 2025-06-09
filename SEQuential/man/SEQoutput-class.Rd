@@ -22,8 +22,6 @@ An S4 class used to hold the outputs for the SEQuential process
 
 \item{\code{hazard}}{hazard ratio}
 
-\item{\code{robust.se}}{robust standard errors}
-
 \item{\code{survival.curve}}{ggplot object for the survival curves}
 
 \item{\code{survival.data}}{data.table of survival data}
