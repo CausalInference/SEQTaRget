@@ -73,7 +73,6 @@ setClass("SEQopts",
     excused = FALSE,
     weight.eligible0 = NA_character_,
     weight.eligible1 = NA_character_,
-    calculate.var = FALSE,
     hazard = FALSE,
     hazard.fixed.dist = list(),
     hazard.time_varying.dist = list(),
@@ -181,7 +180,6 @@ setClass("SEQweights",
 #' @slot denominator denominator covariates
 #' @slot outcome.model list of length \code{bootstrap.nboot} containing outcome coefficients
 #' @slot hazard hazard ratio
-#' @slot robust.se robust standard errors
 #' @slot survival.curve ggplot object for the survival curves
 #' @slot survival.data data.table of survival data
 #' @slot risk.difference risk difference calculated from survival data
@@ -199,7 +197,6 @@ setClass("SEQoutput",
            denominator = "character",
            outcome.model = "list",
            hazard = "list",
-           robust.se = "list",
            survival.curve = "list",
            survival.data = "list",
            risk.comparison = "list",
@@ -215,7 +212,6 @@ setClass("SEQoutput",
            denominator = NA_character_,
            outcome_model = list(),
            hazard = list(),
-           robust_se = list(),
            survival.curve = list(),
            survival.data = data.table(),
            risk.comparison = list(),

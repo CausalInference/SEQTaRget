@@ -34,7 +34,6 @@ parameter.setter <- function(data, DT,
     excused = opts@excused,
     cense = opts@cense,
     hazard = opts@hazard,
-    calculate.var = opts@calculate.var,
     compevent = opts@compevent,
     cense.eligible = opts@cense.eligible,
     excused.cols = opts@excused.cols,
@@ -95,7 +94,7 @@ parameter.simplifier <- function(params) {
                              rep(NA, length(params@treat.level) - length(params@excused.cols)))
   }
 
-  if (params@km.curves & (params@calculate.var | params@hazard)) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
+  if (params@km.curves & params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
 
   if (!is.na(params@cense)) {
@@ -117,7 +116,7 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
@@ -128,7 +127,6 @@ prepare.output <- function(params, outcome, weights, hazard, vcov, survival.plot
       denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
       hazard = if (!params@hazard) list() else hazard,
-      robust.se = if (!params@calculate.var) list() else vcov,
       weight.statistics = weights,
       survival.curve = if (!params@km.curves) list() else survival.plot,
       survival.data = if (!params@km.curves) list() else survival.data,

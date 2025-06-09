@@ -14,7 +14,8 @@ SEQuential(
   time_varying.cols = list(),
   fixed.cols = list(),
   method,
-  options
+  options,
+  analysis = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ SEQuential(
 \item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{SEQOpts}}
+
+\item{analysis}{Boolean: whether to preform analysis or not, if FALSE immediately returns the expanded data.table}
 }
 \value{
 An S4 object of class SEQoutput

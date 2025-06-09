@@ -24,7 +24,6 @@
 #' @param weight.eligible0 String: column name for indicator column defining which weights are eligible for the 'zero' model
 #' @param weight.eligible1 String: column name for indicator column defining which weights are eligible for the 'one' model
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data
-#' @param calculate.var Logical: robust standard error calculation instead of survival bootstrapping
 #' @param hazard Logical: hazard error calculation instead of survival estimation
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]
@@ -55,8 +54,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     followup.min = -Inf, followup.max = Inf, survival.max = Inf, followup.include = TRUE, trial.include = TRUE,
                     covariates = NA, weighted = FALSE, weight.upper = Inf, weight.lower = -Inf, weight.p99 = FALSE,
                     numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
-                    hazard = FALSE,
-                    calculate.var = FALSE, subgroup = NA,
+                    hazard = FALSE, subgroup = NA,
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
@@ -80,7 +78,6 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
   weight.eligible1 <- as.character(weight.eligible1)
 
   hazard <- as.logical(hazard)
-  calculate.var <- as.logical(calculate.var)
   
   subgroup <- as.character(subgroup)
 
@@ -152,7 +149,6 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     treat.level = treat.level,
     multinomial = multinomial,
     hazard = hazard,
-    calculate.var = calculate.var,
     weight.eligible1 = weight.eligible1,
     weight.eligible0 = weight.eligible0,
     followup.class = followup.class,

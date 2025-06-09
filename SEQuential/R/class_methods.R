@@ -287,18 +287,6 @@ hazard <- function(object) {
   return(slot(object, "hazard"))
 }
 
-#' Function to return robust standard errors from a SEQuential object
-#' 
-#' @param object SEQoutput object
-#' @importFrom methods is slot
-#' @returns list of robust standard errors of outcome models
-#' @export
-robust <- function(object) {
-  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
-  if (!object@params@calculate.var) stop("Robust standard errors were not created through `calculate.var = TRUE` in SEQuential process")
-  return(slot(object, "hazard"))
-}
-
 #' Function to return diagnostic tables from a SEQuential object
 #'
 #' @param object SEQoutput object

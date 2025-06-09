@@ -1,5 +1,5 @@
 test_that("ITT", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
     method = "ITT", options = SEQopts()
   )
@@ -16,7 +16,7 @@ test_that("ITT", {
 })
 
 test_that("Pre-Expansion Dose-Response", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "dose-response",
@@ -35,7 +35,7 @@ test_that("Pre-Expansion Dose-Response", {
 })
 
 test_that("Post-Expansion Dose-Response", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "dose-response",
@@ -56,7 +56,7 @@ test_that("Post-Expansion Dose-Response", {
 })
 
 test_that("Pre-Expansion Censoring", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
@@ -74,7 +74,7 @@ test_that("Pre-Expansion Censoring", {
 })
 
 test_that("Post-Expansion Censoring", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
@@ -93,7 +93,7 @@ test_that("Post-Expansion Censoring", {
 })
 
 test_that("Pre-Expansion Excused Censoring", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
@@ -103,17 +103,17 @@ test_that("Pre-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -4.99426122251981, tx_init_bas1 = 0.24360293965826, 
-                   followup = 0.0470636820691071, followup_sq = -0.000383218644047451, 
-                   trial = 0.00860351535075726, trial_sq = 0.000877530870213345, 
-                   `tx_init_bas1:followup` = 0.00587269521884963)
+  expected <- list(`(Intercept)` = -5.2575896658564, tx_init_bas1 = 0.377685654920678, 
+                   followup = 0.00760616508976486, followup_sq = 0.000746470267632687, 
+                   trial = 0.0522808132127782, trial_sq = 9.77743011844572e-05, 
+                   `tx_init_bas1:followup` = -0.0118014806930868)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
 test_that("Post-Expansion Excused Censoring", {
-  data <- SEQdata
+  data <- copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
     list("N", "L", "P"), list("sex"),
     method = "censoring",
@@ -124,18 +124,18 @@ test_that("Post-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -6.25952868564203, tx_init_bas1 = 0.435286935939038, 
-                   followup = 0.0390193615029649, followup_sq = -0.000126930862610936, 
-                   trial = 0.0283524306525045, trial_sq = 0.00067554365227342, 
-                   sex1 = 0.114373278272966, N_bas = 0.00416934507547887, L_bas = -0.0121795815428353, 
-                   P_bas = 0.121296056972401, `tx_init_bas1:followup` = -0.00388907815773606)
+  expected <- list(`(Intercept)` = -7.39823007365969, tx_init_bas1 = 0.18661552044241, 
+                   followup = 0.0330697756483816, followup_sq = -0.00021962235131531, 
+                   trial = 0.0473303975239299, trial_sq = 0.000637937130078203, 
+                   sex1 = 0.147588593642298, N_bas = 0.00214158691732886, L_bas = 0.0095624455063144, 
+                   P_bas = 0.262719878929645, `tx_init_bas1:followup` = 0.00390910310115834)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
 })
 
 test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
-  data <- SEQdata.LTFU
+  data <- copy(SEQdata.LTFU)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(cense = "LTFU", weight.preexpansion = TRUE, fastglm.method = 1))
@@ -153,7 +153,7 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
 })
 
 test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
-  data <- SEQdata.LTFU
+  data <- copy(SEQdata.LTFU)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(cense = "LTFU", weight.preexpansion = FALSE, fastglm.method = 1))

@@ -23,8 +23,7 @@ internal.model <- function(data, params) {
                        ][weight > params@weight.upper, weight := params@weight.upper][['weight']]
         model <- fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
       }
-    if (params@calculate.var) vcov <- robust_fastglm(model, X, y, weight) else NA
-    return(list(model = model, vcov = vcov))
+    return(list(model = model))
   }
   
   if (is.na(params@subgroup)) model <- list(handler(data, params)) else {

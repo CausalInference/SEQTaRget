@@ -17,6 +17,7 @@
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQOpts}
+#' @param analysis Boolean: whether to preform analysis or not, if FALSE immediately returns the expanded data.table
 #'
 #' @import data.table doRNG
 #' @importFrom methods is
@@ -144,7 +145,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival.plot[[label]] <- internal.plot(survival$data, params)
         risk[[label]] <- create.risk(survival$data, params) 
       }
-      if (params@calculate.var) vcov[[label]] <- lapply(models, function(x) x$vcov)
       outcome[[label]] <- lapply(models, function(x) x$model)
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
@@ -163,8 +163,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@DT[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
   }
   
-  kable(copy(params@data)[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)])
-  
   # Output ======================================================
   info <- list(outcome.unique = outcome.unique,
                outcome.nonunique = outcome.nonunique,
@@ -176,7 +174,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- params@data <- data.table()
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
 
-  out <- prepare.output(params, outcome, weights, hazard, vcov, survival.plot, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
   cat("Completed\n")
   plan(future::sequential())
