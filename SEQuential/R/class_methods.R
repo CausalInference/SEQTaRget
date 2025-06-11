@@ -40,45 +40,17 @@ setMethod("show", "SEQoutput", function(object) {
     if (params@weighted) {
       cat("\nWeight Information ============================================= \n")
       if (params@method != "ITT") {
-        cat("Treatment Lag =", unlist(params@treat.level[[1]]),"Model ========================================== \n")
-        if (!params@multinomial) {
-          if (length(weight_statistics$n0.coef) > 1) {
-            cat("Numerator: \n")
-            print(summary(weight_statistics$n0.coef)) 
+        for (i in seq_along(params@treat.level)) {
+          cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
+          for (j in seq_along(length(params@treat.level) - 1)) {
+            cat("Treatment = ", j, "============================ \n")
+            if (length(weight_statistics$coef.numerator > 1)) {
+              cat("Numerator ========================== \n")
+              print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
+            }
+            cat("Denominator ========================== \n")
+            print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
           }
-          cat("Denominator: \n")
-          print(summary(weight_statistics$d0.coef)) 
-        } else {
-          cat("Numerator: \n")
-          lapply(1:length(weight_statistics$n0.coef$models), function(x) {
-            cat("Model: ", unlist(params@treat.level[[x]]))
-            print(summary(weight_statistics$n0.coef$models[[x]]))
-            })
-          cat("Denominator: \n")
-          lapply(1:length(weight_statistics$d0.coef$models), function(x) {
-            cat("Model: ", unlist(params@treat.level[[x]]))
-            print(summary(weight_statistics$d0.coef$models[[x]]))
-          })
-        }
-        cat("Treatment Lag =", unlist(params@treat.level[[2]]),"Model ========================================== \n")
-        if (!params@multinomial) {
-          if (length(weight_statistics$n1.coef) > 1) {
-            cat("Numerator: \n")
-            print(summary(weight_statistics$n1.coef)) 
-          }
-          cat("Denominator: \n")
-          print(summary(weight_statistics$d1.coef))
-        } else {
-          cat("Numerator: \n")
-          lapply(1:length(weight_statistics$n1.coef$models), function(x) {
-            cat("Model: ", unlist(params@treat.level[[x]]))
-            print(summary(weight_statistics$n1.coef$models[[x]]))
-          })
-          cat("Denominator: \n")
-          lapply(1:length(weight_statistics$d1.coef$models), function(x) {
-            cat("Model: ", unlist(params@treat.level[[x]]))
-            print(summary(weight_statistics$d1.coef$models[[x]]))
-          })
         }
         
         cat("Weights:\n")
