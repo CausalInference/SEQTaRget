@@ -57,7 +57,8 @@ parameter.setter <- function(data, DT,
     plot.subtitle = opts@plot.subtitle,
     plot.labels = opts@plot.labels,
     plot.colors = opts@plot.colors,
-    subgroup = opts@subgroup
+    subgroup = opts@subgroup,
+    data.return = opts@data.return
   )
 }
 
@@ -116,12 +117,16 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, DT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
+  params@DT <- params@data <- data.table()
+  if (!params@data.return) DT <- data.table()
+  
   new("SEQoutput",
       params = params,
+      DT = DT,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),

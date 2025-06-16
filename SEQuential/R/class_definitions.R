@@ -52,7 +52,8 @@ setClass("SEQopts",
     plot.labels = "character",
     plot.colors = "character",
     plot.type = "character",
-    subgroup = "character"
+    subgroup = "character",
+    data.return = "logical"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -101,7 +102,8 @@ setClass("SEQopts",
     plot.labels = NA_character_,
     plot.colors = NA_character_,
     plot.type = NA_character_,
-    subgroup = NA_character_
+    subgroup = NA_character_,
+    data.return = FALSE
   )
 )
 
@@ -192,6 +194,7 @@ setClass("SEQweights",
 setClass("SEQoutput",
          slots = c(
            params = "SEQparams",
+           DT = "data.table",
            outcome = "character",
            numerator = "character",
            denominator = "character",
@@ -207,6 +210,7 @@ setClass("SEQoutput",
            info = "list"
          ), prototype = c(
            params = new("SEQparams"),
+           DT = data.table(),
            outcome = NA_character_,
            numerator = NA_character_,
            denominator = NA_character_,

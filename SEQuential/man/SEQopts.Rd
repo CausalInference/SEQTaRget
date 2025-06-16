@@ -29,6 +29,7 @@ SEQopts(
   weight.eligible1 = NA,
   hazard = FALSE,
   subgroup = NA,
+  data.return = FALSE,
   selection.random = FALSE,
   selection.prob = 0.8,
   followup.class = FALSE,
@@ -101,6 +102,8 @@ SEQopts(
 \item{hazard}{Logical: hazard error calculation instead of survival estimation}
 
 \item{subgroup}{Character: Column name to stratify outcome models on}
+
+\item{data.return}{Logical: whether to return the expanded dataframe with weighting information}
 
 \item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
 

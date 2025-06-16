@@ -14,8 +14,7 @@ SEQuential(
   time_varying.cols = list(),
   fixed.cols = list(),
   method,
-  options,
-  analysis = TRUE
+  options
 )
 }
 \arguments{
@@ -38,8 +37,6 @@ SEQuential(
 \item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{SEQOpts}}
-
-\item{analysis}{Boolean: whether to preform analysis or not, if FALSE immediately returns the expanded data.table}
 }
 \value{
 An S4 object of class SEQoutput
@@ -62,7 +59,7 @@ model <- SEQuential(data, id.col = "ID",
                           eligible.col = "eligible",
                           treatment.col = "tx_init",
                           outcome.col = "outcome",
-                          time_varying.cols = c("N", "L", "P")
+                          time_varying.cols = c("N", "L", "P"),
                           fixed.cols = "sex",
                           method = "ITT", 
                           options = SEQopts())

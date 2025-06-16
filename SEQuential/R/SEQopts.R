@@ -46,6 +46,7 @@
 #' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
 #' @param subgroup Character: Column name to stratify outcome models on
+#' @param data.return Logical: whether to return the expanded dataframe with weighting information
 #'
 #' @export
 #' @returns An object of class 'SEQOpts'
@@ -54,7 +55,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
                     followup.min = -Inf, followup.max = Inf, survival.max = Inf, followup.include = TRUE, trial.include = TRUE,
                     covariates = NA, weighted = FALSE, weight.upper = Inf, weight.lower = -Inf, weight.p99 = FALSE,
                     numerator = NA, denominator = NA, weight.preexpansion = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
-                    hazard = FALSE, subgroup = NA,
+                    hazard = FALSE, subgroup = NA, data.return = FALSE,
                     selection.random = FALSE, selection.prob = 0.8, followup.class = FALSE, followup.spline = FALSE,
                     cense.numerator = NA, cense.denominator = NA, cense = NA, cense.eligible = NA,
                     compevent = NA, multinomial = FALSE, treat.level = c(0, 1),
