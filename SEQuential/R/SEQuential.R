@@ -109,8 +109,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
-  if (!analysis) return(params@DT)
-  
   gc()
   cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
@@ -126,6 +124,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Model Dispersion ===========================================
   survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
   analytic <- internal.analysis(params)
+  WDT <- analytic[[1]]$WDT
   
   subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
   if (!params@hazard) {
@@ -172,7 +171,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                                                                                   ][[params@compevent]]) else NA)
   
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
-  out <- prepare.output(params, params@DT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
   cat("Completed\n")
   plan(future::sequential())

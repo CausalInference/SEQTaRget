@@ -20,6 +20,7 @@ internal.analysis <- function(params) {
     handler <- function(DT, data, params) {
       if (!params@weighted) {
         model <- internal.model(DT, params)
+        WDT <- data.table()
       } else if (params@weighted) {
         WT <- internal.weights(DT, data, params)
 
@@ -92,7 +93,8 @@ internal.analysis <- function(params) {
       }
       return(list(
         model = model,
-        weighted_stats = if (params@weighted) stats else NA
+        weighted_stats = if (params@weighted) stats else NA,
+        WDT = WDT
       ))
     }
 
@@ -112,6 +114,8 @@ internal.analysis <- function(params) {
           RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
                                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
           out <- handler(RMDT, RMdata, params)
+          out$WDT <- NULL
+          
           return(out)
         }, future.seed = params@seed)
       } else {
@@ -121,7 +125,10 @@ internal.analysis <- function(params) {
                                                                                ][, eval(params@id) := paste0(get(params@id), "_", x)]))
           RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
                                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          handler(RMDT, RMdata, params)
+          out <- handler(RMDT, RMdata, params)
+          out$WDT <- NULL
+          
+          return(out)
         })
       }
     } else {

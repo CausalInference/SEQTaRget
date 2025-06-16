@@ -57,7 +57,8 @@ parameter.setter <- function(data, DT,
     plot.subtitle = opts@plot.subtitle,
     plot.labels = opts@plot.labels,
     plot.colors = opts@plot.colors,
-    subgroup = opts@subgroup
+    subgroup = opts@subgroup,
+    data.return = opts@data.return
   )
 }
 
@@ -121,6 +122,7 @@ prepare.output <- function(params, DT, outcome, weights, hazard, survival.plot, 
   risk.data <- lapply(risk, \(x) x$risk.data)
   
   params@DT <- params@data <- data.table()
+  if (!params@data.return) DT <- data.table()
   
   new("SEQoutput",
       params = params,
