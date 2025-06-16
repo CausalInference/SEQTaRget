@@ -42,7 +42,7 @@ setMethod("show", "SEQoutput", function(object) {
       if (params@method != "ITT") {
         for (i in seq_along(params@treat.level)) {
           cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
-          for (j in seq_along(length(params@treat.level) - 1)) {
+          for (j in seq_along(params@treat.level)) {
             cat("Treatment = ", j, "============================ \n")
             if (length(weight_statistics$coef.numerator > 1)) {
               cat("Numerator ========================== \n")
