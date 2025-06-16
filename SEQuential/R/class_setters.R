@@ -116,12 +116,15 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, DT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
+  params@DT <- params@data <- data.table()
+  
   new("SEQoutput",
       params = params,
+      DT = DT,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),

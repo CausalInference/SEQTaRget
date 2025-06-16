@@ -17,7 +17,6 @@
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQOpts}
-#' @param analysis Boolean: whether to preform analysis or not, if FALSE immediately returns the expanded data.table
 #'
 #' @import data.table doRNG
 #' @importFrom methods is
@@ -34,14 +33,14 @@
 #'                           eligible.col = "eligible",
 #'                           treatment.col = "tx_init",
 #'                           outcome.col = "outcome",
-#'                           time_varying.cols = c("N", "L", "P")
+#'                           time_varying.cols = c("N", "L", "P"),
 #'                           fixed.cols = "sex",
 #'                           method = "ITT", 
 #'                           options = SEQopts())
 #' }
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options, analysis = TRUE) {
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
   # Immediate error checking =================================
   if (missing(data)) stop("Data was not supplied")
   if (missing(id.col)) stop("ID column name was not supplied")
@@ -171,10 +170,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                compevent.unique = if (!is.na(params@compevent)) table(data[[params@compevent]]) else NA,
                compevent.nonunique = if(!is.na(params@compevent)) table(params@DT[!is.na(get(params@outcome)), 
                                                                                   ][[params@compevent]]) else NA)
-  params@DT <- params@data <- data.table()
+  
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
-
-  out <- prepare.output(params, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, params@DT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
   cat("Completed\n")
   plan(future::sequential())

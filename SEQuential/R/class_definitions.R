@@ -192,6 +192,7 @@ setClass("SEQweights",
 setClass("SEQoutput",
          slots = c(
            params = "SEQparams",
+           DT = "data.table",
            outcome = "character",
            numerator = "character",
            denominator = "character",
@@ -207,6 +208,7 @@ setClass("SEQoutput",
            info = "list"
          ), prototype = c(
            params = new("SEQparams"),
+           DT = data.table(),
            outcome = NA_character_,
            numerator = NA_character_,
            denominator = NA_character_,
