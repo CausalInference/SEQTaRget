@@ -1,7 +1,7 @@
 Package: SEQuential
 Type: Package
 Title: Sequential Trial Emulation
-Version: 0.8.9
+Version: 0.8.8
 Authors@R: c(person(given = "Ryan",
                     family = "O\'Dea",
                     role = c("aut", "cre"),
@@ -42,4 +42,3 @@ Imports:
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
-URL: https://causalinference.github.io/SEQuential/
