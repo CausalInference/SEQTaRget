@@ -150,8 +150,8 @@ internal.weights <- function(DT, data, params) {
                   numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)
                   ]
             }
-            out[get(params@treatment) == params@treat.level[[1]], numerator := 1 - numerator]
           }
+          out[get(params@treatment) == params@treat.level[[1]], numerator := 1 - numerator]
         }
       }
     } else out <- weight
