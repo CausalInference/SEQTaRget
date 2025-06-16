@@ -10,3 +10,6 @@ sticker.R
 ^data-raw$
 ^codecov\.yml$
 ^.*\.csv$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
