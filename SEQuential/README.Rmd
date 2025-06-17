@@ -29,7 +29,7 @@ The goal of SEQuential is to implement sequential trial emulation for the analys
 
 You can install the development version of SEQuential from [GitHub](https://github.com/) with:
 
-```{r}
+```{r eval=FALSE}
 install.packages("devtools")
 devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
 ```
@@ -38,7 +38,7 @@ devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
 
 `SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`. `SEQestimate` can also take the provided options and return a (very rough) estimated time for analysis.
 
-```{r eval=FALSE, message=FALSE, include=FALSE}
+```{r eval=FALSE}
 library(SEQuential)
 data <- SEQdata
 
@@ -98,7 +98,7 @@ These can be handily and easily printed to the terminal with by calling the obje
 
 ## Finding More Information and Examples
 
-Further information on utilizing this package or developing it further is available with the [SEQuential Wiki](https://github.com/CausalInference/SEQuential/wiki) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
+Further information on utilizing this package or developing it further is available with the [SEQuential Pages](https://causalinference.github.io/SEQuential) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
 
 ## Contributing to the package
 
