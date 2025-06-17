@@ -14,3 +14,4 @@ sticker.R
 ^\.\./docs$
 ^pkgdown$
 ^docs$
+^README\.Rmd$
