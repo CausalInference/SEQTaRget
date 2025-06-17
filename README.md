@@ -4,9 +4,25 @@
 # SEQuential
 
 <!-- badges: start -->
+
+![CRAN Version](https://www.r-pkg.org/badges/version/SEQuential)
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQuential)
+[![R-CMD](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
 <!-- badges: end -->
 
-The goal of SEQuential is to …
+<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQuential.png" align="right" style="float" width="200"/>
+
+The goal of SEQuential is to implement sequential trial emulation for
+the analysis of observational databases. The SEQuential software
+accommodates time-varying treatments and confounders, as well as binary
+and failure time outcomes. SEQ allows to compare both static and dynamic
+strategies, can be used to estimate observational analogs of
+intention-to-treat and per-protocol effects, and can adjust for
+potential selection bias induced by losses-to-follow-up.
 
 ## Installation
 
@@ -14,39 +30,117 @@ You can install the development version of SEQuential from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("CausalInference/SEQuential")
+install.packages("devtools")
+#> Installing package into '/home/runner/work/_temp/Library'
+#> (as 'lib' is unspecified)
+#> also installing the dependencies 'credentials', 'zip', 'gitcreds', 'ini', 'httpuv', 'xtable', 'sourcetools', 'later', 'promises', 'clipr', 'gert', 'gh', 'rstudioapi', 'shiny', 'htmlwidgets', 'brew', 'commonmark', 'cpp11', 'usethis', 'ellipsis', 'miniUI', 'profvis', 'remotes', 'roxygen2', 'rversions', 'urlchecker'
+devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
+#> Using github PAT from envvar GITHUB_PAT. Use `gitcreds::gitcreds_set()` and unset GITHUB_PAT in .Renviron (or elsewhere) if you want to use the more secure git credential store instead.
+#> Downloading GitHub repo CausalInference/SEQuential@HEAD
+#> BH         (NA     -> 1.87.0-1 ) [CRAN]
+#> RcppEigen  (NA     -> 0.3.4.0.2) [CRAN]
+#> data.table (1.17.4 -> 1.17.6   ) [CRAN]
+#> Installing 3 packages: BH, RcppEigen, data.table
+#> Installing packages into '/home/runner/work/_temp/Library'
+#> (as 'lib' is unspecified)
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#> * checking for file ‘/tmp/RtmpEyv08F/remotes1971563bc682/CausalInference-SEQuential-7f65f1971e25116780ab5a780f8b25af7d713270/SEQuential/DESCRIPTION’ ... OK
+#> * preparing ‘SEQuential’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * building ‘SEQuential_0.8.9.tar.gz’
+#> Installing package into '/home/runner/work/_temp/Library'
+#> (as 'lib' is unspecified)
 ```
 
-## Example
+## Setting up your Analysis
 
-This is a basic example which shows you how to solve a common problem:
+`SEQuential` uses R’s S4 object class system to handle function
+input/output. From the user side, this amounts to calling a helpful
+constructor `SEQopts` and then feeding that into `SEQuential`.
+`SEQestimate` can also take the provided options and return a (very
+rough) estimated time for analysis.
 
-``` r
-library(SEQuential)
-## basic example code
-```
+### Assumptions
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+This package places several assumptions onto the input data and
+unexpected results and errors may arrise if these are not followed-
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
+    also assume that the column contains only integers and doest
+    continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed
+    and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
+    - Provided `time.col` entries may be out of order as a sort is
+      enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
+      is valid because it begins at 0 and is continuously increasing by
+      increments of 1, even though it is not ordered.
+2.  `eligible`, `excused.col1`, and `excused.col0` are once one only one
+    (with respect to `time.col`) flag variables
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+## Return
 
-You can also embed plots, for example:
+The primary function, `SEQuential`, returns an S4 object of class
+`SEQoutput` with slots:
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+1.  params - the SEQparams object created through the SEQuential process
+2.  DT - Expanded data table with weighting information
+3.  outcome - outcome covariates
+4.  numerator - numerator covariates when weighting
+5.  denominator - denominator covariates when weighting
+6.  hazard - the hazard ratio
+7.  survival.curve - ggplot survival curve
+8.  survival.data - survival and risk data for all points of followup
+9.  risk.difference - risk difference at end of followup with CIs if
+    bootstrapped
+10. risk.ratio - risk ratio at end of followup with CIs if bootstrapped
+11. time - elapsed time for the SEQuential analysis
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+These can be handily and easily printed to the terminal with by calling
+the object as `mySequential`. While this this the shape of the output
+object, not all slots will always be filled, e.g. if a user providers
+`hazard = TRUE, calculate.var = TRUE`, then the survival curves, data,
+and associated risks will return `NA`.
+
+## Dependencies
+
+- data.table
+- doFuture
+- doRNG
+- future
+- future.apply
+- ggplot2
+- fastglm
+- methods
+- stringr
+
+## Finding More Information and Examples
+
+Further information on utilizing this package or developing it further
+is available with the [SEQuential
+Wiki](https://github.com/CausalInference/SEQuential/wiki) as a part of
+this repository. If you are unable to find solutions or answers there,
+please feel free to open a discussion.
+
+## Contributing to the package
+
+Community members are welcome to contribute to this package through
+several different avenues-
+
+- Asking/Answering questions about the package via [Github
+  Discussions](https://github.com/CausalInference/SEQuential/discussions/categories/q-a).
+  These can be questions about analysis methods, future planned
+  developments for the package, or requests for clarity on package
+  internals.
+- Contributing to [Github
+  Issues](https://github.com/CausalInference/SEQuential/issues) if a bug
+  is found. We have a guided bug report to help us resolve unintended
+  pests quickly.
+- Adding content to the package
+  - If you intend to add to the package, we would prefer you to branch
+    and then pull-request. This PR will need to:
+    1.  Pass current unit-tests to ensure nothing is being broken
+        backwards.
+    2.  Add tests to added portions of code if they are not already
+        covered in existing tests
+    3.  Pass R-CMD-Check (initiated on PR) with 0-0-0 status
