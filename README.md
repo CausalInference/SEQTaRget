@@ -31,27 +31,7 @@ You can install the development version of SEQuential from
 
 ``` r
 install.packages("devtools")
-#> Installing package into '/home/runner/work/_temp/Library'
-#> (as 'lib' is unspecified)
-#> also installing the dependencies 'credentials', 'zip', 'gitcreds', 'ini', 'httpuv', 'xtable', 'sourcetools', 'later', 'promises', 'clipr', 'gert', 'gh', 'rstudioapi', 'shiny', 'htmlwidgets', 'brew', 'commonmark', 'cpp11', 'usethis', 'ellipsis', 'miniUI', 'profvis', 'remotes', 'roxygen2', 'rversions', 'urlchecker'
 devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
-#> Using github PAT from envvar GITHUB_PAT. Use `gitcreds::gitcreds_set()` and unset GITHUB_PAT in .Renviron (or elsewhere) if you want to use the more secure git credential store instead.
-#> Downloading GitHub repo CausalInference/SEQuential@HEAD
-#> BH         (NA     -> 1.87.0-1 ) [CRAN]
-#> RcppEigen  (NA     -> 0.3.4.0.2) [CRAN]
-#> data.table (1.17.4 -> 1.17.6   ) [CRAN]
-#> Installing 3 packages: BH, RcppEigen, data.table
-#> Installing packages into '/home/runner/work/_temp/Library'
-#> (as 'lib' is unspecified)
-#> ── R CMD build ─────────────────────────────────────────────────────────────────
-#> * checking for file ‘/tmp/RtmpEyv08F/remotes1971563bc682/CausalInference-SEQuential-7f65f1971e25116780ab5a780f8b25af7d713270/SEQuential/DESCRIPTION’ ... OK
-#> * preparing ‘SEQuential’:
-#> * checking DESCRIPTION meta-information ... OK
-#> * checking for LF line-endings in source and make files and shell scripts
-#> * checking for empty or unneeded directories
-#> * building ‘SEQuential_0.8.9.tar.gz’
-#> Installing package into '/home/runner/work/_temp/Library'
-#> (as 'lib' is unspecified)
 ```
 
 ## Setting up your Analysis
@@ -61,6 +41,26 @@ input/output. From the user side, this amounts to calling a helpful
 constructor `SEQopts` and then feeding that into `SEQuential`.
 `SEQestimate` can also take the provided options and return a (very
 rough) estimated time for analysis.
+
+``` r
+library(SEQuential)
+data <- SEQdata
+
+model <- SEQuential(data, id.col = "ID", time.col = "time",
+                    eligible.col = "eligible", treatment.col = "tx_init", 
+                    outcome.col = "outcome", 
+                    time_varying.cols = c("N", "L", "P"),
+                    fixed.cols = "sex",
+                    method = "ITT",
+                    options = SEQopts(km.curves = TRUE))
+
+outcome(model)       # Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping
+diagnostics(model)  # Returns a table of non-excused treatment switches and both unique and non-unique outcomes
+
+# Plotting
+km.curve(model)                      # Returns the Survival curve
+km.data(model)                      # Returns a dataframe of survival data in long-format for other analysis/plotting
+```
 
 ### Assumptions
 
@@ -118,9 +118,9 @@ and associated risks will return `NA`.
 
 Further information on utilizing this package or developing it further
 is available with the [SEQuential
-Wiki](https://github.com/CausalInference/SEQuential/wiki) as a part of
-this repository. If you are unable to find solutions or answers there,
-please feel free to open a discussion.
+Pages](https://causalinference.github.io/SEQuential) as a part of this
+repository. If you are unable to find solutions or answers there, please
+feel free to open a discussion.
 
 ## Contributing to the package
 
