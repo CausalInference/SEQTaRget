@@ -30,7 +30,7 @@ The goal of SEQuential is to implement sequential trial emulation for the analys
 You can install the development version of SEQuential from [GitHub](https://github.com/) with:
 
 ```{r}
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
 ```
 
