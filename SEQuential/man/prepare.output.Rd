@@ -6,7 +6,7 @@
 \usage{
 prepare.output(
   params,
-  DT,
+  WDT,
   outcome,
   weights,
   hazard,

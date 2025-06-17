@@ -117,12 +117,12 @@ parameter.simplifier <- function(params) {
 #'
 #' @importFrom methods new
 #' @keywords internal
-prepare.output <- function(params, DT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
+  DT <- if (params@data.return) if (params@weighted) WDT else copy(params@DT) else data.table()
   params@DT <- params@data <- data.table()
-  if (!params@data.return) DT <- data.table()
   
   new("SEQoutput",
       params = params,

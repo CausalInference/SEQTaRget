@@ -159,6 +159,7 @@ SEQopts <- function(parallel = FALSE, nthreads = data.table::getDTthreads(), nco
     plot.labels = plot.labels,
     plot.colors = plot.colors,
     plot.type = plot.type,
-    subgroup = subgroup
+    subgroup = subgroup,
+    data.return = data.return
   )
 }
