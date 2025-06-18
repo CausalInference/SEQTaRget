@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Sequential Trial Emulation">
-<meta name="description" content="Implemention of sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up. More information on specific analysis cases can be found on the SEQuential wiki &lt;github.com/CausalInference/SEQuential/wiki&gt;.">
-<meta property="og:description" content="Implemention of sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up. More information on specific analysis cases can be found on the SEQuential wiki &lt;github.com/CausalInference/SEQuential/wiki&gt;.">
+<meta name="description" content="Implemention of sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.">
+<meta property="og:description" content="Implemention of sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.">
 <meta property="og:image" content="https://causalinference.github.io/SEQuential/logo.png">
 </head>
 <body>
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,17 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/SEQuential.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="articles/seqopts.html">Defining your SEQopts()</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -45,8 +55,122 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9">
-Implemention of sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up. More information on specific analysis cases can be found on the SEQuential wiki &lt;github.com/CausalInference/SEQuential/wiki&gt;.
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="sequential">SEQuential<a class="anchor" aria-label="anchor" href="#sequential"></a>
+</h1>
+</div>
+<!-- badges: start -->
+
+<!-- badges: end -->
+<p><img src="https://github.com/CausalInference/SEQuential/blob/main/SEQuential.png" align="right" style="float" width="200"></p>
+<p>The goal of SEQuential is to implement sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.</p>
+<p><br><br></p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>You can install the development version of SEQuential from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"CausalInference/SEQuential"</span>, subdir <span class="op">=</span> <span class="st">"SEQuential"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="setting-up-your-analysis">Setting up your Analysis<a class="anchor" aria-label="anchor" href="#setting-up-your-analysis"></a>
+</h2>
+<p><code>SEQuential</code> uses R’s S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor <code>SEQopts</code> and then feeding that into <code>SEQuential</code>. <code>SEQestimate</code> can also take the provided options and return a (very rough) estimated time for analysis.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://causalinference.github.io/SEQuential/">SEQuential</a></span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>, time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
+<span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>, treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>, </span>
+<span>                    outcome.col <span class="op">=</span> <span class="st">"outcome"</span>, </span>
+<span>                    time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span>
+<span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                    method <span class="op">=</span> <span class="st">"ITT"</span>,</span>
+<span>                    options <span class="op">=</span> <span class="fu"><a href="reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/outcome.html">outcome</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>       <span class="co"># Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping</span></span>
+<span><span class="fu"><a href="reference/diagnostics.html">diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>  <span class="co"># Returns a table of non-excused treatment switches and both unique and non-unique outcomes</span></span>
+<span></span>
+<span><span class="co"># Plotting</span></span>
+<span><span class="fu"><a href="reference/km.curve.html">km.curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                      <span class="co"># Returns the Survival curve</span></span>
+<span><span class="fu"><a href="reference/km.data.html">km.data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                      <span class="co"># Returns a dataframe of survival data in long-format for other analysis/plotting</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="assumptions">Assumptions<a class="anchor" aria-label="anchor" href="#assumptions"></a>
+</h3>
+<p>This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed-</p>
+<ol style="list-style-type: decimal">
+<li>User provided <code>time.col</code> begins at 0 per unique <code>id.col</code> entries, we also assume that the column contains only integers and doest continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
+<ul>
+<li>Provided <code>time.col</code> entries may be out of order as a sort is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …) is valid because it begins at 0 and is continuously increasing by increments of 1, even though it is not ordered.</li>
+</ul>
+</li>
+<li>
+<code>eligible</code>, <code>excused.col1</code>, and <code>excused.col0</code> are once one only one (with respect to <code>time.col</code>) flag variables</li>
+</ol>
+</div>
+</div>
+<div class="section level2">
+<h2 id="return">Return<a class="anchor" aria-label="anchor" href="#return"></a>
+</h2>
+<p>The primary function, <code>SEQuential</code>, returns an S4 object of class <code>SEQoutput</code> with slots:</p>
+<ol style="list-style-type: decimal">
+<li>params - the SEQparams object created through the SEQuential process</li>
+<li>DT - Expanded data table with weighting information</li>
+<li>outcome - outcome covariates</li>
+<li>numerator - numerator covariates when weighting</li>
+<li>denominator - denominator covariates when weighting</li>
+<li>hazard - the hazard ratio</li>
+<li>survival.curve - ggplot survival curve</li>
+<li>survival.data - survival and risk data for all points of followup</li>
+<li>risk.difference - risk difference at end of followup with CIs if bootstrapped</li>
+<li>risk.ratio - risk ratio at end of followup with CIs if bootstrapped</li>
+<li>time - elapsed time for the SEQuential analysis</li>
+</ol>
+<p>These can be handily and easily printed to the terminal with by calling the object as <code>mySequential</code>. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers <code>hazard = TRUE, calculate.var = TRUE</code>, then the survival curves, data, and associated risks will return <code>NA</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h2>
+<ul>
+<li>data.table</li>
+<li>doFuture</li>
+<li>doRNG</li>
+<li>future</li>
+<li>future.apply</li>
+<li>ggplot2</li>
+<li>fastglm</li>
+<li>methods</li>
+<li>stringr</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="finding-more-information-and-examples">Finding More Information and Examples<a class="anchor" aria-label="anchor" href="#finding-more-information-and-examples"></a>
+</h2>
+<p>Further information on utilizing this package or developing it further is available with the <a href="https://causalinference.github.io/SEQuential">SEQuential Pages</a> as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.</p>
+</div>
+<div class="section level2">
+<h2 id="contributing-to-the-package">Contributing to the package<a class="anchor" aria-label="anchor" href="#contributing-to-the-package"></a>
+</h2>
+<p>Community members are welcome to contribute to this package through several different avenues-</p>
+<ul>
+<li>Asking/Answering questions about the package via <a href="https://github.com/CausalInference/SEQuential/discussions/categories/q-a" class="external-link">Github Discussions</a>. These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.</li>
+<li>Contributing to <a href="https://github.com/CausalInference/SEQuential/issues" class="external-link">Github Issues</a> if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.</li>
+<li>Adding content to the package
+<ul>
+<li>If you intend to add to the package, we would prefer you to branch and then pull-request. This PR will need to:
+<ol style="list-style-type: decimal">
+<li>Pass current unit-tests to ensure nothing is being broken backwards.</li>
+<li>Add tests to added portions of code if they are not already covered in existing tests</li>
+<li>Pass R-CMD-Check (initiated on PR) with 0-0-0 status</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
@@ -72,7 +196,14 @@ Implemention of sequential trial emulation for the analysis of observational dat
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD"></a></li>
+<li><a href="https://codecov.io/gh/CausalInference/SEQuential" class="external-link"><img src="https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08" alt="codecov"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
