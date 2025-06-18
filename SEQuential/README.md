@@ -24,6 +24,8 @@ strategies, can be used to estimate observational analogs of
 intention-to-treat and per-protocol effects, and can adjust for
 potential selection bias induced by losses-to-follow-up.
 
+<br/> <br/>
+
 ## Installation
 
 You can install the development version of SEQuential from
