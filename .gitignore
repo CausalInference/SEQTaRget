@@ -49,3 +49,8 @@ po/*~
 rsconnect/
 
 .DS_Store
+
+# pkgdown generated files
+docs/
+SEQuential/docs
+*.html
