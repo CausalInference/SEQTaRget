@@ -19,8 +19,7 @@ setClass("SEQopts",
     weight.lower = "numeric",
     weight.upper = "numeric",
     weight.p99 = "logical",
-    weight.eligible0 = "character",
-    weight.eligible1 = "character",
+    weight.eligible_cols = "list",
     weight.preexpansion = "logical",
     excused = "logical",
     calculate.var = "logical",
@@ -53,7 +52,8 @@ setClass("SEQopts",
     plot.colors = "character",
     plot.type = "character",
     subgroup = "character",
-    data.return = "logical"
+    data.return = "logical",
+    weight.lag_condition = "logical"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -72,8 +72,7 @@ setClass("SEQopts",
     weight.p99 = FALSE,
     weight.preexpansion = TRUE,
     excused = FALSE,
-    weight.eligible0 = NA_character_,
-    weight.eligible1 = NA_character_,
+    weight.eligible_cols = list(),
     hazard = FALSE,
     hazard.fixed.dist = list(),
     hazard.time_varying.dist = list(),
@@ -103,7 +102,8 @@ setClass("SEQopts",
     plot.colors = NA_character_,
     plot.type = NA_character_,
     subgroup = NA_character_,
-    data.return = FALSE
+    data.return = FALSE,
+    weight.lag_condition = TRUE
   )
 )
 

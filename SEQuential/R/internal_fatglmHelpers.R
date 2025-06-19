@@ -46,16 +46,16 @@ prepare.data <- function(weight, params, type, model, case) {
       covs <- ifelse(type == "numerator", params@numerator, params@denominator)
       
       if (!params@excused) {
-        weight <- weight[tx_lag == model, ]
+        if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
       } else {
         target <- match(model, unlist(params@treat.level))
         if (type == "denominator" && params@weight.preexpansion) {
-          weight <- weight[tx_lag == model, ]
+          if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
           if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         } else {
-          weight <- weight[tx_lag == model &
-                                  isExcused < 1 &
-                                  followup != 0, ]
+          if (params@weight.lag_condition) {
+            weight <- weight[tx_lag == model & isExcused < 1 & followup != 0, ]
+          } else weight <- weight[isExcused < 1 & followup != 0, ]
           if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
         }
       }

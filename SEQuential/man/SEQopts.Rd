@@ -5,149 +5,149 @@
 \title{Parameter Builder for SEQuential Model and Estimates}
 \usage{
 SEQopts(
-  parallel = FALSE,
-  nthreads = data.table::getDTthreads(),
-  ncores = parallel::detectCores() - 1,
   bootstrap = FALSE,
   bootstrap.nboot = 100,
   bootstrap.sample = 0.8,
-  seed = 1636,
-  followup.min = -Inf,
-  followup.max = Inf,
-  survival.max = Inf,
-  followup.include = TRUE,
-  trial.include = TRUE,
-  covariates = NA,
-  weighted = FALSE,
-  weight.upper = Inf,
-  weight.lower = -Inf,
-  weight.p99 = FALSE,
-  numerator = NA,
-  denominator = NA,
-  weight.preexpansion = TRUE,
-  weight.eligible0 = NA,
-  weight.eligible1 = NA,
-  hazard = FALSE,
-  subgroup = NA,
-  data.return = FALSE,
-  selection.random = FALSE,
-  selection.prob = 0.8,
-  followup.class = FALSE,
-  followup.spline = FALSE,
-  cense.numerator = NA,
-  cense.denominator = NA,
   cense = NA,
+  cense.denominator = NA,
   cense.eligible = NA,
+  cense.numerator = NA,
   compevent = NA,
-  multinomial = FALSE,
-  treat.level = c(0, 1),
+  covariates = NA,
+  data.return = FALSE,
+  denominator = NA,
   excused = FALSE,
   excused.cols = c(NA, NA),
-  km.curves = FALSE,
+  fastglm.method = 2L,
+  followup.class = FALSE,
+  followup.include = TRUE,
+  followup.max = Inf,
+  followup.min = -Inf,
+  followup.spline = FALSE,
+  hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
-  fastglm.method = 2L,
-  plot.title = NA,
-  plot.subtitle = NA,
-  plot.labels = NA,
+  km.curves = FALSE,
+  multinomial = FALSE,
+  ncores = parallel::detectCores() - 1,
+  nthreads = data.table::getDTthreads(),
+  numerator = NA,
+  parallel = FALSE,
   plot.colors = c("#F8766D", "#00BFC4", "#555555"),
-  plot.type = "survival"
+  plot.labels = NA,
+  plot.subtitle = NA,
+  plot.title = NA,
+  plot.type = "survival",
+  seed = 1636,
+  selection.prob = 0.8,
+  selection.random = FALSE,
+  subgroup = NA,
+  survival.max = Inf,
+  treat.level = c(0, 1),
+  trial.include = TRUE,
+  weight.eligible_cols = c(),
+  weight.lower = -Inf,
+  weight.lag_condition = TRUE,
+  weight.p99 = FALSE,
+  weight.preexpansion = TRUE,
+  weight.upper = Inf,
+  weighted = FALSE
 )
 }
 \arguments{
-\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
-
-\item{nthreads}{Integer: number of threads to use for data.table processing}
-
-\item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
-
 \item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
 
 \item{bootstrap.nboot}{Integer: number of bootstraps}
 
 \item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
 
-\item{seed}{Integer: starting seed}
-
-\item{followup.min}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
-
-\item{followup.max}{Numeric: maximum time to expand about, default is Inf (no maximum)}
-
-\item{survival.max}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
-
-\item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
-
-\item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
-
-\item{covariates}{String: covariates to the right hand side of a formula object}
-
-\item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
-
-\item{weight.upper}{Numeric: weights truncated at upper end at this weight}
-
-\item{weight.lower}{Numeric: weights truncated at lower end at this weight}
-
-\item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
-
-\item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
-
-\item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
-
-\item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
-
-\item{weight.eligible0}{String: column name for indicator column defining which weights are eligible for the 'zero' model}
-
-\item{weight.eligible1}{String: column name for indicator column defining which weights are eligible for the 'one' model}
-
-\item{hazard}{Logical: hazard error calculation instead of survival estimation}
-
-\item{subgroup}{Character: Column name to stratify outcome models on}
-
-\item{data.return}{Logical: whether to return the expanded dataframe with weighting information}
-
-\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
-
-\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]}
-
-\item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column}
-
-\item{followup.spline}{Logical: treat followup as a cubic spline}
-
-\item{cense.numerator}{String: censoring numerator covariates to the right hand side of a formula object}
+\item{cense}{String: column name for additional censoring variable, e.g. loss-to-follow-up}
 
 \item{cense.denominator}{String: censoring denominator covariates to the right hand side of a formula object}
 
-\item{cense}{String: column name for additional censoring variable, e.g. loss-to-follow-up}
-
 \item{cense.eligible}{String: column name for indicator column defining which rows to use for censoring model}
+
+\item{cense.numerator}{String: censoring numerator covariates to the right hand side of a formula object}
 
 \item{compevent}{String: column name for competing event indicator}
 
-\item{multinomial}{Logical:}
+\item{covariates}{String: covariates to the right hand side of a formula object}
 
-\item{treat.level}{List: treatment levels to compare}
+\item{data.return}{Logical: whether to return the expanded dataframe with weighting information}
+
+\item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 
 \item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
 
-\item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
+\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+
+\item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column}
+
+\item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
+
+\item{followup.max}{Numeric: maximum time to expand about, default is Inf (no maximum)}
+
+\item{followup.min}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+
+\item{followup.spline}{Logical: treat followup as a cubic spline}
+
+\item{hazard}{Logical: hazard error calculation instead of survival estimation}
 
 \item{indicator.baseline}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{indicator.squared}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+\item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
 
-\item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
+\item{multinomial}{Logical:}
 
-\item{plot.subtitle}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+\item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
 
-\item{plot.labels}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+\item{nthreads}{Integer: number of threads to use for data.table processing}
+
+\item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
+
+\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
 
 \item{plot.colors}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
 
+\item{plot.labels}{Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}}
+
+\item{plot.subtitle}{Character: Subtitle for output plot if \code{km.curves = TRUE}}
+
+\item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
+
 \item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)}
+
+\item{seed}{Integer: starting seed}
+
+\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]}
+
+\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
+
+\item{subgroup}{Character: Column name to stratify outcome models on}
+
+\item{survival.max}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
+
+\item{treat.level}{List: treatment levels to compare}
+
+\item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
+
+\item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
+
+\item{weight.lower}{Numeric: weights truncated at lower end at this weight}
+
+\item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value}
+
+\item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
+
+\item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
+
+\item{weight.upper}{Numeric: weights truncated at upper end at this weight}
+
+\item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 }
 \value{
 An object of class 'SEQOpts'

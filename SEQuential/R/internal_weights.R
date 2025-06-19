@@ -71,13 +71,14 @@ internal.weights <- function(DT, data, params) {
       model.data <- copy(weight)
       if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
       
-      # Handle eligibility criteria for each treatment level if specified TODO
-      #for (i in seq_along(params@treat.level)) {
-      #  eligible_col <- paste0("params@weight.eligible", i-1)
-      #  if (exists(eligible_col) && !is.na(get(eligible_col))) {
-      #    model.data <- model.data[get(get(eligible_col)) == 1 & get(params@treatment) == params@treat.level[[i]], ]
-      #  }
-      #}
+      
+      for (i in seq_along(params@treat.level)) {
+        level <- params@treat.level[[i]]
+        if (!is.na(params@weight.eligible_cols[[i]])) {
+          model.data[get(params@treatment) == level & 
+                       get(params@weight.eligible_col) == 0, names(model.data) := NULL]
+        }
+      }
 
       # Fit models for each treatment level
       if (!(params@excused & params@weight.preexpansion)) {
@@ -194,4 +195,3 @@ internal.weights <- function(DT, data, params) {
   })
   return(result)
 }
-

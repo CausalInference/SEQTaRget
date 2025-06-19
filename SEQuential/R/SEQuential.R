@@ -149,7 +149,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else {
     for (i in seq_along(subgroups)) {
       label <- paste0(params@subgroup, "_", subgroups[[i]])
-      hazard[[label]] <- internal.hazard(analytic, params)
+      models <- lapply(analytic, function(x) x$model[[i]])
+      hazard[[label]] <- internal.hazard(models, params)
     }
   }
   
