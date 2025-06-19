@@ -194,4 +194,3 @@ internal.weights <- function(DT, data, params) {
   })
   return(result)
 }
-
