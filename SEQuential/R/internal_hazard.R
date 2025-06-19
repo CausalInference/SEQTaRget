@@ -19,7 +19,7 @@ internal.hazard <- function(model, params) {
       rm(ce.data)
     }
     
-    handler <- function(data, params) {
+    handler <- function(data, params, model) {
       trials <- copy(data)[, kept, with = FALSE
                      ][, .SD[1], by = c(params@id, "trial")
                        ][rep(seq_len(.N), each = params@followup.max + 1)
@@ -29,7 +29,7 @@ internal.hazard <- function(model, params) {
       out_list <- c()
       for (i in seq_along(params@treat.level)) {
         tmp <- copy(trials)[, eval(tx_bas) := params@treat.level[[i]]
-                            ][, "outcomeProb" := inline.pred(model[[1]]$model[[1]]$model, newdata = .SD, params, type = "outcome")
+                            ][, "outcomeProb" := inline.pred(model, newdata = .SD, params, type = "outcome")
                               ][, "outcome" := rbinom(.N, 1, outcomeProb)]
         if (!is.na(params@compevent)) {
           tmp[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv")
@@ -60,7 +60,7 @@ internal.hazard <- function(model, params) {
       } else hr.res <- coxph(Surv(followup, event == 1) ~ get(tx_bas), data)
       exp(hr.res$coefficients)
     }
-    full <- handler(params@DT, params)
+    full <- handler(params@DT, params, model[[1]]$model)
     if (is.na(full)) return(c(Hazard = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
     bootstrap <- if (params@bootstrap) {
@@ -73,14 +73,14 @@ internal.hazard <- function(model, params) {
         out <- future_lapply(1:params@bootstrap.nboot, function(x) {
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
           RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) subDT[get(params@id) == id.sample[x], ]))
-          handler(RMDT, params)
+          handler(RMDT, params, model[[x]]$model)
         }, future.seed = params@seed)
       } else {
         out <- lapply(1:params@bootstrap.nboot, function(x) {
           set.seed(params@seed + x)
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
           RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) subDT[get(params@id) == id.sample[x], ]))
-          handler(RMDT, params)
+          handler(RMDT, params, model[[x]]$model)
         })
       }
     }
