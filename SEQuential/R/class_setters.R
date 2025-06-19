@@ -50,8 +50,7 @@ parameter.setter <- function(data, DT,
     treat.level = opts@treat.level,
     followup.class = opts@followup.class,
     followup.spline = opts@followup.spline,
-    weight.eligible1 = opts@weight.eligible1,
-    weight.eligible0 = opts@weight.eligible0,
+    weight.eligible_cols = opts@weight.eligible_cols,
     plot.type = opts@plot.type,
     plot.title = opts@plot.title,
     plot.subtitle = opts@plot.subtitle,
@@ -95,6 +94,11 @@ parameter.simplifier <- function(params) {
     params@excused.cols <- c(params@excused.cols, 
                              rep(NA, length(params@treat.level) - length(params@excused.cols)))
   }
+  
+  if (length(params@weight.eligible_cols) < length(params@treat.level)) {
+    params@weight.eligible_cols <- c(params@weight.eligible_cols,
+                                     rep(NA, length(params@treat.level) - length(params@weight.eligible_cols)))
+  }
 
   if (params@km.curves & params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
@@ -110,6 +114,8 @@ parameter.simplifier <- function(params) {
   }
   if (params@followup.class & params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
   if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
+  
+  if (params@multinomial & params@method == "dose-response") stop("Multinomial dose-response is not supported")
 
   return(params)
 }

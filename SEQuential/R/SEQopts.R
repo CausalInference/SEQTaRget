@@ -40,8 +40,7 @@
 #' @param survival.max Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @param treat.level List: treatment levels to compare
 #' @param trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
-#' @param weight.eligible0 Not currently in use
-#' @param weight.eligible1 Not currently in use
+#' @param weight.eligible_cols List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}
 #' @param weight.lower Numeric: weights truncated at lower end at this weight
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
@@ -60,7 +59,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     km.curves = FALSE, multinomial = FALSE, ncores = parallel::detectCores() - 1, nthreads = data.table::getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     seed = 1636, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
-                    treat.level = c(0, 1), trial.include = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
+                    treat.level = c(0, 1), trial.include = TRUE, weight.eligible_cols = c(),
                     weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
@@ -74,8 +73,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   survival.max <- as.numeric(survival.max)
   weight.lower <- as.numeric(weight.lower)
   weight.upper <- as.numeric(weight.upper)
-  weight.eligible0 <- as.character(weight.eligible0)
-  weight.eligible1 <- as.character(weight.eligible1)
+  weight.eligible_cols <- as.list(weight.eligible_cols)
 
   hazard <- as.logical(hazard)
   
@@ -150,8 +148,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
     treat.level = treat.level,
     multinomial = multinomial,
     hazard = hazard,
-    weight.eligible1 = weight.eligible1,
-    weight.eligible0 = weight.eligible0,
+    weight.eligible_cols = weight.eligible_cols,
     followup.class = followup.class,
     followup.spline = followup.spline,
     plot.title = plot.title,

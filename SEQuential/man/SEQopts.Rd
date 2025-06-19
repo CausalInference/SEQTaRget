@@ -45,8 +45,7 @@ SEQopts(
   survival.max = Inf,
   treat.level = c(0, 1),
   trial.include = TRUE,
-  weight.eligible0 = NA,
-  weight.eligible1 = NA,
+  weight.eligible_cols = c(),
   weight.lower = -Inf,
   weight.lag_condition = TRUE,
   weight.p99 = FALSE,
@@ -136,9 +135,7 @@ SEQopts(
 
 \item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
 
-\item{weight.eligible0}{Not currently in use}
-
-\item{weight.eligible1}{Not currently in use}
+\item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
 
 \item{weight.lower}{Numeric: weights truncated at lower end at this weight}
 
