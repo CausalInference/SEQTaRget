@@ -138,6 +138,7 @@ options <- SEQopts(km.curves = TRUE,
 
 data <- SEQdata.LTFU                                
 model <- SEQuential(data, 
+                    id.col = "ID",
                     time.col = "time",
                     eligible.col = "eligible",
                     treatment.col = "tx_init",

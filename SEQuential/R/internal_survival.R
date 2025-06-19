@@ -30,13 +30,11 @@ internal.survival <- function(params, outcome) {
       out_list <- c()
       for (i in seq_along(params@treat.level)) {
         psurv <- paste0("predsurv_", params@treat.level[[i]])
-        csurv <- paste0("cumsurv_", params@treat.level[[i]])
         surv <- paste0("surv_", params@treat.level[[i]])
         pce <- paste0("predce_", params@treat.level[[i]])
         cce <- paste0("ce_", params@treat.level[[i]])
         inc <- paste0("inc_", params@treat.level[[i]])
         risk <- paste0("risk_", params@treat.level[[i]])
-        
         
         RMDT <- copy(DT)[, trialID := paste0(get(params@id), "_", trial)
                    ][get("followup") == 0,
@@ -51,14 +49,14 @@ internal.survival <- function(params, outcome) {
             }
         RMDT[, (psurv) := inline.pred(model, newdata = .SD, params, case = "surv")]
         
-        if (!is.na(params@compevent)) RMDT[, eval(ce) := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+        if (!is.na(params@compevent)) RMDT[, eval(pce) := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
         RMDT[, eval(surv) := cumprod(1 - get(psurv)), by = "trialID"]
         
         if (!is.na(params@compevent)) {
           RMDT[, eval(cce) := cumprod((1 - get(psurv)) * (1 - get(pce))), by = "trialID"
                ][, eval(inc) := cumsum(get(psurv) * (1 - get(pce)) * get(cce)), by = "trialID"]
           
-          RMDT <- RMDT[, setNames(list(mean(get(csurv)), mean(get(inc))), c(surv, inc)), by = "followup"]
+          RMDT <- RMDT[, setNames(list(mean(get(surv)), mean(get(inc))), c(surv, inc)), by = "followup"]
           fup0 <- data.table(followup = 0)[, (surv) := 1][, (inc) := 0]
           } else {
             RMDT <- RMDT[, setNames(list(mean(get(surv))), surv), by = "followup"]
