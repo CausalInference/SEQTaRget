@@ -48,6 +48,7 @@ SEQopts(
   weight.eligible0 = NA,
   weight.eligible1 = NA,
   weight.lower = -Inf,
+  weight.lag_condition = TRUE,
   weight.p99 = FALSE,
   weight.preexpansion = TRUE,
   weight.upper = Inf,
@@ -140,6 +141,8 @@ SEQopts(
 \item{weight.eligible1}{Not currently in use}
 
 \item{weight.lower}{Numeric: weights truncated at lower end at this weight}
+
+\item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value}
 
 \item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 

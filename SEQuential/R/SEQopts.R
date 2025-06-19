@@ -43,6 +43,7 @@
 #' @param weight.eligible0 Not currently in use
 #' @param weight.eligible1 Not currently in use
 #' @param weight.lower Numeric: weights truncated at lower end at this weight
+#' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data
 #' @param weight.upper Numeric: weights truncated at upper end at this weight
@@ -60,7 +61,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     seed = 1636, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE, weight.eligible0 = NA, weight.eligible1 = NA, 
-                    weight.lower = -Inf, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
+                    weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -130,6 +131,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
     followup.include = followup.include,
     weighted = weighted,
     weight.lower = weight.lower,
+    weight.lag_condition = weight.lag_condition,
     weight.upper = weight.upper,
     weight.p99 = weight.p99,
     weight.preexpansion = weight.preexpansion,

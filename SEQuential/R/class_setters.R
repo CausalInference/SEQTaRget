@@ -58,7 +58,8 @@ parameter.setter <- function(data, DT,
     plot.labels = opts@plot.labels,
     plot.colors = opts@plot.colors,
     subgroup = opts@subgroup,
-    data.return = opts@data.return
+    data.return = opts@data.return,
+    weight.lag_condition = opts@weight.lag_condition
   )
 }
 

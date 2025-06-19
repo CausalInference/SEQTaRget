@@ -53,7 +53,8 @@ setClass("SEQopts",
     plot.colors = "character",
     plot.type = "character",
     subgroup = "character",
-    data.return = "logical"
+    data.return = "logical",
+    weight.lag_condition = "logical"
   ), prototype = list(
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
@@ -103,7 +104,8 @@ setClass("SEQopts",
     plot.colors = NA_character_,
     plot.type = NA_character_,
     subgroup = NA_character_,
-    data.return = FALSE
+    data.return = FALSE,
+    weight.lag_condition = TRUE
   )
 )
 
