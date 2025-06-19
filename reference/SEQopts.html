@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,53 +45,53 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SEQopts</span><span class="op">(</span></span>
-<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  nthreads <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">getDTthreads</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  ncores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
 <span>  bootstrap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bootstrap.nboot <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  bootstrap.sample <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">1636</span>,</span>
-<span>  followup.min <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
-<span>  followup.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  survival.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  followup.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  trial.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  covariates <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  weight.upper <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  weight.lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
-<span>  weight.p99 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  weight.preexpansion <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  weight.eligible0 <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  weight.eligible1 <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  hazard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  subgroup <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  data.return <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  selection.random <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  selection.prob <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  followup.class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  followup.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  cense.numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  cense.denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  cense <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  cense.denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  cense.eligible <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  cense.numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  compevent <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  multinomial <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  treat.level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  covariates <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  data.return <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>  km.curves <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fastglm.method <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  followup.class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  followup.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  followup.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  followup.min <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  followup.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  hazard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  indicator.baseline <span class="op">=</span> <span class="st">"_bas"</span>,</span>
 <span>  indicator.squared <span class="op">=</span> <span class="st">"_sq"</span>,</span>
-<span>  fastglm.method <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>  plot.title <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  plot.subtitle <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  plot.labels <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  km.curves <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  multinomial <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ncores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
+<span>  nthreads <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">getDTthreads</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot.colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#F8766D"</span>, <span class="st">"#00BFC4"</span>, <span class="st">"#555555"</span><span class="op">)</span>,</span>
-<span>  plot.type <span class="op">=</span> <span class="st">"survival"</span></span>
+<span>  plot.labels <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  plot.subtitle <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  plot.title <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  plot.type <span class="op">=</span> <span class="st">"survival"</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">1636</span>,</span>
+<span>  selection.prob <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  selection.random <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  subgroup <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  survival.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  treat.level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  trial.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  weight.eligible_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  weight.lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  weight.lag_condition <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  weight.p99 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  weight.preexpansion <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  weight.upper <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  weighted <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,19 +99,7 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
-<dd><p>Logical: define if the SEQuential process is run in parallel, default is FALSE</p></dd>
-
-
-<dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
-<dd><p>Integer: number of threads to use for data.table processing</p></dd>
-
-
-<dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
-<dd><p>Integer: number of cores to use in parallel processing, default is one less than system max</p></dd>
-
-
-<dt id="arg-bootstrap">bootstrap<a class="anchor" aria-label="anchor" href="#arg-bootstrap"></a></dt>
+<dl><dt id="arg-bootstrap">bootstrap<a class="anchor" aria-label="anchor" href="#arg-bootstrap"></a></dt>
 <dd><p>Logical: defines if SEQuential should run bootstrapping, default is FALSE</p></dd>
 
 
@@ -123,124 +111,36 @@
 <dd><p>Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8</p></dd>
 
 
-<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Integer: starting seed</p></dd>
-
-
-<dt id="arg-followup-min">followup.min<a class="anchor" aria-label="anchor" href="#arg-followup-min"></a></dt>
-<dd><p>Numeric: minimum time to expand aboud, default is -Inf (no minimum)</p></dd>
-
-
-<dt id="arg-followup-max">followup.max<a class="anchor" aria-label="anchor" href="#arg-followup-max"></a></dt>
-<dd><p>Numeric: maximum time to expand about, default is Inf (no maximum)</p></dd>
-
-
-<dt id="arg-survival-max">survival.max<a class="anchor" aria-label="anchor" href="#arg-survival-max"></a></dt>
-<dd><p>Numeric: maximum time for survival curves, default is Inf (no maximum)</p></dd>
-
-
-<dt id="arg-followup-include">followup.include<a class="anchor" aria-label="anchor" href="#arg-followup-include"></a></dt>
-<dd><p>Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model</p></dd>
-
-
-<dt id="arg-trial-include">trial.include<a class="anchor" aria-label="anchor" href="#arg-trial-include"></a></dt>
-<dd><p>Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model</p></dd>
-
-
-<dt id="arg-covariates">covariates<a class="anchor" aria-label="anchor" href="#arg-covariates"></a></dt>
-<dd><p>String: covariates to the right hand side of a formula object</p></dd>
-
-
-<dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
-<dd><p>Logical: whether or not to preform weighted analysis, default is FALSE</p></dd>
-
-
-<dt id="arg-weight-upper">weight.upper<a class="anchor" aria-label="anchor" href="#arg-weight-upper"></a></dt>
-<dd><p>Numeric: weights truncated at upper end at this weight</p></dd>
-
-
-<dt id="arg-weight-lower">weight.lower<a class="anchor" aria-label="anchor" href="#arg-weight-lower"></a></dt>
-<dd><p>Numeric: weights truncated at lower end at this weight</p></dd>
-
-
-<dt id="arg-weight-p-">weight.p99<a class="anchor" aria-label="anchor" href="#arg-weight-p-"></a></dt>
-<dd><p>Logical: forces weight truncation at 1st and 99th percentile weights, will override provided <code>weight.upper</code> and <code>weight.lower</code></p></dd>
-
-
-<dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
-<dd><p>String: numerator covariates to the right hand side of a  to formula object</p></dd>
-
-
-<dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
-<dd><p>String: denominator covariates to the right hand side of a  to formula object</p></dd>
-
-
-<dt id="arg-weight-preexpansion">weight.preexpansion<a class="anchor" aria-label="anchor" href="#arg-weight-preexpansion"></a></dt>
-<dd><p>Logical: whether weighting should be done on pre-expanded data</p></dd>
-
-
-<dt id="arg-weight-eligible-">weight.eligible0<a class="anchor" aria-label="anchor" href="#arg-weight-eligible-"></a></dt>
-<dd><p>String: column name for indicator column defining which weights are eligible for the 'zero' model</p></dd>
-
-
-<dt id="arg-weight-eligible-">weight.eligible1<a class="anchor" aria-label="anchor" href="#arg-weight-eligible-"></a></dt>
-<dd><p>String: column name for indicator column defining which weights are eligible for the 'one' model</p></dd>
-
-
-<dt id="arg-hazard">hazard<a class="anchor" aria-label="anchor" href="#arg-hazard"></a></dt>
-<dd><p>Logical: hazard error calculation instead of survival estimation</p></dd>
-
-
-<dt id="arg-subgroup">subgroup<a class="anchor" aria-label="anchor" href="#arg-subgroup"></a></dt>
-<dd><p>Character: Column name to stratify outcome models on</p></dd>
-
-
-<dt id="arg-data-return">data.return<a class="anchor" aria-label="anchor" href="#arg-data-return"></a></dt>
-<dd><p>Logical: whether to return the expanded dataframe with weighting information</p></dd>
-
-
-<dt id="arg-selection-random">selection.random<a class="anchor" aria-label="anchor" href="#arg-selection-random"></a></dt>
-<dd><p>Logical: randomly selects IDs with replacement to run analysis</p></dd>
-
-
-<dt id="arg-selection-prob">selection.prob<a class="anchor" aria-label="anchor" href="#arg-selection-prob"></a></dt>
-<dd><p>Numeric: percent of total IDs to select for <code>selection.random</code>, should be bound [0, 1]</p></dd>
-
-
-<dt id="arg-followup-class">followup.class<a class="anchor" aria-label="anchor" href="#arg-followup-class"></a></dt>
-<dd><p>Logical: treat followup as a class, e.g. expands every time to it's own indicator column</p></dd>
-
-
-<dt id="arg-followup-spline">followup.spline<a class="anchor" aria-label="anchor" href="#arg-followup-spline"></a></dt>
-<dd><p>Logical: treat followup as a cubic spline</p></dd>
-
-
-<dt id="arg-cense-numerator">cense.numerator<a class="anchor" aria-label="anchor" href="#arg-cense-numerator"></a></dt>
-<dd><p>String: censoring numerator covariates to the right hand side of a formula object</p></dd>
+<dt id="arg-cense">cense<a class="anchor" aria-label="anchor" href="#arg-cense"></a></dt>
+<dd><p>String: column name for additional censoring variable, e.g. loss-to-follow-up</p></dd>
 
 
 <dt id="arg-cense-denominator">cense.denominator<a class="anchor" aria-label="anchor" href="#arg-cense-denominator"></a></dt>
 <dd><p>String: censoring denominator covariates to the right hand side of a formula object</p></dd>
 
 
-<dt id="arg-cense">cense<a class="anchor" aria-label="anchor" href="#arg-cense"></a></dt>
-<dd><p>String: column name for additional censoring variable, e.g. loss-to-follow-up</p></dd>
-
-
 <dt id="arg-cense-eligible">cense.eligible<a class="anchor" aria-label="anchor" href="#arg-cense-eligible"></a></dt>
 <dd><p>String: column name for indicator column defining which rows to use for censoring model</p></dd>
+
+
+<dt id="arg-cense-numerator">cense.numerator<a class="anchor" aria-label="anchor" href="#arg-cense-numerator"></a></dt>
+<dd><p>String: censoring numerator covariates to the right hand side of a formula object</p></dd>
 
 
 <dt id="arg-compevent">compevent<a class="anchor" aria-label="anchor" href="#arg-compevent"></a></dt>
 <dd><p>String: column name for competing event indicator</p></dd>
 
 
-<dt id="arg-multinomial">multinomial<a class="anchor" aria-label="anchor" href="#arg-multinomial"></a></dt>
-<dd><p>Logical:</p></dd>
+<dt id="arg-covariates">covariates<a class="anchor" aria-label="anchor" href="#arg-covariates"></a></dt>
+<dd><p>String: covariates to the right hand side of a formula object</p></dd>
 
 
-<dt id="arg-treat-level">treat.level<a class="anchor" aria-label="anchor" href="#arg-treat-level"></a></dt>
-<dd><p>List: treatment levels to compare</p></dd>
+<dt id="arg-data-return">data.return<a class="anchor" aria-label="anchor" href="#arg-data-return"></a></dt>
+<dd><p>Logical: whether to return the expanded dataframe with weighting information</p></dd>
+
+
+<dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
+<dd><p>String: denominator covariates to the right hand side of a  to formula object</p></dd>
 
 
 <dt id="arg-excused">excused<a class="anchor" aria-label="anchor" href="#arg-excused"></a></dt>
@@ -251,8 +151,32 @@
 <dd><p>List: list of column names for treatment switch excuses - should be the same length, and ordered the same as <code>treat.level</code></p></dd>
 
 
-<dt id="arg-km-curves">km.curves<a class="anchor" aria-label="anchor" href="#arg-km-curves"></a></dt>
-<dd><p>Logical: Kaplan-Meier survival curve creation and data return</p></dd>
+<dt id="arg-fastglm-method">fastglm.method<a class="anchor" aria-label="anchor" href="#arg-fastglm-method"></a></dt>
+<dd><p>Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)</p></dd>
+
+
+<dt id="arg-followup-class">followup.class<a class="anchor" aria-label="anchor" href="#arg-followup-class"></a></dt>
+<dd><p>Logical: treat followup as a class, e.g. expands every time to it's own indicator column</p></dd>
+
+
+<dt id="arg-followup-include">followup.include<a class="anchor" aria-label="anchor" href="#arg-followup-include"></a></dt>
+<dd><p>Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model</p></dd>
+
+
+<dt id="arg-followup-max">followup.max<a class="anchor" aria-label="anchor" href="#arg-followup-max"></a></dt>
+<dd><p>Numeric: maximum time to expand about, default is Inf (no maximum)</p></dd>
+
+
+<dt id="arg-followup-min">followup.min<a class="anchor" aria-label="anchor" href="#arg-followup-min"></a></dt>
+<dd><p>Numeric: minimum time to expand aboud, default is -Inf (no minimum)</p></dd>
+
+
+<dt id="arg-followup-spline">followup.spline<a class="anchor" aria-label="anchor" href="#arg-followup-spline"></a></dt>
+<dd><p>Logical: treat followup as a cubic spline</p></dd>
+
+
+<dt id="arg-hazard">hazard<a class="anchor" aria-label="anchor" href="#arg-hazard"></a></dt>
+<dd><p>Logical: hazard error calculation instead of survival estimation</p></dd>
 
 
 <dt id="arg-indicator-baseline">indicator.baseline<a class="anchor" aria-label="anchor" href="#arg-indicator-baseline"></a></dt>
@@ -263,28 +187,104 @@
 <dd><p>String: identifier for squared variables in <code>covariates, numerator, denominator</code> - intended as an override</p></dd>
 
 
-<dt id="arg-fastglm-method">fastglm.method<a class="anchor" aria-label="anchor" href="#arg-fastglm-method"></a></dt>
-<dd><p>Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)</p></dd>
+<dt id="arg-km-curves">km.curves<a class="anchor" aria-label="anchor" href="#arg-km-curves"></a></dt>
+<dd><p>Logical: Kaplan-Meier survival curve creation and data return</p></dd>
 
 
-<dt id="arg-plot-title">plot.title<a class="anchor" aria-label="anchor" href="#arg-plot-title"></a></dt>
-<dd><p>Character: Title for output plot if <code>km.curves = TRUE</code></p></dd>
+<dt id="arg-multinomial">multinomial<a class="anchor" aria-label="anchor" href="#arg-multinomial"></a></dt>
+<dd><p>Logical:</p></dd>
 
 
-<dt id="arg-plot-subtitle">plot.subtitle<a class="anchor" aria-label="anchor" href="#arg-plot-subtitle"></a></dt>
-<dd><p>Character: Subtitle for output plot if <code>km.curves = TRUE</code></p></dd>
+<dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
+<dd><p>Integer: number of cores to use in parallel processing, default is one less than system max</p></dd>
 
 
-<dt id="arg-plot-labels">plot.labels<a class="anchor" aria-label="anchor" href="#arg-plot-labels"></a></dt>
-<dd><p>Character: Color labels for output plot if <code>km.curves = TRUE</code> in order e.g. <code>c("risk.0", "risk.1")</code></p></dd>
+<dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
+<dd><p>Integer: number of threads to use for data.table processing</p></dd>
+
+
+<dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
+<dd><p>String: numerator covariates to the right hand side of a  to formula object</p></dd>
+
+
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
+<dd><p>Logical: define if the SEQuential process is run in parallel, default is FALSE</p></dd>
 
 
 <dt id="arg-plot-colors">plot.colors<a class="anchor" aria-label="anchor" href="#arg-plot-colors"></a></dt>
 <dd><p>Character: Colors for output plot if <code>km.curves = TRUE</code>, defaulted to ggplot2 defaults</p></dd>
 
 
+<dt id="arg-plot-labels">plot.labels<a class="anchor" aria-label="anchor" href="#arg-plot-labels"></a></dt>
+<dd><p>Character: Color labels for output plot if <code>km.curves = TRUE</code> in order e.g. <code>c("risk.0", "risk.1")</code></p></dd>
+
+
+<dt id="arg-plot-subtitle">plot.subtitle<a class="anchor" aria-label="anchor" href="#arg-plot-subtitle"></a></dt>
+<dd><p>Character: Subtitle for output plot if <code>km.curves = TRUE</code></p></dd>
+
+
+<dt id="arg-plot-title">plot.title<a class="anchor" aria-label="anchor" href="#arg-plot-title"></a></dt>
+<dd><p>Character: Title for output plot if <code>km.curves = TRUE</code></p></dd>
+
+
 <dt id="arg-plot-type">plot.type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
 <dd><p>Character: Type of plot to create if <code>km.curves = TRUE</code>, available options are 'survival', 'risk', and 'inc' (in the case of censoring)</p></dd>
+
+
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
+<dd><p>Integer: starting seed</p></dd>
+
+
+<dt id="arg-selection-prob">selection.prob<a class="anchor" aria-label="anchor" href="#arg-selection-prob"></a></dt>
+<dd><p>Numeric: percent of total IDs to select for <code>selection.random</code>, should be bound [0, 1]</p></dd>
+
+
+<dt id="arg-selection-random">selection.random<a class="anchor" aria-label="anchor" href="#arg-selection-random"></a></dt>
+<dd><p>Logical: randomly selects IDs with replacement to run analysis</p></dd>
+
+
+<dt id="arg-subgroup">subgroup<a class="anchor" aria-label="anchor" href="#arg-subgroup"></a></dt>
+<dd><p>Character: Column name to stratify outcome models on</p></dd>
+
+
+<dt id="arg-survival-max">survival.max<a class="anchor" aria-label="anchor" href="#arg-survival-max"></a></dt>
+<dd><p>Numeric: maximum time for survival curves, default is Inf (no maximum)</p></dd>
+
+
+<dt id="arg-treat-level">treat.level<a class="anchor" aria-label="anchor" href="#arg-treat-level"></a></dt>
+<dd><p>List: treatment levels to compare</p></dd>
+
+
+<dt id="arg-trial-include">trial.include<a class="anchor" aria-label="anchor" href="#arg-trial-include"></a></dt>
+<dd><p>Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model</p></dd>
+
+
+<dt id="arg-weight-eligible-cols">weight.eligible_cols<a class="anchor" aria-label="anchor" href="#arg-weight-eligible-cols"></a></dt>
+<dd><p>List: list of column names for indicator columns defining which weights are eligible for weight models - in order of <code>treat.level</code></p></dd>
+
+
+<dt id="arg-weight-lower">weight.lower<a class="anchor" aria-label="anchor" href="#arg-weight-lower"></a></dt>
+<dd><p>Numeric: weights truncated at lower end at this weight</p></dd>
+
+
+<dt id="arg-weight-lag-condition">weight.lag_condition<a class="anchor" aria-label="anchor" href="#arg-weight-lag-condition"></a></dt>
+<dd><p>Logical: whether weights should be conditioned on treatment lag value</p></dd>
+
+
+<dt id="arg-weight-p-">weight.p99<a class="anchor" aria-label="anchor" href="#arg-weight-p-"></a></dt>
+<dd><p>Logical: forces weight truncation at 1st and 99th percentile weights, will override provided <code>weight.upper</code> and <code>weight.lower</code></p></dd>
+
+
+<dt id="arg-weight-preexpansion">weight.preexpansion<a class="anchor" aria-label="anchor" href="#arg-weight-preexpansion"></a></dt>
+<dd><p>Logical: whether weighting should be done on pre-expanded data</p></dd>
+
+
+<dt id="arg-weight-upper">weight.upper<a class="anchor" aria-label="anchor" href="#arg-weight-upper"></a></dt>
+<dd><p>Numeric: weights truncated at upper end at this weight</p></dd>
+
+
+<dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
+<dd><p>Logical: whether or not to preform weighted analysis, default is FALSE</p></dd>
 
 </dl></div>
     <div class="section level2">
