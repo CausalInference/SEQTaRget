@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_methods.R
 \name{show,SEQoutput-method}
 \alias{show,SEQoutput-method}
-\title{TODO}
+\title{Show method for S4 object - SEQoutput.}
 \usage{
 \S4method{show}{SEQoutput}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{A SEQoutput object - usually generated from \code{SEQuential}}
 }
 \description{
-TODO
+Show method for S4 object - SEQoutput.
 }
