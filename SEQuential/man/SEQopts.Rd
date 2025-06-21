@@ -150,7 +150,7 @@ SEQopts(
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
 }
 \value{
-An object of class 'SEQOpts'
+An object of class 'SEQopts'
 }
 \description{
 Parameter Builder for SEQuential Model and Estimates

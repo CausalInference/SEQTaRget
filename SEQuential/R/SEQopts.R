@@ -49,7 +49,7 @@
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #'
 #' @export
-#' @returns An object of class 'SEQOpts'
+#' @returns An object of class 'SEQopts'
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
