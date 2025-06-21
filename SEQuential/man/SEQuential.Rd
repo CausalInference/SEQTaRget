@@ -36,7 +36,7 @@ SEQuential(
 
 \item{method}{String: method of analysis to preform}
 
-\item{options}{List: optional list of parameters from \code{SEQOpts}}
+\item{options}{List: optional list of parameters from \code{SEQopts}}
 }
 \value{
 An S4 object of class SEQoutput

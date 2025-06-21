@@ -9,7 +9,7 @@
 #' @param time_varying.cols List: column names for time varying columns
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
-#' @param options List: optional list of parameters from \code{SEQOpts}
+#' @param options List: optional list of parameters from \code{SEQopts}
 #'
 #' @importFrom stats lm rbinom
 #' @importFrom fastglm fastglm

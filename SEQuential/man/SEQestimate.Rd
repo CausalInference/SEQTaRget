@@ -36,7 +36,7 @@ SEQestimate(
 
 \item{method}{String: method of analysis to preform}
 
-\item{options}{List: optional list of parameters from \code{SEQOpts}}
+\item{options}{List: optional list of parameters from \code{SEQopts}}
 }
 \description{
 Estimate the (very rough) time to run SEQuential analysis on current machine

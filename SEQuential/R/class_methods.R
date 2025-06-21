@@ -1,4 +1,5 @@
-#' TODO
+#' Show method for S4 object - SEQoutput.
+#' 
 #' @param object A SEQoutput object - usually generated from \code{SEQuential}
 #' @importFrom knitr kable
 #' @importMethodsFrom methods show
