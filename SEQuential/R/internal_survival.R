@@ -85,8 +85,9 @@ internal.survival <- function(params, outcome) {
         setDTthreads(1)
         
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = FALSE)
-          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
+          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
+          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == id.sample[x],
+                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
           rm(RMDT); gc()
@@ -94,8 +95,9 @@ internal.survival <- function(params, outcome) {
         }, future.seed = params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = FALSE)
-          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == x, ]))
+          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
+          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == id.sample[x],
+                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
           rm(RMDT); gc()
