@@ -39,6 +39,7 @@ SEQopts(
   plot.title = NA,
   plot.type = "survival",
   seed = 1636,
+  selection.first_trial = FALSE,
   selection.prob = 0.8,
   selection.random = FALSE,
   subgroup = NA,
@@ -122,6 +123,8 @@ SEQopts(
 \item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)}
 
 \item{seed}{Integer: starting seed}
+
+\item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset}
 
 \item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]}
 

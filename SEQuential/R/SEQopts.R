@@ -34,6 +34,7 @@
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
 #' @param seed Integer: starting seed
+#' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis
 #' @param subgroup Character: Column name to stratify outcome models on
@@ -58,7 +59,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = parallel::detectCores() - 1, nthreads = data.table::getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
-                    seed = 1636, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
+                    seed = 1636, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE, weight.eligible_cols = c(),
                     weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
@@ -157,6 +158,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
     plot.colors = plot.colors,
     plot.type = plot.type,
     subgroup = subgroup,
-    data.return = data.return
+    data.return = data.return,
+    selection.first_trial = selection.first_trial
   )
 }

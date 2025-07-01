@@ -28,6 +28,7 @@ setClass("SEQopts",
     hazard.time_varying.dist = "list",
     selection.random = "logical",
     selection.prob = "numeric",
+    selection.first_trial = "logical",
     cense = "character",
     cense.eligible = "character",
     excused.cols = "list",
@@ -103,7 +104,8 @@ setClass("SEQopts",
     plot.type = NA_character_,
     subgroup = NA_character_,
     data.return = FALSE,
-    weight.lag_condition = TRUE
+    weight.lag_condition = TRUE,
+    selection.first_trial = FALSE
   )
 )
 

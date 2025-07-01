@@ -111,6 +111,10 @@ SEQexpand <- function(params) {
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
                    ][, `:=`(firstSwitch = NULL)]
     }
+    if (params@selection.first_trial) {
+      out <- out[get("trial") == min(get("trial")), .SD, by = c(params@id)]
+    }
+    
     if (params@selection.random) {
       set.seed(params@seed)
       out[, "trialID" := paste0(params@id, "-", trial)]
