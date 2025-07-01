@@ -35,7 +35,7 @@ SEQexpand <- function(params) {
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
                      params@treatment, params@cense, params@cense.eligible,
                      params@compevent, unlist(params@weight.eligible_cols), params@subgroup))
-    vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag")
+    vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
     vars <- vars[!vars %in% vars.nin]
     vars.base <- vars[grep(params@indicator.baseline, vars)]
@@ -100,12 +100,12 @@ SEQexpand <- function(params) {
         out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
             ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")
               ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")
-                ][, excused_tmp := NULL]
+                ][, `:=` (excused_tmp = NULL, "censored" = ifelse(switch, 1, 0))]
       } else {
         out[, `:=`(
           trial_sq = trial^2,
           switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
-          ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
+            ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
       }
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))

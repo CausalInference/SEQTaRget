@@ -105,7 +105,7 @@ test_that("Default Numerator Creation: Post-Expansion Excused Censoring", {
 
   expected <- unlist(c(
     params@fixed, paste0(params@time_varying, params@indicator.baseline), "followup", "followup_sq",
-    "trial", "trial_sq"
+    "trial", "trial_sq", "censored"
   ))
   expect_true(setequal(components, expected))
 })
