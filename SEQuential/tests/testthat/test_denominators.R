@@ -130,7 +130,7 @@ test_that("Default Denominator Creation: Post-Expansion Excused Censoring", {
 
   expected <- unlist(c(
     params@fixed, params@time_varying, paste0(params@time_varying, params@indicator.baseline),
-    "followup", "followup_sq", "trial_sq", "trial", "censored"
+    "followup", "followup_sq", "trial_sq", "trial"
   ))
   expect_true(setequal(components, expected))
 })

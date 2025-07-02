@@ -136,8 +136,12 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot,
       params = params,
       DT = DT,
       outcome = paste0(params@outcome, "~", params@covariates),
-      numerator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@numerator),
-      denominator = if (!params@weighted) NA_character_ else paste0(params@treatment, "~", params@denominator),
+      numerator = if (!params@weighted) NA_character_ else 
+        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@numerator) else 
+          paste0(params@treatment, "~", params@numerator),
+      denominator = if (!params@weighted) NA_character_ else 
+        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@denominator) else 
+          paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
       hazard = if (!params@hazard) list() else hazard,
       weight.statistics = weights,
