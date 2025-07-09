@@ -46,7 +46,9 @@ prepare.data <- function(weight, params, type, model, case) {
       cols <- unlist(strsplit(ifelse(type == "numerator", params@numerator, params@denominator), "\\+|\\*"))
       covs <- ifelse(type == "numerator", params@numerator, params@denominator)
       
-      if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
+      if (params@weight.lag_condition) {
+        weight <- if (type == "numerator" && params@excused) weight[get(paste0(params@treatment, params@indicator.baseline)) == model, ] else weight[tx_lag == model, ]
+      } 
       if (type == "denominator" && !params@weight.preexpansion) weight <- weight[followup != 0, ]
       if (params@excused) {
         if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
