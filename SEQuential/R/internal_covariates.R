@@ -76,7 +76,7 @@ create.default.weight.covariates <- function(params, type) {
     } else if (!params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
       if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial, "censored"), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@weight.preexpansion) {
@@ -86,7 +86,7 @@ create.default.weight.covariates <- function(params, type) {
     } else if (!params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
       if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial, "censored"), collapse = "+")
     }
   }
   return(out)
