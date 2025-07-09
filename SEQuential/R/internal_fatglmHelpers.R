@@ -39,28 +39,20 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
 #' @keywords internal
 prepare.data <- function(weight, params, type, model, case) {
   cols <- covs <- y <- X <- isExcused <- followup <- tx_lag <- NULL
-
+  target <- match(model, unlist(params@treat.level))
+  
   if (case == "default") {
     if (type %in% c("numerator", "denominator")) {
       cols <- unlist(strsplit(ifelse(type == "numerator", params@numerator, params@denominator), "\\+|\\*"))
       covs <- ifelse(type == "numerator", params@numerator, params@denominator)
       
-      if (!params@excused) {
-        if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
-      } else {
-        target <- match(model, unlist(params@treat.level))
-        if (type == "denominator" && params@weight.preexpansion) {
-          if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
-          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
-        } else {
-          if (params@weight.lag_condition) {
-            weight <- weight[tx_lag == model & isExcused < 1 & followup != 0, ]
-          } else weight <- weight[isExcused < 1 & followup != 0, ]
-          if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
-        }
+      if (params@weight.lag_condition) weight <- weight[tx_lag == model, ]
+      if (type == "denominator" && !params@weight.preexpansion) weight <- weight[followup != 0, ]
+      if (params@excused) {
+        if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
       }
       
-      y <- weight[[params@treatment]]
+      y <- if (!params@weight.preexpansion && params@excused) weight[["censored"]] else weight[[params@treatment]]
       X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     }
     

@@ -39,6 +39,8 @@ create.risk <- function(data, params) {
     setnames(out, names(out), c("A_x", "A_y", 
                                 "Risk Ratio", "Risk Differerence",
                                 "RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI"))
+    setcolorder(out, c("A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
+                                     "Risk Differerence", "RD 95% LCI", "RD 95% UCI"))
     
     setnames(table, c("value", "LCI", "UCI"), c("Risk", "95% LCI", "95% UCI"))
     setcolorder(table, c("Method", "A", "Risk", "95% LCI", "95% UCI"))

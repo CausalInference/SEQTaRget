@@ -124,11 +124,11 @@ test_that("Post-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -7.10394531681585, tx_init_bas1 = 0.185102291081515, 
-                   followup = 0.0362007816496858, followup_sq = -0.000201489725260655, 
-                   trial = 0.0425462931750881, trial_sq = 0.000664540280031127, 
-                   sex1 = 0.11911291756272, N_bas = 0.00313589780936621, L_bas = 0.00403866027174858, 
-                   P_bas = 0.233380901113283, `tx_init_bas1:followup` = -0.000271830157151866)
+  expected <- list(`(Intercept)` = -8.4110507935508, tx_init_bas1 = 0.0944943297879259, 
+                   followup = 0.0239284539998946, followup_sq = 6.73453220549376e-05, 
+                   trial = 0.0803102867450126, trial_sq = 0.000217087434802677, 
+                   sex1 = 0.294420752191619, N_bas = 0.00221902649129262, L_bas = 0.0156647753277698, 
+                   P_bas = 0.356800748579545, `tx_init_bas1:followup` = 0.00460778450801917)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
