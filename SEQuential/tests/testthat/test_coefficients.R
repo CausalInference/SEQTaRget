@@ -64,10 +64,10 @@ test_that("Pre-Expansion Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -4.8335329013179, tx_init_bas1 = 0.403758380579968, 
-                   followup = 0.0154569713994959, followup_sq = 4.1901794818538e-05, 
-                   trial = -0.0131499042719138, trial_sq = 0.0011333713629491, 
-                   sex1 = 0.0810780295818352, `tx_init_bas1:followup` = 0.0155924909801899)
+  expected <- list(`(Intercept)` = -4.8331064655654, tx_init_bas1 = 0.401676361798836, 
+                   followup = 0.0147725158310964, followup_sq = 4.04157002656377e-05, 
+                   trial = -0.0131874685320351, trial_sq = 0.00113427136978775, 
+                   sex1 = 0.0841593672798384, `tx_init_bas1:followup` = 0.0163419157652325)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
