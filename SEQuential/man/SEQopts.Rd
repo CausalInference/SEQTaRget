@@ -16,6 +16,11 @@ SEQopts(
   covariates = NA,
   data.return = FALSE,
   denominator = NA,
+  deviation = FALSE,
+  deviation.col = NA,
+  deviation.conditions = c(),
+  deviation.excused = FALSE,
+  deviation.excused_cols = c(),
   excused = FALSE,
   excused.cols = c(NA, NA),
   fastglm.method = 2L,
@@ -77,6 +82,16 @@ SEQopts(
 \item{data.return}{Logical: whether to return the expanded dataframe with weighting information}
 
 \item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
+
+\item{deviation}{Logical: create switch based on deviation from column \code{deviation.col}}
+
+\item{deviation.col}{Character: column name for deviation}
+
+\item{deviation.conditions}{Character list: RHS evaluations of the same length as \code{treat.levels}}
+
+\item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}}
+
+\item{deviation.excused_cols}{Character list: excused columns for deviation switches}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition}
 

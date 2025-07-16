@@ -95,3 +95,8 @@ format.time <- function(seconds) {
 allNA <- function(x) {
   all(sapply(x, function(y) is.na(y)))
 }
+
+equalizer <- function(list, levels) {
+  if (length(list) < length(levels)) list <- c(list, rep(NA, length(levels) - length(list)))
+  return(list)
+}

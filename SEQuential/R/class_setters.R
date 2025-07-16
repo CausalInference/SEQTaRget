@@ -59,7 +59,11 @@ parameter.setter <- function(data, DT,
     subgroup = opts@subgroup,
     data.return = opts@data.return,
     weight.lag_condition = opts@weight.lag_condition,
-    selection.first_trial = opts@selection.first_trial
+    selection.first_trial = opts@selection.first_trial,
+    deviation = opts@deviation,
+    deviation.col = opts@deviation.col,
+    deviation.conditions = opts@deviation.conditions,
+    deviation.excused_cols = opts@deviation.excused_cols
   )
 }
 
@@ -91,15 +95,10 @@ parameter.simplifier <- function(params) {
     params@excused <- TRUE
   }
   
-  if (length(params@excused.cols) < length(params@treat.level)) {
-    params@excused.cols <- c(params@excused.cols, 
-                             rep(NA, length(params@treat.level) - length(params@excused.cols)))
-  }
-  
-  if (length(params@weight.eligible_cols) < length(params@treat.level)) {
-    params@weight.eligible_cols <- c(params@weight.eligible_cols,
-                                     rep(NA, length(params@treat.level) - length(params@weight.eligible_cols)))
-  }
+  params@excused.cols <- equalizer(params@excused.cols, params@treat.level)
+  params@deviation.conditions <- equalizer(params@deviation.conditions, params@treat.level)
+  params@deviation.excused_cols <- equalizer(params@deviation.excused_cols, params@treat.level)
+  params@weight.eligible_cols <- equalizer(params@weight.eligible_cols, params@treat.level)
 
   if (params@km.curves & params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
