@@ -26,6 +26,7 @@ internal.analysis <- function(params) {
 
         if (params@weight.preexpansion) {
           if (params@excused) {
+            # Dynamic - pre-expansion
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, denominator := 1
@@ -38,15 +39,17 @@ internal.analysis <- function(params) {
                                    ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
                                      ][, weight := weight[1], list(cumsum(!is.na(weight)))]
           } else {
+            # Static - pre-expansion
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, `:=`(numerator = 1, denominator = 1)
                         ][, wt := numerator / denominator
-                          ][followup == 0, wt := 1
+                          ][followup == 0 & trial == 0, wt := 1
                             ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
         } else {
           if (params@excused) {
+            # Dynamic - post-expansion
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)
@@ -60,6 +63,7 @@ internal.analysis <- function(params) {
                                       ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
                                         ][, weight := weight[1], list(cumsum(!is.na(weight)))]
           } else {
+            # Static - post-expansion
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)
