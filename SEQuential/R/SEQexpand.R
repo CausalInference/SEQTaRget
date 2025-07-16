@@ -26,10 +26,10 @@ SEQexpand <- function(params) {
 
     # Expansion =======================================================
     if (!params@weighted) {
-      vars.intake <- c(params@covariates)
+      vars.intake <- c(params@covariates, params@deviation.col)
     } else {
       vars.intake <- c(params@covariates, params@numerator, params@denominator,
-                       params@cense.denominator, params@cense.numerator)
+                       params@cense.denominator, params@cense.numerator, params@deviation.col)
       if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline))
     }
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
@@ -87,14 +87,15 @@ SEQexpand <- function(params) {
     }
 
     if (params@method == "censoring") {
+      out[, switch := FALSE]
       if (params@deviation) {
         # Censoring on deviation condition
         for (i in seq_along(params@treat.level)) {
-          if (is.na(deviation.conditions[[i]])) next
+          if (is.na(params@deviation.conditions[[i]])) next
           conditional <- paste0(params@treatment, "==", params@treat.level[[i]],
                                 " & ", params@deviation.col, params@deviation.conditions[[i]])
           
-          out[eval(parse(text = conditional)), switch := 1]
+          out[eval(parse(text = conditional)), switch := TRUE]
         }
         if (params@deviation.excused) {
           # Excusing deviation conditions
