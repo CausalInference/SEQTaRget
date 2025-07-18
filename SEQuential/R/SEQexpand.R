@@ -104,7 +104,7 @@ SEQexpand <- function(params) {
               out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]] == 1, 1, 0))]
             }
           }
-          out[!is.na(isExcused), excused_tmp := cumsum(isExcused, by = c(params@id, "trial"))
+          out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
               ][, (excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
                 ][, excused_tmp := FALSE]
         } 

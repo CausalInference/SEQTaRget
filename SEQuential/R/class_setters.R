@@ -116,6 +116,8 @@ parameter.simplifier <- function(params) {
   if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
   
   if (params@multinomial & params@method == "dose-response") stop("Multinomial dose-response is not supported")
+  
+  if (params@excused & params@deviation.excused) stop("Must select either excused from deviation or excused from treatment swap")
 
   return(params)
 }

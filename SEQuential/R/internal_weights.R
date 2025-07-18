@@ -105,7 +105,7 @@ internal.weights <- function(DT, data, params) {
     if (params@method != "ITT") {
       out <- copy(weight)[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
-      if (!params@excused) {
+      if (!params@excused & !params@deviation.excused) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           out[tx_lag == level, `:=`(
@@ -123,19 +123,20 @@ internal.weights <- function(DT, data, params) {
       } else {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
+          col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
           
-          if (!is.na(params@excused.cols[[i]])) {
-            out[tx_lag == level & get(params@excused.cols[[i]]) != 1, 
+          if (!is.na(col)) {
+            out[tx_lag == level & get(col) != 1, 
                 denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level)]
             if (i == 1) {
               out[tx_lag == level & 
                     get(params@treatment) == params@treat.level[[i]] & 
-                    get(params@excused.cols[[i]]) == 0, 
+                    get(col) == 0, 
                   denominator := 1 - denominator]
             } else {
               out[tx_lag == level & 
                     get(params@treatment) != params@treat.level[[i]] & 
-                    get(params@excused.cols[[i]]) == 0, 
+                    get(col) == 0, 
                   denominator := 1 - denominator]
             }
           }
@@ -146,8 +147,9 @@ internal.weights <- function(DT, data, params) {
         } else {
           for (i in seq_along(params@treat.level)) {
             level <- params@treat.level[[i]]
-            if (!is.na(params@excused.cols[[i]])) {
-              out[get(params@treatment) == level & get(params@excused.cols[[i]]) == 0, 
+            col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
+            if (!is.na(col)) {
+              out[get(params@treatment) == level & get(col) == 0, 
                   numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)
                   ]
             }
