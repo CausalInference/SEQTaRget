@@ -92,7 +92,7 @@ SEQexpand <- function(params) {
         # Censoring on deviation condition
         for (i in seq_along(params@treat.level)) {
           if (is.na(params@deviation.conditions[[i]])) next
-          conditional <- paste0(params@treatment, "==", params@treat.level[[i]],
+          conditional <- paste0(paste0(params@treatment, params@indicator.baseline), "==", params@treat.level[[i]],
                                 " & ", params@deviation.col, params@deviation.conditions[[i]])
           
           out[eval(parse(text = conditional)), switch := TRUE]
