@@ -61,6 +61,7 @@ parameter.setter <- function(data, DT,
     weight.lag_condition = opts@weight.lag_condition,
     selection.first_trial = opts@selection.first_trial,
     deviation = opts@deviation,
+    deviation.excused = opts@deviation.excused,
     deviation.col = opts@deviation.col,
     deviation.conditions = opts@deviation.conditions,
     deviation.excused_cols = opts@deviation.excused_cols
@@ -138,10 +139,10 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot,
       DT = DT,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else 
-        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@numerator) else 
+        if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) paste0("censored", "~", params@numerator) else 
           paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else 
-        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@denominator) else 
+        if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) paste0("censored", "~", params@denominator) else 
           paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
       hazard = if (!params@hazard) list() else hazard,

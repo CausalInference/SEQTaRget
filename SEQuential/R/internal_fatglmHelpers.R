@@ -54,7 +54,7 @@ prepare.data <- function(weight, params, type, model, case) {
         if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
       }
       
-      y <- if (!params@weight.preexpansion && params@excused) weight[["censored"]] else weight[[params@treatment]]
+      y <- if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) weight[["censored"]] else weight[[params@treatment]]
       X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     }
     

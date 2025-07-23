@@ -59,7 +59,7 @@
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
-                    deviation = FALSE, deviation.col = NA, deviation.conditions = c(), deviation.excused = FALSE, deviation.excused_cols = c(),
+                    deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
                     excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = -Inf, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",

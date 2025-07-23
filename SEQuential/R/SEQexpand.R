@@ -101,11 +101,11 @@ SEQexpand <- function(params) {
           # Excusing deviation conditions
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@deviation.excused_cols[[i]])) {
-              out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]] == 1, 1, 0))]
+              out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
             }
           }
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
-              ][, (excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
+              ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
                 ][, excused_tmp := FALSE]
         } 
       }  else {
