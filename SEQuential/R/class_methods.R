@@ -40,20 +40,33 @@ setMethod("show", "SEQoutput", function(object) {
   
     if (params@weighted) {
       cat("\nWeight Information ============================================= \n")
-      if (params@method != "ITT") {
-        for (i in seq_along(params@treat.level)) {
-          cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
-          for (j in seq_along(params@treat.level)) {
-            cat("Treatment = ", j, "============================ \n")
-            if (length(weight_statistics$coef.numerator > 1)) {
-              cat("Numerator ========================== \n")
-              print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
+      if (params@multinomial) {
+        if (params@method != "ITT") {
+          for (i in seq_along(params@treat.level)) {
+            cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
+            for (j in seq_along(params@treat.level)) {
+              cat("Treatment = ", j, "============================ \n")
+              if (length(weight_statistics$coef.numerator > 1)) {
+                cat("Numerator ========================== \n")
+                print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
+              }
+              cat("Denominator ========================== \n")
+              print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
             }
-            cat("Denominator ========================== \n")
-            print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
           }
         }
-        
+      } else {
+        if (params@method != "ITT") {
+          for (i in seq_along(params@treat.level)) {
+            cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
+              if (length(weight_statistics$coef.numerator > 1)) {
+                cat("Numerator ========================== \n")
+                print(summary(weight_statistics$coef.numerator[[i]]))
+              }
+              cat("Denominator ========================== \n")
+              print(summary(weight_statistics$coef.denominator[[i]]))
+          }
+        }
         cat("Weights:\n")
         cat("Min: ", weight_statistics$min, "\n")
         cat("Max: ", weight_statistics$max, "\n")
