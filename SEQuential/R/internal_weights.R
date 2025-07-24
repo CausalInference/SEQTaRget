@@ -41,7 +41,7 @@ internal.weights <- function(DT, data, params) {
         DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
            ][followup != 0, ])[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
 
-      if (params@excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
+      if (params@excused | params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
     } else {
       weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
@@ -69,8 +69,7 @@ internal.weights <- function(DT, data, params) {
     
     if (params@method != "ITT") {
       model.data <- copy(weight)
-      if (!params@weight.preexpansion & !params@excused) model.data <- model.data[followup > 0, ]
-      
+      if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
       for (i in seq_along(params@treat.level)) {
         level <- params@treat.level[[i]]
@@ -81,7 +80,7 @@ internal.weights <- function(DT, data, params) {
       }
 
       # Fit models for each treatment level
-      if (!(params@excused & params@weight.preexpansion)) {
+      if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           n.data <- prepare.data(model.data, params, type = "numerator", model = level, case = "default")
@@ -105,7 +104,7 @@ internal.weights <- function(DT, data, params) {
     if (params@method != "ITT") {
       out <- copy(weight)[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
-      if (!params@excused) {
+      if (!(params@excused | params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           out[tx_lag == level, `:=`(
@@ -123,19 +122,20 @@ internal.weights <- function(DT, data, params) {
       } else {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
+          col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
           
-          if (!is.na(params@excused.cols[[i]])) {
-            out[tx_lag == level & get(params@excused.cols[[i]]) != 1, 
+          if (!is.na(col)) {
+            out[tx_lag == level & get(col) != 1, 
                 denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level)]
             if (i == 1) {
               out[tx_lag == level & 
                     get(params@treatment) == params@treat.level[[i]] & 
-                    get(params@excused.cols[[i]]) == 0, 
+                    get(col) == 0, 
                   denominator := 1 - denominator]
             } else {
               out[tx_lag == level & 
                     get(params@treatment) != params@treat.level[[i]] & 
-                    get(params@excused.cols[[i]]) == 0, 
+                    get(col) == 0, 
                   denominator := 1 - denominator]
             }
           }
@@ -146,8 +146,9 @@ internal.weights <- function(DT, data, params) {
         } else {
           for (i in seq_along(params@treat.level)) {
             level <- params@treat.level[[i]]
-            if (!is.na(params@excused.cols[[i]])) {
-              out[get(params@treatment) == level & get(params@excused.cols[[i]]) == 0, 
+            col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
+            if (!is.na(col)) {
+              out[get(params@treatment) == level & get(col) == 0, 
                   numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)
                   ]
             }
@@ -171,7 +172,7 @@ internal.weights <- function(DT, data, params) {
 
     weight.info <- new("SEQweights", weights = out)
     
-    if (!(params@excused & params@weight.preexpansion) & params@method != "ITT") {
+    if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
       coef.numerator <- c()
       for (i in seq_along(params@treat.level)) {
         coef.numerator[[i]] <- clean_fastglm(coef.numerator[[i]])

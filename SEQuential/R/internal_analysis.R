@@ -25,8 +25,7 @@ internal.analysis <- function(params) {
         WT <- internal.weights(DT, data, params)
 
         if (params@weight.preexpansion) {
-          if (params@excused) {
-            # Dynamic - pre-expansion
+          if (params@excused | params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, denominator := 1
@@ -48,8 +47,7 @@ internal.analysis <- function(params) {
                             ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
         } else {
-          if (params@excused) {
-            # Dynamic - post-expansion
+          if (params@excused | params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)

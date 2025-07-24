@@ -59,7 +59,12 @@ parameter.setter <- function(data, DT,
     subgroup = opts@subgroup,
     data.return = opts@data.return,
     weight.lag_condition = opts@weight.lag_condition,
-    selection.first_trial = opts@selection.first_trial
+    selection.first_trial = opts@selection.first_trial,
+    deviation = opts@deviation,
+    deviation.excused = opts@deviation.excused,
+    deviation.col = opts@deviation.col,
+    deviation.conditions = opts@deviation.conditions,
+    deviation.excused_cols = opts@deviation.excused_cols
   )
 }
 
@@ -91,15 +96,10 @@ parameter.simplifier <- function(params) {
     params@excused <- TRUE
   }
   
-  if (length(params@excused.cols) < length(params@treat.level)) {
-    params@excused.cols <- c(params@excused.cols, 
-                             rep(NA, length(params@treat.level) - length(params@excused.cols)))
-  }
-  
-  if (length(params@weight.eligible_cols) < length(params@treat.level)) {
-    params@weight.eligible_cols <- c(params@weight.eligible_cols,
-                                     rep(NA, length(params@treat.level) - length(params@weight.eligible_cols)))
-  }
+  params@excused.cols <- equalizer(params@excused.cols, params@treat.level)
+  if (length(params@deviation.conditions) != length(params@treat.level)) stop("Deviation conditions should encompass all treatment levels")
+  params@deviation.excused_cols <- equalizer(params@deviation.excused_cols, params@treat.level)
+  params@weight.eligible_cols <- equalizer(params@weight.eligible_cols, params@treat.level)
 
   if (params@km.curves & params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
@@ -117,6 +117,8 @@ parameter.simplifier <- function(params) {
   if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
   
   if (params@multinomial & params@method == "dose-response") stop("Multinomial dose-response is not supported")
+  
+  if (params@excused & params@deviation.excused) stop("Must select either excused from deviation or excused from treatment swap")
 
   return(params)
 }
@@ -137,10 +139,10 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot,
       DT = DT,
       outcome = paste0(params@outcome, "~", params@covariates),
       numerator = if (!params@weighted) NA_character_ else 
-        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@numerator) else 
+        if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) paste0("censored", "~", params@numerator) else 
           paste0(params@treatment, "~", params@numerator),
       denominator = if (!params@weighted) NA_character_ else 
-        if (!params@weight.preexpansion && params@excused) paste0("censored", "~", params@denominator) else 
+        if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) paste0("censored", "~", params@denominator) else 
           paste0(params@treatment, "~", params@denominator),
       outcome.model = outcome,
       hazard = if (!params@hazard) list() else hazard,

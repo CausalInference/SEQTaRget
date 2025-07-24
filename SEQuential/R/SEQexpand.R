@@ -26,10 +26,10 @@ SEQexpand <- function(params) {
 
     # Expansion =======================================================
     if (!params@weighted) {
-      vars.intake <- c(params@covariates)
+      vars.intake <- c(params@covariates, params@deviation.col)
     } else {
       vars.intake <- c(params@covariates, params@numerator, params@denominator,
-                       params@cense.denominator, params@cense.numerator)
+                       params@cense.denominator, params@cense.numerator, params@deviation.col)
       if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline))
     }
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
@@ -40,7 +40,7 @@ SEQexpand <- function(params) {
     vars <- vars[!vars %in% vars.nin]
     vars.base <- vars[grep(params@indicator.baseline, vars)]
     vars.sq <- vars[grep(params@indicator.squared, vars)]
-    vars.time <- c(vars[!vars %in% vars.base], unlist(params@excused.cols))
+    vars.time <- c(vars[!vars %in% vars.base], unlist(params@excused.cols), unlist(params@deviation.excused_cols))
     vars.time <- vars.time[!is.na(vars.time)]
     vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
@@ -84,33 +84,60 @@ SEQexpand <- function(params) {
         dose_sq = dose^2,
         trial_sq = trial^2
       )]
-      return(out)
     }
 
     if (params@method == "censoring") {
-      out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
-      if (params@excused) {
-        out[, switch := (get(params@treatment) != lag)]
-        
+      out[, switch := FALSE]
+      if (params@deviation) {
+        # Censoring on deviation condition
         for (i in seq_along(params@treat.level)) {
-          if (!is.na(params@excused.cols[[i]])) {
-            out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
-          }
+          if (is.na(params@deviation.conditions[[i]])) next
+          conditional <- paste0(paste0(params@treatment, params@indicator.baseline), "==", params@treat.level[[i]],
+                                " & ", params@deviation.col, params@deviation.conditions[[i]])
+          
+          out[eval(parse(text = conditional)), switch := TRUE]
         }
-        out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(eval(params@id), "trial")
-            ][(excused_tmp) > 0, switch := FALSE, by = c(eval(params@id), "trial")
-              ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")
-                ][, `:=` (excused_tmp = NULL, "censored" = ifelse(switch, 1, 0))]
-      } else {
-        out[, `:=`(
-          trial_sq = trial^2,
-          switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(eval(params@id), "trial")
-            ][, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(eval(params@id), "trial")]
+        if (params@deviation.excused) {
+          # Excusing deviation conditions
+          for (i in seq_along(params@treat.level)) {
+            if (!is.na(params@deviation.excused_cols[[i]])) {
+              out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
+            }
+          }
+          out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
+              ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
+                ][, excused_tmp := FALSE]
+        } 
+      }  else {
+        # Automatic switch definition (based on treatment and treatment lag)
+        out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
+        
+        if (params@excused) {
+          # Excused treatment lag switches
+          out[, switch := (get(params@treatment) != lag)]
+          
+          for (i in seq_along(params@treat.level)) {
+            if (!is.na(params@excused.cols[[i]])) {
+              out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
+            }
+          }
+          out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
+              ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
+                ][, excused_tmp := NULL]
+        } else {
+          # Non-excused treatment lag switches
+          out[, `:=`(
+            trial_sq = trial^2,
+            switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(params@id, "trial")]
+        }
       }
-      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(eval(params@id), "trial")]$V1
+      out[, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(params@id, "trial")]
+      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
-                   ][, `:=`(firstSwitch = NULL)]
+                   ][, `:=`(firstSwitch = NULL)
+                     ][, "censored" := ifelse(switch, 1, 0)]
     }
+    
     if (params@selection.first_trial) {
       out <- out[get("trial") == min(get("trial")), .SD, by = c(params@id)]
     }

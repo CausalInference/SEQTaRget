@@ -3,6 +3,11 @@
 #' @keywords internal
 setClass("SEQopts",
   slots = c(
+    deviation = "logical",
+    deviation.col = "character",
+    deviation.conditions = "list",
+    deviation.excused = "logical",
+    deviation.excused_cols = "list",
     parallel = "logical",
     nthreads = "numeric",
     ncores = "integer",
@@ -56,6 +61,11 @@ setClass("SEQopts",
     data.return = "logical",
     weight.lag_condition = "logical"
   ), prototype = list(
+    deviation = FALSE,
+    deviation.col = NA_character_,
+    deviation.conditions = list(),
+    deviation.excused = FALSE,
+    deviation.excused_cols = list(),
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
     ncores = parallel::detectCores(),

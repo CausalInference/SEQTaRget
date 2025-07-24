@@ -11,6 +11,11 @@
 #' @param covariates String: covariates to the right hand side of a formula object
 #' @param data.return Logical: whether to return the expanded dataframe with weighting information
 #' @param denominator String: denominator covariates to the right hand side of a  to formula object
+#' @param deviation Logical: create switch based on deviation from column \code{deviation.col}
+#' @param deviation.col Character: column name for deviation
+#' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
+#' @param deviation.excused Logical: whether deviations should be excused by \code{deviation.excused_cols}
+#' @param deviation.excused_cols Character list: excused columns for deviation switches
 #' @param excused Logical: in the case of censoring, whether there is an excused condition
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)
@@ -54,6 +59,7 @@
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
+                    deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
                     excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = -Inf, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
@@ -75,6 +81,10 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   weight.lower <- as.numeric(weight.lower)
   weight.upper <- as.numeric(weight.upper)
   weight.eligible_cols <- as.list(weight.eligible_cols)
+  
+  deviation.col <- as.character(deviation.col)
+  deviation.conditions <- as.list(deviation.conditions)
+  deviation.excused_cols <- as.list(deviation.excused_cols)
 
   hazard <- as.logical(hazard)
   
@@ -116,49 +126,54 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
 
   new("SEQopts",
-    parallel = parallel,
-    nthreads = nthreads,
-    ncores = ncores,
-    bootstrap = bootstrap,
-    bootstrap.nboot = bootstrap.nboot,
-    bootstrap.sample = bootstrap.sample,
-    seed = seed,
-    followup.min = followup.min,
-    followup.max = followup.max,
-    survival.max = survival.max,
-    trial.include = trial.include,
-    followup.include = followup.include,
-    weighted = weighted,
-    weight.lower = weight.lower,
-    weight.lag_condition = weight.lag_condition,
-    weight.upper = weight.upper,
-    weight.p99 = weight.p99,
-    weight.preexpansion = weight.preexpansion,
-    excused = excused,
-    cense = cense,
-    compevent = compevent,
-    cense.eligible = cense.eligible,
-    excused.cols = excused.cols,
-    km.curves = km.curves,
-    covariates = covariates,
-    numerator = numerator,
-    denominator = denominator,
-    indicator.baseline = indicator.baseline,
-    indicator.squared = indicator.squared,
-    fastglm.method = fastglm.method,
-    treat.level = treat.level,
-    multinomial = multinomial,
-    hazard = hazard,
-    weight.eligible_cols = weight.eligible_cols,
-    followup.class = followup.class,
-    followup.spline = followup.spline,
-    plot.title = plot.title,
-    plot.subtitle = plot.subtitle,
-    plot.labels = plot.labels,
-    plot.colors = plot.colors,
-    plot.type = plot.type,
-    subgroup = subgroup,
-    data.return = data.return,
-    selection.first_trial = selection.first_trial
+      deviation = deviation,
+      deviation.col = deviation.col,
+      deviation.excused = deviation.excused,
+      deviation.excused_cols = deviation.excused_cols,
+      deviation.conditions = deviation.conditions,
+      parallel = parallel,
+      nthreads = nthreads,
+      ncores = ncores,
+      bootstrap = bootstrap,
+      bootstrap.nboot = bootstrap.nboot,
+      bootstrap.sample = bootstrap.sample,
+      seed = seed,
+      followup.min = followup.min,
+      followup.max = followup.max,
+      survival.max = survival.max,
+      trial.include = trial.include,
+      followup.include = followup.include,
+      weighted = weighted,
+      weight.lower = weight.lower,
+      weight.lag_condition = weight.lag_condition,
+      weight.upper = weight.upper,
+      weight.p99 = weight.p99,
+      weight.preexpansion = weight.preexpansion,
+      excused = excused,
+      cense = cense,
+      compevent = compevent,
+      cense.eligible = cense.eligible,
+      excused.cols = excused.cols,
+      km.curves = km.curves,
+      covariates = covariates,
+      numerator = numerator,
+      denominator = denominator,
+      indicator.baseline = indicator.baseline,
+      indicator.squared = indicator.squared,
+      fastglm.method = fastglm.method,
+      treat.level = treat.level,
+      multinomial = multinomial,
+      hazard = hazard,
+      weight.eligible_cols = weight.eligible_cols,
+      followup.class = followup.class,
+      followup.spline = followup.spline,
+      plot.title = plot.title,
+      plot.subtitle = plot.subtitle,
+      plot.labels = plot.labels,
+      plot.colors = plot.colors,
+      plot.type = plot.type,
+      subgroup = subgroup,
+      data.return = data.return,
+      selection.first_trial = selection.first_trial
   )
 }
