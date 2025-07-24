@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,11 @@
 <span>  covariates <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  data.return <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  deviation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  deviation.col <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  deviation.conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  deviation.excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  deviation.excused_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  fastglm.method <span class="op">=</span> <span class="fl">2L</span>,</span>
@@ -142,6 +147,26 @@
 
 <dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
 <dd><p>String: denominator covariates to the right hand side of a  to formula object</p></dd>
+
+
+<dt id="arg-deviation">deviation<a class="anchor" aria-label="anchor" href="#arg-deviation"></a></dt>
+<dd><p>Logical: create switch based on deviation from column <code>deviation.col</code></p></dd>
+
+
+<dt id="arg-deviation-col">deviation.col<a class="anchor" aria-label="anchor" href="#arg-deviation-col"></a></dt>
+<dd><p>Character: column name for deviation</p></dd>
+
+
+<dt id="arg-deviation-conditions">deviation.conditions<a class="anchor" aria-label="anchor" href="#arg-deviation-conditions"></a></dt>
+<dd><p>Character list: RHS evaluations of the same length as <code>treat.levels</code></p></dd>
+
+
+<dt id="arg-deviation-excused">deviation.excused<a class="anchor" aria-label="anchor" href="#arg-deviation-excused"></a></dt>
+<dd><p>Logical: whether deviations should be excused by <code>deviation.excused_cols</code></p></dd>
+
+
+<dt id="arg-deviation-excused-cols">deviation.excused_cols<a class="anchor" aria-label="anchor" href="#arg-deviation-excused-cols"></a></dt>
+<dd><p>Character list: excused columns for deviation switches</p></dd>
 
 
 <dt id="arg-excused">excused<a class="anchor" aria-label="anchor" href="#arg-excused"></a></dt>
