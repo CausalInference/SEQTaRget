@@ -78,7 +78,7 @@ over their use, we will expand on them here in greater detail:</p>
 <div class="section level4">
 <h4 id="general-options">General Options<a class="anchor" aria-label="anchor" href="#general-options"></a>
 </h4>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
 <col width="16%">
 <col width="50%">
@@ -93,64 +93,53 @@ over their use, we will expand on them here in greater detail:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>parallel</td>
-<td>Whether the bootstrapping should be run in parallel</td>
-<td>Boolean</td>
-<td>TRUE</td>
-</tr>
-<tr class="even">
-<td>nthreads</td>
-<td>Number of threads to use for data.table manipulations</td>
-<td>Integer</td>
-<td>16L</td>
-</tr>
-<tr class="odd">
-<td>ncores</td>
-<td>Number of cores to use in parallel multisession</td>
-<td>Integer</td>
-<td>8L</td>
-</tr>
-<tr class="even">
 <td>bootstrap</td>
 <td>Whether bootstrapping should take place</td>
 <td>Boolean</td>
 <td>TRUE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>bootstrap.nboot</td>
 <td>Number of bootstraps to run in addition to the full model</td>
 <td>Integer</td>
 <td>100L</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>bootstrap.sample</td>
 <td>Subsample of data to use when bootstrapping</td>
 <td>Float [0, 1]</td>
 <td>0.8</td>
 </tr>
-<tr class="odd">
-<td>seed</td>
-<td>Starting seed for random number generators</td>
-<td>Integer</td>
-<td>1636</td>
-</tr>
 <tr class="even">
-<td>followup.min</td>
-<td>Minimum value of followup per trial</td>
-<td>Numeric</td>
-<td>0</td>
+<td>calculate.var</td>
+<td>Whether to calculate the robust standard errors for the outcome
+model</td>
+<td>Boolean</td>
+<td>FALSE</td>
 </tr>
 <tr class="odd">
-<td>followup.max</td>
-<td>Maximum value of followup per trial</td>
-<td>Numeric</td>
-<td>60</td>
+<td>compevent</td>
+<td>Column name for competing event variable</td>
+<td>Char</td>
+<td>“LTFU”</td>
 </tr>
 <tr class="even">
-<td>survival.max</td>
-<td>Maximum value for Risk/Survival curves</td>
-<td>Numeric</td>
-<td>60</td>
+<td>covariates</td>
+<td>If provided, forces covariates for outcome models</td>
+<td>Char</td>
+<td>“X1+X2*X3+X4”</td>
+</tr>
+<tr class="odd">
+<td>data.return</td>
+<td>Whether to return expanded data as output</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="even">
+<td>followup.class</td>
+<td>Whether to expand followup values to an indicator matrix</td>
+<td>Boolean</td>
+<td>FALSE</td>
 </tr>
 <tr class="odd">
 <td>followup.include</td>
@@ -160,53 +149,16 @@ models</td>
 <td>TRUE</td>
 </tr>
 <tr class="even">
-<td>trial.include</td>
-<td>Whether to include ‘trial’ and ‘trial^2’ in outcome models</td>
-<td>Boolean</td>
-<td>TRUE</td>
+<td>followup.max</td>
+<td>Maximum value of followup per trial</td>
+<td>Numeric</td>
+<td>60</td>
 </tr>
 <tr class="odd">
-<td>covariates</td>
-<td>If provided, forces covariates for outcome models</td>
-<td>Char</td>
-<td>“X1+X2*X3+X4”</td>
-</tr>
-<tr class="even">
-<td>hazard</td>
-<td>Whether to estimate the hazard ratio</td>
-<td>Boolean</td>
-<td>FALSE</td>
-</tr>
-<tr class="odd">
-<td>calculate.var</td>
-<td>Whether to calculate the robust standard errors for the outcome
-model</td>
-<td>Boolean</td>
-<td>FALSE</td>
-</tr>
-<tr class="even">
-<td>subgroup</td>
-<td>Column name for subgroup analysis</td>
-<td>Char</td>
-<td>“sex”</td>
-</tr>
-<tr class="odd">
-<td>selection.random</td>
-<td>Whether to randomly select IDs with replacement to run analysis</td>
-<td>Boolean</td>
-<td>FALSE</td>
-</tr>
-<tr class="even">
-<td>selection.prob</td>
-<td>Subsample of total IDs to select</td>
-<td>Float [0, 1]</td>
-<td>0.8</td>
-</tr>
-<tr class="odd">
-<td>followup.class</td>
-<td>Whether to expand followup values to an indicator matrix</td>
-<td>Boolean</td>
-<td>FALSE</td>
+<td>followup.min</td>
+<td>Minimum value of followup per trial</td>
+<td>Numeric</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td>followup.spline</td>
@@ -215,32 +167,86 @@ model</td>
 <td>FALSE</td>
 </tr>
 <tr class="odd">
+<td>hazard</td>
+<td>Whether to estimate the hazard ratio</td>
+<td>Boolean</td>
+<td>FALSE</td>
+</tr>
+<tr class="even">
+<td>km.curves</td>
+<td>Whether to estimate kaplan meier survival curves and data</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
 <td>multinomial</td>
 <td>Whether to expect more than 2 treatment types</td>
 <td>Boolean</td>
 <td>FALSE</td>
 </tr>
 <tr class="even">
+<td>ncores</td>
+<td>Number of cores to use in parallel multisession</td>
+<td>Integer</td>
+<td>8L</td>
+</tr>
+<tr class="odd">
+<td>nthreads</td>
+<td>Number of threads to use for data.table manipulations</td>
+<td>Integer</td>
+<td>16L</td>
+</tr>
+<tr class="even">
+<td>parallel</td>
+<td>Whether the bootstrapping should be run in parallel</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
+<td>seed</td>
+<td>Starting seed for random number generators</td>
+<td>Integer</td>
+<td>1636</td>
+</tr>
+<tr class="even">
+<td>selection.first_trial</td>
+<td>Selects only the first eligible trial in the expanded dataset</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
+<td>selection.prob</td>
+<td>Subsample of total IDs to select</td>
+<td>Float [0, 1]</td>
+<td>0.8</td>
+</tr>
+<tr class="even">
+<td>selection.random</td>
+<td>Whether to randomly select IDs with replacement to run analysis</td>
+<td>Boolean</td>
+<td>FALSE</td>
+</tr>
+<tr class="odd">
+<td>subgroup</td>
+<td>Column name for subgroup analysis</td>
+<td>Char</td>
+<td>“sex”</td>
+</tr>
+<tr class="even">
+<td>survival.max</td>
+<td>Maximum value for Risk/Survival curves</td>
+<td>Numeric</td>
+<td>60</td>
+</tr>
+<tr class="odd">
 <td>treat.level</td>
 <td>Treatment levels to compare</td>
 <td>List</td>
 <td>list(0, 1)</td>
 </tr>
-<tr class="odd">
-<td>km.curves</td>
-<td>Whether to estimate kaplan meier survival curves and data</td>
-<td>Boolean</td>
-<td>TRUE</td>
-</tr>
 <tr class="even">
-<td>compevent</td>
-<td>Column name for competing event variable</td>
-<td>Char</td>
-<td>“LTFU”</td>
-</tr>
-<tr class="odd">
-<td>data.return</td>
-<td>Whether to return expanded data as output</td>
+<td>trial.include</td>
+<td>Whether to include ‘trial’ and ‘trial^2’ in outcome models</td>
 <td>Boolean</td>
 <td>TRUE</td>
 </tr>
@@ -268,40 +274,41 @@ weighted in the case of a censoring variable like loss-to-followup.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>weighted</td>
-<td>Whether the analysis should be weighted</td>
-<td>Boolean</td>
-<td>TRUE</td>
-</tr>
-<tr class="even">
-<td>weight.upper</td>
-<td>Upper truncation for weight values</td>
-<td>Float</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
-<td>weight.lower</td>
-<td>Lower truncation for weight values</td>
-<td>Float</td>
-<td>0.0</td>
-</tr>
-<tr class="even">
-<td>weight.p99</td>
-<td>Whether to truncate weights at the 99% percentile</td>
-<td>Boolean</td>
-<td>TRUE</td>
-</tr>
-<tr class="odd">
-<td>numerator</td>
-<td>If provided, forces numerator covariates for weight models</td>
+<td>cense</td>
+<td>Column name for censoring variable</td>
 <td>Char</td>
-<td>“B1+B2*B3+B4”</td>
+<td>“LTFU”</td>
 </tr>
 <tr class="even">
+<td>cense.denominator</td>
+<td>If provided, forces denominator covariates for censoring models</td>
+<td>Char</td>
+<td>“A1+A2*A3+A4”</td>
+</tr>
+<tr class="odd">
+<td>cense.eligible</td>
+<td>Column name for indicator column defining which rows to use for
+censoring model</td>
+<td>Char</td>
+<td>“eligible_cense”</td>
+</tr>
+<tr class="even">
+<td>cense.numerator</td>
+<td>If provided, forces numerator covariates for censoring models</td>
+<td>Char</td>
+<td>“Z1+Z2*Z3+Z4”</td>
+</tr>
+<tr class="odd">
 <td>denominator</td>
 <td>If provided, forces denominator covariates for weight models</td>
 <td>Char</td>
 <td>“C1+C2*C3+B4”</td>
+</tr>
+<tr class="even">
+<td>numerator</td>
+<td>If provided, forces numerator covariates for weight models</td>
+<td>Char</td>
+<td>“B1+B2*B3+B4”</td>
 </tr>
 <tr class="odd">
 <td>weight.eligible</td>
@@ -311,22 +318,47 @@ treatment values</td>
 <td>list(‘we1’, we2’)</td>
 </tr>
 <tr class="even">
-<td>cense</td>
-<td>Column name for censoring variable</td>
-<td>Char</td>
-<td>“LTFU”</td>
+<td>weight.eligible_cols</td>
+<td>List of column names for indicator columns defining which weights
+are eligible for weight models</td>
+<td>List</td>
+<td>list(“eligible1”, “eligible2”)</td>
 </tr>
 <tr class="odd">
-<td>cense.numerator</td>
-<td>If provided, forces numerator covariates for censoring models</td>
-<td>Char</td>
-<td>“Z1+Z2*Z3+Z4”</td>
+<td>weight.lag_condition</td>
+<td>Whether weights should be conditioned on treatment lag value</td>
+<td>Boolean</td>
+<td>TRUE</td>
 </tr>
 <tr class="even">
-<td>cense.denominator</td>
-<td>If provided, forces denominator covariates for censoring models</td>
-<td>Char</td>
-<td>“A1+A2*A3+A4”</td>
+<td>weight.lower</td>
+<td>Lower truncation for weight values</td>
+<td>Float</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<td>weight.p99</td>
+<td>Whether to truncate weights at the 99% percentile</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="even">
+<td>weight.preexpansion</td>
+<td>Whether weighting should be done on pre-expanded data</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
+<td>weight.upper</td>
+<td>Upper truncation for weight values</td>
+<td>Float</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>weighted</td>
+<td>Whether the analysis should be weighted</td>
+<td>Boolean</td>
+<td>TRUE</td>
 </tr>
 </tbody>
 </table>
@@ -353,28 +385,28 @@ customize it yourself through your preferred plotting software.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>plot.title</td>
-<td>Title for plot output</td>
-<td>Char</td>
-<td>“My Plot Title”</td>
+<td>plot.colors</td>
+<td>Figure colors for output plot</td>
+<td>List</td>
+<td>list(“red”, “blue”)</td>
 </tr>
 <tr class="even">
-<td>plot.subtitle</td>
-<td>Subtitle for plot output</td>
-<td>Char</td>
-<td>“My Plot Subtitle”</td>
-</tr>
-<tr class="odd">
 <td>plot.labels</td>
 <td>Legend labels for output plot</td>
 <td>List</td>
 <td>list(“Tx 0”, “Tx 1”)</td>
 </tr>
+<tr class="odd">
+<td>plot.subtitle</td>
+<td>Subtitle for plot output</td>
+<td>Char</td>
+<td>“My Plot Subtitle”</td>
+</tr>
 <tr class="even">
-<td>plot.colors</td>
-<td>Figure colors for output plot</td>
-<td>List</td>
-<td>list(“red”, “blue”)</td>
+<td>plot.title</td>
+<td>Title for plot output</td>
+<td>Char</td>
+<td>“My Plot Title”</td>
 </tr>
 <tr class="odd">
 <td>plot.type</td>
@@ -386,14 +418,12 @@ customize it yourself through your preferred plotting software.</p>
 </table>
 </div>
 <div class="section level4">
-<h4 id="internal-options">Internal Options<a class="anchor" aria-label="anchor" href="#internal-options"></a>
+<h4 id="special-cases">Special Cases<a class="anchor" aria-label="anchor" href="#special-cases"></a>
 </h4>
-<p>These are internal options that change output name of covariates or
-the decomposition method when estimating coefficients.</p>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="40%">
+<col width="19%">
+<col width="42%">
 <col width="19%">
 <col width="19%">
 </colgroup>
@@ -405,25 +435,95 @@ the decomposition method when estimating coefficients.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td>deviation</td>
+<td>Create switch based on deviation from column</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="even">
+<td>deviation.col</td>
+<td>Column name for deviation</td>
+<td>Char</td>
+<td>“deviation_var”</td>
+</tr>
+<tr class="odd">
+<td>deviation.conditions</td>
+<td>RHS evaluations of the same length as treat.levels</td>
+<td>List</td>
+<td>list(“&gt;3”, “==1”)</td>
+</tr>
+<tr class="even">
+<td>deviation.excused</td>
+<td>Whether deviations should be excused by deviation.excused_cols</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
+<td>deviation.excused_cols</td>
+<td>Excused columns for deviation switches</td>
+<td>List</td>
+<td>list(“excuse1”, “excuse2”)</td>
+</tr>
+<tr class="even">
+<td>excused</td>
+<td>When censoring, whether there is an excused condition</td>
+<td>Boolean</td>
+<td>TRUE</td>
+</tr>
+<tr class="odd">
+<td>excused.cols</td>
+<td>List of column names for treatment switch excuses</td>
+<td>List</td>
+<td>list(“excuse1”, “excuse2”)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level4">
+<h4 id="internal-options">Internal Options<a class="anchor" aria-label="anchor" href="#internal-options"></a>
+</h4>
+<p>These are internal options that change output name of covariates or
+the decomposition method when estimating coefficients.</p>
+<table class="table">
+<colgroup>
+<col width="16%">
+<col width="50%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Option Name</th>
+<th>Description</th>
+<th>Input Type</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>fastglm.method</td>
+<td>Method for decomposition by fastglm</td>
+<td>Integer</td>
+<td>3L</td>
+</tr>
+<tr class="even">
 <td>indicator.baseline</td>
 <td>Identifier for baseline variables</td>
 <td>Char</td>
 <td>“_bas”</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>indicator.squared</td>
 <td>Identifier for squared variables</td>
 <td>Char</td>
 <td>“_sq”</td>
 </tr>
-<tr class="odd">
-<td>fasgtlm.method</td>
-<td>Method for decomposition by fastglm</td>
-<td>Integer</td>
-<td>3L</td>
-</tr>
 </tbody>
 </table>
+</div>
+<div class="section level4">
+<h4 id="missed-options">Missed Options<a class="anchor" aria-label="anchor" href="#missed-options"></a>
+</h4>
+<p>All options from the documentation have now been incorporated into
+the appropriate sections above.</p>
 </div>
 </div>
 </div>

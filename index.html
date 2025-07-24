@@ -91,7 +91,7 @@
 <span>                    options <span class="op">=</span> <span class="fu"><a href="reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/outcome.html">outcome</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>       <span class="co"># Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping</span></span>
-<span><span class="fu"><a href="reference/diagnostics.html">diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>  <span class="co"># Returns a table of non-excused treatment switches and both unique and non-unique outcomes</span></span>
+<span><span class="fu"><a href="reference/diagnostics.html">diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>   <span class="co"># Returns a table of unique and non-unique outcomes</span></span>
 <span></span>
 <span><span class="co"># Plotting</span></span>
 <span><span class="fu"><a href="reference/km.curve.html">km.curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                      <span class="co"># Returns the Survival curve</span></span>
@@ -99,15 +99,15 @@
 <div class="section level3">
 <h3 id="assumptions">Assumptions<a class="anchor" aria-label="anchor" href="#assumptions"></a>
 </h3>
-<p>This package places several assumptions onto the input data and unexpected results and errors may arrise if these are not followed-</p>
+<p>This package places several assumptions onto the input data and unexpected results and errors may arise if these are not followed-</p>
 <ol style="list-style-type: decimal">
-<li>User provided <code>time.col</code> begins at 0 per unique <code>id.col</code> entries, we also assume that the column contains only integers and doest continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
+<li>User provided <code>time.col</code> begins at 0 per unique <code>id.col</code> entries, we also assume that the column contains only integers and continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
 <ul>
 <li>Provided <code>time.col</code> entries may be out of order as a sort is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …) is valid because it begins at 0 and is continuously increasing by increments of 1, even though it is not ordered.</li>
 </ul>
 </li>
 <li>
-<code>eligible</code>, <code>excused.col1</code>, and <code>excused.col0</code> are once one only one (with respect to <code>time.col</code>) flag variables</li>
+<code>eligible</code> and colnumn names provided to <code>excused.cols</code> are once one only one (with respect to <code>time.col</code>) flag variables</li>
 </ol>
 </div>
 </div>
@@ -121,14 +121,18 @@
 <li>outcome - outcome covariates</li>
 <li>numerator - numerator covariates when weighting</li>
 <li>denominator - denominator covariates when weighting</li>
+<li>outcome.model - fastglm model objects</li>
 <li>hazard - the hazard ratio</li>
+<li>weight.statistics - weighting information</li>
 <li>survival.curve - ggplot survival curve</li>
 <li>survival.data - survival and risk data for all points of followup</li>
-<li>risk.difference - risk difference at end of followup with CIs if bootstrapped</li>
-<li>risk.ratio - risk ratio at end of followup with CIs if bootstrapped</li>
+<li>risk.comparison - data table of comparisons between risks at end of followup bootstrapped</li>
+<li>risk.data - data table of risks for every level of treatment at each time point</li>
 <li>time - elapsed time for the SEQuential analysis</li>
+<li>info - list of diagnostic tables</li>
+<li>ce.model - Competing event model objects</li>
 </ol>
-<p>These can be handily and easily printed to the terminal with by calling the object as <code>mySequential</code>. While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers <code>hazard = TRUE, calculate.var = TRUE</code>, then the survival curves, data, and associated risks will return <code>NA</code>.</p>
+<p>These can be handily and easily printed to the terminal with by calling the object as <code>model</code> (if continuing the example above). While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers <code>hazard = TRUE</code>, then the survival curves, data, and associated risks will return <code>NA</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
