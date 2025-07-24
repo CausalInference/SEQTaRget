@@ -57,7 +57,7 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
                     options = SEQopts(km.curves = TRUE))
 
 outcome(model)       # Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping
-diagnostics(model)  # Returns a table of non-excused treatment switches and both unique and non-unique outcomes
+diagnostics(model)   # Returns a table of unique and non-unique outcomes
 
 # Plotting
 km.curve(model)                      # Returns the Survival curve
@@ -67,18 +67,18 @@ km.data(model)                      # Returns a dataframe of survival data in lo
 ### Assumptions
 
 This package places several assumptions onto the input data and
-unexpected results and errors may arrise if these are not followed-
+unexpected results and errors may arise if these are not followed-
 
 1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
-    also assume that the column contains only integers and doest
-    continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed
-    and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
+    also assume that the column contains only integers and continues by
+    1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2,
+    2.5, …) or (0, 1, 2, 4, 5, …) are not.
     - Provided `time.col` entries may be out of order as a sort is
       enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
       is valid because it begins at 0 and is continuously increasing by
       increments of 1, even though it is not ordered.
-2.  `eligible`, `excused.col1`, and `excused.col0` are once one only one
-    (with respect to `time.col`) flag variables
+2.  `eligible` and colnumn names provided to `excused.cols` are once one
+    only one (with respect to `time.col`) flag variables
 
 ## Return
 
@@ -90,19 +90,24 @@ The primary function, `SEQuential`, returns an S4 object of class
 3.  outcome - outcome covariates
 4.  numerator - numerator covariates when weighting
 5.  denominator - denominator covariates when weighting
-6.  hazard - the hazard ratio
-7.  survival.curve - ggplot survival curve
-8.  survival.data - survival and risk data for all points of followup
-9.  risk.difference - risk difference at end of followup with CIs if
-    bootstrapped
-10. risk.ratio - risk ratio at end of followup with CIs if bootstrapped
-11. time - elapsed time for the SEQuential analysis
+6.  outcome.model - fastglm model objects
+7.  hazard - the hazard ratio
+8.  weight.statistics - weighting information
+9.  survival.curve - ggplot survival curve
+10. survival.data - survival and risk data for all points of followup
+11. risk.comparison - data table of comparisons between risks at end of
+    followup bootstrapped
+12. risk.data - data table of risks for every level of treatment at each
+    time point
+13. time - elapsed time for the SEQuential analysis
+14. info - list of diagnostic tables
+15. ce.model - Competing event model objects
 
 These can be handily and easily printed to the terminal with by calling
-the object as `mySequential`. While this this the shape of the output
-object, not all slots will always be filled, e.g. if a user providers
-`hazard = TRUE, calculate.var = TRUE`, then the survival curves, data,
-and associated risks will return `NA`.
+the object as `model` (if continuing the example above). While this this
+the shape of the output object, not all slots will always be filled,
+e.g. if a user providers `hazard = TRUE`, then the survival curves,
+data, and associated risks will return `NA`.
 
 ## Dependencies
 

@@ -77,12 +77,17 @@ The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` wi
 3.  outcome - outcome covariates
 4.  numerator - numerator covariates when weighting
 5.  denominator - denominator covariates when weighting
-6.  hazard - the hazard ratio
-7.  survival.curve - ggplot survival curve
-8.  survival.data - survival and risk data for all points of followup
-9.  risk.difference - risk difference at end of followup with CIs if bootstrapped
-10. risk.ratio - risk ratio at end of followup with CIs if bootstrapped
-11. time - elapsed time for the SEQuential analysis
+6.  outcome.model - fastglm model objects
+7.  hazard - the hazard ratio
+8.  weight.statistics - weighting information
+9.  survival.curve - ggplot survival curve
+10.  survival.data - survival and risk data for all points of followup
+11.  risk.comparison - data table of comparisons between risks at end of followup
+    bootstrapped
+12. risk.data - data table of risks for every level of treatment at each time point
+13. time - elapsed time for the SEQuential analysis
+14. info - list of diagnostic tables 
+15. ce.model - Competing event model objects
 
 These can be handily and easily printed to the terminal with by calling the object as `model` (if continuing the example above). While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE`, then the survival curves, data, and associated risks will return `NA`.
 

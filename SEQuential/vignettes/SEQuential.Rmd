@@ -22,7 +22,7 @@ The flow of the SEQuential R package never changes, nor are there planned change
 
 In your R script, you will always start by defining your options object, through the `SEQopts` helper. There are many defaults which allow you to target exactly how you would like to change your analysis. Through this wiki there are specific pages dedicated to each causal contrast and the parameters which affect them, but for simplicity let's start with an intention-to-treat analysis with 20 bootstrap samples.
 
-```{r setup}
+```{r setup, eval=FALSE}
 library(SEQuential)
 
 options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
@@ -36,7 +36,7 @@ In general, options will be in the form `{option}.{parameter}` - here you may no
 
 The next step is running the primary R function, `SEQuential`. Here you will give your options, data, and data-level information. We provide some small simulated datasets to test on.
 
-```{r running}
+```{r running, eval=FALSE}
 data <- SEQdata
 model <- SEQuential(data, id.col = "ID", 
                           time.col = "time", 
@@ -54,7 +54,7 @@ model <- SEQuential(data, id.col = "ID",
 
 `SEQuential` produces a lot of internal diagnostics, models, and dataframes out of its main function in an S4 class. We provide a few different methods to handle obtaining your results.
 
-```{r outcome}
+```{r outcome, eval=FALSE}
 outcome(model)     # Returns a list of only the outcome models 
 km.curve(model)    # Prints the survival curve
 ```

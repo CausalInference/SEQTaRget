@@ -28,7 +28,7 @@
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return
-#' @param multinomial Logical:
+#' @param multinomial Logical: whether to expect multilevel treatment values
 #' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max
 #' @param nthreads Integer: number of threads to use for data.table processing
 #' @param numerator String: numerator covariates to the right hand side of a  to formula object
