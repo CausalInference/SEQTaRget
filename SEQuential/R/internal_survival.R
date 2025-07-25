@@ -2,7 +2,7 @@
 #'
 #' @import data.table future doFuture doRNG future.apply
 #' @importFrom fastglm fastglm
-#' @importFrom stats setNames
+#' @importFrom stats setNames ave
 #'
 #' @keywords internal
 internal.survival <- function(params, outcome) {
@@ -36,15 +36,14 @@ internal.survival <- function(params, outcome) {
         inc <- paste0("inc_", params@treat.level[[i]])
         risk <- paste0("risk_", params@treat.level[[i]])
         
-        RMDT <- copy(DT)[, trialID := paste0(get(params@id), "_", trial)
-                   ][get("followup") == 0,
-                     ][rep(1:.N, each = params@survival.max + 1)
-                       ][, `:=`(followup = seq(1:.N) - 1,
-                                followup_sq = (seq(1:.N) - 1)^2), by = "trialID"
-                         ][, eval(tx_bas) := as.character(params@treat.level[[i]])]
+        RMDT <- copy(DT)[rep(1:.N, each = params@survival.max + 1),
+                          ][, `:=`(followup = (rowid(get(params@id))) - 1,
+                                   followup_sq = (rowid(get(params@id)) - 1)^2), by = "trialID"
+                            ][, eval(tx_bas) := as.character(params@treat.level[[i]])]
+        
         if (params@method == "dose-response" & i == 1) { 
           RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)] 
-          } else {
+          } else if (params@method == "dose-response" & i != 1) {
             RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
             }
         RMDT[, (psurv) := inline.pred(model, newdata = .SD, params, case = "surv")]
@@ -76,7 +75,8 @@ internal.survival <- function(params, outcome) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    full <- handler(copy(params@DT), params, outcome[[1]]$model)
+    full <- handler(copy(params@DT)[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))
+                                    ][get("followup") == 0, ], params, outcome[[1]]$model)
     
     if (params@bootstrap) {
       UIDs <- unique(params@DT[[params@id]])
@@ -86,8 +86,12 @@ internal.survival <- function(params, outcome) {
         
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == id.sample[x],
-                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+          replicate <- ave(seq_along(id.sample), id.sample, FUN = seq_along)
+          
+          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) { 
+            copy(params@DT)[get(params@id) == id.sample[x] & get("followup") == 0,
+                            ][, "trialID" := paste0(get(params@id), "_", replicate[x], "_", get("trial"))]
+          }))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
           rm(RMDT); gc()
@@ -95,9 +99,14 @@ internal.survival <- function(params, outcome) {
         }, future.seed = params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
+          set.seed(params@seed + x)
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(id.sample, function(x) params@DT[get(params@id) == id.sample[x],
-                                                                    ][, eval(params@id) := paste0(get(params@id), "_", x)]))
+          replicate <- ave(seq_along(id.sample), id.sample, FUN = seq_along)
+          
+          RMDT <- rbindlist(lapply(seq_along(id.sample), function(i) { 
+            copy(params@DT)[get(params@id) == id.sample[i] & get("followup") == 0,
+                            ][, "trialID" := paste0(get(params@id), "_", replicate[i], "_", get("trial"))]
+          }))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
           rm(RMDT); gc()
