@@ -3,7 +3,7 @@ Type: Package
 Title: Sequential Trial Emulation
 Version: 0.11.0
 Authors@R: c(person(given = "Ryan",
-                    family = "O\'Dea",
+                    family = "O'Dea",
                     role = c("aut", "cre"),
                     email = "ryanodea@hsph.harvard.edu"),
              person(given = "Alejandro",
@@ -14,7 +14,6 @@ Authors@R: c(person(given = "Ryan",
                     family = "Hernan",
                     role = c("aut"),
                     email = "mhernan@hsph.harvard.edu"))
-Maintainer: Ryan ODea <ryanodea@hsph.harvard.edu>
 Description: Implemention of sequential trial emulation for the analysis of observational databases. 
     The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
     and failure time outcomes. SEQuential allows to compare both static and dynamic strategies, 
