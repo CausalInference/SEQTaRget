@@ -117,7 +117,7 @@ SEQopts(
 
 \item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
 
-\item{multinomial}{Logical:}
+\item{multinomial}{Logical: whether to expect multilevel treatment values}
 
 \item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
 
