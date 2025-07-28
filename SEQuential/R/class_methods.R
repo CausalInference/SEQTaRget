@@ -296,3 +296,16 @@ diagnostics <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   return(slot(object, "info"))
 }
+
+#' Function to return the internal data from a SEQuential object
+#' 
+#' @param object SEQoutput object
+#' 
+#' @importFrom methods is slot
+#' @returns data.table
+#' @export
+SEQ_data <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@data.return) stop ("Data was not attached through `data.return = TRUE` in SEQuential process")
+  return(slot(object, "DT"))
+}
