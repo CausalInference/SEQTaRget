@@ -52,12 +52,14 @@ model <- SEQuential(data, id.col = "ID", time.col = "time",
                     method = "ITT",
                     options = SEQopts(km.curves = TRUE))
 
-outcome(model)       # Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping
-diagnostics(model)   # Returns a table of unique and non-unique outcomes
+outcome(model)                       # Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping
+diagnostics <- diagnostics(model)    # Returns a list of diagnostic tables
+diagnostics$outcome.unique[[1]]      # Returns a table of unique outcomes
+diagnostics$outcome.nonunique[[1]]   # Returns a table of nonunique outcomes
 
 # Plotting
-km_curve(model)                      # Returns the Survival curve
-km_data(model)                      # Returns a dataframe of survival data in long-format for other analysis/plotting
+km_curve(model)[[1]]                 # Returns the Survival curve
+km_data(model)[[1]]                  # Returns a dataframe of survival data in long-format for other analysis/plotting
 ```
 
 ### Assumptions
