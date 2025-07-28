@@ -56,8 +56,8 @@ outcome(model)       # Returns a list of all outcome models as S3 fastglm object
 diagnostics(model)   # Returns a table of unique and non-unique outcomes
 
 # Plotting
-km.curve(model)                      # Returns the Survival curve
-km.data(model)                      # Returns a dataframe of survival data in long-format for other analysis/plotting
+km_curve(model)                      # Returns the Survival curve
+km_data(model)                      # Returns a dataframe of survival data in long-format for other analysis/plotting
 ```
 
 ### Assumptions
