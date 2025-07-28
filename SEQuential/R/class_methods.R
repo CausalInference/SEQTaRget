@@ -267,7 +267,7 @@ risk <- function(object) {
 #' @importFrom methods is slot
 #' @returns list of hazard ratios
 #' @export
-hazard <- function(object) {
+hazard_ratio <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@hazard) stop("Hazard Ratios were not created through `hazard = TRUE` in SEQuential process")
   return(slot(object, "hazard"))
