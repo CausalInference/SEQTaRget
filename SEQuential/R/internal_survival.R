@@ -22,8 +22,8 @@ internal.survival <- function(params, outcome) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }
       if (!is.na(params@compevent)) {
-        ce.data <- prepare.data(DT, params, case = "surv", type = "compevent")
-        ce.model <- fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method)
+        ce.data <- prepare.data(params@DT, params, case = "surv", type = "compevent", model = NA)
+        ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
         rm(ce.data)
       }
       
@@ -36,10 +36,10 @@ internal.survival <- function(params, outcome) {
         inc <- paste0("inc_", params@treat.level[[i]])
         risk <- paste0("risk_", params@treat.level[[i]])
         
-        RMDT <- copy(DT)[rep(1:.N, each = params@survival.max + 1),
-                          ][, `:=`(followup = (rowid(get(params@id))) - 1,
-                                   followup_sq = (rowid(get(params@id)) - 1)^2), by = "trialID"
-                            ][, eval(tx_bas) := as.character(params@treat.level[[i]])]
+        RMDT <- DT[rep(1:.N, each = params@survival.max + 1),
+                   ][, `:=`(followup = (rowid(get(params@id))) - 1,
+                            followup_sq = (rowid(get(params@id)) - 1)^2), by = "trialID"
+                     ][, eval(tx_bas) := as.character(params@treat.level[[i]])]
         
         if (params@method == "dose-response" & i == 1) { 
           RMDT[, `:=`(dose = FALSE, dose_sq = FALSE)] 

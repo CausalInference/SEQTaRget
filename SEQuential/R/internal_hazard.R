@@ -12,7 +12,7 @@ internal.hazard <- function(model, params) {
                                                     "period", params@outcome)]
   
   if (!is.na(params@compevent)) {
-    ce.data <- prepare.data(params@DT[!is.na(get(params@outcome)), ], params, case = "surv", type = "compevent")
+    ce.data <- prepare.data(params@DT, params, case = "surv", type = "compevent", model = NA)
     ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
     rm(ce.data)
   }
