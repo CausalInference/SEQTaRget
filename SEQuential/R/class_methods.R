@@ -231,7 +231,7 @@ km_curve <- function(object, plot.type = "survival",
 #' @importFrom methods is slot
 #' @returns list of dataframes of survival values
 #' @export
-km.data <- function(object) {
+km_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   return(slot(object, "survival.data"))
 }
