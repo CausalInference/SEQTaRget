@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,12 +90,14 @@
 <span>                    method <span class="op">=</span> <span class="st">"ITT"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="fu"><a href="reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/outcome.html">outcome</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>       <span class="co"># Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping</span></span>
-<span><span class="fu"><a href="reference/diagnostics.html">diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>   <span class="co"># Returns a table of unique and non-unique outcomes</span></span>
+<span><span class="fu"><a href="reference/outcome.html">outcome</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                       <span class="co"># Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping</span></span>
+<span><span class="va">diagnostics</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/diagnostics.html">diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>    <span class="co"># Returns a list of diagnostic tables</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">outcome.unique</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>      <span class="co"># Returns a table of unique outcomes</span></span>
+<span><span class="va">diagnostics</span><span class="op">$</span><span class="va">outcome.nonunique</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>   <span class="co"># Returns a table of nonunique outcomes</span></span>
 <span></span>
 <span><span class="co"># Plotting</span></span>
-<span><span class="fu"><a href="reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                      <span class="co"># Returns the Survival curve</span></span>
-<span><span class="fu"><a href="reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>                      <span class="co"># Returns a dataframe of survival data in long-format for other analysis/plotting</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>                 <span class="co"># Returns the Survival curve</span></span>
+<span><span class="fu"><a href="reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>                  <span class="co"># Returns a dataframe of survival data in long-format for other analysis/plotting</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="assumptions">Assumptions<a class="anchor" aria-label="anchor" href="#assumptions"></a>
 </h3>

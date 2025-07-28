@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,15 +71,15 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://causalinference.github.io/SEQuential/">SEQuential</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="itt-with-20-bootstrap-samples">ITT With 20 bootstrap samples<a class="anchor" aria-label="anchor" href="#itt-with-20-bootstrap-samples"></a>
+<h2 id="itt-with-5-bootstrap-samples">ITT With 5 bootstrap samples<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="co"># tells SEQuential to create kaplan meier curves</span></span>
 <span>                   km.curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   <span class="co"># tells SEQuential to bootstrap</span></span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                   <span class="co"># tells SEQuential to run bootstraps 20 times</span></span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span>                   <span class="co"># tells SEQuential to run bootstraps 5 times</span></span>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># use example data</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span>                             </span>
@@ -93,21 +93,21 @@ the library before getting in to some sample use cases.</p>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span>            <span class="co"># retrieve survival and risk data</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>            <span class="co"># retrieve survival and risk data</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="itt-with-20-bootstrap-samples-and-losses-to-followup">ITT with 20 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-20-bootstrap-samples-and-losses-to-followup"></a>
+<h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>                   <span class="co"># tells SEQuential to expect LTFU as the censoring column</span></span>
 <span>                   cense <span class="op">=</span> <span class="st">"LTFU"</span>,</span>
 <span>                   <span class="co"># tells SEQuential to treat this column as the </span></span>
 <span>                   <span class="co"># censoring eligibility column</span></span>
-<span>                   cense.eligible <span class="op">=</span> <span class="st">"eligible.cense"</span><span class="op">)</span></span>
+<span>                   cense.eligible <span class="op">=</span> <span class="st">"eligible_cense"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># use example data for LTFU</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata.LTFU</span></span>
@@ -121,16 +121,16 @@ the library before getting in to some sample use cases.</p>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="itt-with-20-bootstrap-samples-and-competing-events">ITT with 20 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-20-bootstrap-samples-and-competing-events"></a>
+<h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>                   <span class="co"># Using LTFU as our competing event</span></span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span><span class="op">)</span></span>
 <span></span>
@@ -145,11 +145,11 @@ the library before getting in to some sample use cases.</p>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="itt-hazard-ratio-with-20-bootstrap-samples-and-competing-events">ITT hazard ratio with 20 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-20-bootstrap-samples-and-competing-events"></a>
+<h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="co"># km.curves must be set to FALSE to turn on hazard </span></span>
@@ -158,7 +158,7 @@ the library before getting in to some sample use cases.</p>
 <span>                   <span class="co"># set hazard to TRUE for hazard ratio creation</span></span>
 <span>                   hazard <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span>,     </span>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata.LTFU</span>                          </span>
@@ -173,16 +173,16 @@ the library before getting in to some sample use cases.</p>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># retrieve hazard ratios</span></span>
-<span><span class="fu">hazard</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="itt-with-20-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">ITT with 20 bootstrap samples and competing events in subgroups
-defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-20-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex"></a>
+<h2 id="itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">ITT with 5 bootstrap samples and competing events in subgroups
+defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex"></a>
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span>,     </span>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span>,</span>
 <span>                   <span class="co"># define the subgroup</span></span>
 <span>                   subgroup <span class="op">=</span> <span class="st">"sex"</span><span class="op">)</span></span>
@@ -198,8 +198,8 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-20-bootstrap
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

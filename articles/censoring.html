@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQuential</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,6 +86,7 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span><span class="co"># use some example data in the package</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span>                                </span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, </span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
 <span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
 <span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
@@ -96,9 +97,9 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># retrieve risk plot</span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
 <span><span class="co"># retrieve survival and risk data</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-no-excused-conditions-i-e--static-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -111,7 +112,8 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span>                   weight.preexpansion <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span>                                 </span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, </span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>,, </span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
 <span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
 <span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
@@ -121,8 +123,8 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-pre-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in pre-expanded data and no
@@ -142,7 +144,8 @@ truncation, excused conditions for initiators and non-initiators
 <span>                   <span class="co"># (mapping to the same positions as the list in excused.cols)</span></span>
 <span>                   treat.level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span>                                </span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, </span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>,, </span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
 <span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
 <span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
@@ -152,8 +155,8 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -168,7 +171,8 @@ truncation, excused conditions for initiators and non-initiators
 <span>                   excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"excusedZero"</span>, <span class="st">"excusedOne"</span><span class="op">)</span>, </span>
 <span>                   treat.level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span>                                </span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, </span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>,, </span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
 <span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
 <span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
@@ -178,8 +182,8 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-a-competing-event">Per-protocol, censoring, weights in post-expanded data and no
@@ -208,8 +212,8 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">km.curve</span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu">km.data</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
+<span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio">Per-protocol, censoring, weights in post-expanded data and no
