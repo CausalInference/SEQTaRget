@@ -94,8 +94,8 @@ setMethod("show", "SEQoutput", function(object) {
     
     if (params@km.curves) {
       cat("Risk ==============================================================\n")
-      for(i in seq_along(risk)) {
-        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk)[[i]], "\n")
+      for(i in seq_along(risk.data)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(risk.data)[[i]], "\n")
         print(kable(risk.data[[i]]))
         print(kable(risk.comparison[[i]]))
       }
@@ -253,12 +253,24 @@ compevent <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns a dataframe of Risk information (risk ratios, risk differences and confidence intervals, if bootstrapped)
+#' @returns a data table of risk information at every followup
 #' @export
-risk <- function(object) {
+risk_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
-  return(slot(object, "risk"))
+  return(slot(object, "risk.data"))
+}
+
+#' Function to return risk information from a SEQuential object
+#' 
+#' @param object SEQoutput object
+#' @importFrom methods is slot
+#' @returns a data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
+#' @export
+risk_comparison <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
+  return(slot(object, "risk.comparison"))
 }
 
 #' Function to return hazard ratios from a SEQuential object
