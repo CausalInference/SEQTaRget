@@ -20,15 +20,15 @@ Here, we'll go over some examples of using ITT. First we need to load the librar
 library(SEQuential)
 ```
 
-## ITT With 20 bootstrap samples
+## ITT With 5 bootstrap samples
 
 ```{r eval=FALSE}
 options <- SEQopts(# tells SEQuential to create kaplan meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
                    bootstrap = TRUE,
-                   # tells SEQuential to run bootstraps 20 times
-                   bootstrap.nboot = 20)
+                   # tells SEQuential to run bootstraps 5 times
+                   bootstrap.nboot = 5)
 
 # use example data
 data <- SEQdata                             
@@ -42,21 +42,21 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")        # retrieve risk plot
-survival_data <- km.data(model)            # retrieve survival and risk data
+km_curve(model, plot.type = "risk")        # retrieve risk plot
+survival_data <- km_data(model)            # retrieve survival and risk data
 ```
 
-## ITT with 20 bootstrap samples and losses-to-followup
+## ITT with 5 bootstrap samples and losses-to-followup
 
 ```{r eval=FALSE}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
-                   bootstrap.nboot = 20,
+                   bootstrap.nboot = 5,
                    # tells SEQuential to expect LTFU as the censoring column
                    cense = "LTFU",
                    # tells SEQuential to treat this column as the 
                    # censoring eligibility column
-                   cense.eligible = "eligible.cense")
+                   cense.eligible = "eligible_cense")
 
 # use example data for LTFU
 data <- SEQdata.LTFU
@@ -70,17 +70,17 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 
-## ITT with 20 bootstrap samples and competing events
+## ITT with 5 bootstrap samples and competing events
 
 ```{r eval=FALSE}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
-                   bootstrap.nboot = 20,
+                   bootstrap.nboot = 5,
                    # Using LTFU as our competing event
                    compevent = "LTFU")
 
@@ -95,12 +95,12 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 
-## ITT hazard ratio with 20 bootstrap samples and competing events
+## ITT hazard ratio with 5 bootstrap samples and competing events
 ```{r eval=FALSE}
 options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
                    # ratio creation
@@ -108,7 +108,7 @@ options <- SEQopts(# km.curves must be set to FALSE to turn on hazard
                    # set hazard to TRUE for hazard ratio creation
                    hazard = TRUE,
                    bootstrap = TRUE,                
-                   bootstrap.nboot = 20,     
+                   bootstrap.nboot = 5,     
                    compevent = "LTFU")
 
 data <- SEQdata.LTFU                          
@@ -123,14 +123,14 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 # retrieve hazard ratios
-hazard(model)
+hazard_ratio(model)
 ```
 
-## ITT with 20 bootstrap samples and competing events in subgroups defined by sex
+## ITT with 5 bootstrap samples and competing events in subgroups defined by sex
 ```{r, eval=FALSE}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
-                   bootstrap.nboot = 20,     
+                   bootstrap.nboot = 5,     
                    compevent = "LTFU",
                    # define the subgroup
                    subgroup = "sex")
@@ -146,6 +146,6 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
