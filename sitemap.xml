@@ -10,6 +10,7 @@
 <url><loc>https://causalinference.github.io/SEQuential/articles/seqopts.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/authors.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/index.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/SEQ_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/SEQdata.LTFU.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/SEQdata.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/SEQdata.multitreatment.html</loc></url>
@@ -32,7 +33,7 @@
 <url><loc>https://causalinference.github.io/SEQuential/reference/denominator.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/diagnostics.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/format.time.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQuential/reference/hazard.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/hazard_ratio.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/index.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/inline.pred.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/internal.analysis.html</loc></url>
@@ -41,8 +42,8 @@
 <url><loc>https://causalinference.github.io/SEQuential/reference/internal.plot.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/internal.survival.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/internal.weights.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQuential/reference/km.curve.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQuential/reference/km.data.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/km_curve.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/km_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/multinomial.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/multinomial.predict.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/multinomial.summary.html</loc></url>
@@ -52,7 +53,8 @@
 <url><loc>https://causalinference.github.io/SEQuential/reference/parameter.simplifier.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/prepare.data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/prepare.output.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQuential/reference/risk.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/risk_comparison.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQuential/reference/risk_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQuential/reference/show-SEQoutput-method.html</loc></url>
 </urlset>
 
