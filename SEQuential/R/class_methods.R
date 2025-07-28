@@ -202,7 +202,7 @@ covariates <- function(object) {
 #' @importFrom methods is slot slot<-
 #' @returns ggplot object of plot \code{plot.type}
 #' @export
-km.curve <- function(object, plot.type = "survival",
+km_curve <- function(object, plot.type = "survival",
                      plot.title, plot.subtitle, plot.labels, plot.colors) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!plot.type %in% c("survival", "risk", "inc")) stop("plot.type should be 'survival', 'risk', or 'inc'")
