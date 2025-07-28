@@ -42,8 +42,8 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")        # retrieve risk plot
-survival_data <- km.data(model)            # retrieve survival and risk data
+km_curve(model, plot.type = "risk")        # retrieve risk plot
+survival_data <- km_data(model)            # retrieve survival and risk data
 ```
 
 ## ITT with 20 bootstrap samples and losses-to-followup
@@ -70,8 +70,8 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 
@@ -95,8 +95,8 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 
@@ -123,7 +123,7 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 # retrieve hazard ratios
-hazard(model)
+hazard_ratio(model)
 ```
 
 ## ITT with 20 bootstrap samples and competing events in subgroups defined by sex
@@ -146,6 +146,6 @@ model <- SEQuential(data, id.col = "ID",
                           method = "ITT", 
                           options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```

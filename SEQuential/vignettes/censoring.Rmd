@@ -43,9 +43,9 @@ model <- SEQuential(data,
                     options = options)
 
 # retrieve risk plot
-km.curve(model, plot.type = "risk")
+km_curve(model, plot.type = "risk")
 # retrieve survival and risk data
-survival_data <- km.data(model)
+survival_data <- km_data(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
@@ -67,8 +67,8 @@ model <- SEQuential(data,
                     method = "censoring",
                     options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -96,8 +96,8 @@ model <- SEQuential(data,
                     method = "censoring",
                     options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -120,8 +120,8 @@ model <- SEQuential(data,
                     method = "censoring",
                     options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
@@ -148,8 +148,8 @@ model <- SEQuential(data,
                     method = "censoring",
                     options = options)
 
-km.curve(model, plot.type = "risk")
-survival_data <- km.data(model)
+km_curve(model, plot.type = "risk")
+survival_data <- km_data(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio

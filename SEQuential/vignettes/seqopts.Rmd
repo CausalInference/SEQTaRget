@@ -105,7 +105,3 @@ These are internal options that change output name of covariates or the decompos
 | fastglm.method | Method for decomposition by fastglm | Integer | 3L |
 | indicator.baseline | Identifier for baseline variables | Char | "\_bas" |
 | indicator.squared | Identifier for squared variables | Char | "\_sq" |
-
-### Missed Options
-
-All options from the documentation have now been incorporated into the appropriate sections above.
