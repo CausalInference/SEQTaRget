@@ -58,7 +58,7 @@ options <- SEQopts(km.curves = TRUE,
                    weight.preexpansion = FALSE)
 
 data <- SEQdata                                 
-model <- SEQuential(data,, 
+model <- SEQuential(data, 
                     id.col = "ID",
                     time.col = "time",
                     eligible.col = "eligible",
@@ -88,7 +88,7 @@ options <- SEQopts(km.curves = TRUE,
                    # (mapping to the same positions as the list in excused.cols)
                    treat.level = c(0, 1))
 data <- SEQdata                                
-model <- SEQuential(data,, 
+model <- SEQuential(data, 
                     id.col = "ID",
                     time.col = "time",
                     eligible.col = "eligible",
@@ -113,7 +113,7 @@ options <- SEQopts(km.curves = TRUE,
                    excused.cols = c("excusedZero", "excusedOne"), 
                    treat.level = c(0, 1))
 data <- SEQdata                                
-model <- SEQuential(data,, 
+model <- SEQuential(data, 
                     id.col = "ID",
                     time.col = "time",
                     eligible.col = "eligible",

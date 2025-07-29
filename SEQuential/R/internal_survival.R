@@ -22,7 +22,7 @@ internal.survival <- function(params, outcome) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }
       if (!is.na(params@compevent)) {
-        ce.data <- prepare.data(params@DT, params, case = "surv", type = "compevent", model = NA)
+        ce.data <- prepare.data(DT, params, case = "surv", type = "compevent", model = NA)
         ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
         rm(ce.data)
       }
