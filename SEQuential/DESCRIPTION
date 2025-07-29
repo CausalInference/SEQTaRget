@@ -18,7 +18,8 @@ Authors@R: c(person(given = "Ryan",
                     family = "Hernan",
                     role = c("aut"),
                     email = "mhernan@hsph.harvard.edu",
-                    comment = c(ROR="03vek6s52"))
+                    comment = c(ORCID="0000-0003-1619-8456",
+                                ROR="03vek6s52"))
               )
 Description: Implemention of sequential trial emulation for the analysis of observational databases. 
     The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
