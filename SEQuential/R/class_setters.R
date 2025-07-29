@@ -97,7 +97,7 @@ parameter.simplifier <- function(params) {
   }
   
   params@excused.cols <- equalizer(params@excused.cols, params@treat.level)
-  if (length(params@deviation.conditions) != length(params@treat.level)) stop("Deviation conditions should encompass all treatment levels")
+  if (params@deviation) if (length(params@deviation.conditions) != length(params@treat.level)) stop("Deviation conditions should encompass all treatment levels")
   params@deviation.excused_cols <- equalizer(params@deviation.excused_cols, params@treat.level)
   params@weight.eligible_cols <- equalizer(params@weight.eligible_cols, params@treat.level)
 
