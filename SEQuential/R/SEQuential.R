@@ -169,8 +169,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     filter <- sort(unique(data[[params@subgroup]]))
-    outcome.unique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@data[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
-    outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@DT[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
+    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter)
+    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter)
   }
   
   # Output ======================================================

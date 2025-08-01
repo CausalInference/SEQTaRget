@@ -100,3 +100,25 @@ equalizer <- function(list, levels) {
   if (length(list) < length(levels)) list <- c(list, rep(NA, length(levels) - length(list)))
   return(list)
 }
+
+outcome.table <- function(type, params, filter = NA) {
+  if (is.na(params@subgroup)) {
+    out <- if (type == "unique") {
+      copy(params@DT)[get(params@outcome) == 1, .SD[1], 
+                      by = c(params@id, params@treatment, params@outcome)
+                      ][, list(n = .N), by = c(params@treatment, params@outcome)] 
+    } else {
+      copy(params@DT)[get(params@outcome) == 1, list(n = .N), 
+                      by = c(params@treatment, params@outcome)]
+    }
+  } else {
+    out <- if (type == "unique") {
+      copy(params@DT)[get(params@outcome) == 1 & params@subgroup == filter, 
+                      .SD[1], by = c(params@id, params@treatment, params@outcome)] 
+    } else {
+      copy(params@DT)[get(params@outcome) == 1 & params@subgroup == filter, 
+                      list(n = .N), by = c(params@treatment, params@outcome)]
+    }
+  }
+  return(out)
+}
