@@ -22,15 +22,16 @@ SEQexpand <- function(params) {
     firstSwitch <- NULL
     trialID <- NULL
     lag <- NULL
+    tx_bas <- paste0(params@treatment, params@indicator.baseline)
     DT <- copy(params@data)
 
     # Expansion =======================================================
     if (!params@weighted) {
-      vars.intake <- c(params@covariates, params@deviation.col)
+      vars.intake <- c(params@covariates, params@deviation.col, tx_bas)
     } else {
       vars.intake <- c(params@covariates, params@numerator, params@denominator,
-                       params@cense.denominator, params@cense.numerator, params@deviation.col)
-      if (params@excused) vars.intake <- c(vars.intake, paste0(params@treatment, params@indicator.baseline))
+                       params@cense.denominator, params@cense.numerator, 
+                       params@deviation.col, tx_bas)
     }
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
                      params@treatment, params@cense, params@cense.eligible,
