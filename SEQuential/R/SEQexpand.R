@@ -91,7 +91,6 @@ SEQexpand <- function(params) {
       if (params@deviation) {
         # Censoring on deviation condition
         for (i in seq_along(params@treat.level)) {
-          if (is.na(params@deviation.conditions[[i]])) next
           conditional <- paste0(paste0(params@treatment, params@indicator.baseline), "==", params@treat.level[[i]],
                                 " & ", params@deviation.col, params@deviation.conditions[[i]])
           
@@ -139,7 +138,9 @@ SEQexpand <- function(params) {
     }
     
     if (params@selection.first_trial) {
-      out <- out[get("trial") == min(get("trial")), .SD, by = c(params@id)]
+      out <- out[, "trial.first" := min(get("trial")), by = c(params@id)
+                 ][get("trial") == get("trial.first"), .SD
+                   ][, "trial.first" := NULL]
     }
     
     if (params@selection.random) {
