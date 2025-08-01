@@ -24,11 +24,11 @@ test_that("Pre-Expansion Dose-Response", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -4.89437436861547, dose = 0.0578172493878777, 
-                   dose_sq = -0.00126433049568143, followup = 0.000817315276267894, 
-                   followup_sq = -0.00017242835071024, trial = 0.0104883292627362, 
-                   trial_sq = 0.000781016829235595, sex1 = 0.172630682250999, 
-                   `dose:followup` = 0.000354769280320122, `dose_sq:followup` = 1.0605834086728e-05)
+  expected <- list(`(Intercept)` = -4.86763263204364, dose = 0.0587390562206159, 
+                   dose_sq = -0.00118380141790317, followup = -0.00431945932798065, 
+                   followup_sq = -5.55487092255259e-05, trial = 0.0105381474212626, 
+                   trial_sq = 0.000777410850631594, sex1 = 0.143071081126181, 
+                   `dose:followup` = 0.000410848850309337, `dose_sq:followup` = 6.47486169924423e-06)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -64,10 +64,10 @@ test_that("Pre-Expansion Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -4.8331064655654, tx_init_bas1 = 0.401676361798836, 
-                   followup = 0.0147725158310964, followup_sq = 4.04157002656377e-05, 
-                   trial = -0.0131874685320351, trial_sq = 0.00113427136978775, 
-                   sex1 = 0.0841593672798384, `tx_init_bas1:followup` = 0.0163419157652325)
+  expected <- list(`(Intercept)` = -4.79700899537026, tx_init_bas1 = 0.398141240108939, 
+                   followup = 0.0136455646615243, followup_sq = 1.10939448747926e-05, 
+                   trial = -0.0137282592316101, trial_sq = 0.00113039188898435, 
+                   sex1 = 0.0484052979031332, `tx_init_bas1:followup` = 0.0172102945332125)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -103,10 +103,10 @@ test_that("Pre-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -5.2575896658564, tx_init_bas1 = 0.377685654920678, 
-                   followup = 0.00760616508976486, followup_sq = 0.000746470267632687, 
-                   trial = 0.0522808132127782, trial_sq = 9.77743011844572e-05, 
-                   `tx_init_bas1:followup` = -0.0118014806930868)
+  expected <- list(`(Intercept)` = -5.58369763317808, tx_init_bas1 = 0.201920328328877, 
+                   followup = -0.0325635833395319, followup_sq = 0.00170197483126703, 
+                   trial = 0.109327651167692, trial_sq = -0.000947001281099358, 
+                   `tx_init_bas1:followup` = -0.00739145872905029)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
