@@ -90,7 +90,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   
   subgroup <- as.character(subgroup)
 
-  selection.prob <- as.logical(selection.prob)
+  selection.prob <- as.numeric(selection.prob)
   selection.random <- as.logical(selection.random)
 
   trial.include <- as.logical(trial.include)
@@ -174,6 +174,10 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       plot.type = plot.type,
       subgroup = subgroup,
       data.return = data.return,
-      selection.first_trial = selection.first_trial
+      selection.first_trial = selection.first_trial,
+      cense.denominator = cense.denominator,
+      cense.numerator = cense.numerator,
+      selection.prob = selection.prob,
+      selection.random = selection.random
   )
 }

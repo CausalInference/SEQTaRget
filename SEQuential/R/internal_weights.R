@@ -45,7 +45,7 @@ internal.weights <- function(DT, data, params) {
 
     } else {
       weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                     ][get(params@time) == 0, tx_lag := '1'
+                     ][get(params@time) == 0, tx_lag := as.character(params@treat.level[[1]])
                        ][, paste0(params@time, "_sq") := get(params@time)^2]
     }
 

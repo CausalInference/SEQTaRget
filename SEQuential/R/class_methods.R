@@ -43,9 +43,9 @@ setMethod("show", "SEQoutput", function(object) {
       if (params@multinomial) {
         if (params@method != "ITT") {
           for (i in seq_along(params@treat.level)) {
-            cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
+            cat("Treatment Lag =", params@treat.level[[i]], "Model ====================================\n")
             for (j in seq_along(params@treat.level)) {
-              cat("Treatment = ", j, "============================ \n")
+              cat("Treatment =", params@treat.level[[j]], "============================ \n")
               if (length(weight_statistics$coef.numerator > 1)) {
                 cat("Numerator ========================== \n")
                 print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))

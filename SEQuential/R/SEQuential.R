@@ -114,8 +114,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
-    switch.unique <- data[, 'switch' := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = eval(params@id)
-                          ][, list(n = .N), by = "switch"]
+    if (!params@deviation) {
+      switch.unique <- data[, 'switch' := (get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = eval(params@id)
+                            ][, list(n = .N), by = "switch"]
+    } else {
+      data[, 'switch' := FALSE]
+      for (i in seq_along(params@treat.level)) {
+        conditional <- paste0(paste0(params@treatment), "==", params@treat.level[[i]],
+                              " & ", params@deviation.col, params@deviation.conditions[[i]])
+        
+        data[eval(parse(text = conditional)), 'switch' := TRUE]
+      }
+      switch.unique <- data[, list(n = .N), by = "switch"]
+    }
     switch.nonunique <- params@DT[, list(n = .N), by = "switch"]
     
     params@DT[, "switch" := NULL]
@@ -158,8 +169,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     filter <- sort(unique(data[[params@subgroup]]))
-    outcome.unique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@data[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
-    outcome.nonunique[[label]] <- if (!is.na(params@subgroup)) params@data[get(params@outcome) == 1 & params@subgroup == filter[[i]], list(n = .N), by = c(params@treatment, params@outcome)] else params@DT[get(params@outcome) == 1, list(n = .N), by = c(params@treatment, params@outcome)]
+    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter)
+    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter)
   }
   
   # Output ======================================================
