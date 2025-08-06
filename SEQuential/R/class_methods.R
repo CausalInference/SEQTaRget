@@ -43,16 +43,16 @@ setMethod("show", "SEQoutput", function(object) {
       if (params@method != "ITT") {
         for (i in seq_along(params@treat.level)) {
           if (params@weight.lag_condition) {
-            cat("Treatment Lag =", params@treat.level[[i]], "Treatment = ", params@treat.level[[i]], "Model ====================================\n")
+            cat("Treatment Lag =", params@treat.level[[i]], "Treatment =", params@treat.level[[i]], "Model ====================================\n")
           } else {
-            cat("Treatment = ", params@treat.level[[i]], "Model ====================================\n")
+            cat("Treatment =", params@treat.level[[i]], "Model ====================================\n")
           }
           if (length(weight_statistics$coef.numerator) > 1) {
             cat("Numerator ========================== \n")
             if (!params@multinomial) print(summary(weight_statistics$coef.numerator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
-                cat("Nested Model: Treatment = ", nonbaseline[[j]], "=========\n")
+                cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
                 print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
               }
             }
@@ -61,7 +61,7 @@ setMethod("show", "SEQoutput", function(object) {
             if (!params@multinomial) print(summary(weight_statistics$coef.denominator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
-                cat("Nested Model: Treatment = ", nonbaseline[[j]], "=========\n")
+                cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
                 print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
               }
             }
