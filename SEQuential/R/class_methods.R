@@ -37,46 +37,47 @@ setMethod("show", "SEQoutput", function(object) {
       if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
       print(summary(outcome_model[[i]]))
     }
-  
+    
     if (params@weighted) {
       cat("\nWeight Information ============================================= \n")
-      if (params@multinomial) {
-        if (params@method != "ITT") {
-          for (i in seq_along(params@treat.level)) {
-            cat("Treatment Lag =", params@treat.level[[i]], "Model ====================================\n")
-            for (j in seq_along(params@treat.level)) {
-              cat("Treatment =", params@treat.level[[j]], "============================ \n")
-              if (length(weight_statistics$coef.numerator > 1)) {
-                cat("Numerator ========================== \n")
+      if (params@method != "ITT") {
+        for (i in seq_along(params@treat.level)) {
+          if (params@weight.lag_condition) {
+            cat("Treatment Lag =", params@treat.level[[i]], "Treatment =", params@treat.level[[i]], "Model ====================================\n")
+          } else {
+            cat("Treatment =", params@treat.level[[i]], "Model ====================================\n")
+          }
+          if (length(weight_statistics$coef.numerator) > 1) {
+            cat("Numerator ========================== \n")
+            if (!params@multinomial) print(summary(weight_statistics$coef.numerator[[i]])) else {
+              nonbaseline <- params@treat.level[-1]
+              for (j in seq_along(nonbaseline)) {
+                cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
                 print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
               }
-              cat("Denominator ========================== \n")
-              print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
+            }
+          }
+            cat("Denominator ========================== \n")
+            if (!params@multinomial) print(summary(weight_statistics$coef.denominator[[i]])) else {
+              nonbaseline <- params@treat.level[-1]
+              for (j in seq_along(nonbaseline)) {
+                cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
+                print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
+              }
             }
           }
         }
-      } else {
-        if (params@method != "ITT") {
-          for (i in seq_along(params@treat.level)) {
-            cat("Treatment Lag = ", params@treat.level[[i]], "Model ====================================\n")
-              if (length(weight_statistics$coef.numerator > 1)) {
-                cat("Numerator ========================== \n")
-                print(summary(weight_statistics$coef.numerator[[i]]))
-              }
-              cat("Denominator ========================== \n")
-              print(summary(weight_statistics$coef.denominator[[i]]))
-          }
-        }
-        cat("Weights:\n")
-        cat("Min: ", weight_statistics$min, "\n")
-        cat("Max: ", weight_statistics$max, "\n")
-        cat("StDev: ", weight_statistics$sd, "\n")
-        cat("P01: ", weight_statistics$p01, "\n")
-        cat("P25: ", weight_statistics$p25, "\n")
-        cat("P50: ", weight_statistics$p50, "\n")
-        cat("P75: ", weight_statistics$p75, "\n")
-        cat("P99: ", weight_statistics$p99, "\n\n")
-      }
+      
+      cat("Weights:\n")
+      cat("Min: ", weight_statistics$min, "\n")
+      cat("Max: ", weight_statistics$max, "\n")
+      cat("StDev: ", weight_statistics$sd, "\n")
+      cat("P01: ", weight_statistics$p01, "\n")
+      cat("P25: ", weight_statistics$p25, "\n")
+      cat("P50: ", weight_statistics$p50, "\n")
+      cat("P75: ", weight_statistics$p75, "\n")
+      cat("P99: ", weight_statistics$p99, "\n\n")
+        
       if (params@LTFU) {
         cat("LTFU Numerator: \n")
         print(summary(weight_statistics$ncense.coef))
