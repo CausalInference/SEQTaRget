@@ -54,7 +54,8 @@ create.risk <- function(data, params) {
 }
 
 factorize <- function(data, params) {
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, c(params@indicator.baseline, ""))))
+  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline),
+                      params@treatment))
   coercion <- encodes[encodes %in% names(data)]
   
   out <- data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
