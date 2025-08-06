@@ -13,6 +13,8 @@ test_that("ITT", {
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
+  
+  show(model)
 })
 
 test_that("Pre-Expansion Dose-Response", {
@@ -90,6 +92,8 @@ test_that("Post-Expansion Censoring", {
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
+  
+  show(model)
 })
 
 test_that("Pre-Expansion Excused Censoring", {
