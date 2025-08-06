@@ -171,7 +171,7 @@ test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
 })
 
 test_that("ITT - Multinomial, Treatment Levels 1,2", {
-  data <- SEQdata.multitreatment
+  data <- copy(SEQdata.multitreatment)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(multinomial = TRUE, treat.level = c(1,2)))
