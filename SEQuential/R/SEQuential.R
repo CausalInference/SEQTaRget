@@ -1,5 +1,5 @@
 #' @title SEQuential trial emulation
-#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on the wiki at https://github.com/CausalInference/SEQuential/wiki
+#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQuential/
 #' 
 #' @details Implemention of sequential trial emulation for the analysis of observational databases. 
 #' The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
