@@ -8,7 +8,7 @@
 ![CRAN Version](https://www.r-pkg.org/badges/version/SEQ)
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQ)
 [![R-CMD](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://app.codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
+[![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
