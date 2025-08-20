@@ -6,22 +6,19 @@ Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
                     email = "ryanodea@hsph.harvard.edu",
-                    comment = c(ORCID="0009-0000-0103-9546",
-                                ROR="03vek6s52")),
+                    comment = c(ORCID="0009-0000-0103-9546")),
              person(given = "Alejandro",
                     family = "Szmulewicz",
                     role = c("aut"),
                     email = "aszmulewicz@hsph.harvard.edu",
-                    comment = c(ORCID="0000-0002-2664-802X",
-                                ROR="03vek6s52")),
+                    comment = c(ORCID="0000-0002-2664-802X")),
              person(given = "Miguel",
                     family = "Hernan",
                     role = c("aut"),
                     email = "mhernan@hsph.harvard.edu",
-                    comment = c(ORCID="0000-0003-1619-8456",
-                                ROR="03vek6s52"))
+                    comment = c(ORCID="0000-0003-1619-8456"))
               )
-Description: Implemention of sequential trial emulation for the analysis of observational databases. 
+Description: Implementation of sequential trial emulation for the analysis of observational databases. 
     The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
     and failure time outcomes. SEQuential allows to compare both static and dynamic strategies, 
     can be used to estimate observational analogs of intention-to-treat 
@@ -51,3 +48,4 @@ Depends:
     R (>= 4.1)
 URL: https://causalinference.github.io/SEQuential/
 VignetteBuilder: knitr
+ROR: 03vek6s52
