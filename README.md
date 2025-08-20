@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SEQuential
+# SEQ - Sequentially Nested Target Trial Emulation
 
 <!-- badges: start -->
 
-![CRAN Version](https://www.r-pkg.org/badges/version/SEQuential)
-![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQuential)
+![CRAN Version](https://www.r-pkg.org/badges/version/SEQ)
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQ)
 [![R-CMD](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential)
 [![Lifecycle:
@@ -14,15 +14,15 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQuential.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
-The goal of SEQuential is to implement sequential trial emulation for
-the analysis of observational databases. The SEQuential software
-accommodates time-varying treatments and confounders, as well as binary
-and failure time outcomes. SEQ allows to compare both static and dynamic
-strategies, can be used to estimate observational analogs of
-intention-to-treat and per-protocol effects, and can adjust for
-potential selection bias induced by losses-to-follow-up.
+The goal of SEQ is to implement sequentially nested trial emulation for
+the analysis of observational databases. The SEQ software accommodates
+time-varying treatments and confounders, as well as binary and failure
+time outcomes. SEQ allows to compare both static and dynamic strategies,
+can be used to estimate observational analogs of intention-to-treat and
+per-protocol effects, and can adjust for potential selection bias
+induced by losses-to-follow-up.
 
 <br/> <br/>
 
@@ -45,7 +45,7 @@ constructor `SEQopts` and then feeding that into `SEQuential`.
 rough) estimated time for analysis.
 
 ``` r
-library(SEQuential)
+library(SEQ)
 data <- SEQdata
 
 model <- SEQuential(data, id.col = "ID", time.col = "time",
