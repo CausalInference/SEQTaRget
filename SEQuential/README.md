@@ -28,7 +28,7 @@ induced by losses-to-follow-up.
 
 ## Installation
 
-You can install the development version of SEQuential from
+You can install the development version of SEQ from
 [GitHub](https://github.com/) with:
 
 ``` r
