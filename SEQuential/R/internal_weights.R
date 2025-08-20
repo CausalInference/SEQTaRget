@@ -120,13 +120,14 @@ internal.weights <- function(DT, data, params) {
           }
         }
       } else {
+        if (params@multinomial & !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
           
           if (!is.na(col)) {
             out[tx_lag == level & get(col) != 1, 
-                denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level)]
+                denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = multi, target = level)]
             if (i == 1) {
               out[tx_lag == level & 
                     get(params@treatment) == params@treat.level[[i]] & 
@@ -144,12 +145,13 @@ internal.weights <- function(DT, data, params) {
         if (params@weight.preexpansion) {
           out[, numerator := 1]
         } else {
+          if (params@multinomial & !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
           for (i in seq_along(params@treat.level)) {
             level <- params@treat.level[[i]]
             col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
             if (!is.na(col)) {
               out[get(params@treatment) == level & get(col) == 0, 
-                  numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level)
+                  numerator := inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = multi, target = level)
                   ]
             }
           }
