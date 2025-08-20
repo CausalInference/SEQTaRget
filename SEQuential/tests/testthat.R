@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SEQuential)
+library(SEQ)
 
-test_check("SEQuential")
+test_check("SEQ")

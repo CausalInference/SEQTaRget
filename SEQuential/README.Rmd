@@ -13,17 +13,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-# SEQuential
+# SEQ - Sequentially Nested Target Trial Emulation
 
 <!-- badges: start -->
 
-![CRAN Version](https://www.r-pkg.org/badges/version/SEQuential) ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQuential) [![R-CMD](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+![CRAN Version](https://www.r-pkg.org/badges/version/SEQ) ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQ) [![R-CMD](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQuential.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
-The goal of SEQuential is to implement sequential trial emulation for the analysis of observational databases. The SEQuential software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
+The goal of SEQ is to implement sequential trial emulation for the analysis of observational databases. The SEQ software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 
 <br/> <br/>
 
@@ -41,7 +41,7 @@ devtools::install_github("CausalInference/SEQuential", subdir = "SEQuential")
 `SEQuential` uses R's S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor `SEQopts` and then feeding that into `SEQuential`. `SEQestimate` can also take the provided options and return a (very rough) estimated time for analysis.
 
 ```{r eval=FALSE}
-library(SEQuential)
+library(SEQ)
 data <- SEQdata
 
 model <- SEQuential(data, id.col = "ID", time.col = "time",
