@@ -7,8 +7,8 @@
 
 ![CRAN Version](https://www.r-pkg.org/badges/version/SEQ)
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQ)
-[![R-CMD](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential-private/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://codecov.io/gh/CausalInference/SEQuential)
+[![R-CMD](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://app.codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
@@ -127,7 +127,7 @@ data, and associated risks will return `NA`.
 
 Further information on utilizing this package or developing it further
 is available with the [SEQuential
-Pages](https://causalinference.github.io/SEQuential) as a part of this
+Pages](https://causalinference.github.io/SEQuential/) as a part of this
 repository. If you are unable to find solutions or answers there, please
 feel free to open a discussion.
 
