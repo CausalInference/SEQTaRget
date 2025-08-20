@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 Here, we'll go over some examples of using ITT. First we need to load the library before getting in to some sample use cases.
 
 ```{r setup, eval=FALSE}
-library(SEQuential)
+library(SEQ)
 ```
 
 ## ITT With 5 bootstrap samples
