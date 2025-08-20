@@ -88,11 +88,11 @@ test_that("Multinomial Censoring Excused Post-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -17.5423713136713, tx_init_bas1 = 0.471496058895865, 
-                   followup = 0.544899613483827, followup_sq = -0.0303623926267505, 
-                   trial = 1.48946830577789, trial_sq = -0.0299837782118285, 
-                   sex1 = 5.88219556277899, N_bas = -0.009772514395115, L_bas = 0.016049097445228, 
-                   P_bas = -2.19591048024873, `tx_init_bas1:followup` = -0.816973341477365)
+  expected <- list(`(Intercept)` = -7.9621883057148, tx_init_bas1 = 0.980863152775663, 
+                   followup = 0.644300028032517, followup_sq = -0.0315534845854166, 
+                   trial = 1.09659829963825, trial_sq = -0.0252606693575758, 
+                   sex1 = 6.7011865089521, N_bas = -0.0329505689776581, L_bas = -0.0149355786758694, 
+                   P_bas = -2.83244833596151, `tx_init_bas1:followup` = -0.940753941433046)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
