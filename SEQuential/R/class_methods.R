@@ -49,7 +49,10 @@ setMethod("show", "SEQoutput", function(object) {
           }
           if (length(weight_statistics$coef.numerator) > 1) {
             cat("Numerator ========================== \n")
-            if (!params@multinomial) print(summary(weight_statistics$coef.numerator[[i]])) else {
+            if (!params@multinomial | 
+                (params@multinomial & !params@weight.preexpansion & 
+                 (params@excused | params@deviation.excused))
+                ) print(summary(weight_statistics$coef.numerator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
                 cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
@@ -58,7 +61,10 @@ setMethod("show", "SEQoutput", function(object) {
             }
           }
             cat("Denominator ========================== \n")
-            if (!params@multinomial) print(summary(weight_statistics$coef.denominator[[i]])) else {
+            if (!params@multinomial | 
+                (params@multinomial & !params@weight.preexpansion & 
+                 (params@excused | params@deviation.excused))
+                ) print(summary(weight_statistics$coef.denominator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
                 cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
