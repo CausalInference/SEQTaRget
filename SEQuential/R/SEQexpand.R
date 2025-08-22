@@ -147,8 +147,8 @@ SEQexpand <- function(params) {
     if (params@selection.random) {
       set.seed(params@seed)
       out[, "trialID" := paste0(params@id, "-", trial)]
-      IDs <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) != 0, ][["trialID"]])
-      set <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) == 0, ][["trialID"]])
+      IDs <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) != params@treat.level[[1]], ][["trialID"]])
+      set <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) == params@treat.level[[1]], ][["trialID"]])
       subset <- sample(set, round(length(set) * params@selection.prob))
       out <- out[trialID %in% c(IDs, subset),
                  ][, trialID := NULL]
