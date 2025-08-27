@@ -10,12 +10,13 @@
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQopts}
+#' @param verbose Logical: if TRUE, cats progress to console 
 #'
 #' @importFrom stats lm rbinom
 #' @importFrom fastglm fastglm
 #' @export
 
-SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
+SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options, verbose = TRUE) {
   # Immediate error checking =================================
   if (missing(data)) stop("Data was not supplied")
   if (missing(id.col)) stop("ID column name was not supplied")
@@ -48,7 +49,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   params <- parameter.setter(data,
                              DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
                              as.list(time_varying.cols), as.list(fixed.cols),
-                             method, options
+                             method, options, verbose
   )
   params <- parameter.simplifier(params)
 

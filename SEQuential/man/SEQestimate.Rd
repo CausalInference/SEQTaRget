@@ -14,7 +14,8 @@ SEQestimate(
   time_varying.cols = list(),
   fixed.cols = list(),
   method,
-  options
+  options,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ SEQestimate(
 \item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{SEQopts}}
+
+\item{verbose}{Logical: if TRUE, cats progress to console}
 }
 \description{
 Estimate the (very rough) time to run SEQuential analysis on current machine
