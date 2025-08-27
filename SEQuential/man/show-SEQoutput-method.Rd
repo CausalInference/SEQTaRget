@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{A SEQoutput object - usually generated from \code{SEQuential}}
 }
+\value{
+No return value, sends information about SEQoutput to the console
+}
 \description{
 Show method for S4 object - SEQoutput.
 }

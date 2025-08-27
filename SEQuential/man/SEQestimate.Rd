@@ -41,6 +41,14 @@ SEQestimate(
 
 \item{verbose}{Logical: if TRUE, cats progress to console}
 }
+\value{
+A list of (very rough) estimates for the time required for SEQuential containing:
+         \itemize{
+             \item \code{modelTime} estimated time used when running models
+             \item \code{expansionTime} estimated time used when expanding data
+             \item \code{totalTime} sum of model and expansion time
+         }
+}
 \description{
 Estimate the (very rough) time to run SEQuential analysis on current machine
 }

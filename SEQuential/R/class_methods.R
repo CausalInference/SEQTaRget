@@ -3,6 +3,8 @@
 #' @param object A SEQoutput object - usually generated from \code{SEQuential}
 #' @importFrom knitr kable
 #' @importMethodsFrom methods show
+#' 
+#' @returns No return value, sends information about SEQoutput to the console
 #' @exportMethod show
 setMethod("show", "SEQoutput", function(object) {
   elapsed_time <- slot(object, "time")
