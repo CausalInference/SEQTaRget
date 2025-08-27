@@ -5,7 +5,7 @@
 parameter.setter <- function(data, DT,
                              id.col, time.col, eligible.col, outcome.col, treatment.col,
                              time_varying.cols, fixed.cols, method,
-                             opts) {
+                             opts, verbose) {
   new("SEQparams",
     data = data,
     DT = DT,
@@ -17,6 +17,7 @@ parameter.setter <- function(data, DT,
     time_varying = time_varying.cols,
     fixed = fixed.cols,
     method = method,
+    verbose = verbose,
     parallel = opts@parallel,
     nthreads = opts@nthreads,
     ncores = opts@ncores,

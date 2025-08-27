@@ -17,6 +17,7 @@
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from \code{SEQopts}
+#' @param verbose Logical: if TRUE, cats progress to console 
 #'
 #' @import data.table doRNG
 #' @importFrom methods is
@@ -40,7 +41,7 @@
 #' }
 #'
 #' @export
-SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options) {
+SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options, verbose = TRUE) {
   # Immediate error checking =================================
   if (missing(data)) stop("Data was not supplied")
   if (missing(id.col)) stop("ID column name was not supplied")
@@ -73,7 +74,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.setter(data,
     DT = data.table(), id.col, time.col, eligible.col, outcome.col, treatment.col,
     as.list(time_varying.cols), as.list(fixed.cols),
-    method, options
+    method, options, verbose
   )
   params <- parameter.simplifier(params)
 
@@ -93,15 +94,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     doRNG::registerDoRNG()
     future::plan("multisession", workers = params@ncores, gc = TRUE)
   }
-
   # Expansion ==================================================
-  cat("Expanding Data...\n")
+  if (params@verbose) cat("Expanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
   gc()
-  cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
+  if (params@verbose) cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
@@ -130,7 +130,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   
   subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
   if (!params@hazard) {
-    cat(method, "model created successfully\n")
+    if (params@verbose) cat(method, "model created successfully\n")
 
     # Survival Information =======================================
     for (i in seq_along(subgroups)) {
@@ -138,7 +138,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- lapply(analytic, function(x) x$model[[i]])
         
       if (params@km.curves) {
-        if (is.na(params@subgroup)) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+        if (is.na(params@subgroup) & params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
@@ -176,7 +176,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
-  cat("Completed\n")
+  if (params@verbose) cat("Completed\n")
   plan("sequential")
   return(out)
 }

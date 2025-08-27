@@ -107,7 +107,7 @@ internal.analysis <- function(params) {
 
     full <- handler(copy(params@DT), copy(params@data), params)
 
-    if (params@bootstrap) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
+    if (params@bootstrap & params@verbose) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 

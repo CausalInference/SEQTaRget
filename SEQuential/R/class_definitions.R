@@ -145,7 +145,8 @@ setClass("SEQparams",
     outcome = "character",
     time_varying = "list",
     fixed = "list",
-    method = "character"
+    method = "character",
+    verbose = "logical"
   ), prototype = list(
     data = NA,
     DT = NA,
@@ -156,7 +157,8 @@ setClass("SEQparams",
     outcome = NA_character_,
     time_varying = list(),
     fixed = list(),
-    method = NA_character_
+    method = NA_character_,
+    verbose = TRUE
   )
 )
 
