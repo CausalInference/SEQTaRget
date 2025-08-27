@@ -14,7 +14,8 @@ SEQuential(
   time_varying.cols = list(),
   fixed.cols = list(),
   method,
-  options
+  options,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ SEQuential(
 \item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{SEQopts}}
+
+\item{verbose}{Logical: if TRUE, cats progress to console}
 }
 \value{
 An S4 object of class SEQoutput

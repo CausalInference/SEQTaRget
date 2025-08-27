@@ -15,7 +15,8 @@ parameter.setter(
   time_varying.cols,
   fixed.cols,
   method,
-  opts
+  opts,
+  verbose
 )
 }
 \description{
