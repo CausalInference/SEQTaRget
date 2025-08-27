@@ -62,15 +62,6 @@ factorize <- function(data, params) {
   return(out)
 }
 
-#' Internal function loading ncores in global environment
-#' @param pos defaults to 1 which equals an assignment to global environment
-#' @param ncores ncores to assign to global
-#'
-#' @keywords internal
-assign.global <- function(ncores, pos = 1) {
-  assign("ncores", ncores, envir = as.environment(pos))
-}
-
 #' Nicely cleans time for readability
 #'
 #' @keywords internal
