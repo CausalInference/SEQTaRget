@@ -20,7 +20,7 @@
 #'
 #' @import data.table doRNG
 #' @importFrom methods is
-#' @importFrom future plan multisession sequential
+#' @importFrom future plan
 #' @importFrom doFuture registerDoFuture
 #' @importFrom stats complete.cases
 #' 
@@ -177,6 +177,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
 
   cat("Completed\n")
-  plan(future::sequential())
+  plan("sequential")
   return(out)
 }
