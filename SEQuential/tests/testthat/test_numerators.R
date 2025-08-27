@@ -7,7 +7,7 @@ test_that("Default Numerator Creation: Pre-Expansion Dose-Response", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "dose-response",
+    method = "dose-response", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
@@ -27,7 +27,7 @@ test_that("Default Numerator Creation: Post-Expansion Dose-Response", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "dose-response",
+    method = "dose-response", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
@@ -50,7 +50,7 @@ test_that("Default Numerator Creation: Pre-Expansion Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
@@ -70,7 +70,7 @@ test_that("Default Numerator Creation: Post-Expansion Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
@@ -93,7 +93,7 @@ test_that("Default Numerator Creation: Post-Expansion Excused Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(
       weighted = TRUE, weight.preexpansion = FALSE,
       excused = TRUE

@@ -6,6 +6,6 @@ test_that("Setter Tests", {
     eligible.col = NA_character_, outcome.col = NA_character_,
     treatment.col = NA_character_, time_varying.cols = list(),
     fixed.cols = list(), method = NA_character_,
-    opts = SEQopts()
+    opts = SEQopts(), verbose = TRUE
   ), "SEQparams")
 })

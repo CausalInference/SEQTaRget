@@ -7,7 +7,7 @@ test_that("Default Denominator Creation: Pre-Expansion Dose-Response", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "dose-response",
+    method = "dose-response", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
@@ -27,7 +27,7 @@ test_that("Default Denominator Creation: Post-Expansion Dose-Response", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "dose-response",
+    method = "dose-response", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
@@ -51,7 +51,7 @@ test_that("Default Denominator Creation: Pre-Expansion Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)
   )
 
@@ -71,7 +71,7 @@ test_that("Default Denominator Creation: Post-Expansion Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(weighted = TRUE, weight.preexpansion = FALSE)
   )
 
@@ -95,7 +95,7 @@ test_that("Default Denominator Creation: Pre-Expansion Excused Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(
       weighted = TRUE, weight.preexpansion = TRUE,
       excused = TRUE
@@ -118,7 +118,7 @@ test_that("Default Denominator Creation: Post-Expansion Excused Censoring", {
     outcome.col = "outcome", treatment.col = "treatment",
     time_varying.cols = list("N", "L", "P"),
     fixed.cols = list("sex", "race"),
-    method = "censoring",
+    method = "censoring", verbose = TRUE,
     opts = SEQopts(
       weighted = TRUE, weight.preexpansion = FALSE,
       excused = TRUE
