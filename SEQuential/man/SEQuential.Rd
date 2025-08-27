@@ -52,7 +52,7 @@ can be used to estimate observational analogs of intention-to-treat
 and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 }
 \examples{
-\dontrun{
+\donttest{
 data <- SEQdata
 model <- SEQuential(data, id.col = "ID", 
                           time.col = "time", 

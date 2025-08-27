@@ -27,7 +27,7 @@
 #' 
 #' @returns An S4 object of class SEQoutput
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data <- SEQdata
 #' model <- SEQuential(data, id.col = "ID", 
 #'                           time.col = "time", 
