@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 Here, we'll go over some examples of using per-protocol, censoring. First we need to load the library before getting in to some sample use cases.
 
 ```{r setup, eval=FALSE}
-library(SEQ)
+library(SEQTaRget)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)

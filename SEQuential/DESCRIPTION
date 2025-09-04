@@ -1,4 +1,4 @@
-Package: SEQ
+Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
 Version: 0.13.0
