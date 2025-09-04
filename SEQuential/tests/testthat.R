@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SEQ)
+library(SEQTaRget)
 
-test_check("SEQ")
+test_check("SEQTaRget")
