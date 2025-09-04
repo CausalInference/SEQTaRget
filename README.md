@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-![CRAN Version](https://www.r-pkg.org/badges/version/SEQ)
-![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQ)
+![CRAN Version](https://www.r-pkg.org/badges/version/SEQTaRget)
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQTaRget)
 [![R-CMD](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
 [![Lifecycle:
@@ -45,7 +45,7 @@ constructor `SEQopts` and then feeding that into `SEQuential`.
 rough) estimated time for analysis.
 
 ``` r
-library(SEQ)
+library(SEQTaRget)
 data <- SEQdata
 
 model <- SEQuential(data, id.col = "ID", time.col = "time",
