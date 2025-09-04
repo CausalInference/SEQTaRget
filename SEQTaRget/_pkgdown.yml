@@ -1,0 +1,5 @@
+url: https://causalinference.github.io/SEQTaRget/
+template:
+  bootstrap: 5
+destination: ../docs
+
