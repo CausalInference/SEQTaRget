@@ -14,7 +14,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
 The goal of SEQ is to implement sequentially nested trial emulation for
 the analysis of observational databases. The SEQ software accommodates
