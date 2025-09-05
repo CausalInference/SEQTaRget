@@ -46,6 +46,10 @@ jobs:
           cd SEQTaRget
            Rscript -e 'pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)'
       
+      - name: Remove duplicated logo from index
+        run: |
+          sed -i '/<p><img src="https:\/\/github\.com\/CausalInference\/SEQTaRget\/blob\/main\/SEQ\.png"/d' SEQTaRget/docs/index.html
+      
       - name: Move docs to root
         run: |
           rm -rf docs
