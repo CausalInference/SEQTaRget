@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
 The goal of SEQ is to implement sequentially nested trial emulation for the analysis of observational databases. The SEQ software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 
