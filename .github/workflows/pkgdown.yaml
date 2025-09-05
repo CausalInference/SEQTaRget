@@ -37,23 +37,23 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          working-directory: SEQuential
+          working-directory: SEQTaRget
           extra-packages: any::pkgdown, local::.
           needs: website
 
       - name: Build site
         run: |
-          cd SEQuential
+          cd SEQTaRget
            Rscript -e 'pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)'
       
       - name: Remove duplicated logo from index
         run: |
-          sed -i '/<p><img src="https:\/\/github\.com\/CausalInference\/SEQuential\/blob\/main\/SEQ\.png"/d' SEQuential/docs/index.html
+          sed -i '/<p><img src="https:\/\/github\.com\/CausalInference\/SEQTaRget\/blob\/main\/SEQ\.png"/d' SEQTaRget/docs/index.html
       
       - name: Move docs to root
         run: |
           rm -rf docs
-          mv SEQuential/docs ./docs
+          mv SEQTaRget/docs ./docs
           touch docs/.nojekyll
 
       - name: Deploy to GitHub pages 🚀
