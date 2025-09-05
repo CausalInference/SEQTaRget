@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SEQ - Sequentially Nested Target Trial Emulation
+# SEQTaRget - Sequentially Nested Target Trial Emulation
 
 <!-- badges: start -->
 
