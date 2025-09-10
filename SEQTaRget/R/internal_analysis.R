@@ -124,7 +124,7 @@ internal.analysis <- function(params) {
           out$WDT <- NULL
           
           return(out)
-        }, future.seed = params@seed)
+        }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         lapply(1:params@bootstrap.nboot, function(x) {
           id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)

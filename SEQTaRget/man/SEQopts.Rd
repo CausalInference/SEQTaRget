@@ -43,7 +43,7 @@ SEQopts(
   plot.subtitle = NA,
   plot.title = NA,
   plot.type = "survival",
-  seed = 1636,
+  seed = NULL,
   selection.first_trial = FALSE,
   selection.prob = 0.8,
   selection.random = FALSE,

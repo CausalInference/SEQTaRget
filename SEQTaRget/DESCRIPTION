@@ -1,7 +1,7 @@
 Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
-Version: 0.13.0
+Version: 0.13.1
 Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
@@ -19,13 +19,12 @@ Authors@R: c(person(given = "Ryan",
                     comment = c(ORCID="0000-0003-1619-8456")),
              person(given = "The President and Fellows of Harvard College",
                     role = c("cph"),
-                    comment = c(ROR="03vek6s52"))
-             )
-Description: Implementation of sequential trial emulation for the analysis of observational databases. 
-    The Sequential software accommodates time-varying treatments and confounders, as well as binary 
-    and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
-    can be used to estimate observational analogs of intention-to-treat 
-    and per-protocol effects, and can adjust for potential selection bias 
+                    comment = c(ROR="03vek6s52")))
+Description: Implementation of sequential trial emulation for the analysis of observational databases.
+    The 'SEQTaRget' software accommodates time-varying treatments and confounders, as well as binary
+    and failure time outcomes. 'SEQTaRget' allows to compare both static and dynamic strategies,
+    can be used to estimate observational analogs of intention-to-treat
+    and per-protocol effects, and can adjust for potential selection bias
     induced by losses-to-follow-up. (Paper to come).
 License: MIT + file LICENSE
 Encoding: UTF-8

@@ -96,7 +96,7 @@ internal.survival <- function(params, outcome) {
           out <- handler(RMDT, params, outcome[[x]]$model)
           rm(RMDT); gc()
           return(out)
-        }, future.seed = params@seed)
+        }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
           set.seed(params@seed + x)
