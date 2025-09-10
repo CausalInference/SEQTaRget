@@ -55,6 +55,7 @@
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
 #'
 #' @export
+#' @importFrom stats runif
 #' @returns An object of class 'SEQopts'
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
@@ -65,7 +66,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = parallel::detectCores() - 1, nthreads = data.table::getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
-                    seed = 1636, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
+                    seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE, weight.eligible_cols = c(),
                     weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
@@ -74,7 +75,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   ncores <- as.integer(ncores)
   bootstrap <- as.logical(bootstrap)
   bootstrap.nboot <- as.integer(bootstrap.nboot)
-  seed <- as.integer(seed)
+  runif(1)
+  seed <- if (is.null(seed)) .Random.seed else as.integer(seed)
   followup.min <- as.numeric(followup.min)
   followup.max <- as.numeric(followup.max)
   survival.max <- as.numeric(survival.max)
