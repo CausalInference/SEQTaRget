@@ -7,24 +7,22 @@
 
 ![CRAN Version](https://www.r-pkg.org/badges/version/SEQTaRget)
 ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQTaRget)
-[![R-CMD](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
+[![R-CMD](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/CausalInference/SEQTaRget/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQTaRget)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
-The goal of SEQ is to implement sequentially nested trial emulation for
-the analysis of observational databases. The SEQ software accommodates
+Implementation of sequential trial emulation for the analysis of
+observational databases. The ‘SEQTaRget’ software accommodates
 time-varying treatments and confounders, as well as binary and failure
-time outcomes. SEQ allows to compare both static and dynamic strategies,
-can be used to estimate observational analogs of intention-to-treat and
-per-protocol effects, and can adjust for potential selection bias
-induced by losses-to-follow-up.
-
-<br/> <br/>
+time outcomes. ‘SEQTaRget’ allows to compare both static and dynamic
+strategies, can be used to estimate observational analogs of
+intention-to-treat and per-protocol effects, and can adjust for
+potential selection bias <br/> <br/>
 
 ## Installation
 
@@ -33,7 +31,7 @@ You can install the development version of SEQ from
 
 ``` r
 install.packages("devtools")
-devtools::install_github("CausalInference/SEQuential", subdir = "SEQTaRget")
+devtools::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
 ```
 
 ## Setting up your Analysis
@@ -126,8 +124,8 @@ data, and associated risks will return `NA`.
 ## Finding More Information and Examples
 
 Further information on utilizing this package or developing it further
-is available with the [SEQuential
-Pages](https://causalinference.github.io/SEQuential/) as a part of this
+is available with the [SEQTaRget
+Pages](https://causalinference.github.io/SEQTaRget/) as a part of this
 repository. If you are unable to find solutions or answers there, please
 feel free to open a discussion.
 
@@ -137,12 +135,12 @@ Community members are welcome to contribute to this package through
 several different avenues-
 
 - Asking/Answering questions about the package via [Github
-  Discussions](https://github.com/CausalInference/SEQuential/discussions/categories/q-a).
+  Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a).
   These can be questions about analysis methods, future planned
   developments for the package, or requests for clarity on package
   internals.
 - Contributing to [Github
-  Issues](https://github.com/CausalInference/SEQuential/issues) if a bug
+  Issues](https://github.com/CausalInference/SEQTaRget/issues) if a bug
   is found. We have a guided bug report to help us resolve unintended
   pests quickly.
 - Adding content to the package
