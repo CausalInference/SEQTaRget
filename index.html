@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,22 +63,21 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>The goal of SEQ is to implement sequentially nested trial emulation for the analysis of observational databases. The SEQ software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.</p>
-<p><br><br></p>
+<p>Implementation of sequential trial emulation for the analysis of observational databases. The ‘SEQTaRget’ software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. ‘SEQTaRget’ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias <br><br></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the development version of SEQ from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"CausalInference/SEQuential"</span>, subdir <span class="op">=</span> <span class="st">"SEQTaRget"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"CausalInference/SEQTaRget"</span>, subdir <span class="op">=</span> <span class="st">"SEQTaRget"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="setting-up-your-analysis">Setting up your Analysis<a class="anchor" aria-label="anchor" href="#setting-up-your-analysis"></a>
 </h2>
 <p><code>SEQuential</code> uses R’s S4 object class system to handle function input/output. From the user side, this amounts to calling a helpful constructor <code>SEQopts</code> and then feeding that into <code>SEQuential</code>. <code>SEQestimate</code> can also take the provided options and return a (very rough) estimated time for analysis.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://causalinference.github.io/SEQuential/" class="external-link">SEQTaRget</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://causalinference.github.io/SEQTaRget/">SEQTaRget</a></span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span></span>
 <span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>, time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
@@ -136,7 +135,7 @@
 <p>These can be handily and easily printed to the terminal with by calling the object as <code>model</code> (if continuing the example above). While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers <code>hazard = TRUE</code>, then the survival curves, data, and associated risks will return <code>NA</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+<h2 id="imports">Imports<a class="anchor" aria-label="anchor" href="#imports"></a>
 </h2>
 <ul>
 <li>data.table</li>
@@ -148,20 +147,23 @@
 <li>fastglm</li>
 <li>methods</li>
 <li>stringr</li>
+<li>survival</li>
+<li>parallelly</li>
+<li>knitr</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="finding-more-information-and-examples">Finding More Information and Examples<a class="anchor" aria-label="anchor" href="#finding-more-information-and-examples"></a>
 </h2>
-<p>Further information on utilizing this package or developing it further is available with the <a href="https://causalinference.github.io/SEQuential/" class="external-link">SEQuential Pages</a> as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.</p>
+<p>Further information on utilizing this package or developing it further is available with the <a href="https://causalinference.github.io/SEQTaRget/">SEQTaRget Pages</a> as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.</p>
 </div>
 <div class="section level2">
 <h2 id="contributing-to-the-package">Contributing to the package<a class="anchor" aria-label="anchor" href="#contributing-to-the-package"></a>
 </h2>
 <p>Community members are welcome to contribute to this package through several different avenues-</p>
 <ul>
-<li>Asking/Answering questions about the package via <a href="https://github.com/CausalInference/SEQuential/discussions/categories/q-a" class="external-link">Github Discussions</a>. These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.</li>
-<li>Contributing to <a href="https://github.com/CausalInference/SEQuential/issues" class="external-link">Github Issues</a> if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.</li>
+<li>Asking/Answering questions about the package via <a href="https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a" class="external-link">Github Discussions</a>. These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.</li>
+<li>Contributing to <a href="https://github.com/CausalInference/SEQTaRget/issues" class="external-link">Github Issues</a> if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.</li>
 <li>Adding content to the package
 <ul>
 <li>If you intend to add to the package, we would prefer you to branch and then pull-request. This PR will need to:
@@ -204,6 +206,7 @@
 <ul class="list-unstyled">
 <li>Ryan O'Dea <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0000-0103-9546" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Alejandro Szmulewicz <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-2664-802X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Tom Palmer <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4655-4511" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> <a href="https://ror.org/0524sp257" class="external-link"><img src="https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg" class="ror" alt="ROR"></a> </li>
 <li>Miguel Hernan <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1619-8456" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
@@ -212,8 +215,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD"></a></li>
-<li><a href="https://app.codecov.io/gh/CausalInference/SEQuential" class="external-link"><img src="https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08" alt="codecov"></a></li>
+<li><a href="https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD"></a></li>
+<li><a href="https://app.codecov.io/gh/CausalInference/SEQTaRget" class="external-link"><img src="https://codecov.io/gh/CausalInference/SEQTaRget/graph/badge.svg?token=MHEN30AF08" alt="codecov"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
@@ -223,7 +226,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Miguel Hernan.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernan.</p>
 </div>
 
 <div class="pkgdown-footer-right">
