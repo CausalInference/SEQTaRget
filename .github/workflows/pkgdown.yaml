@@ -48,7 +48,7 @@ jobs:
       
       - name: Remove duplicated logo from index
         run: |
-          sed -i '/<p><img src="https:\/\/github\.com\/CausalInference\/SEQuential\/blob\/main\/SEQ\.png"/d' SEQTaRget/docs/index.html
+          sed -i '/<p><img src="https:\/\/github\.com\/CausalInference\/SEQTaRget\/blob\/main\/SEQ\.png"/d' SEQTaRget/docs/index.html
       
       - name: Move docs to root
         run: |

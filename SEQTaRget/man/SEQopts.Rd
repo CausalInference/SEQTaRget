@@ -34,7 +34,7 @@ SEQopts(
   indicator.squared = "_sq",
   km.curves = FALSE,
   multinomial = FALSE,
-  ncores = parallel::detectCores() - 1,
+  ncores = parallelly::availableCores() - 1,
   nthreads = data.table::getDTthreads(),
   numerator = NA,
   parallel = FALSE,

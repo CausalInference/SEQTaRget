@@ -19,7 +19,7 @@ SEQuential(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}}
+\item{data}{data.frame or data.table, will preform expansion according to arguments passed to \code{options}}
 
 \item{id.col}{String: column name of the id column}
 
@@ -45,7 +45,7 @@ SEQuential(
 An S4 object of class SEQoutput
 }
 \description{
-`SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQuential/
+`SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQTaRget/
 }
 \details{
 Implemention of sequential trial emulation for the analysis of observational databases. 

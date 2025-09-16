@@ -1,7 +1,7 @@
 Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
-Version: 0.13.1
+Version: 1.0.0
 Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
@@ -12,6 +12,12 @@ Authors@R: c(person(given = "Ryan",
                     role = c("aut"),
                     email = "aszmulewicz@hsph.harvard.edu",
                     comment = c(ORCID="0000-0002-2664-802X")),
+             person(given = "Tom",
+                    family = "Palmer",
+                    role = c("aut"),
+                    email = "tom.palmer@bristol.ac.uk",
+                    comment = c(ORCID="0000-0003-4655-4511",
+                                ROR="0524sp257")),
              person(given = "Miguel",
                     family = "Hernan",
                     role = c("aut"),
@@ -44,9 +50,10 @@ Imports:
     knitr,
     methods,
     stringr,
-    survival
+    survival,
+    parallelly
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
-URL: https://causalinference.github.io/SEQuential/
+URL: https://causalinference.github.io/SEQTaRget/
 VignetteBuilder: knitr
