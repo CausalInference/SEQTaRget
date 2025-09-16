@@ -11,6 +11,7 @@
 [![codecov](https://codecov.io/gh/CausalInference/SEQTaRget/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQTaRget)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+
 <!-- badges: end -->
 
 <img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
