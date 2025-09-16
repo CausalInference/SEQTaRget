@@ -50,7 +50,8 @@ Imports:
     knitr,
     methods,
     stringr,
-    survival
+    survival,
+    parallelly
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
