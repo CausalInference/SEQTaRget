@@ -109,7 +109,7 @@ the shape of the output object, not all slots will always be filled,
 e.g. if a user providers `hazard = TRUE`, then the survival curves,
 data, and associated risks will return `NA`.
 
-## Dependencies
+## Imports
 
 - data.table
 - doFuture
@@ -120,6 +120,9 @@ data, and associated risks will return `NA`.
 - fastglm
 - methods
 - stringr
+- survival
+- parallelly
+- knitr
 
 ## Finding More Information and Examples
 
