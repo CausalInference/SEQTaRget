@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-![CRAN Version](https://www.r-pkg.org/badges/version/SEQTaRget) ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQTaRget) [![R-CMD](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQuential/actions/workflows/R-CMD-check.yaml) 
-[![codecov](https://codecov.io/gh/CausalInference/SEQuential/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQuential)
+![CRAN Version](https://www.r-pkg.org/badges/version/SEQTaRget) ![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/SEQTaRget) [![R-CMD](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml) 
+[![codecov](https://codecov.io/gh/CausalInference/SEQTaRget/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQTaRget)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
-<img src="https://github.com/CausalInference/SEQuential/blob/main/SEQ.png" align="right" style="float" width="200"/>
+<img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
 
 The goal of SEQ is to implement sequentially nested trial emulation for the analysis of observational databases. The SEQ software accommodates time-varying treatments and confounders, as well as binary and failure time outcomes. SEQ allows to compare both static and dynamic strategies, can be used to estimate observational analogs of intention-to-treat and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 
@@ -35,7 +35,7 @@ You can install the development version of SEQ from [GitHub](https://github.com/
 
 ```{r eval=FALSE}
 install.packages("devtools")
-devtools::install_github("CausalInference/SEQuential", subdir = "SEQTaRget")
+devtools::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
 ```
 
 ## Setting up your Analysis
@@ -109,14 +109,14 @@ These can be handily and easily printed to the terminal with by calling the obje
 
 ## Finding More Information and Examples
 
-Further information on utilizing this package or developing it further is available with the [SEQuential Pages](https://causalinference.github.io/SEQuential/) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
+Further information on utilizing this package or developing it further is available with the [SEQTaRget Pages](https://causalinference.github.io/SEQTaRget/) as a part of this repository. If you are unable to find solutions or answers there, please feel free to open a discussion.
 
 ## Contributing to the package
 
 Community members are welcome to contribute to this package through several different avenues-
 
--   Asking/Answering questions about the package via [Github Discussions](https://github.com/CausalInference/SEQuential/discussions/categories/q-a). These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.
--   Contributing to [Github Issues](https://github.com/CausalInference/SEQuential/issues) if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.
+-   Asking/Answering questions about the package via [Github Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a). These can be questions about analysis methods, future planned developments for the package, or requests for clarity on package internals.
+-   Contributing to [Github Issues](https://github.com/CausalInference/SEQTaRget/issues) if a bug is found. We have a guided bug report to help us resolve unintended pests quickly.
 -   Adding content to the package
     -   If you intend to add to the package, we would prefer you to branch and then pull-request. This PR will need to:
         1.  Pass current unit-tests to ensure nothing is being broken backwards.

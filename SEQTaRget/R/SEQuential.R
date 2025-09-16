@@ -1,5 +1,5 @@
 #' @title SEQuential trial emulation
-#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQuential/
+#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQTaRget/
 #' 
 #' @details Implemention of sequential trial emulation for the analysis of observational databases. 
 #' The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
@@ -7,7 +7,7 @@
 #' can be used to estimate observational analogs of intention-to-treat 
 #' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
-#' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
+#' @param data data.frame or data.table, will preform expansion according to arguments passed to \code{options}
 #' @param id.col String: column name of the id column
 #' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column

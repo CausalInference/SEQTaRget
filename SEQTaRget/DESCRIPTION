@@ -54,5 +54,5 @@ Imports:
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
-URL: https://causalinference.github.io/SEQuential/
+URL: https://causalinference.github.io/SEQTaRget/
 VignetteBuilder: knitr
