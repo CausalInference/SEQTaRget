@@ -98,17 +98,20 @@ The primary function, `SEQuential`, returns an S4 object of class `SEQoutput` wi
 
 These can be handily and easily printed to the terminal with by calling the object as `model` (if continuing the example above). While this this the shape of the output object, not all slots will always be filled, e.g. if a user providers `hazard = TRUE`, then the survival curves, data, and associated risks will return `NA`.
 
-## Dependencies
+## Imports
 
--   data.table
--   doFuture
--   doRNG
--   future
--   future.apply
--   ggplot2
--   fastglm
--   methods
--   stringr
+- data.table
+- doFuture
+- doRNG
+- future
+- future.apply
+- ggplot2
+- fastglm
+- methods
+- stringr
+- survival
+- parallelly
+- knitr
 
 ## Finding More Information and Examples
 
