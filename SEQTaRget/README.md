@@ -10,8 +10,7 @@
 [![R-CMD](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CausalInference/SEQTaRget/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/CausalInference/SEQTaRget/graph/badge.svg?token=MHEN30AF08)](https://app.codecov.io/gh/CausalInference/SEQTaRget)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 <img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200"/>
