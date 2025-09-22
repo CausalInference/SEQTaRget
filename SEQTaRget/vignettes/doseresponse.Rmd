@@ -19,6 +19,7 @@ library(SEQTaRget)
 ```
 
 Currently, dose-response analysis through SEQuential only supports binary treatment values. Therefore; running multinomial models will lead to errors.
+
 ## Dose-response With 5 bootstrap samples
 
 ```{r eval=FALSE}
