@@ -77,8 +77,8 @@ unexpected results and errors may arise if these are not followed-
       enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
       is valid because it begins at 0 and is continuously increasing by
       increments of 1, even though it is not ordered.
-2.  `eligible` and colnumn names provided to `excused.cols` are once one
-    only one (with respect to `time.col`) flag variables
+2.  `eligible` and column names provided to types of `excused.cols` are
+    once one only one (with respect to `time.col`) flag variables
 
 ## Return
 
