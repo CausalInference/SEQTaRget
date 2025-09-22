@@ -90,9 +90,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   # Parallel Setup ==================================
   if (params@parallel) {
-    doFuture::registerDoFuture()
-    doRNG::registerDoRNG()
-    future::plan("multisession", workers = params@ncores, gc = TRUE)
+    registerDoFuture()
+    registerDoRNG()
+    plan("multisession", workers = params@ncores, gc = TRUE)
   }
   # Expansion ==================================================
   if (params@verbose) cat("Expanding Data...\n")
