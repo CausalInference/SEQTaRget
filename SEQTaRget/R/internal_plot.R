@@ -22,7 +22,7 @@ internal.plot <- function(survival.data, params) {
     geom_line() +
     theme_bw() +
     labs(x = "Followup",
-         y = stringr::str_to_title(params@plot.type),
+         y = str_to_title(params@plot.type),
          col = "") + 
     scale_color_manual(values = pal)
   if (params@bootstrap) {

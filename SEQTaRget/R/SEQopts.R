@@ -57,6 +57,7 @@
 #' @export
 #' @importFrom stats runif
 #' @importFrom parallelly availableCores
+#' @import data.table
 #' @returns An object of class 'SEQopts'
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
@@ -65,7 +66,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = -Inf, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
-                    km.curves = FALSE, multinomial = FALSE, ncores = parallelly::availableCores() - 1, nthreads = data.table::getDTthreads(),
+                    km.curves = FALSE, multinomial = FALSE, ncores = availableCores() - 1, nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE, weight.eligible_cols = c(),

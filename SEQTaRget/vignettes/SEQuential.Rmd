@@ -16,7 +16,12 @@ knitr::opts_chunk$set(
 
 ## Setting up your Analysis
 
-The flow of the SEQuential R package never changes, nor are there planned changes to this flow in the future.
+There are some assumptions which must be met to avoid unintended errors when using SEQuential. These are: 
+
+1. User provided `time.col` begins at 0 per unique `id.col` entries, we also assume that the column contains only integers and continues by 1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2, 2.5, …) or (0, 1, 2, 4, 5, …) are not.
+2. Provided `time.col` entries may be out of order as a sort is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …) is valid because it begins at 0 and is continuously increasing by increments of 1, even though it is not ordered.
+3. `eligible` and column names provided to and `excused.cols` are once one only one (with respect to `time.col`) flag variables
+
 
 ### Step 1 - Defining your options
 

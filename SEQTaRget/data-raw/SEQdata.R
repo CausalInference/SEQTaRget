@@ -5,10 +5,11 @@
 #' @param max.time Integer: max followup time per individual
 #' 
 #' @import data.table
+#' @importFrom future.apply future_lapply
 #'
 #' @keywords internal
 generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1) {
-  output <- future.apply::future_lapply(1:n, function(x) {
+  output <- future_lapply(1:n, function(x) {
     sex <- as.integer(rbinom(1, 1, 0.5))
     outcome <- as.integer(rbinom(1, 1, 0.02))
     tx_time <- as.integer(sample(0:max.time, 1))
