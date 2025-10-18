@@ -94,6 +94,26 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     registerDoRNG()
     plan("multisession", workers = params@ncores, gc = TRUE)
   }
+  
+  # Data Checking ====================================
+  needed <- c(params@id, params@time, params@eligible, params@treatment, params@outcome, 
+              unlist(params@time_varying), unlist(params@fixed), 
+              params@cense, params@compevent, params@deviation.col, 
+              unlist(params@excused.cols), params@subgroup)
+  needed <- needed[!is.na(needed)]
+  
+  if (length(colnames(data)) > length(needed)) {
+    if (verbose) cat("Non-required columns provided, pruning for efficiency\n")
+    data <- data[, needed, with = FALSE]
+    if (verbose) cat("Pruned\n") else warning("Non-required columns provided and pruned for efficiency\n")
+  }
+  
+  if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
+  if (nrow(copy(data)[max(get(params@time)) > .N, .SD, by = eval(params@id)]) > 0) {
+    if (verbose) cat("Non zero-indexed time identified. Attempting Repair...\n")
+    data[, get(params@time) := 0:(.N - 1), by = eval(params@id)]
+    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identifed, Repair attempted and succeeded\n")
+  }
   # Expansion ==================================================
   if (params@verbose) cat("Expanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
