@@ -86,6 +86,9 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   weight.upper <- as.numeric(weight.upper)
   weight.eligible_cols <- as.list(weight.eligible_cols)
   
+  # Temporarily disabling deviation - work in progress method
+  if (deviation) stop("Deviation is currently under further development and is currently not suitable for analysis.
+                      We apologize for this inconvenience")
   deviation.col <- as.character(deviation.col)
   deviation.conditions <- as.list(deviation.conditions)
   deviation.excused_cols <- as.list(deviation.excused_cols)
