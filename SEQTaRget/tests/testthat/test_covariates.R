@@ -13,7 +13,7 @@ test_that("Default Covariate Creation: ITT", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "N_bas", "L_bas", "P_bas", "treatment_bas*followup")
+                "sex", "race", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })
 
@@ -36,7 +36,7 @@ test_that("Default Covariate Creation: Pre-Expansion Dose-Response", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("dose", "dose_sq", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "followup*dose", "followup*dose_sq")
+                "sex", "race")
   expect_true(setequal(components, expected))
 })
 
@@ -59,7 +59,7 @@ test_that("Default Covariate Creation: Post-Expansion Dose-Response", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("dose", "dose_sq", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "N_bas", "L_bas", "P_bas", "followup*dose", "followup*dose_sq")
+                "sex", "race", "N_bas", "L_bas", "P_bas")
 
   expect_true(setequal(components, expected))
 })
@@ -83,7 +83,7 @@ test_that("Default Covariate Creation: Pre-Expansion Censoring", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "treatment_bas*followup")
+                "sex", "race")
   expect_true(setequal(components, expected))
 })
 
@@ -106,7 +106,7 @@ test_that("Default Covariate Creation: Post-Expansion Censoring", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "N_bas", "L_bas", "P_bas", "treatment_bas*followup")
+                "sex", "race", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })
 
@@ -129,8 +129,7 @@ test_that("Default Covariate Creation: Pre-Expansion Excused Censoring", {
   covariates <- create.default.covariates(params)
   components <- unlist(strsplit(covariates, "\\+"))
 
-  expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
-                "treatment_bas*followup")
+  expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq")
   expect_true(setequal(components, expected))
 })
 
@@ -154,6 +153,6 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
   components <- unlist(strsplit(covariates, "\\+"))
 
   expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
-                "sex", "race", "N_bas", "L_bas", "P_bas", "treatment_bas*followup")
+                "sex", "race", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })

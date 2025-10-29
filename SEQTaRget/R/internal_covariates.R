@@ -11,6 +11,7 @@ create.default.covariates <- function(params) {
   interaction <- paste0(tx_bas, "*", "followup")
   interaction.dose <- paste0("followup*", c("dose", "dose_sq"), collapse = "+")
   if (params@hazard) interaction <- interaction.dose <- NULL
+  if (!params@km.curves) interaction <- interaction.dose <- NULL
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -22,7 +23,8 @@ create.default.covariates <- function(params) {
     fixed <- if(length(fixed) > 0) paste0(fixed, collapse = "+") else NULL
   }
   if (params@trial.include) trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
-  if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared)) else if (params@followup.spline | params@followup.class) followup <- "followup"
+  if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared)) else followup <- NULL
+  if ((params@followup.spline | params@followup.class) & !params@followup.include) followup <- "followup" 
 
   if (params@method == "ITT") {
     out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")

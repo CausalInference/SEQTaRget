@@ -43,3 +43,11 @@ test_that("ITT - Followup Spline", {
                       options = SEQopts(followup.spline = TRUE, followup.include = FALSE))
   expect_s4_class(model, "SEQoutput")
 })
+
+test_that("Error 107 - followup.include = FALSE failing to create covariates", {
+  data <- copy(SEQdata)
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(followup.include = FALSE))
+  expect_s4_class(model, "SEQoutput")
+})
