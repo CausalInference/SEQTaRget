@@ -11,6 +11,7 @@ create.default.covariates <- function(params) {
   interaction <- paste0(tx_bas, "*", "followup")
   interaction.dose <- paste0("followup*", c("dose", "dose_sq"), collapse = "+")
   if (params@hazard) interaction <- interaction.dose <- NULL
+  if (!params@km.curves) interaction <- interaction.dose <- NULL
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
