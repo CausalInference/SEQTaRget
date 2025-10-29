@@ -49,4 +49,5 @@ test_that("Error 107 - followup.include = FALSE failing to create covariates", {
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(followup.include = FALSE))
+  expect_s4_class(model, "SEQoutput")
 })
