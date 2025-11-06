@@ -87,8 +87,13 @@ internal.hazard <- function(model, params) {
     bootstrap <- unlist(bootstrap)
     if (all(is.na(bootstrap))) return(c(Hazard = NA_real_, LCI = NA_real_, UCI = NA_real_))
     
-    se <- sd(bootstrap, na.rm = TRUE) / sqrt(sum(!is.na(bootstrap)))
-    ci <- sort(c(full + se, full - se), decreasing = FALSE)
+    if (params@bootstrap.CI_method == "se") {
+      z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
+      se <- sd(bootstrap, na.rm = TRUE) / sqrt(sum(!is.na(bootstrap)))
+      ci <- sort(c(full + z*se, full - z*se), decreasing = FALSE) 
+    } else ci <- quantile(bootstrap, 
+                          probs = c((1 - params@bootstrap.CI)/2, 
+                                    1 - (1 - params@bootstrap.CI)/2))
   } else {
     ci <- c(NA_real_, NA_real_)
   }

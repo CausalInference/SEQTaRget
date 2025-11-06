@@ -24,6 +24,8 @@ parameter.setter <- function(data, DT,
     bootstrap.nboot = opts@bootstrap.nboot,
     bootstrap = opts@bootstrap,
     bootstrap.sample = opts@bootstrap.sample,
+    bootstrap.CI = opts@bootstrap.CI,
+    bootstrap.CI_method = opts@bootstrap.CI_method,
     seed = opts@seed,
     followup.include = opts@followup.include,
     trial.include = opts@trial.include,
@@ -124,6 +126,8 @@ parameter.simplifier <- function(params) {
   if (params@multinomial & params@method == "dose-response") stop("Multinomial dose-response is not supported")
   
   if (params@excused & params@deviation.excused) stop("Must select either excused from deviation or excused from treatment swap")
+  
+  if (!params@bootstrap.CI_method %in% c("se", "percentile")) stop("Invalid confidence interval method defined")
 
   return(params)
 }
