@@ -1,6 +1,8 @@
 #' Parameter Builder for SEQuential Model and Estimates
 #'
 #' @param bootstrap Logical: defines if SEQuential should run bootstrapping, default is FALSE
+#' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is 0.95 (95\% CI)
+#' @param bootstrap.CI_method Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")
 #' @param bootstrap.nboot Integer: number of bootstraps
 #' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
 #' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
@@ -53,13 +55,12 @@
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data
 #' @param weight.upper Numeric: weights truncated at upper end at this weight
 #' @param weighted Logical: whether or not to preform weighted analysis, default is FALSE
-#'
+#' @returns An object of class 'SEQopts'
 #' @export
 #' @importFrom stats runif
 #' @importFrom parallelly availableCores
 #' @import data.table
-#' @returns An object of class 'SEQopts'
-SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8,
+SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8, bootstrap.CI = 0.95, bootstrap.CI_method = "se",
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
@@ -144,6 +145,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       bootstrap = bootstrap,
       bootstrap.nboot = bootstrap.nboot,
       bootstrap.sample = bootstrap.sample,
+      bootstrap.CI = bootstrap.CI,
+      bootstrap.CI_method = bootstrap.CI_method,
       seed = seed,
       followup.min = followup.min,
       followup.max = followup.max,
