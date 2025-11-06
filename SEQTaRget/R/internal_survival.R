@@ -115,13 +115,21 @@ internal.survival <- function(params, outcome) {
       }
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
+      if (params@bootstrap.CI_method == "se") {
+        z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
+        DT <- rbindlist(data)[, list(se = sd(value) / sqrt(params@bootstrap.nboot)),
+                               by = c("followup", "variable")]
       
-      DT <- rbindlist(data)[, list(se = sd(value) / sqrt(params@bootstrap.nboot)),
-                             by = c("followup", "variable")]
-
-      surv <- full$data[DT, on = c("followup", "variable")
-                        ][, `:=` (LCI = value - se, UCI = value + se)
-                          ][, se := NULL]
+        surv <- full$data[DT, on = c("followup", "variable")
+                          ][, `:=` (LCI = value - z*se, UCI = value + z*se)
+                            ][, se := NULL]
+      } else {
+        DT <- rbindlist(data)
+        surv <- full$data[DT, on = c("followup", "variable")
+                          ][, `:=` (LCI = quantile(value, (1 - params@bootstrap.CI)/2),
+                                    UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2))
+                            ][, se := NULL]
+      }
       
     } else  surv <- full$data
     out <- list(data = surv, 
