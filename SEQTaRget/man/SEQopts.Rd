@@ -8,6 +8,8 @@ SEQopts(
   bootstrap = FALSE,
   bootstrap.nboot = 100,
   bootstrap.sample = 0.8,
+  bootstrap.CI = 0.95,
+  bootstrap.CI_method = "se",
   cense = NA,
   cense.denominator = NA,
   cense.eligible = NA,
@@ -66,6 +68,10 @@ SEQopts(
 \item{bootstrap.nboot}{Integer: number of bootstraps}
 
 \item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
+
+\item{bootstrap.CI}{Numeric: defines the confidence interval after bootstrapping, default is 0.95 (95\% CI)}
+
+\item{bootstrap.CI_method}{Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")}
 
 \item{cense}{String: column name for additional censoring variable, e.g. loss-to-follow-up}
 
