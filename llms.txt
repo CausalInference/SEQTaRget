@@ -1,0 +1,203 @@
+# SEQTaRget - Sequentially Nested Target Trial Emulation
+
+![](https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png)
+
+Implementation of sequential trial emulation for the analysis of
+observational databases. The ‘SEQTaRget’ software accommodates
+time-varying treatments and confounders, as well as binary and failure
+time outcomes. ‘SEQTaRget’ allows to compare both static and dynamic
+strategies, can be used to estimate observational analogs of
+intention-to-treat and per-protocol effects, and can adjust for
+potential selection bias  
+  
+
+## Installation
+
+You can install the development version of SEQ from
+[GitHub](https://github.com/) with:
+
+``` r
+install.packages("devtools")
+devtools::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
+```
+
+## Setting up your Analysis
+
+`SEQuential` uses R’s S4 object class system to handle function
+input/output. From the user side, this amounts to calling a helpful
+constructor `SEQopts` and then feeding that into `SEQuential`.
+`SEQestimate` can also take the provided options and return a (very
+rough) estimated time for analysis.
+
+``` r
+library(SEQTaRget)
+data <- SEQdata
+
+model <- SEQuential(data, id.col = "ID", time.col = "time",
+                    eligible.col = "eligible", treatment.col = "tx_init", 
+                    outcome.col = "outcome", 
+                    time_varying.cols = c("N", "L", "P"),
+                    fixed.cols = "sex",
+                    method = "ITT",
+                    options = SEQopts(km.curves = TRUE))
+
+outcome(model)                       # Returns a list of all outcome models as S3 fastglm objects over the course of bootstrapping
+diagnostics <- diagnostics(model)    # Returns a list of diagnostic tables
+diagnostics$outcome.unique[[1]]      # Returns a table of unique outcomes
+diagnostics$outcome.nonunique[[1]]   # Returns a table of nonunique outcomes
+
+# Plotting
+km_curve(model)[[1]]                 # Returns the Survival curve
+km_data(model)[[1]]                  # Returns a dataframe of survival data in long-format for other analysis/plotting
+```
+
+### Assumptions
+
+This package places several assumptions onto the input data and
+unexpected results and errors may arise if these are not followed-
+
+1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
+    also assume that the column contains only integers and continues by
+    1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2,
+    2.5, …) or (0, 1, 2, 4, 5, …) are not.
+    - Provided `time.col` entries may be out of order as a sort is
+      enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
+      is valid because it begins at 0 and is continuously increasing by
+      increments of 1, even though it is not ordered.
+2.  `eligible` and column names provided to types of `excused.cols` are
+    once one only one (with respect to `time.col`) flag variables
+
+## Return
+
+The primary function, `SEQuential`, returns an S4 object of class
+`SEQoutput` with slots:
+
+1.  params - the SEQparams object created through the SEQuential process
+2.  DT - Expanded data table with weighting information
+3.  outcome - outcome covariates
+4.  numerator - numerator covariates when weighting
+5.  denominator - denominator covariates when weighting
+6.  outcome.model - fastglm model objects
+7.  hazard - the hazard ratio
+8.  weight.statistics - weighting information
+9.  survival.curve - ggplot survival curve
+10. survival.data - survival and risk data for all points of followup
+11. risk.comparison - data table of comparisons between risks at end of
+    followup bootstrapped
+12. risk.data - data table of risks for every level of treatment at each
+    time point
+13. time - elapsed time for the SEQuential analysis
+14. info - list of diagnostic tables
+15. ce.model - Competing event model objects
+
+These can be handily and easily printed to the terminal with by calling
+the object as `model` (if continuing the example above). While this this
+the shape of the output object, not all slots will always be filled,
+e.g. if a user providers `hazard = TRUE`, then the survival curves,
+data, and associated risks will return `NA`.
+
+## Imports
+
+- data.table
+- doFuture
+- doRNG
+- future
+- future.apply
+- ggplot2
+- fastglm
+- methods
+- stringr
+- survival
+- parallelly
+- knitr
+
+## Finding More Information and Examples
+
+Further information on utilizing this package or developing it further
+is available with the [SEQTaRget
+Pages](https://causalinference.github.io/SEQTaRget/) as a part of this
+repository. If you are unable to find solutions or answers there, please
+feel free to open a discussion.
+
+## Contributing to the package
+
+Community members are welcome to contribute to this package through
+several different avenues-
+
+- Asking/Answering questions about the package via [Github
+  Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a).
+  These can be questions about analysis methods, future planned
+  developments for the package, or requests for clarity on package
+  internals.
+- Contributing to [Github
+  Issues](https://github.com/CausalInference/SEQTaRget/issues) if a bug
+  is found. We have a guided bug report to help us resolve unintended
+  pests quickly.
+- Adding content to the package
+  - If you intend to add to the package, we would prefer you to branch
+    and then pull-request. This PR will need to:
+    1.  Pass current unit-tests to ensure nothing is being broken
+        backwards.
+    2.  Add tests to added portions of code if they are not already
+        covered in existing tests
+    3.  Pass R-CMD-Check (initiated on PR) with 0-0-0 status
+
+# Package index
+
+## All functions
+
+- [`SEQ_data()`](https://causalinference.github.io/SEQTaRget/reference/SEQ_data.md)
+  : Function to return the internal data from a SEQuential object
+- [`SEQdata.LTFU`](https://causalinference.github.io/SEQTaRget/reference/SEQdata.LTFU.md)
+  : Simulated Lost-to-followup example data for SEQuential
+- [`SEQdata.multitreatment`](https://causalinference.github.io/SEQTaRget/reference/SEQdata.multitreatment.md)
+  : Simulated multitreatment example data for SEQuential multinomial
+  models
+- [`SEQestimate()`](https://causalinference.github.io/SEQTaRget/reference/SEQestimate.md)
+  : Estimate the (very rough) time to run SEQuential analysis on current
+  machine
+- [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
+  : Parameter Builder for SEQuential Model and Estimates
+- [`SEQoutput-class`](https://causalinference.github.io/SEQTaRget/reference/SEQoutput-class.md)
+  : An S4 class used to hold the outputs for the SEQuential process
+- [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
+  : SEQuential trial emulation
+- [`compevent()`](https://causalinference.github.io/SEQTaRget/reference/compevent.md)
+  : Function to return competing event models from a SEQuential object
+- [`covariates()`](https://causalinference.github.io/SEQTaRget/reference/covariates.md)
+  : Retrieves Outcome, Numerator, and Denominator Covariates
+- [`denominator()`](https://causalinference.github.io/SEQTaRget/reference/denominator.md)
+  : Retrieves Denominator Models from SEQuential object
+- [`diagnostics()`](https://causalinference.github.io/SEQTaRget/reference/diagnostics.md)
+  : Function to return diagnostic tables from a SEQuential object
+- [`hazard_ratio()`](https://causalinference.github.io/SEQTaRget/reference/hazard_ratio.md)
+  : Function to return hazard ratios from a SEQuential object
+- [`km_curve()`](https://causalinference.github.io/SEQTaRget/reference/km_curve.md)
+  : Function to print kaplan-meier curves
+- [`km_data()`](https://causalinference.github.io/SEQTaRget/reference/km_data.md)
+  : Function to return survival data from a SEQuential object
+- [`numerator()`](https://causalinference.github.io/SEQTaRget/reference/numerator.md)
+  : Retrieves Numerator Models from SEQuential object
+- [`outcome()`](https://causalinference.github.io/SEQTaRget/reference/outcome.md)
+  : Retrieves Outcome Models from SEQuential object
+- [`risk_comparison()`](https://causalinference.github.io/SEQTaRget/reference/risk_comparison.md)
+  : Function to return risk information from a SEQuential object
+- [`risk_data()`](https://causalinference.github.io/SEQTaRget/reference/risk_data.md)
+  : Function to return risk information from a SEQuential object
+- [`show(`*`<SEQoutput>`*`)`](https://causalinference.github.io/SEQTaRget/reference/show-SEQoutput-method.md)
+  : Show method for S4 object - SEQoutput.
+
+# Articles
+
+### All vignettes
+
+- [Per-Protocol: Censoring
+  Analysis](https://causalinference.github.io/SEQTaRget/articles/censoring.md):
+- [Per-Protocol: Dose-Response
+  Analysis](https://causalinference.github.io/SEQTaRget/articles/doseresponse.md):
+- [Intention-To-Treat
+  Analysis](https://causalinference.github.io/SEQTaRget/articles/ITT.md):
+- [Defining your
+  SEQopts()](https://causalinference.github.io/SEQTaRget/articles/seqopts.md):
+- [Introduction to
+  SEQuential](https://causalinference.github.io/SEQTaRget/articles/SEQuential.md):

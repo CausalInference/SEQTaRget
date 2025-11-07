@@ -1,0 +1,71 @@
+# Introduction to SEQuential
+
+## Setting up your Analysis
+
+There are some assumptions which must be met to avoid unintended errors
+when using SEQuential. These are:
+
+1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
+    also assume that the column contains only integers and continues by
+    1 for every time step. e.g. (0, 1, 2, 3, …) is allowed and (0, 1, 2,
+    2.5, …) or (0, 1, 2, 4, 5, …) are not.
+2.  Provided `time.col` entries may be out of order as a sort is
+    enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
+    is valid because it begins at 0 and is continuously increasing by
+    increments of 1, even though it is not ordered.
+3.  `eligible` and column names provided to and `excused.cols` are once
+    one only one (with respect to `time.col`) flag variables
+
+### Step 1 - Defining your options
+
+In your R script, you will always start by defining your options object,
+through the `SEQopts` helper. There are many defaults which allow you to
+target exactly how you would like to change your analysis. Through this
+wiki there are specific pages dedicated to each causal contrast and the
+parameters which affect them, but for simplicity let’s start with an
+intention-to-treat analysis with 20 bootstrap samples.
+
+``` r
+library(SEQTaRget)
+
+options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
+                   bootstrap = TRUE, #asks the model to preform bootstrapping
+                   bootstrap.nboot = 10) #asks the model for 10 bootstrap samples
+```
+
+In general, options will be in the form `{option}.{parameter}` - here
+you may notice that we use `bootstrap.nboot` indicating that this
+parameter affects the `bootstrap`
+
+### Step 2 - Running the Primary Function
+
+The next step is running the primary R function, `SEQuential`. Here you
+will give your options, data, and data-level information. We provide
+some small simulated datasets to test on.
+
+``` r
+data <- SEQdata
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible",
+                          treatment.col = "tx_init",
+                          outcome.col = "outcome",
+                          time_varying.cols = c("N", "L", "P"),
+                          fixed.cols = "sex",
+                          method = "ITT", options = options)
+```
+
+`SEQuential` is a rather chunky algorithm and will take some time to
+run, especially when bootstrapping. We provide some print statements to
+help track where the function is processing at any given point in time.
+
+### Step 3 - Recovering your results
+
+`SEQuential` produces a lot of internal diagnostics, models, and
+dataframes out of its main function in an S4 class. We provide a few
+different methods to handle obtaining your results.
+
+``` r
+outcome(model)     # Returns a list of only the outcome models 
+km_curve(model)    # Prints the survival curve
+```

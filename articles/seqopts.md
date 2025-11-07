@@ -1,0 +1,103 @@
+# Defining your SEQopts()
+
+## Behind SEQopts()
+
+[`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
+provides the primary API to changing internal options of
+[`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md).
+While the documentation should go over their use, we will expand on them
+here in greater detail:
+
+### The options
+
+#### General Options
+
+| Option Name           | Description                                                           | Input Type     | Example        |
+|-----------------------|-----------------------------------------------------------------------|----------------|----------------|
+| bootstrap             | Whether bootstrapping should take place                               | Boolean        | TRUE           |
+| bootstrap.nboot       | Number of bootstraps to run in addition to the full model             | Integer        | 100L           |
+| bootstrap.sample      | Subsample of data to use when bootstrapping                           | Float \[0, 1\] | 0.8            |
+| calculate.var         | Whether to calculate the robust standard errors for the outcome model | Boolean        | FALSE          |
+| compevent             | Column name for competing event variable                              | Char           | “LTFU”         |
+| covariates            | If provided, forces covariates for outcome models                     | Char           | “X1+X2\*X3+X4” |
+| data.return           | Whether to return expanded data as output                             | Boolean        | TRUE           |
+| followup.class        | Whether to expand followup values to an indicator matrix              | Boolean        | FALSE          |
+| followup.include      | Whether to include ‘followup’ and ‘followup^2’ in outcome models      | Boolean        | TRUE           |
+| followup.max          | Maximum value of followup per trial                                   | Numeric        | 60             |
+| followup.min          | Minimum value of followup per trial                                   | Numeric        | 0              |
+| followup.spline       | Whether to format followup values to a spline                         | Boolean        | FALSE          |
+| hazard                | Whether to estimate the hazard ratio                                  | Boolean        | FALSE          |
+| km.curves             | Whether to estimate kaplan meier survival curves and data             | Boolean        | TRUE           |
+| multinomial           | Whether to expect more than 2 treatment types                         | Boolean        | FALSE          |
+| ncores                | Number of cores to use in parallel multisession                       | Integer        | 8L             |
+| nthreads              | Number of threads to use for data.table manipulations                 | Integer        | 16L            |
+| parallel              | Whether the bootstrapping should be run in parallel                   | Boolean        | TRUE           |
+| seed                  | Starting seed for random number generators                            | Integer        | 1636           |
+| selection.first_trial | Selects only the first eligible trial in the expanded dataset         | Boolean        | TRUE           |
+| selection.prob        | Subsample of total IDs to select                                      | Float \[0, 1\] | 0.8            |
+| selection.random      | Whether to randomly select IDs with replacement to run analysis       | Boolean        | FALSE          |
+| subgroup              | Column name for subgroup analysis                                     | Char           | “sex”          |
+| survival.max          | Maximum value for Risk/Survival curves                                | Numeric        | 60             |
+| treat.level           | Treatment levels to compare                                           | List           | list(0, 1)     |
+| trial.include         | Whether to include ‘trial’ and ‘trial^2’ in outcome models            | Boolean        | TRUE           |
+
+#### Weighting Options
+
+In general these only affect analytic methods of ‘dose-response’ and
+‘censoring’. However, providing `cense` will allow ITT to be weighted in
+the case of a censoring variable like loss-to-followup.
+
+| Option Name          | Description                                                                                      | Input Type | Example                        |
+|----------------------|--------------------------------------------------------------------------------------------------|------------|--------------------------------|
+| cense                | Column name for censoring variable                                                               | Char       | “LTFU”                         |
+| cense.denominator    | If provided, forces denominator covariates for censoring models                                  | Char       | “A1+A2\*A3+A4”                 |
+| cense.eligible       | Column name for indicator column defining which rows to use for censoring model                  | Char       | “eligible_cense”               |
+| cense.numerator      | If provided, forces numerator covariates for censoring models                                    | Char       | “Z1+Z2\*Z3+Z4”                 |
+| denominator          | If provided, forces denominator covariates for weight models                                     | Char       | “C1+C2\*C3+B4”                 |
+| numerator            | If provided, forces numerator covariates for weight models                                       | Char       | “B1+B2\*B3+B4”                 |
+| weight.eligible      | List of columns for eligibility in weight models with certain treatment values                   | List       | list(‘we1’, we2’)              |
+| weight.eligible_cols | List of column names for indicator columns defining which weights are eligible for weight models | List       | list(“eligible1”, “eligible2”) |
+| weight.lag_condition | Whether weights should be conditioned on treatment lag value                                     | Boolean    | TRUE                           |
+| weight.lower         | Lower truncation for weight values                                                               | Float      | 0.0                            |
+| weight.p99           | Whether to truncate weights at the 99% percentile                                                | Boolean    | TRUE                           |
+| weight.preexpansion  | Whether weighting should be done on pre-expanded data                                            | Boolean    | TRUE                           |
+| weight.upper         | Upper truncation for weight values                                                               | Float      | 1.0                            |
+| weighted             | Whether the analysis should be weighted                                                          | Boolean    | TRUE                           |
+
+#### Plot Options (km.curves = TRUE)
+
+All of these can be changed after SEQuential has finished analysis - if
+you forget to add them, no need to stop and restart. Additionally,
+SEQuential will output the data used for the plot if you would like to
+customize it yourself through your preferred plotting software.
+
+| Option Name   | Description                                     | Input Type | Example              |
+|---------------|-------------------------------------------------|------------|----------------------|
+| plot.colors   | Figure colors for output plot                   | List       | list(“red”, “blue”)  |
+| plot.labels   | Legend labels for output plot                   | List       | list(“Tx 0”, “Tx 1”) |
+| plot.subtitle | Subtitle for plot output                        | Char       | “My Plot Subtitle”   |
+| plot.title    | Title for plot output                           | Char       | “My Plot Title”      |
+| plot.type     | Type of output plot (“survival”, “risk”, “inc”) | Char       | “survival”           |
+
+#### Special Cases
+
+| Option Name            | Description                                                    | Input Type | Example                    |
+|------------------------|----------------------------------------------------------------|------------|----------------------------|
+| deviation              | Create switch based on deviation from column                   | Boolean    | TRUE                       |
+| deviation.col          | Column name for deviation                                      | Char       | “deviation_var”            |
+| deviation.conditions   | RHS evaluations of the same length as treat.levels             | List       | list(“\>3”, “==1”)         |
+| deviation.excused      | Whether deviations should be excused by deviation.excused_cols | Boolean    | TRUE                       |
+| deviation.excused_cols | Excused columns for deviation switches                         | List       | list(“excuse1”, “excuse2”) |
+| excused                | When censoring, whether there is an excused condition          | Boolean    | TRUE                       |
+| excused.cols           | List of column names for treatment switch excuses              | List       | list(“excuse1”, “excuse2”) |
+
+#### Internal Options
+
+These are internal options that change output name of covariates or the
+decomposition method when estimating coefficients.
+
+| Option Name        | Description                         | Input Type | Example |
+|--------------------|-------------------------------------|------------|---------|
+| fastglm.method     | Method for decomposition by fastglm | Integer    | 3L      |
+| indicator.baseline | Identifier for baseline variables   | Char       | “\_bas” |
+| indicator.squared  | Identifier for squared variables    | Char       | “\_sq”  |
