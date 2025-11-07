@@ -89,7 +89,7 @@ internal.hazard <- function(model, params) {
     
     if (params@bootstrap.CI_method == "se") {
       z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
-      se <- sd(bootstrap, na.rm = TRUE) / sqrt(sum(!is.na(bootstrap)))
+      se <- sd(bootstrap, na.rm = TRUE)
       ci <- sort(c(full + z*se, full - z*se), decreasing = FALSE) 
     } else ci <- quantile(bootstrap, 
                           probs = c((1 - params@bootstrap.CI)/2, 

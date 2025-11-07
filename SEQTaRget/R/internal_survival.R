@@ -117,7 +117,7 @@ internal.survival <- function(params, outcome) {
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
-        DT <- rbindlist(data)[, list(se = sd(value) / sqrt(params@bootstrap.nboot)),
+        DT <- rbindlist(data)[, list(se = sd(value)),
                                by = c("followup", "variable")]
       
         surv <- full$data[DT, on = c("followup", "variable")
