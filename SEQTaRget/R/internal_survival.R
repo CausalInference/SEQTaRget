@@ -127,8 +127,7 @@ internal.survival <- function(params, outcome) {
         DT <- rbindlist(data)
         surv <- full$data[DT, on = c("followup", "variable")
                           ][, `:=` (LCI = quantile(value, (1 - params@bootstrap.CI)/2),
-                                    UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2))
-                            ][, se := NULL]
+                                    UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2))]
       }
       
     } else  surv <- full$data
