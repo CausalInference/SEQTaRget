@@ -3,9 +3,11 @@
 #' @keywords internal
 create.risk <- function(data, params) {
   variable <- followup <- V1 <- V2 <- NULL
-  i.value <- i.LCI <- i.UCI <- NULL
-  UCI <- LCI <- NULL
+  i.value <- i.LCI <- i.UCI <- i.SE <- NULL
+  UCI <- LCI <- SE <- NULL
   rd_lb <- rd_ub <- rr_lb <- rr_ub <- NULL
+  rd <- rd_se <- rr <- rr_se <- NULL
+  
   var <- if ("inc0" %in% data[["variable"]]) "inc" else "risk"
   table <- data[, .SD[.N], by = "variable"
                 ][variable %like% var, 
@@ -14,28 +16,24 @@ create.risk <- function(data, params) {
   out <- CJ(table$variable, table$variable)[table, on = c("V2" = "variable")
                                             ][table, on = c("V1" = "variable")][V1 != V2, ]
   
-  out[, `:=` (rr = value / i.value, rd = value - i.value)
-      ][, `:=` (value = NULL, i.value = NULL)]
-  
+  out[, `:=` (rr = value / i.value, rd = value - i.value)]
   
   table[, `:=` (A = sub(".*_", "", variable), 
                 Method = params@method,
                 variable = NULL)]
   
   if (all(c("LCI", "UCI") %in% names(out))) {
-    out[, `:=` (
-      rd_lb = LCI - i.LCI,
-      rd_ub = UCI - i.UCI,
-      rr_lb = LCI / i.LCI,
-      rr_ub = UCI / i.UCI
-      )][, `:=` (
-      rd_lci = pmin(rd_lb, rd_ub),
-      rd_uci = pmax(rd_lb, rd_ub),
-      rr_lci = pmin(rr_lb, rr_ub),
-      rr_uci = pmax(rr_lb, rr_ub))
-      ][, `:=` (LCI = NULL, UCI = NULL, i.LCI = NULL, i.UCI = NULL,
-                rd_lb = NULL, rd_ub = NULL, rr_lb = NULL, rr_ub = NULL)]
+    z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
     
+    out[, `:=` (rd_se = sqrt(SE^2 + i.SE^2),
+                rr_se = sqrt((SE/value)^2 + (i.SE/i.value)^2))
+        ][, `:=` (rd_lci = rd - z*rd_se,
+                  rd_uci = rd + z*rd_se,
+                  rr_lci = exp(log(rr) - z*rr_se),
+                  rr_uci = exp(log(rr) + z*rr_se))
+          ][, `:=` (value = NULL, i.value = NULL, LCI = NULL, UCI = NULL, 
+                    i.LCI = NULL, i.UCI = NULL, SE = NULL, i.SE = NULL, 
+                    rd_se = NULL, rr_se = NULL)]
     setnames(out, names(out), c("A_x", "A_y", 
                                 "Risk Ratio", "Risk Differerence",
                                 "RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI"))
@@ -45,6 +43,7 @@ create.risk <- function(data, params) {
     setnames(table, c("value", "LCI", "UCI"), c("Risk", "95% LCI", "95% UCI"))
     setcolorder(table, c("Method", "A", "Risk", "95% LCI", "95% UCI"))
   } else {
+    out[, `:=` (value = NULL, i.value = NULL)]
     setnames(out, names(out), c("A_x", "A_y", "Risk Ratio", "Risk Difference"))
     setnames(table, "value", "Risk")
     setcolorder(table, c("Method", "A", "Risk"))

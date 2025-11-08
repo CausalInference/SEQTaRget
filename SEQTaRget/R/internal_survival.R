@@ -6,6 +6,7 @@
 #'
 #' @keywords internal
 internal.survival <- function(params, outcome) {
+  SE <- NULL
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
@@ -115,21 +116,20 @@ internal.survival <- function(params, outcome) {
       }
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
+      DT.se <- rbindlist(data)[, list(SE = sd(value)), by = c("followup", "variable")]
+      
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
-        DT <- rbindlist(data)[, list(se = sd(value)),
-                               by = c("followup", "variable")]
-      
-        surv <- full$data[DT, on = c("followup", "variable")
-                          ][, `:=` (LCI = value - z*se, UCI = value + z*se)
-                            ][, se := NULL]
+        surv <- full$data[DT.se, on = c("followup", "variable")
+                          ][, `:=` (LCI = max(0, value - z*SE), UCI = min(1, value + z*SE)), by = .I]
       } else {
-        DT <- rbindlist(data)
-        surv <- full$data[DT, on = c("followup", "variable")
-                          ][, `:=` (LCI = quantile(value, (1 - params@bootstrap.CI)/2),
-                                    UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2))]
+        DT.q<- rbindlist(data)[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
+                                   UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),
+                               by = c("followup", "variable")]
+        
+        surv <- full$data[DT.se, on = c("followup", "variable")
+                          ][DT.q, on = c("followup", "variable")]
       }
-      
     } else  surv <- full$data
     out <- list(data = surv, 
                 ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
