@@ -48,6 +48,9 @@
 #' @param survival.max Numeric: maximum time for survival curves, default is Inf (no maximum)
 #' @param treat.level List: treatment levels to compare
 #' @param trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model
+#' @param visit String: column name for visit indicator variable, e.g. visit
+#' @param visit.denominator String: visit denominator covariates to the right hand side of a formula object
+#' @param visit.numerator String: visit numerator covariates to the right hand side of a formula object
 #' @param weight.eligible_cols List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}
 #' @param weight.lower Numeric: weights truncated at lower end at this weight
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value
@@ -70,7 +73,9 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores() - 1, nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
-                    treat.level = c(0, 1), trial.include = TRUE, weight.eligible_cols = c(),
+                    treat.level = c(0, 1), trial.include = TRUE,
+                    visit = NA, visit.denominator = NA, visit.numerator = NA,
+                    weight.eligible_cols = c(),
                     weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
@@ -109,7 +114,9 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   denominator <- gsub("\\s", "", denominator)
   cense.numerator <- gsub("\\s", "", cense.numerator)
   cense.denominator <- gsub("\\s", "", cense.denominator)
-
+  visit.numerator <- gsub("\\s", "", visit.numerator)
+  visit.denominator <- gsub("\\s", "", visit.denominator)
+  
   weighted <- as.logical(weighted)
   weight.preexpansion <- as.logical(weight.preexpansion)
 
@@ -120,7 +127,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   cense.eligible <- as.character(cense.eligible)
   compevent <- as.character(compevent)
   treat.level <- as.list(treat.level)
-
+  visit <- as.character(visit)
+  
   indicator.baseline <- as.character(indicator.baseline)
   indicator.squared <- as.character(indicator.squared)
 
@@ -188,6 +196,9 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       cense.denominator = cense.denominator,
       cense.numerator = cense.numerator,
       selection.prob = selection.prob,
-      selection.random = selection.random
+      selection.random = selection.random,
+      visit = visit,
+      visit.numerator = visit.numerator,
+      visit.denominator = visit.denominator
   )
 }
