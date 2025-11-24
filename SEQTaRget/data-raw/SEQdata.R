@@ -14,7 +14,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
     outcome <- as.integer(rbinom(1, 1, 0.02))
     tx_time <- as.integer(sample(0:max.time, 1))
 
-    if (LTFU){
+    if (LTFU) {
       LTFU.ind <- rbinom(1, 1, .2)
       if (LTFU.ind == 1) {
         LTFU.time <- sample(1:max.time, 1)
@@ -46,7 +46,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
         if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(0:n_treatments, 1, prob = c(0.8, rep((1 - 0.8) / n_treatments, n_treatments)))
         if (tx_vector[j - 1] != 0) {
           switch <- as.logical(rbinom(1, 1, 0.05))
-          if(switch) {
+          if (switch) {
             valid <- setdiff(0:n_treatments, tx_vector[j - 1])
             tx_vector[j] <- sample(valid)
           } else tx_vector[j] <- tx_vector[j-1]

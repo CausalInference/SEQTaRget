@@ -129,7 +129,7 @@ setMethod("show", "SEQoutput", function(object) {
     print(kable(outcome.nonunique[[i]]))
   }
     
-  if (slot(params, "method") == "censoring"){
+  if (slot(params, "method") == "censoring") {
     cat("\nUnique Switch Table: ")
     print(kable(slot(object, "info")$switch.unique))
     cat("\nNon-Unique Switch Table: ")

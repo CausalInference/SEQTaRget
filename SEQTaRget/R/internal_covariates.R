@@ -97,7 +97,7 @@ create.default.weight.covariates <- function(params, type) {
 #' Internal Function to create 'default' loss-to-followup formula
 #'
 #' @keywords internal
-create.default.LTFU.covariates <- function(params, type){
+create.default.LTFU.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
