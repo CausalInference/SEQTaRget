@@ -94,11 +94,11 @@ parameter.simplifier <- function(params) {
   if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
   if (is.infinite(params@survival.max)) params@survival.max <- params@followup.max
 
-  if (allNA(params@excused.cols) & params@excused & params@method == "censoring") {
+  if (allNA(params@excused.cols) && params@excused && params@method == "censoring") {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")
     params@excused <- FALSE
   }
-  if (!allNA(params@excused.cols) & !params@excused) {
+  if (!allNA(params@excused.cols) && !params@excused) {
     warning("Excused variables given, but excused was set to FALSE, automatically changed to excused = TRUE")
     params@excused <- TRUE
   }
@@ -108,7 +108,7 @@ parameter.simplifier <- function(params) {
   params@deviation.excused_cols <- equalizer(params@deviation.excused_cols, params@treat.level)
   params@weight.eligible_cols <- equalizer(params@weight.eligible_cols, params@treat.level)
 
-  if (params@km.curves & params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
+  if (params@km.curves && params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
 
   if (!is.na(params@cense)) {
@@ -116,16 +116,16 @@ parameter.simplifier <- function(params) {
     params@weighted <- TRUE
   }
 
-  if (params@method == "ITT" & params@weighted & !params@LTFU) {
+  if (params@method == "ITT" && params@weighted && !params@LTFU) {
     warning("Without LTFU, weighted ITT model is not supported, automatically changed to weighted = FALSE")
     params@weighted <- FALSE
   }
-  if (params@followup.class & params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
+  if (params@followup.class && params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
   if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
   
-  if (params@multinomial & params@method == "dose-response") stop("Multinomial dose-response is not supported")
+  if (params@multinomial && params@method == "dose-response") stop("Multinomial dose-response is not supported")
   
-  if (params@excused & params@deviation.excused) stop("Must select either excused from deviation or excused from treatment swap")
+  if (params@excused && params@deviation.excused) stop("Must select either excused from deviation or excused from treatment swap")
   
   if (!params@bootstrap.CI_method %in% c("se", "percentile")) stop("Invalid confidence interval method defined")
 
