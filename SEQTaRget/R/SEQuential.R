@@ -79,7 +79,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.simplifier(params)
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if (params@weighted & params@method != "ITT") {
+  if (params@weighted && params@method != "ITT") {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
@@ -158,7 +158,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- lapply(analytic, function(x) x$model[[i]])
         
       if (params@km.curves) {
-        if (is.na(params@subgroup) & params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+        if (is.na(params@subgroup) && params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
