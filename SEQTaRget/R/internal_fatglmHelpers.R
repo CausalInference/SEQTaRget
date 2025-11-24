@@ -6,7 +6,7 @@
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL){
+inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL) {
   covs <- switch(
     case,
     "default" = switch(
