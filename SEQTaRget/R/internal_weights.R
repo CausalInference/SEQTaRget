@@ -22,7 +22,8 @@ internal.weights <- function(DT, data, params) {
     cense1 <- cense1.numerator <- cense1.denominator <- NULL
     followup <- NULL
     isExcused <- NULL
-
+    visit <- visit.numerator <- visit.denominator <- NULL
+    
     # Setting up weight data ====================================
     if (!params@weight.preexpansion) {
       subtable.kept <- c(params@treatment, params@id, params@time)
@@ -166,7 +167,14 @@ internal.weights <- function(DT, data, params) {
                          cense1.denominator = inline.pred(cense.denominator, .SD, params, "denominator", "LTFU"))
                  ][, cense1 := cense1.numerator / cense1.denominator]
     }
-    
+
+    if (params@visit) {
+      if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
+      out <- out[, `:=` (visit.numerator = inline.pred(visit.numerator, .SD, params, "numerator", "visit"),
+                         visit.denominator = inline.pred(visit.denominator, .SD, params, "denominator", "visit"))
+      ][, visit := visit.numerator / visit.denominator]
+    }
+
     if (params@time %in% names(out)) setnames(out, params@time, "period")
     kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "cense2")
     kept <- kept[kept %in% names(out)]
