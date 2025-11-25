@@ -53,6 +53,9 @@ SEQopts(
   survival.max = Inf,
   treat.level = c(0, 1),
   trial.include = TRUE,
+  visit = NA,
+  visit.denominator = NA,
+  visit.numerator = NA,
   weight.eligible_cols = c(),
   weight.lower = -Inf,
   weight.lag_condition = TRUE,
@@ -158,6 +161,12 @@ SEQopts(
 \item{treat.level}{List: treatment levels to compare}
 
 \item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
+
+\item{visit}{String: column name for visit indicator variable, e.g. visit}
+
+\item{visit.denominator}{String: visit denominator covariates to the right hand side of a formula object}
+
+\item{visit.numerator}{String: visit numerator covariates to the right hand side of a formula object}
 
 \item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
 
