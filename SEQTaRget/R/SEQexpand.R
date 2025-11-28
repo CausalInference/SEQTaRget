@@ -118,9 +118,12 @@ SEQexpand <- function(params) {
           
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@excused.cols[[i]])) {
-              out[(switch) & get(params@treatment) != lag, isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
+              out[(switch) & 
+                    get(params@treatment) != lag & 
+                    get(params@treatment) == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
             }
           }
+          setorderv(out, c(params@id, "trial", "followup"))
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
               ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
                 ][, excused_tmp := NULL]
