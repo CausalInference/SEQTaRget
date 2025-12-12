@@ -168,7 +168,7 @@ internal.weights <- function(DT, data, params) {
                  ][, cense1 := cense1.numerator / cense1.denominator]
     }
 
-    if (params@visit) {
+    if (!is.na(params@visit)) {
       if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
       out <- out[, `:=` (visit.numerator = inline.pred(visit.numerator, .SD, params, "numerator", "visit"),
                          visit.denominator = inline.pred(visit.denominator, .SD, params, "denominator", "visit"))
