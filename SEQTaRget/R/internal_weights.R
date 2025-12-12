@@ -185,7 +185,7 @@ internal.weights <- function(DT, data, params) {
     if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
       coef.numerator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.numerator[[i]] <- clean_fastglm(coef.numerator[[i]])
+        coef.numerator[[i]] <- clean_fastglm(numerator_models[[i]])
       }
       weight.info@coef.numerator <- coef.numerator
     }
