@@ -199,7 +199,7 @@ covariates <- function(object) {
               Denominator = object@denominator))
 }
 
-#' Function to print kaplan-meier curves
+#' Function to print Kaplan-Meier curves
 #'
 #' @param object SEQoutput object to plot
 #' @param plot.type character: type of plot to print

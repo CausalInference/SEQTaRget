@@ -37,7 +37,7 @@ knitr::opts_chunk$set(
 | followup.min | Minimum value of followup per trial | Numeric | 0 |
 | followup.spline | Whether to format followup values to a spline | Boolean | FALSE |
 | hazard | Whether to estimate the hazard ratio | Boolean | FALSE |
-| km.curves | Whether to estimate kaplan meier survival curves and data | Boolean | TRUE |
+| km.curves | Whether to estimate Kaplan-Meier survival curves and data | Boolean | TRUE |
 | multinomial | Whether to expect more than 2 treatment types | Boolean | FALSE |
 | ncores | Number of cores to use in parallel multisession | Integer | 8L |
 | nthreads | Number of threads to use for data.table manipulations | Integer | 16L |
