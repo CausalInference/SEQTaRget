@@ -188,7 +188,7 @@ outcome <- function(object) {
 #' Retrieves Outcome, Numerator, and Denominator Covariates
 #' @param object object of class SEQoutput
 #'
-#' @returns list of SEQuential covariates
+#' @returns List of SEQuential covariates
 #' @importFrom methods is slot
 #'
 #' @export
@@ -238,7 +238,7 @@ km_curve <- function(object, plot.type = "survival",
 #' @param object SEQoutput object
 #'
 #' @importFrom methods is slot
-#' @returns list of dataframes of survival values
+#' @returns List of dataframes of survival values
 #' @export
 km_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -250,7 +250,7 @@ km_data <- function(object) {
 #' @param object SEQoutput object
 #' 
 #' @importFrom methods is slot
-#' @returns list of fastglm objects
+#' @returns List of fastglm objects
 #' @export
 compevent <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -262,7 +262,7 @@ compevent <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns a data table of risk information at every followup
+#' @returns A data table of risk information at every followup
 #' @export
 risk_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -274,7 +274,7 @@ risk_data <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns a data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
+#' @returns A data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
 #' @export
 risk_comparison <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -286,7 +286,7 @@ risk_comparison <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns list of hazard ratios
+#' @returns List of hazard ratios
 #' @export
 hazard_ratio <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -299,7 +299,7 @@ hazard_ratio <- function(object) {
 #' @param object SEQoutput object
 #'
 #' @importFrom methods is slot
-#' @returns list of diagnostic tables
+#' @returns List of diagnostic tables
 #' @export
 diagnostics <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
