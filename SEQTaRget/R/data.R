@@ -15,11 +15,11 @@
 #'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
 #' }
 #' @usage SEQdata
-#' @description Simulated observational example data for SEQuential
+#' @description Simulated observational example data for [SEQuential()]
 #' @keywords internal
 "SEQdata"
 
-#' Simulated Lost-to-followup example data for SEQuential
+#' Simulated lost-to-followup example data for [SEQuential()]
 #' @format A dataframe with 4,139 rows and 13 columns:
 #' \describe{
 #'   \item{ID}{Integer: Unique ID emulating individual patients}
@@ -37,7 +37,7 @@
 #' }
 "SEQdata.LTFU"
 
-#' Simulated multitreatment example data for SEQuential multinomial models
+#' Simulated multitreatment example data for [SEQuential()] multinomial models
 #' @format A dataframe with 5,976 rows and 11 columns:
 #' \describe{
 #'   \item{ID}{Integer: Unique ID emulating individual patients}
