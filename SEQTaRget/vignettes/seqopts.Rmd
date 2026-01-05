@@ -25,6 +25,8 @@ knitr::opts_chunk$set(
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
 | `bootstrap` | Whether bootstrapping should take place | Boolean | `TRUE` |
+| `bootstrap.CI` | Defines the confidence interval after bootstrapping (should be within [0, 1]) | Numeric double | `0.95` |
+| `bootstrap.CI_method` | Selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`) | Character | `"se"` |
 | `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
 | `bootstrap.sample` | Subsample of data to use when bootstrapping | numeric double [0, 1] | `0.8` |
 | `compevent` | Column name for competing event variable | Character | `"LTFU"` |
