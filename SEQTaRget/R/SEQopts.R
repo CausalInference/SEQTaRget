@@ -1,7 +1,7 @@
 #' Parameter Builder for SEQuential Model and Estimates
 #'
 #' @param bootstrap Logical: defines if SEQuential should run bootstrapping, default is `FALSE`
-#' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is `0.95` (95\% CI)
+#' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is `0.95` (95% CI)
 #' @param bootstrap.CI_method Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")
 #' @param bootstrap.nboot Integer: number of bootstraps
 #' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
