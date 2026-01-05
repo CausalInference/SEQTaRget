@@ -71,7 +71,10 @@ parameter.setter <- function(data, DT,
     deviation.excused = opts@deviation.excused,
     deviation.col = opts@deviation.col,
     deviation.conditions = opts@deviation.conditions,
-    deviation.excused_cols = opts@deviation.excused_cols
+    deviation.excused_cols = opts@deviation.excused_cols,
+    visit = opts@visit,
+    visit.denominator = opts@visit.denominator,
+    visit.numerator = opts@visit.numerator
   )
 }
 
