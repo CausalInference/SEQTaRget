@@ -57,3 +57,4 @@ Depends:
     R (>= 4.1)
 URL: https://causalinference.github.io/SEQTaRget/
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
