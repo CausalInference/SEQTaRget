@@ -4,7 +4,7 @@
 #' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is `0.95` (95% CI)
 #' @param bootstrap.CI_method Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")
 #' @param bootstrap.nboot Integer: number of bootstraps
-#' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8
+#' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should in \[0, 1\], default is `0.8`
 #' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
 #' @param cense.denominator String: censoring denominator covariates to the right hand side of a formula object
 #' @param cense.eligible String: column name for indicator column defining which rows to use for censoring model
@@ -42,7 +42,7 @@
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
 #' @param seed Integer: starting seed
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
-#' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1], default is `0.8`
+#' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
 #' @param subgroup Character: Column name to stratify outcome models on
 #' @param survival.max Numeric: maximum time for survival curves, default is `Inf` (no maximum)
