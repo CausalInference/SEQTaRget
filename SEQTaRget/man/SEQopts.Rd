@@ -36,7 +36,7 @@ SEQopts(
   indicator.squared = "_sq",
   km.curves = FALSE,
   multinomial = FALSE,
-  ncores = availableCores() - 1,
+  ncores = availableCores(omit = 1L),
   nthreads = getDTthreads(),
   numerator = NA,
   parallel = FALSE,
