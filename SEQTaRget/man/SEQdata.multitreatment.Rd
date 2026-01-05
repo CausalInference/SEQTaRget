@@ -3,7 +3,7 @@
 \docType{data}
 \name{SEQdata.multitreatment}
 \alias{SEQdata.multitreatment}
-\title{Simulated multitreatment example data for SEQuential multinomial models}
+\title{Simulated multitreatment example data for \code{\link[=SEQuential]{SEQuential()}} multinomial models}
 \format{
 A dataframe with 5,976 rows and 11 columns:
 \describe{
@@ -24,6 +24,6 @@ A dataframe with 5,976 rows and 11 columns:
 SEQdata.multitreatment
 }
 \description{
-Simulated multitreatment example data for SEQuential multinomial models
+Simulated multitreatment example data for \code{\link[=SEQuential]{SEQuential()}} multinomial models
 }
 \keyword{datasets}

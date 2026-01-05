@@ -24,6 +24,6 @@ A data frame with 54,687 rows and 13 columns:
 SEQdata
 }
 \description{
-Simulated observational example data for SEQuential
+Simulated observational example data for \code{\link[=SEQuential]{SEQuential()}}
 }
 \keyword{internal}

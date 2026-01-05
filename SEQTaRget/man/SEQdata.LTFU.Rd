@@ -3,7 +3,7 @@
 \docType{data}
 \name{SEQdata.LTFU}
 \alias{SEQdata.LTFU}
-\title{Simulated Lost-to-followup example data for SEQuential}
+\title{Simulated lost-to-followup example data for \code{\link[=SEQuential]{SEQuential()}}}
 \format{
 A dataframe with 4,139 rows and 13 columns:
 \describe{
@@ -25,6 +25,6 @@ A dataframe with 4,139 rows and 13 columns:
 SEQdata.LTFU
 }
 \description{
-Simulated Lost-to-followup example data for SEQuential
+Simulated lost-to-followup example data for \code{\link[=SEQuential]{SEQuential()}}
 }
 \keyword{datasets}
