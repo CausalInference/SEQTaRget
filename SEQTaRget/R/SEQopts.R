@@ -70,7 +70,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = -Inf, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
-                    km.curves = FALSE, multinomial = FALSE, ncores = availableCores() - 1, nthreads = getDTthreads(),
+                    km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE,
