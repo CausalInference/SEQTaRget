@@ -66,13 +66,13 @@ SEQopts(
 )
 }
 \arguments{
-\item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is FALSE}
+\item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is \code{FALSE}}
 
 \item{bootstrap.nboot}{Integer: number of bootstraps}
 
-\item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8}
+\item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is \code{0.8}}
 
-\item{bootstrap.CI}{Numeric: defines the confidence interval after bootstrapping, default is 0.95 (95\% CI)}
+\item{bootstrap.CI}{Numeric: defines the confidence interval after bootstrapping, default is \code{0.95} (95\% CI)}
 
 \item{bootstrap.CI_method}{Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")}
 
@@ -88,53 +88,53 @@ SEQopts(
 
 \item{covariates}{String: covariates to the right hand side of a formula object}
 
-\item{data.return}{Logical: whether to return the expanded dataframe with weighting information}
+\item{data.return}{Logical: whether to return the expanded dataframe with weighting information, default is \code{FALSE}}
 
 \item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
 
-\item{deviation}{Logical: create switch based on deviation from column \code{deviation.col}}
+\item{deviation}{Logical: create switch based on deviation from column \code{deviation.col}, default is \code{FALSE}}
 
 \item{deviation.col}{Character: column name for deviation}
 
 \item{deviation.conditions}{Character list: RHS evaluations of the same length as \code{treat.levels}}
 
-\item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}}
+\item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is \code{FALSE}}
 
 \item{deviation.excused_cols}{Character list: excused columns for deviation switches}
 
-\item{excused}{Logical: in the case of censoring, whether there is an excused condition}
+\item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
 \item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
 
-\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)}
+\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is \code{2L}}
 
-\item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column}
+\item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 
-\item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model}
+\item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is \code{TRUE}}
 
-\item{followup.max}{Numeric: maximum time to expand about, default is Inf (no maximum)}
+\item{followup.max}{Numeric: maximum time to expand about, default is \code{Inf} (no maximum)}
 
-\item{followup.min}{Numeric: minimum time to expand aboud, default is -Inf (no minimum)}
+\item{followup.min}{Numeric: minimum time to expand aboud, default is \code{-Inf} (no minimum)}
 
-\item{followup.spline}{Logical: treat followup as a cubic spline}
+\item{followup.spline}{Logical: treat followup as a cubic spline, default is \code{FALSE}}
 
-\item{hazard}{Logical: hazard error calculation instead of survival estimation}
+\item{hazard}{Logical: hazard error calculation instead of survival estimation, default is \code{FALSE}}
 
 \item{indicator.baseline}{String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override}
 
 \item{indicator.squared}{String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override}
 
-\item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return}
+\item{km.curves}{Logical: Kaplan-Meier survival curve creation and data return, default is \code{FALSE}}
 
-\item{multinomial}{Logical: whether to expect multilevel treatment values}
+\item{multinomial}{Logical: whether to expect multilevel treatment values, default is \code{FALSE}}
 
 \item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
 
-\item{nthreads}{Integer: number of threads to use for data.table processing}
+\item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:openmp-utils]{data.table::getDTthreads()}}}
 
 \item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
 
-\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is FALSE}
+\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
 
 \item{plot.colors}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
 
@@ -148,21 +148,21 @@ SEQopts(
 
 \item{seed}{Integer: starting seed}
 
-\item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset}
+\item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset, default \code{FALSE}}
 
-\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1]}
+\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1], default is \code{0.8}}
 
-\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis}
+\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis, default \code{FALSE}}
 
 \item{subgroup}{Character: Column name to stratify outcome models on}
 
-\item{survival.max}{Numeric: maximum time for survival curves, default is Inf (no maximum)}
+\item{survival.max}{Numeric: maximum time for survival curves, default is \code{Inf} (no maximum)}
 
 \item{treat.level}{List: treatment levels to compare}
 
-\item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model}
+\item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model, default is \code{TRUE}}
 
-\item{visit}{String: column name for visit indicator variable, e.g. visit}
+\item{visit}{String: column name for visit indicator variable, e.g. \code{"visit"}}
 
 \item{visit.denominator}{String: visit denominator covariates to the right hand side of a formula object}
 
@@ -172,15 +172,15 @@ SEQopts(
 
 \item{weight.lower}{Numeric: weights truncated at lower end at this weight}
 
-\item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value}
+\item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value, default \code{TRUE}}
 
 \item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
 
-\item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data}
+\item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data, default \code{TRUE}}
 
 \item{weight.upper}{Numeric: weights truncated at upper end at this weight}
 
-\item{weighted}{Logical: whether or not to preform weighted analysis, default is FALSE}
+\item{weighted}{Logical: whether or not to preform weighted analysis, default is \code{FALSE}}
 }
 \value{
 An object of class 'SEQopts'
