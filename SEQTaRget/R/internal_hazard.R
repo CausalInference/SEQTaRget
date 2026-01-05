@@ -28,7 +28,7 @@ internal.hazard <- function(model, params) {
     for (i in seq_along(params@treat.level)) {
       tmp <- copy(trials)[, eval(tx_bas) := params@treat.level[[i]]
                           ][, "outcomeProb" := inline.pred(model, newdata = .SD, params, type = "outcome")
-                            ][, "outcome" := rbinom(.N, 1, outcomeProb)]
+                            ][, "outcome" := rbinom(.N, 1, fcoalesce(outcomeProb, 0.5))]
       if (!is.na(params@compevent)) {
         tmp[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv")
             ][, "ce" := rbinom(.N, 1, ceProb)
