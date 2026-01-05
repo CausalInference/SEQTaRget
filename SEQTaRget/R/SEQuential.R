@@ -7,7 +7,7 @@
 #' can be used to estimate observational analogs of intention-to-treat 
 #' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
-#' @param data data.frame or data.table, will preform expansion according to arguments passed to [SEQopts()]
+#' @param data data.frame or data.table, will preform expansion according to arguments passed through the `options` argument
 #' @param id.col String: column name of the id column, default is `"ID"`
 #' @param time.col String: column name of the time column, default is `"time"`
 #' @param eligible.col String: column name of the eligibility column, default is `"eligible"`
