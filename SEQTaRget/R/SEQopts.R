@@ -39,7 +39,7 @@
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
-#' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are 'survival', 'risk', and 'inc' (in the case of censoring)
+#' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'`, `'risk'`, and `'inc'` (in the case of censoring)
 #' @param seed Integer: starting seed
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
