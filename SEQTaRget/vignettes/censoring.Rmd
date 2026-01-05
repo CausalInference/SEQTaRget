@@ -111,7 +111,8 @@ options <- SEQopts(km.curves = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
                    excused.cols = c("excusedZero", "excusedOne"), 
-                   treat.level = c(0, 1))
+                   treat.level = c(0, 1),
+                   weight.p99 = TRUE)
 data <- SEQdata                                
 model <- SEQuential(data, 
                     id.col = "ID",
@@ -164,7 +165,8 @@ options <- SEQopts(# tell SEQuential to run hazard ratios
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
-                   excused.cols = c("excusedZero", "excusedOne"))
+                   excused.cols = c("excusedZero", "excusedOne"),
+                   weight.p99 = TRUE)
 
 data <- SEQdata                              
 model <- SEQuential(data,
