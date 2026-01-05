@@ -10,7 +10,7 @@ diagnostics(object)
 \item{object}{SEQoutput object}
 }
 \value{
-list of diagnostic tables
+List of diagnostic tables
 }
 \description{
 Function to return diagnostic tables from a SEQuential object

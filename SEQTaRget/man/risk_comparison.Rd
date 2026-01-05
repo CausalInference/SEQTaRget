@@ -10,7 +10,7 @@ risk_comparison(object)
 \item{object}{SEQoutput object}
 }
 \value{
-a data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
+A data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
 }
 \description{
 Function to return risk information from a SEQuential object
