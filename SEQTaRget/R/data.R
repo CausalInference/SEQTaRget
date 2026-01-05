@@ -8,9 +8,9 @@
 #'   \item{outcome}{Binary: If an outcome is observed at this time point}
 #'   \item{tx_init}{Binary: If treatment is observed at this time point}
 #'   \item{sex}{Binary: Sex of the emulated patient}
-#'   \item{N}{Numeric: Normal random variable from N\(10,5\)}
-#'   \item{L}{Numeric: 4% continuously increase from U\(0, 1\)}
-#'   \item{P}{Numeric: 2% continuously decrease from U\(9, 10\)}
+#'   \item{N}{Numeric: Normal random variable from N(10,5)}
+#'   \item{L}{Numeric: 4% continuously increase from U(0, 1)}
+#'   \item{P}{Numeric: 2% continuously decrease from U(9, 10)}
 #'   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 #'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
 #' }
@@ -28,9 +28,9 @@
 #'   \item{outcome}{Binary: If an outcome is observed at this time point}
 #'   \item{tx_init}{Binary: If treatment is observed at this time point}
 #'   \item{sex}{Binary: Sex of the emulated patient}
-#'   \item{N}{Numeric: Normal random variable from N\(10,5\)}
-#'   \item{L}{Numeric: 4% continuously increase from U\(0, 1\)}
-#'   \item{P}{Numeric: 2% continuously decrease from U\(9, 10\)}
+#'   \item{N}{Numeric: Normal random variable from N(10,5)}
+#'   \item{L}{Numeric: 4% continuously increase from U(0, 1)}
+#'   \item{P}{Numeric: 2% continuously decrease from U(9, 10)}
 #'   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 #'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
 #'   \item{LTFU}{Binary: Flag for losing a simulated ID to followup, if 1 there are no more records of the ID afterwards}
@@ -46,9 +46,9 @@
 #'   \item{outcome}{Binary: If an outcome is observed at this time point}
 #'   \item{tx_init}{Integer: Which treatment is observed at this time point}
 #'   \item{sex}{Binary: Sex of the emulated patient}
-#'   \item{N}{Numeric: Normal random variable from N\(10,5\)}
-#'   \item{L}{Numeric: 4% continuously increase from U\(0, 1\)}
-#'   \item{P}{Numeric: 2% continuously decrease from U\(9, 10\)}
+#'   \item{N}{Numeric: Normal random variable from N(10,5)}
+#'   \item{L}{Numeric: 4% continuously increase from U(0, 1)}
+#'   \item{P}{Numeric: 2% continuously decrease from U(9, 10)}
 #'   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 #'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
 #' }
