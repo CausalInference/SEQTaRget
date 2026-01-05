@@ -158,7 +158,7 @@ SEQopts(
 
 \item{survival.max}{Numeric: maximum time for survival curves, default is \code{Inf} (no maximum)}
 
-\item{treat.level}{List: treatment levels to compare}
+\item{treat.level}{List: treatment levels to compare, default is \code{c(0, 1)}}
 
 \item{trial.include}{Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model, default is \code{TRUE}}
 
