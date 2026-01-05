@@ -19,7 +19,7 @@ SEQuential(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, will preform expansion according to arguments passed to \code{\link[=SEQopts]{SEQopts()}}}
+\item{data}{data.frame or data.table, will preform expansion according to arguments passed through the \code{options} argument}
 
 \item{id.col}{String: column name of the id column, default is \code{"ID"}}
 
