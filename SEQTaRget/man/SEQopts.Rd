@@ -114,7 +114,7 @@ SEQopts(
 
 \item{followup.max}{Numeric: maximum time to expand about, default is \code{Inf} (no maximum)}
 
-\item{followup.min}{Numeric: minimum time to expand aboud, default is \code{-Inf} (no minimum)}
+\item{followup.min}{Numeric: minimum time to expand about, default is \code{-Inf} (no minimum)}
 
 \item{followup.spline}{Logical: treat followup as a cubic spline, default is \code{FALSE}}
 
