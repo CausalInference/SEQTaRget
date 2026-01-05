@@ -24,11 +24,11 @@ knitr::opts_chunk$set(
 
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
-| `bootstrap` | Whether bootstrapping should take place | Boolean | `TRUE` |
+| `bootstrap` | Whether bootstrapping should take place | Logical | `TRUE` |
 | `bootstrap.CI` | Defines the confidence interval after bootstrapping (should be within [0, 1]) | Numeric double | `0.95` |
 | `bootstrap.CI_method` | Selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`) | Character | `"se"` |
 | `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
-| `bootstrap.sample` | Subsample of data to use when bootstrapping | numeric double [0, 1] | `0.8` |
+| `bootstrap.sample` | Subsample of data to use when bootstrapping | Numeric double [0, 1] | `0.8` |
 | `compevent` | Column name for competing event variable | Character | `"LTFU"` |
 | `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2\*X3+X4"` |
 | `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
@@ -45,7 +45,7 @@ knitr::opts_chunk$set(
 | `parallel` | Whether the SEQuential process should be run in parallel | Logical | `TRUE` |
 | `seed` | Starting seed for random number generators | Integer | `1636` |
 | `selection.first_trial` | Selects only the first eligible trial in the expanded dataset | Logical | `TRUE` |
-| `selection.prob` | Subsample of total IDs to select | numeric double [0, 1] | `0.8` |
+| `selection.prob` | Subsample of total IDs to select | Numeric double [0, 1] | `0.8` |
 | `selection.random` | Whether to randomly select IDs with replacement to run analysis | Logical | `FALSE` |
 | `subgroup` | Column name for subgroup analysis | Character | `"sex"` |
 | `survival.max` | Maximum value for Risk/Survival curves | Numeric double | `60` |
