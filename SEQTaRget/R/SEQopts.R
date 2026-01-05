@@ -46,7 +46,7 @@
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
 #' @param subgroup Character: Column name to stratify outcome models on
 #' @param survival.max Numeric: maximum time for survival curves, default is `Inf` (no maximum)
-#' @param treat.level List: treatment levels to compare
+#' @param treat.level List: treatment levels to compare, default is `c(0, 1)`
 #' @param trial.include Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model, default is `TRUE`
 #' @param visit String: column name for visit indicator variable, e.g. `"visit"`
 #' @param visit.denominator String: visit denominator covariates to the right hand side of a formula object
