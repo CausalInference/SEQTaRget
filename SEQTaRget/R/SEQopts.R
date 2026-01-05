@@ -24,7 +24,7 @@
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
-#' @param followup.min Numeric: minimum time to expand aboud, default is `-Inf` (no minimum)
+#' @param followup.min Numeric: minimum time to expand about, default is `-Inf` (no minimum)
 #' @param followup.spline Logical: treat followup as a cubic spline, default is `FALSE`
 #' @param hazard Logical: hazard error calculation instead of survival estimation, default is `FALSE`
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
