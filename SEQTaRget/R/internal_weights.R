@@ -176,7 +176,7 @@ internal.weights <- function(DT, data, params) {
     }
 
     if (params@time %in% names(out)) setnames(out, params@time, "period")
-    kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "cense2")
+    kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "visit")
     kept <- kept[kept %in% names(out)]
     out <- out[, kept, with = FALSE]
 

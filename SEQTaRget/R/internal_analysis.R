@@ -75,7 +75,8 @@ internal.analysis <- function(params) {
                               ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
           }
         }
-        if (params@LTFU) WDT <- WDT[, weight := weight * cense1]
+        if (params@LTFU) WDT[, weight := weight * cense1]
+        if (!is.na(params@visit)) WDT[, weight := weight * visit]
 
         percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
         stats <- list(
