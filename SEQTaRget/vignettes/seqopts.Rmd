@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 | `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
 | `bootstrap.sample` | Subsample of data to use when bootstrapping | Numeric double [0, 1] | `0.8` |
 | `compevent` | Column name for competing event variable | Character | `"LTFU"` |
-| `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2\*X3+X4"` |
+| `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2*X3+X4"` |
 | `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
 | `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
 | `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |
@@ -62,11 +62,11 @@ In general these only affect analytic methods of 'dose-response' and 'censoring'
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
 | `cense` | Column name for censoring variable | Character | `"LTFU"` |
-| `cense.denominator` | If provided, forces denominator covariates for censoring models | Character | `"A1+A2\*A3+A4"` |
+| `cense.denominator` | If provided, forces denominator covariates for censoring models | Character | `"A1+A2*A3+A4"` |
 | `cense.eligible` | Column name for indicator column defining which rows to use for censoring model | Character | `"eligible_cense"` |
-| `cense.numerator` | If provided, forces numerator covariates for censoring models | Character | `"Z1+Z2\*Z3+Z4"` |
+| `cense.numerator` | If provided, forces numerator covariates for censoring models | Character | `"Z1+Z2*Z3+Z4"` |
 | `denominator` | If provided, forces denominator covariates for weight models | Character | `"C1+C2\*C3+B4"` |
-| `numerator` | If provided, forces numerator covariates for weight models | Character | `"B1+B2\*B3+B4"` |
+| `numerator` | If provided, forces numerator covariates for weight models | Character | `"B1+B2*B3+B4"` |
 | `weight.eligible_cols` | List of column names for indicator columns defining which weights are eligible for weight models | Character list | `list("eligible1", "eligible2")` |
 | `weight.lag_condition` | Whether weights should be conditioned on treatment lag value | Logical | `TRUE` |
 | `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
@@ -106,5 +106,5 @@ These are internal options that change output name of covariates or the decompos
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
 | `fastglm.method` | Method for decomposition by fastglm | Integer | `3L` |
-| `indicator.baseline` | Identifier for baseline variables | Char | `"\_bas"` |
-| `indicator.squared` | Identifier for squared variables | Char | `"\_sq"` |
+| `indicator.baseline` | Identifier for baseline variables | Char | `"_bas"` |
+| `indicator.squared` | Identifier for squared variables | Char | `"_sq"` |
