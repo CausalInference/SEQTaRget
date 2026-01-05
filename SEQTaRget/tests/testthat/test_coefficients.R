@@ -205,4 +205,7 @@ test_that("Pre-Expansion ITT: visit variable", {
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
+  expect_equal(model@params@visit, "LTFU")
+  expect_equal(model@params@visit.denominator, as.character(NA))
+  expect_equal(model@params@visit.numerator, as.character(NA))
 })
