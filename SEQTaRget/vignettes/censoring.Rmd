@@ -16,14 +16,14 @@ knitr::opts_chunk$set(
 
 Here, we'll go over some examples of using per-protocol, censoring. First we need to load the library before getting in to some sample use cases.
 
-```{r setup, eval=FALSE}
+```{r setup}
 library(SEQTaRget)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r eval=FALSE}
 options <- SEQopts(# tells SEQuential to create kaplan meier curves
+```{r}
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
                    weighted = TRUE, 
@@ -51,7 +51,7 @@ survival_data <- km_data(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE, 
                    # tells SEQuential to build weights from the post-expanded data
@@ -75,7 +75,7 @@ survival_data <- km_data(model)
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = TRUE,
@@ -105,7 +105,7 @@ survival_data <- km_data(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -131,7 +131,7 @@ survival_data <- km_data(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -159,7 +159,7 @@ survival_data <- km_data(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(# tell SEQuential to run hazard ratios
                    hazard = TRUE,
                    weighted = TRUE,
@@ -179,5 +179,5 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
-
+survival_data <- km_data(model)
 ```
