@@ -1,4 +1,4 @@
-#' Creates an expanded dataset for use with \code{SEQuential}
+#' Creates an expanded dataset for use with [SEQuential()]
 #'
 #' @param params SEQparams object built in the SEQuential function
 #'
