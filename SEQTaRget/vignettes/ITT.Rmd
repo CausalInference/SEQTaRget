@@ -23,7 +23,7 @@ library(SEQTaRget)
 ## ITT With 5 bootstrap samples
 
 ```{r eval=FALSE}
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
                    bootstrap = TRUE,
