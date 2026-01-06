@@ -66,15 +66,15 @@ SEQopts(
 )
 }
 \arguments{
-\item{bootstrap}{Logical: defines if SEQuential should run bootstrapping, default is \code{FALSE}}
+\item{bootstrap}{Logical: defines if \code{SEQuential()} should run bootstrapping, default is \code{FALSE}}
 
-\item{bootstrap.nboot}{Integer: number of bootstraps}
+\item{bootstrap.nboot}{Integer: number of bootstraps, default is \code{100}}
 
 \item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should be in [0, 1], default is \code{0.8}}
 
 \item{bootstrap.CI}{Numeric: defines the confidence interval after bootstrapping, default is \code{0.95} (95\% CI)}
 
-\item{bootstrap.CI_method}{Character: selects which way to calculate bootstraps confidence intervals (\code{"se"}, \code{"percentile"})}
+\item{bootstrap.CI_method}{Character: selects which way to calculate bootstraps confidence intervals (\code{"se"}, \code{"percentile"}), default is \code{"se"}}
 
 \item{cense}{String: column name for additional censoring variable, e.g. loss-to-follow-up}
 
