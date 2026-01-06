@@ -22,8 +22,8 @@ library(SEQTaRget)
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
 ```{r}
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
                    weighted = TRUE, 
