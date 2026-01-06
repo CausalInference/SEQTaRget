@@ -7,7 +7,7 @@
 \S4method{show}{SEQoutput}(object)
 }
 \arguments{
-\item{object}{A SEQoutput object - usually generated from \code{SEQuential}}
+\item{object}{A SEQoutput object - usually generated from \code{\link[=SEQuential]{SEQuential()}}}
 }
 \value{
 No return value, sends information about SEQoutput to the console
