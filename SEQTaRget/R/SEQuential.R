@@ -8,14 +8,14 @@
 #' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
 #' @param data data.frame or data.table, will preform expansion according to arguments passed through the `options` argument
-#' @param id.col String: column name of the id column, default is `"ID"`
-#' @param time.col String: column name of the time column, default is `"time"`
-#' @param eligible.col String: column name of the eligibility column, default is `"eligible"`
-#' @param treatment.col String: column name of the treatment column, default is `"tx_init"`
-#' @param outcome.col String: column name of the outcome column, default is `"outcome"`
-#' @param time_varying.cols List: column names for time varying columns, default is `c("N", "L", "P")`
-#' @param fixed.cols List: column names for fixed columns, default is `"sex"`
-#' @param method String: method of analysis to preform, default is `"ITT"`
+#' @param id.col String: column name of the id column
+#' @param time.col String: column name of the time column
+#' @param eligible.col String: column name of the eligibility column
+#' @param treatment.col String: column name of the treatment column
+#' @param outcome.col String: column name of the outcome column
+#' @param time_varying.cols List: column names for time varying columns
+#' @param fixed.cols List: column names for fixed columns
+#' @param method String: method of analysis to preform
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
