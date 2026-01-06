@@ -62,4 +62,6 @@ model <- SEQuential(data, id.col = "ID",
 ```{r outcome}
 outcome(model)     # Returns a list of only the outcome models 
 km_curve(model)    # Prints the survival curve
+risk_data(model)
+risk_comparison(model)
 ```
