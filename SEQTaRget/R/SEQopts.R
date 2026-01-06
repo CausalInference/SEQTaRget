@@ -31,7 +31,7 @@
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param km.curves Logical: Kaplan-Meier survival curve creation and data return, default is `FALSE`
 #' @param multinomial Logical: whether to expect multilevel treatment values, default is `FALSE`
-#' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max
+#' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max, see [parallelly::availableCores()]
 #' @param nthreads Integer: number of threads to use for data.table processing, default is [data.table::getDTthreads()]
 #' @param numerator String: numerator covariates to the right hand side of a  to formula object
 #' @param parallel Logical: define if the SEQuential process is run in parallel, default is `FALSE`
@@ -39,7 +39,7 @@
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
-#' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'`, `'risk'`, and `'inc'` (in the case of censoring)
+#' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'` (the default), `'risk'`, and `'inc'` (in the case of censoring)
 #' @param seed Integer: starting seed
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
@@ -52,11 +52,11 @@
 #' @param visit.denominator String: visit denominator covariates to the right hand side of a formula object
 #' @param visit.numerator String: visit numerator covariates to the right hand side of a formula object
 #' @param weight.eligible_cols List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}
-#' @param weight.lower Numeric: weights truncated at lower end at this weight
+#' @param weight.lower Numeric: weights truncated at lower end at this weight, default is `-Inf`
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value, default `TRUE`
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
-#' @param weight.upper Numeric: weights truncated at upper end at this weight
+#' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`
 #' @param weighted Logical: whether or not to preform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
