@@ -1,5 +1,5 @@
 test_that("Multinomial ITT", {
-  data_multi <- copy(SEQdata.multitreatment)
+  data_multi <- data.table::copy(SEQdata.multitreatment)
   model <- SEQuential(data_multi, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(multinomial = TRUE, treat.level = c(0, 1, 2))
   )
@@ -19,7 +19,7 @@ test_that("Multinomial ITT", {
 })
 
 test_that("Multinomial Censoring Pre-Expansion", {
-  data_multi <- copy(SEQdata.multitreatment)
+  data_multi <- data.table::copy(SEQdata.multitreatment)
   model <- SEQuential(data_multi, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "censoring", options = SEQopts(multinomial = TRUE, treat.level = c(0, 1, 2),
                                                               weighted = TRUE)
@@ -39,7 +39,7 @@ test_that("Multinomial Censoring Pre-Expansion", {
 })
 
 test_that("Multinomial Censoring Post-Expansion", {
-  data_multi <- copy(SEQdata.multitreatment)
+  data_multi <- data.table::copy(SEQdata.multitreatment)
   model <- SEQuential(data_multi, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "censoring", options = SEQopts(multinomial = TRUE, treat.level = c(0, 1, 2),
                                                               weighted = TRUE, weight.preexpansion = FALSE)
@@ -57,7 +57,7 @@ test_that("Multinomial Censoring Post-Expansion", {
 })
 
 test_that("Multinomial Censoring Excused Pre-Expansion", {
-  data_multi <- copy(SEQdata.multitreatment)
+  data_multi <- data.table::copy(SEQdata.multitreatment)
   model <- suppressWarnings(SEQuential(data_multi, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                                        method = "censoring", options = SEQopts(multinomial = TRUE, treat.level = c(0, 1),
                                                               weighted = TRUE, weight.preexpansion = TRUE,
@@ -74,7 +74,7 @@ test_that("Multinomial Censoring Excused Pre-Expansion", {
 })
 
 test_that("Multinomial Censoring Excused Post-Expansion", {
-  data_multi <- copy(SEQdata.multitreatment)
+  data_multi <- data.table::copy(SEQdata.multitreatment)
   model <- suppressWarnings(SEQuential(data_multi, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                                        method = "censoring", options = SEQopts(multinomial = TRUE, treat.level = c(0, 1),
                                                                                weighted = TRUE, weight.preexpansion = FALSE,

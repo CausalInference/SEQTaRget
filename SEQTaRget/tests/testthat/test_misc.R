@@ -1,3 +1,5 @@
+library(data.table)
+
 test_that("Pre-Expansion Excused Censoring - No excusedOne given", {
   data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
