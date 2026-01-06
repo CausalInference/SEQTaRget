@@ -21,21 +21,21 @@ SEQuential(
 \arguments{
 \item{data}{data.frame or data.table, will preform expansion according to arguments passed through the \code{options} argument}
 
-\item{id.col}{String: column name of the id column, default is \code{"ID"}}
+\item{id.col}{String: column name of the id column}
 
-\item{time.col}{String: column name of the time column, default is \code{"time"}}
+\item{time.col}{String: column name of the time column}
 
-\item{eligible.col}{String: column name of the eligibility column, default is \code{"eligible"}}
+\item{eligible.col}{String: column name of the eligibility column}
 
-\item{treatment.col}{String: column name of the treatment column, default is \code{"tx_init"}}
+\item{treatment.col}{String: column name of the treatment column}
 
-\item{outcome.col}{String: column name of the outcome column, default is \code{"outcome"}}
+\item{outcome.col}{String: column name of the outcome column}
 
-\item{time_varying.cols}{List: column names for time varying columns, default is \code{c("N", "L", "P")}}
+\item{time_varying.cols}{List: column names for time varying columns}
 
-\item{fixed.cols}{List: column names for fixed columns, default is \code{"sex"}}
+\item{fixed.cols}{List: column names for fixed columns}
 
-\item{method}{String: method of analysis to preform, default is \code{"ITT"}}
+\item{method}{String: method of analysis to preform}
 
 \item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 
