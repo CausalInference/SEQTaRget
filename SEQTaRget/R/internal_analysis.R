@@ -12,7 +12,7 @@ internal.analysis <- function(params) {
 
     trial <- trial.first <- NULL
     numerator <- denominator <- NULL
-    wt <- weight <- cense1 <- NULL
+    wt <- weight <- cense1 <- visit <- NULL
     tmp <- NULL
     followup <- NULL
     isExcused <- NULL
