@@ -128,7 +128,7 @@ SEQopts(
 
 \item{multinomial}{Logical: whether to expect multilevel treatment values, default is \code{FALSE}}
 
-\item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max}
+\item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max, see \code{\link[parallelly:availableCores]{parallelly::availableCores()}}}
 
 \item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:openmp-utils]{data.table::getDTthreads()}}}
 
@@ -144,7 +144,7 @@ SEQopts(
 
 \item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
 
-\item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are \code{'survival'}, \code{'risk'}, and \code{'inc'} (in the case of censoring)}
+\item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are \code{'survival'} (the default), \code{'risk'}, and \code{'inc'} (in the case of censoring)}
 
 \item{seed}{Integer: starting seed}
 
@@ -170,7 +170,7 @@ SEQopts(
 
 \item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
 
-\item{weight.lower}{Numeric: weights truncated at lower end at this weight}
+\item{weight.lower}{Numeric: weights truncated at lower end at this weight, default is \code{-Inf}}
 
 \item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value, default \code{TRUE}}
 
@@ -178,7 +178,7 @@ SEQopts(
 
 \item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data, default \code{TRUE}}
 
-\item{weight.upper}{Numeric: weights truncated at upper end at this weight}
+\item{weight.upper}{Numeric: weights truncated at upper end at this weight, default is \code{Inf}}
 
 \item{weighted}{Logical: whether or not to preform weighted analysis, default is \code{FALSE}}
 }
