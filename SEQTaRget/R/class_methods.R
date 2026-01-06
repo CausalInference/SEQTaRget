@@ -1,6 +1,6 @@
 #' Show method for S4 object - SEQoutput.
 #' 
-#' @param object A SEQoutput object - usually generated from \code{SEQuential}
+#' @param object A SEQoutput object - usually generated from [SEQuential()]
 #' @importFrom knitr kable
 #' @importMethodsFrom methods show
 #' 
