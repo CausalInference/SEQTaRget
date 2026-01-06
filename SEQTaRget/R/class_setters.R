@@ -138,6 +138,7 @@ parameter.simplifier <- function(params) {
 #' Output constructor
 #'
 #' @importFrom methods new
+#' @import data.table
 #' @keywords internal
 prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)

@@ -14,6 +14,7 @@
 #'
 #' @importFrom stats lm rbinom
 #' @importFrom fastglm fastglm
+#' @import data.table
 #'
 #' @returns A list of (very rough) estimates for the time required for SEQuential containing:
 #'          \itemize{
