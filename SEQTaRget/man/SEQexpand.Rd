@@ -2,7 +2,7 @@
 % Please edit documentation in R/SEQexpand.R
 \name{SEQexpand}
 \alias{SEQexpand}
-\title{Creates an expanded dataset for use with \code{SEQuential}}
+\title{Creates an expanded dataset for use with \code{\link[=SEQuential]{SEQuential()}}}
 \usage{
 SEQexpand(params)
 }
@@ -10,6 +10,6 @@ SEQexpand(params)
 \item{params}{SEQparams object built in the SEQuential function}
 }
 \description{
-Creates an expanded dataset for use with \code{SEQuential}
+Creates an expanded dataset for use with \code{\link[=SEQuential]{SEQuential()}}
 }
 \keyword{internal}

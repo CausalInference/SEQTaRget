@@ -6,7 +6,7 @@
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL){
+inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL) {
   covs <- switch(
     case,
     "default" = switch(
@@ -19,6 +19,11 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
       type,
       "numerator" = params@cense.numerator,
       "denominator" = params@cense.denominator
+    ),
+    "visit" = switch(
+      type,
+      "numerator" = params@visit.numerator,
+      "denominator" = params@visit.denominator
     ),
     "surv" = params@covariates
   )
@@ -54,7 +59,7 @@ prepare.data <- function(weight, params, type, model, case) {
         if (!is.na(params@excused.cols[[target]])) weight <- weight[get(params@excused.cols[[target]]) == 0, ]
       }
       
-      y <- if (!params@weight.preexpansion && (params@excused | params@deviation.excused)) weight[["censored"]] else weight[[params@treatment]]
+      y <- if (!params@weight.preexpansion && (params@excused || params@deviation.excused)) weight[["censored"]] else weight[[params@treatment]]
       X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     }
     
@@ -65,6 +70,14 @@ prepare.data <- function(weight, params, type, model, case) {
     
     weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
     y <- abs(weight[[params@cense]] - 1)
+    X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
+    
+  } else if (case == "visit") {
+    cols <- unlist(strsplit(ifelse(type == "numerator", params@visit.numerator, params@visit.denominator), "\\+|\\*"))
+    covs <- ifelse(type == "numerator", params@visit.numerator, params@visit.denominator)
+    
+    weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
+    y <- weight[[params@visit]]
     X <- model.matrix(as.formula(paste0("~", covs)), weight[, cols, with = FALSE])
     
   } else if (case == "surv") {

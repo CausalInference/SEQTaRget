@@ -10,7 +10,7 @@ hazard_ratio(object)
 \item{object}{SEQoutput object}
 }
 \value{
-list of hazard ratios
+List of hazard ratios
 }
 \description{
 Function to return hazard ratios from a SEQuential object

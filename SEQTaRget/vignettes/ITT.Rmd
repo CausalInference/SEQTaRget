@@ -10,20 +10,21 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
 Here, we'll go over some examples of using ITT. First we need to load the library before getting in to some sample use cases.
 
-```{r setup, eval=FALSE}
+```{r setup}
 library(SEQTaRget)
 ```
 
 ## ITT With 5 bootstrap samples
 
-```{r eval=FALSE}
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
+```{r}
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
                    bootstrap = TRUE,
@@ -43,12 +44,13 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")        # retrieve risk plot
-survival_data <- km_data(model)            # retrieve survival and risk data
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## ITT with 5 bootstrap samples and losses-to-followup
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,
@@ -71,13 +73,14 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 
 ## ITT with 5 bootstrap samples and competing events
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,
@@ -96,12 +99,13 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 
 ## ITT hazard ratio with 5 bootstrap samples and competing events
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
                    # ratio creation
                    km.curves = FALSE,
@@ -127,7 +131,7 @@ hazard_ratio(model)
 ```
 
 ## ITT with 5 bootstrap samples and competing events in subgroups defined by sex
-```{r, eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,     
@@ -147,5 +151,6 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```

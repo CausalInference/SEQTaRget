@@ -61,7 +61,10 @@ setClass("SEQopts",
     plot.type = "character",
     subgroup = "character",
     data.return = "logical",
-    weight.lag_condition = "logical"
+    weight.lag_condition = "logical",
+    visit = "character",
+    visit.numerator = "character",
+    visit.denominator = "character"
   ), prototype = list(
     deviation = FALSE,
     deviation.col = NA_character_,
@@ -70,7 +73,7 @@ setClass("SEQopts",
     deviation.excused_cols = list(),
     parallel = FALSE,
     nthreads = data.table::getDTthreads(),
-    ncores = parallelly::availableCores(),
+    ncores = parallelly::availableCores(omit = 1L),
     bootstrap = FALSE,
     bootstrap.sample = 0.8,
     bootstrap.CI_method = "se",
@@ -119,7 +122,10 @@ setClass("SEQopts",
     subgroup = NA_character_,
     data.return = FALSE,
     weight.lag_condition = TRUE,
-    selection.first_trial = FALSE
+    selection.first_trial = FALSE,
+    visit = NA_character_,
+    visit.numerator = NA_character_,
+    visit.denominator = NA_character_
   )
 )
 

@@ -19,7 +19,7 @@ SEQuential(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, will preform expansion according to arguments passed to \code{options}}
+\item{data}{data.frame or data.table, will preform expansion according to arguments passed through the \code{options} argument}
 
 \item{id.col}{String: column name of the id column}
 
@@ -35,23 +35,23 @@ SEQuential(
 
 \item{fixed.cols}{List: column names for fixed columns}
 
-\item{method}{String: method of analysis to preform}
+\item{method}{String: method of analysis to preform; should be one of \code{"ITT"}, \code{"dose-response"}, or \code{"censoring"}}
 
-\item{options}{List: optional list of parameters from \code{SEQopts}}
+\item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 
-\item{verbose}{Logical: if TRUE, cats progress to console}
+\item{verbose}{Logical: if TRUE, cats progress to console, default is \code{TRUE}}
 }
 \value{
 An S4 object of class SEQoutput
 }
 \description{
-`SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQTaRget/
+\code{SEQuential} is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at \url{https://causalinference.github.io/SEQTaRget/}
 }
 \details{
-Implemention of sequential trial emulation for the analysis of observational databases. 
-The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
-and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
-can be used to estimate observational analogs of intention-to-treat 
+Implementation of sequential trial emulation for the analysis of observational databases.
+The SEQuential software accommodates time-varying treatments and confounders, as well as binary
+and failure time outcomes. SEQ allows to compare both static and dynamic strategies,
+can be used to estimate observational analogs of intention-to-treat
 and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 }
 \examples{

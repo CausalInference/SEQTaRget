@@ -3,6 +3,7 @@
 #' @importFrom fastglm fastglm
 #' @importFrom stats as.formula model.matrix
 #' @importFrom splines ns
+#' @import data.table
 #'
 #' @keywords internal
 internal.model <- function(data, params) {

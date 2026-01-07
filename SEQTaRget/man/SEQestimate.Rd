@@ -19,7 +19,7 @@ SEQestimate(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}}
+\item{data}{data.frame or data.table, if not already expanded with \code{\link[=SEQexpand]{SEQexpand()}}, will preform expansion according to arguments passed to either \code{params} or \code{...}}
 
 \item{id.col}{String: column name of the id column}
 
@@ -37,17 +37,17 @@ SEQestimate(
 
 \item{method}{String: method of analysis to preform}
 
-\item{options}{List: optional list of parameters from \code{SEQopts}}
+\item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 
-\item{verbose}{Logical: if TRUE, cats progress to console}
+\item{verbose}{Logical: if \code{TRUE}, cats progress to console, default is \code{TRUE}}
 }
 \value{
 A list of (very rough) estimates for the time required for SEQuential containing:
-         \itemize{
-             \item \code{modelTime} estimated time used when running models
-             \item \code{expansionTime} estimated time used when expanding data
-             \item \code{totalTime} sum of model and expansion time
-         }
+\itemize{
+\item \code{modelTime} estimated time used when running models
+\item \code{expansionTime} estimated time used when expanding data
+\item \code{totalTime} sum of model and expansion time
+}
 }
 \description{
 Estimate the (very rough) time to run SEQuential analysis on current machine

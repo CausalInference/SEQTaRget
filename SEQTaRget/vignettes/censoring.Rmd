@@ -16,14 +16,14 @@ knitr::opts_chunk$set(
 
 Here, we'll go over some examples of using per-protocol, censoring. First we need to load the library before getting in to some sample use cases.
 
-```{r setup, eval=FALSE}
+```{r setup}
 library(SEQTaRget)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r eval=FALSE}
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
+```{r}
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
                    weighted = TRUE, 
@@ -47,11 +47,13 @@ model <- SEQuential(data,
 km_curve(model, plot.type = "risk")
 # retrieve survival and risk data
 survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE, 
                    # tells SEQuential to build weights from the post-expanded data
@@ -70,12 +72,13 @@ model <- SEQuential(data,
                     options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = TRUE,
@@ -100,18 +103,20 @@ model <- SEQuential(data,
                     options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
                    excused.cols = c("excusedZero", "excusedOne"), 
-                   treat.level = c(0, 1))
+                   treat.level = c(0, 1),
+                   weight.p99 = TRUE)
 data <- SEQdata                                
 model <- SEQuential(data, 
                     id.col = "ID",
@@ -125,12 +130,13 @@ model <- SEQuential(data,
                     options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -153,18 +159,20 @@ model <- SEQuential(data,
                     options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
 
-```{r eval=FALSE}
+```{r}
 options <- SEQopts(# tell SEQuential to run hazard ratios
                    hazard = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
-                   excused.cols = c("excusedZero", "excusedOne"))
+                   excused.cols = c("excusedZero", "excusedOne"),
+                   weight.p99 = TRUE)
 
 data <- SEQdata                              
 model <- SEQuential(data,
@@ -177,5 +185,5 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
-
+hazard_ratio(model)
 ```

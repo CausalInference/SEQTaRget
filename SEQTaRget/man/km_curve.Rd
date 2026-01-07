@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_methods.R
 \name{km_curve}
 \alias{km_curve}
-\title{Function to print kaplan-meier curves}
+\title{Function to print Kaplan-Meier curves}
 \usage{
 km_curve(
   object,
@@ -30,5 +30,5 @@ km_curve(
 ggplot object of plot \code{plot.type}
 }
 \description{
-Function to print kaplan-meier curves
+Function to print Kaplan-Meier curves
 }

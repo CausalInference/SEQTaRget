@@ -1,13 +1,13 @@
 #' @title SEQuential trial emulation
-#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at https://causalinference.github.io/SEQTaRget/
+#' @description `SEQuential` is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at <https://causalinference.github.io/SEQTaRget/>
 #' 
-#' @details Implemention of sequential trial emulation for the analysis of observational databases. 
+#' @details Implementation of sequential trial emulation for the analysis of observational databases. 
 #' The SEQuential software accommodates time-varying treatments and confounders, as well as binary 
 #' and failure time outcomes. SEQ allows to compare both static and dynamic strategies, 
 #' can be used to estimate observational analogs of intention-to-treat 
 #' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
-#' @param data data.frame or data.table, will preform expansion according to arguments passed to \code{options}
+#' @param data data.frame or data.table, will preform expansion according to arguments passed through the `options` argument
 #' @param id.col String: column name of the id column
 #' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
@@ -15,9 +15,9 @@
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
 #' @param fixed.cols List: column names for fixed columns
-#' @param method String: method of analysis to preform
-#' @param options List: optional list of parameters from \code{SEQopts}
-#' @param verbose Logical: if TRUE, cats progress to console 
+#' @param method String: method of analysis to preform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
+#' @param options List: optional list of parameters from [SEQopts()]
+#' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
 #' @import data.table doRNG
 #' @importFrom methods is
@@ -79,13 +79,18 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params <- parameter.simplifier(params)
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
-  if (params@weighted & params@method != "ITT") {
+  if (params@weighted && params@method != "ITT") {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
   if (params@LTFU) {
     if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")
     if (is.na(params@cense.denominator)) params@cense.denominator <- create.default.LTFU.covariates(params, "denominator")
+  }
+  if (!is.na(params@visit)) {
+    # Visit uses the same params as LTFU unless otherwise specified
+    if (is.na(params@visit.numerator)) params@visit.numerator <- create.default.LTFU.covariates(params, "numerator")
+    if (is.na(params@visit.denominator)) params@visit.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
 
   # Parallel Setup ==================================
@@ -158,7 +163,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- lapply(analytic, function(x) x$model[[i]])
         
       if (params@km.curves) {
-        if (is.na(params@subgroup) & params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+        if (is.na(params@subgroup) && params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
@@ -180,8 +185,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     filter <- sort(unique(data[[params@subgroup]]))
-    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter)
-    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter)
+    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
+    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
   }
   
   # Output ======================================================

@@ -137,12 +137,12 @@ feel free to open a discussion.
 Community members are welcome to contribute to this package through
 several different avenues-
 
-- Asking/Answering questions about the package via [Github
+- Asking/Answering questions about the package via [GitHub
   Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a).
   These can be questions about analysis methods, future planned
   developments for the package, or requests for clarity on package
   internals.
-- Contributing to [Github
+- Contributing to [GitHub
   Issues](https://github.com/CausalInference/SEQTaRget/issues) if a bug
   is found. We have a guided bug report to help us resolve unintended
   pests quickly.

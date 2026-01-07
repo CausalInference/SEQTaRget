@@ -10,7 +10,7 @@ compevent(object)
 \item{object}{SEQoutput object}
 }
 \value{
-list of fastglm objects
+List of fastglm objects
 }
 \description{
 Function to return competing event models from a SEQuential object

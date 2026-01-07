@@ -10,7 +10,7 @@ covariates(object)
 \item{object}{object of class SEQoutput}
 }
 \value{
-list of SEQuential covariates
+List of SEQuential covariates
 }
 \description{
 Retrieves Outcome, Numerator, and Denominator Covariates

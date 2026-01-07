@@ -1,3 +1,5 @@
+library(data.table)
+
 test_that("Post-Expansion Excused Censoring", {
   data <- copy(SEQdata)
   data[N > 10, deviation := TRUE]

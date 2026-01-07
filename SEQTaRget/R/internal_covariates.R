@@ -24,7 +24,7 @@ create.default.covariates <- function(params) {
   }
   if (params@trial.include) trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
   if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared)) else followup <- NULL
-  if ((params@followup.spline | params@followup.class) & !params@followup.include) followup <- "followup" 
+  if ((params@followup.spline || params@followup.class) && !params@followup.include) followup <- "followup" 
 
   if (params@method == "ITT") {
     out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
@@ -34,18 +34,18 @@ create.default.covariates <- function(params) {
   if (params@weighted) {
     if (params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(dose, followup, trial, fixed, interaction.dose), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, interaction), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, interaction), collapse = "+")
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, interaction), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- paste0(c(tx_bas, followup, trial, interaction), collapse = "+")
     } else if (!params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(dose, followup, trial, fixed, timeVarying_bas, interaction.dose), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
     }
     return(out)
   } else {
     if (params@method == "dose-response") out <- paste0(c(dose, followup, trial, fixed, timeVarying_bas, interaction.dose), collapse = "+")
-    if (params@method == "censoring" & !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
-    if (params@method == "censoring" & params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+    if (params@method == "censoring" && !params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
+    if (params@method == "censoring" && params@excused) out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")
     return(out)
     }
 }
@@ -73,22 +73,22 @@ create.default.weight.covariates <- function(params, type) {
   if (type == "numerator") {
     if (params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, time), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, time), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- NA_character_
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(fixed, time), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- NA_character_
     } else if (!params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- paste0(c(fixed, timeVarying_bas, followup, trial), collapse = "+")
     }
   } else if (type == "denominator") {
     if (params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying, time), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- paste0(c(fixed, timeVarying, time), collapse = "+")
     } else if (!params@weight.preexpansion) {
       if (params@method == "dose-response") out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & !params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
-      if (params@method == "censoring" & params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" && !params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
+      if (params@method == "censoring" && params@excused) out <- paste0(c(fixed, timeVarying, timeVarying_bas, followup, trial), collapse = "+")
     }
   }
   return(out)
@@ -97,7 +97,7 @@ create.default.weight.covariates <- function(params, type) {
 #' Internal Function to create 'default' loss-to-followup formula
 #'
 #' @keywords internal
-create.default.LTFU.covariates <- function(params, type){
+create.default.LTFU.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL

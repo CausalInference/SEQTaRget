@@ -10,7 +10,7 @@ risk_data(object)
 \item{object}{SEQoutput object}
 }
 \value{
-a data table of risk information at every followup
+A data table of risk information at the end of followup
 }
 \description{
 Function to return risk information from a SEQuential object

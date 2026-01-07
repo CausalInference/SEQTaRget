@@ -1,6 +1,6 @@
 #' Estimate the (very rough) time to run SEQuential analysis on current machine
 #'
-#' @param data data.frame or data.table, if not already expanded with \code{SEQexpand}, will preform expansion according to arguments passed to either \code{params} or \code{...}
+#' @param data data.frame or data.table, if not already expanded with [SEQexpand()], will preform expansion according to arguments passed to either \code{params} or \code{...}
 #' @param id.col String: column name of the id column
 #' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
@@ -9,11 +9,12 @@
 #' @param time_varying.cols List: column names for time varying columns
 #' @param fixed.cols List: column names for fixed columns
 #' @param method String: method of analysis to preform
-#' @param options List: optional list of parameters from \code{SEQopts}
-#' @param verbose Logical: if TRUE, cats progress to console 
+#' @param options List: optional list of parameters from [SEQopts()]
+#' @param verbose Logical: if `TRUE`, cats progress to console, default is `TRUE`
 #'
 #' @importFrom stats lm rbinom
 #' @importFrom fastglm fastglm
+#' @import data.table
 #'
 #' @returns A list of (very rough) estimates for the time required for SEQuential containing:
 #'          \itemize{

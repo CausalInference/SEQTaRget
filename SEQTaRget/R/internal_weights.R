@@ -22,7 +22,8 @@ internal.weights <- function(DT, data, params) {
     cense1 <- cense1.numerator <- cense1.denominator <- NULL
     followup <- NULL
     isExcused <- NULL
-
+    visit <- visit.numerator <- visit.denominator <- NULL
+    
     # Setting up weight data ====================================
     if (!params@weight.preexpansion) {
       subtable.kept <- c(params@treatment, params@id, params@time)
@@ -50,17 +51,30 @@ internal.weights <- function(DT, data, params) {
     }
 
     # Modeling ======================================================
-    if (params@method == "ITT" | params@LTFU) {
+    if (params@method == "ITT" || params@LTFU || !is.na(params@visit)) {
       model.data <- copy(weight)
-      if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
-
-      cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
-      cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
-
-      cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
-      cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
-
-      rm(cense.numerator.data, cense.denominator.data)
+      if (params@LTFU) {
+        if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
+        
+        cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
+        cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
+        
+        cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        
+        rm(cense.numerator.data, cense.denominator.data)
+      }
+      
+      if (!is.na(params@visit)) {
+        visit.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "visit")
+        visit.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "visit")
+        
+        visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        
+        rm(visit.numerator.data, visit.denominator.data)
+      }
+      
     }
 
     # Initialize storage for all models
@@ -166,9 +180,16 @@ internal.weights <- function(DT, data, params) {
                          cense1.denominator = inline.pred(cense.denominator, .SD, params, "denominator", "LTFU"))
                  ][, cense1 := cense1.numerator / cense1.denominator]
     }
-    
+
+    if (!is.na(params@visit)) {
+      if (params@method == "ITT") out <- out[, `:=` (numerator = 1, denominator = 1)]
+      out <- out[, `:=` (visit.numerator = inline.pred(visit.numerator, .SD, params, "numerator", "visit"),
+                         visit.denominator = inline.pred(visit.denominator, .SD, params, "denominator", "visit"))
+      ][, visit := visit.numerator / visit.denominator]
+    }
+
     if (params@time %in% names(out)) setnames(out, params@time, "period")
-    kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "cense2")
+    kept <- c("numerator", "denominator", "period", "trial", params@id, "cense1", "visit")
     kept <- kept[kept %in% names(out)]
     out <- out[, kept, with = FALSE]
 
@@ -177,7 +198,7 @@ internal.weights <- function(DT, data, params) {
     if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
       coef.numerator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.numerator[[i]] <- clean_fastglm(coef.numerator[[i]])
+        coef.numerator[[i]] <- clean_fastglm(numerator_models[[i]])
       }
       weight.info@coef.numerator <- coef.numerator
     }
