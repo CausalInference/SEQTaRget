@@ -51,7 +51,7 @@ internal.weights <- function(DT, data, params) {
     }
 
     # Modeling ======================================================
-    if (params@method == "ITT") {
+    if (params@method == "ITT" || params@LTFU || !is.na(params@visit)) {
       model.data <- copy(weight)
       if (params@LTFU) {
         if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
