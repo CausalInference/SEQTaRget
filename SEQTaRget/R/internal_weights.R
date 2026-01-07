@@ -51,17 +51,30 @@ internal.weights <- function(DT, data, params) {
     }
 
     # Modeling ======================================================
-    if (params@method == "ITT" | params@LTFU) {
+    if (params@method == "ITT") {
       model.data <- copy(weight)
-      if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
-
-      cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
-      cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
-
-      cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
-      cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
-
-      rm(cense.numerator.data, cense.denominator.data)
+      if (params@LTFU) {
+        if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
+        
+        cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
+        cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
+        
+        cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        
+        rm(cense.numerator.data, cense.denominator.data)
+      }
+      
+      if (!is.na(params@visit)) {
+        visit.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "visit")
+        visit.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "visit")
+        
+        visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        
+        rm(visit.numerator.data, visit.denominator.data)
+      }
+      
     }
 
     # Initialize storage for all models
