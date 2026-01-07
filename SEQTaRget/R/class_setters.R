@@ -119,8 +119,8 @@ parameter.simplifier <- function(params) {
     params@weighted <- TRUE
   }
 
-  if (params@method == "ITT" && params@weighted && !params@LTFU) {
-    warning("Without LTFU, weighted ITT model is not supported, automatically changed to weighted = FALSE")
+  if (params@method == "ITT" && params@weighted && !params@LTFU && is.na(params@visit)) {
+    warning("Without LTFU or Visit, weighted ITT model is not supported, automatically changed to weighted = FALSE")
     params@weighted <- FALSE
   }
   if (params@followup.class && params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
