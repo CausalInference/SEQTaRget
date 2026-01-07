@@ -77,7 +77,7 @@
 <span>  indicator.squared <span class="op">=</span> <span class="st">"_sq"</span>,</span>
 <span>  km.curves <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  multinomial <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  ncores <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
+<span>  ncores <span class="op">=</span> <span class="fu">availableCores</span><span class="op">(</span>omit <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>,</span>
 <span>  nthreads <span class="op">=</span> <span class="fu">getDTthreads</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -94,6 +94,9 @@
 <span>  survival.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  treat.level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  trial.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  visit <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  visit.denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  visit.numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  weight.eligible_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weight.lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
 <span>  weight.lag_condition <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -109,23 +112,23 @@
 
 
 <dl><dt id="arg-bootstrap">bootstrap<a class="anchor" aria-label="anchor" href="#arg-bootstrap"></a></dt>
-<dd><p>Logical: defines if SEQuential should run bootstrapping, default is FALSE</p></dd>
+<dd><p>Logical: defines if <code><a href="SEQuential.html">SEQuential()</a></code> should run bootstrapping, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-bootstrap-nboot">bootstrap.nboot<a class="anchor" aria-label="anchor" href="#arg-bootstrap-nboot"></a></dt>
-<dd><p>Integer: number of bootstraps</p></dd>
+<dd><p>Integer: number of bootstraps, default is <code>100</code></p></dd>
 
 
 <dt id="arg-bootstrap-sample">bootstrap.sample<a class="anchor" aria-label="anchor" href="#arg-bootstrap-sample"></a></dt>
-<dd><p>Numeric: percentage of data to use when bootstrapping, should in [0, 1], default is 0.8</p></dd>
+<dd><p>Numeric: percentage of data to use when bootstrapping, should be in [0, 1], default is <code>0.8</code></p></dd>
 
 
 <dt id="arg-bootstrap-ci">bootstrap.CI<a class="anchor" aria-label="anchor" href="#arg-bootstrap-ci"></a></dt>
-<dd><p>Numeric: defines the confidence interval after bootstrapping, default is 0.95 (95% CI)</p></dd>
+<dd><p>Numeric: defines the confidence interval after bootstrapping, default is <code>0.95</code> (95% CI)</p></dd>
 
 
 <dt id="arg-bootstrap-ci-method">bootstrap.CI_method<a class="anchor" aria-label="anchor" href="#arg-bootstrap-ci-method"></a></dt>
-<dd><p>Character: selects which way to calculate bootstraps confidence intervals ("se", "percentile")</p></dd>
+<dd><p>Character: selects which way to calculate bootstraps confidence intervals (<code>"se"</code>, <code>"percentile"</code>), default is <code>"se"</code></p></dd>
 
 
 <dt id="arg-cense">cense<a class="anchor" aria-label="anchor" href="#arg-cense"></a></dt>
@@ -153,7 +156,7 @@
 
 
 <dt id="arg-data-return">data.return<a class="anchor" aria-label="anchor" href="#arg-data-return"></a></dt>
-<dd><p>Logical: whether to return the expanded dataframe with weighting information</p></dd>
+<dd><p>Logical: whether to return the expanded dataframe with weighting information, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
@@ -161,7 +164,7 @@
 
 
 <dt id="arg-deviation">deviation<a class="anchor" aria-label="anchor" href="#arg-deviation"></a></dt>
-<dd><p>Logical: create switch based on deviation from column <code>deviation.col</code></p></dd>
+<dd><p>Logical: create switch based on deviation from column <code>deviation.col</code>, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-deviation-col">deviation.col<a class="anchor" aria-label="anchor" href="#arg-deviation-col"></a></dt>
@@ -173,7 +176,7 @@
 
 
 <dt id="arg-deviation-excused">deviation.excused<a class="anchor" aria-label="anchor" href="#arg-deviation-excused"></a></dt>
-<dd><p>Logical: whether deviations should be excused by <code>deviation.excused_cols</code></p></dd>
+<dd><p>Logical: whether deviations should be excused by <code>deviation.excused_cols</code>, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-deviation-excused-cols">deviation.excused_cols<a class="anchor" aria-label="anchor" href="#arg-deviation-excused-cols"></a></dt>
@@ -181,7 +184,7 @@
 
 
 <dt id="arg-excused">excused<a class="anchor" aria-label="anchor" href="#arg-excused"></a></dt>
-<dd><p>Logical: in the case of censoring, whether there is an excused condition</p></dd>
+<dd><p>Logical: in the case of censoring, whether there is an excused condition, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-excused-cols">excused.cols<a class="anchor" aria-label="anchor" href="#arg-excused-cols"></a></dt>
@@ -189,31 +192,31 @@
 
 
 <dt id="arg-fastglm-method">fastglm.method<a class="anchor" aria-label="anchor" href="#arg-fastglm-method"></a></dt>
-<dd><p>Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV)</p></dd>
+<dd><p>Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is <code>2L</code></p></dd>
 
 
 <dt id="arg-followup-class">followup.class<a class="anchor" aria-label="anchor" href="#arg-followup-class"></a></dt>
-<dd><p>Logical: treat followup as a class, e.g. expands every time to it's own indicator column</p></dd>
+<dd><p>Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-followup-include">followup.include<a class="anchor" aria-label="anchor" href="#arg-followup-include"></a></dt>
-<dd><p>Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model</p></dd>
+<dd><p>Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is <code>TRUE</code></p></dd>
 
 
 <dt id="arg-followup-max">followup.max<a class="anchor" aria-label="anchor" href="#arg-followup-max"></a></dt>
-<dd><p>Numeric: maximum time to expand about, default is Inf (no maximum)</p></dd>
+<dd><p>Numeric: maximum time to expand about, default is <code>Inf</code> (no maximum)</p></dd>
 
 
 <dt id="arg-followup-min">followup.min<a class="anchor" aria-label="anchor" href="#arg-followup-min"></a></dt>
-<dd><p>Numeric: minimum time to expand aboud, default is -Inf (no minimum)</p></dd>
+<dd><p>Numeric: minimum time to expand about, default is <code>-Inf</code> (no minimum)</p></dd>
 
 
 <dt id="arg-followup-spline">followup.spline<a class="anchor" aria-label="anchor" href="#arg-followup-spline"></a></dt>
-<dd><p>Logical: treat followup as a cubic spline</p></dd>
+<dd><p>Logical: treat followup as a cubic spline, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-hazard">hazard<a class="anchor" aria-label="anchor" href="#arg-hazard"></a></dt>
-<dd><p>Logical: hazard error calculation instead of survival estimation</p></dd>
+<dd><p>Logical: hazard error calculation instead of survival estimation, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-indicator-baseline">indicator.baseline<a class="anchor" aria-label="anchor" href="#arg-indicator-baseline"></a></dt>
@@ -225,19 +228,19 @@
 
 
 <dt id="arg-km-curves">km.curves<a class="anchor" aria-label="anchor" href="#arg-km-curves"></a></dt>
-<dd><p>Logical: Kaplan-Meier survival curve creation and data return</p></dd>
+<dd><p>Logical: Kaplan-Meier survival curve creation and data return, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-multinomial">multinomial<a class="anchor" aria-label="anchor" href="#arg-multinomial"></a></dt>
-<dd><p>Logical: whether to expect multilevel treatment values</p></dd>
+<dd><p>Logical: whether to expect multilevel treatment values, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
-<dd><p>Integer: number of cores to use in parallel processing, default is one less than system max</p></dd>
+<dd><p>Integer: number of cores to use in parallel processing, default is one less than system max, see <code><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">parallelly::availableCores()</a></code></p></dd>
 
 
 <dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
-<dd><p>Integer: number of threads to use for data.table processing</p></dd>
+<dd><p>Integer: number of threads to use for data.table processing, default is <code><a href="https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html" class="external-link">data.table::getDTthreads()</a></code></p></dd>
 
 
 <dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
@@ -245,7 +248,7 @@
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
-<dd><p>Logical: define if the SEQuential process is run in parallel, default is FALSE</p></dd>
+<dd><p>Logical: define if the SEQuential process is run in parallel, default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-plot-colors">plot.colors<a class="anchor" aria-label="anchor" href="#arg-plot-colors"></a></dt>
@@ -265,7 +268,7 @@
 
 
 <dt id="arg-plot-type">plot.type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
-<dd><p>Character: Type of plot to create if <code>km.curves = TRUE</code>, available options are 'survival', 'risk', and 'inc' (in the case of censoring)</p></dd>
+<dd><p>Character: Type of plot to create if <code>km.curves = TRUE</code>, available options are <code>'survival'</code> (the default), <code>'risk'</code>, and <code>'inc'</code> (in the case of censoring)</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -273,15 +276,15 @@
 
 
 <dt id="arg-selection-first-trial">selection.first_trial<a class="anchor" aria-label="anchor" href="#arg-selection-first-trial"></a></dt>
-<dd><p>Logical: selects only the first eligible trial in the expanded dataset</p></dd>
+<dd><p>Logical: selects only the first eligible trial in the expanded dataset, default <code>FALSE</code></p></dd>
 
 
 <dt id="arg-selection-prob">selection.prob<a class="anchor" aria-label="anchor" href="#arg-selection-prob"></a></dt>
-<dd><p>Numeric: percent of total IDs to select for <code>selection.random</code>, should be bound [0, 1]</p></dd>
+<dd><p>Numeric: percent of total IDs to select for <code>selection.random</code>, should be bound [0, 1], default is <code>0.8</code></p></dd>
 
 
 <dt id="arg-selection-random">selection.random<a class="anchor" aria-label="anchor" href="#arg-selection-random"></a></dt>
-<dd><p>Logical: randomly selects IDs with replacement to run analysis</p></dd>
+<dd><p>Logical: randomly selects IDs with replacement to run analysis, default <code>FALSE</code></p></dd>
 
 
 <dt id="arg-subgroup">subgroup<a class="anchor" aria-label="anchor" href="#arg-subgroup"></a></dt>
@@ -289,15 +292,27 @@
 
 
 <dt id="arg-survival-max">survival.max<a class="anchor" aria-label="anchor" href="#arg-survival-max"></a></dt>
-<dd><p>Numeric: maximum time for survival curves, default is Inf (no maximum)</p></dd>
+<dd><p>Numeric: maximum time for survival curves, default is <code>Inf</code> (no maximum)</p></dd>
 
 
 <dt id="arg-treat-level">treat.level<a class="anchor" aria-label="anchor" href="#arg-treat-level"></a></dt>
-<dd><p>List: treatment levels to compare</p></dd>
+<dd><p>List: treatment levels to compare, default is <code>c(0, 1)</code></p></dd>
 
 
 <dt id="arg-trial-include">trial.include<a class="anchor" aria-label="anchor" href="#arg-trial-include"></a></dt>
-<dd><p>Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model</p></dd>
+<dd><p>Logical: whether or not to include 'trial' and 'trial_squared' in the outcome model, default is <code>TRUE</code></p></dd>
+
+
+<dt id="arg-visit">visit<a class="anchor" aria-label="anchor" href="#arg-visit"></a></dt>
+<dd><p>String: column name for visit indicator variable, e.g. <code>"visit"</code></p></dd>
+
+
+<dt id="arg-visit-denominator">visit.denominator<a class="anchor" aria-label="anchor" href="#arg-visit-denominator"></a></dt>
+<dd><p>String: visit denominator covariates to the right hand side of a formula object</p></dd>
+
+
+<dt id="arg-visit-numerator">visit.numerator<a class="anchor" aria-label="anchor" href="#arg-visit-numerator"></a></dt>
+<dd><p>String: visit numerator covariates to the right hand side of a formula object</p></dd>
 
 
 <dt id="arg-weight-eligible-cols">weight.eligible_cols<a class="anchor" aria-label="anchor" href="#arg-weight-eligible-cols"></a></dt>
@@ -305,11 +320,11 @@
 
 
 <dt id="arg-weight-lower">weight.lower<a class="anchor" aria-label="anchor" href="#arg-weight-lower"></a></dt>
-<dd><p>Numeric: weights truncated at lower end at this weight</p></dd>
+<dd><p>Numeric: weights truncated at lower end at this weight, default is <code>-Inf</code></p></dd>
 
 
 <dt id="arg-weight-lag-condition">weight.lag_condition<a class="anchor" aria-label="anchor" href="#arg-weight-lag-condition"></a></dt>
-<dd><p>Logical: whether weights should be conditioned on treatment lag value</p></dd>
+<dd><p>Logical: whether weights should be conditioned on treatment lag value, default <code>TRUE</code></p></dd>
 
 
 <dt id="arg-weight-p-">weight.p99<a class="anchor" aria-label="anchor" href="#arg-weight-p-"></a></dt>
@@ -317,15 +332,15 @@
 
 
 <dt id="arg-weight-preexpansion">weight.preexpansion<a class="anchor" aria-label="anchor" href="#arg-weight-preexpansion"></a></dt>
-<dd><p>Logical: whether weighting should be done on pre-expanded data</p></dd>
+<dd><p>Logical: whether weighting should be done on pre-expanded data, default <code>TRUE</code></p></dd>
 
 
 <dt id="arg-weight-upper">weight.upper<a class="anchor" aria-label="anchor" href="#arg-weight-upper"></a></dt>
-<dd><p>Numeric: weights truncated at upper end at this weight</p></dd>
+<dd><p>Numeric: weights truncated at upper end at this weight, default is <code>Inf</code></p></dd>
 
 
 <dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>
-<dd><p>Logical: whether or not to preform weighted analysis, default is FALSE</p></dd>
+<dd><p>Logical: whether or not to preform weighted analysis, default is <code>FALSE</code></p></dd>
 
 </dl></div>
     <div class="section level2">

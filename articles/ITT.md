@@ -10,7 +10,7 @@ library(SEQTaRget)
 ## ITT With 5 bootstrap samples
 
 ``` r
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
                    bootstrap = TRUE,
@@ -30,7 +30,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")        # retrieve risk plot
-survival_data <- km_data(model)            # retrieve survival and risk data
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## ITT with 5 bootstrap samples and losses-to-followup
@@ -58,7 +59,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## ITT with 5 bootstrap samples and competing events
@@ -82,7 +84,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## ITT hazard ratio with 5 bootstrap samples and competing events
@@ -134,5 +137,6 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```

@@ -1,6 +1,7 @@
-# Creates an expanded dataset for use with `SEQuential`
+# Creates an expanded dataset for use with [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
 
-Creates an expanded dataset for use with `SEQuential`
+Creates an expanded dataset for use with
+[`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
 
 ## Usage
 

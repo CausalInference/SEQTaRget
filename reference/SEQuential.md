@@ -1,8 +1,8 @@
 # SEQuential trial emulation
 
-\`SEQuential\` is an all-in-one API to SEQuential analysis, returning a
+`SEQuential` is an all-in-one API to SEQuential analysis, returning a
 SEQoutput object of results. More specific examples can be found on
-pages at https://causalinference.github.io/SEQTaRget/
+pages at <https://causalinference.github.io/SEQTaRget/>
 
 ## Usage
 
@@ -27,7 +27,7 @@ SEQuential(
 - data:
 
   data.frame or data.table, will preform expansion according to
-  arguments passed to `options`
+  arguments passed through the `options` argument
 
 - id.col:
 
@@ -59,15 +59,17 @@ SEQuential(
 
 - method:
 
-  String: method of analysis to preform
+  String: method of analysis to preform; should be one of `"ITT"`,
+  `"dose-response"`, or `"censoring"`
 
 - options:
 
-  List: optional list of parameters from `SEQopts`
+  List: optional list of parameters from
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
 
 - verbose:
 
-  Logical: if TRUE, cats progress to console
+  Logical: if TRUE, cats progress to console, default is `TRUE`
 
 ## Value
 
@@ -75,7 +77,7 @@ An S4 object of class SEQoutput
 
 ## Details
 
-Implemention of sequential trial emulation for the analysis of
+Implementation of sequential trial emulation for the analysis of
 observational databases. The SEQuential software accommodates
 time-varying treatments and confounders, as well as binary and failure
 time outcomes. SEQ allows to compare both static and dynamic strategies,

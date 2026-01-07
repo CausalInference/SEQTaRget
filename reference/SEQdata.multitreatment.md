@@ -1,6 +1,8 @@
-# Simulated multitreatment example data for SEQuential multinomial models
+# Simulated multitreatment example data for [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md) multinomial models
 
-Simulated multitreatment example data for SEQuential multinomial models
+Simulated multitreatment example data for
+[`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
+multinomial models
 
 ## Usage
 
@@ -39,15 +41,15 @@ A dataframe with 5,976 rows and 11 columns:
 
 - N:
 
-  Numeric: Normal random variable from N\\10,5\\
+  Numeric: Normal random variable from N(10,5)
 
 - L:
 
-  Numeric: 4% continuously increase from U\\0, 1\\
+  Numeric: 4% continuously increase from U(0, 1)
 
 - P:
 
-  Numeric: 2% continuously decrease from U\\9, 10\\
+  Numeric: 2% continuously decrease from U(9, 10)
 
 - excusedOne:
 

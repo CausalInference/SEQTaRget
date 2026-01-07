@@ -16,4 +16,4 @@ diagnostics(object)
 
 ## Value
 
-list of diagnostic tables
+List of diagnostic tables

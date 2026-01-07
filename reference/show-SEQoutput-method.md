@@ -13,7 +13,8 @@ show(object)
 
 - object:
 
-  A SEQoutput object - usually generated from `SEQuential`
+  A SEQoutput object - usually generated from
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
 
 ## Value
 

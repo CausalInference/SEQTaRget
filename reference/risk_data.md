@@ -16,4 +16,4 @@ risk_data(object)
 
 ## Value
 
-a data table of risk information at every followup
+A data table of risk information at the end of followup

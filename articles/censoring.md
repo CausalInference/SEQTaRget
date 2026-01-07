@@ -11,7 +11,7 @@ library(SEQTaRget)
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
 ``` r
-options <- SEQopts(# tells SEQuential to create kaplan meier curves
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
                    weighted = TRUE, 
@@ -30,11 +30,41 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Non-required columns provided, pruning for efficiency
+#> Pruned
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> censoring model created successfully
+#> Creating Survival curves
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> Completed
 
 # retrieve risk plot
 km_curve(model, plot.type = "risk")
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> [[1]]
+```
+
+![](censoring_files/figure-html/unnamed-chunk-2-1.png)
+
+``` r
 # retrieve survival and risk data
 survival_data <- km_data(model)
+risk_data(model)
+#> [[1]]
+#>       Method      A      Risk
+#>       <char> <char>     <num>
+#> 1: censoring      0 0.6596589
+#> 2: censoring      1 0.9243520
+risk_comparison(model)
+#> [[1]]
+#>       A_x    A_y Risk Ratio Risk Difference
+#>    <fctr> <fctr>      <num>           <num>
+#> 1: risk_0 risk_1  1.4012576       0.2646931
+#> 2: risk_1 risk_0  0.7136447      -0.2646931
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
@@ -56,9 +86,38 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Non-required columns provided, pruning for efficiency
+#> Pruned
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> censoring model created successfully
+#> Creating Survival curves
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> Completed
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> [[1]]
+```
+
+![](censoring_files/figure-html/unnamed-chunk-3-1.png)
+
+``` r
+risk_data(model)
+#> [[1]]
+#>       Method      A      Risk
+#>       <char> <char>     <num>
+#> 1: censoring      0 0.6533049
+#> 2: censoring      1 0.9281893
+risk_comparison(model)
+#> [[1]]
+#>       A_x    A_y Risk Ratio Risk Difference
+#>    <fctr> <fctr>      <num>           <num>
+#> 1: risk_0 risk_1  1.4207598       0.2748844
+#> 2: risk_1 risk_0  0.7038488      -0.2748844
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -86,9 +145,36 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> censoring model created successfully
+#> Creating Survival curves
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> Completed
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> [[1]]
+```
+
+![](censoring_files/figure-html/unnamed-chunk-4-1.png)
+
+``` r
+risk_data(model)
+#> [[1]]
+#>       Method      A      Risk
+#>       <char> <char>     <num>
+#> 1: censoring      0 0.9647942
+#> 2: censoring      1 0.9627635
+risk_comparison(model)
+#> [[1]]
+#>       A_x    A_y Risk Ratio Risk Difference
+#>    <fctr> <fctr>      <num>           <num>
+#> 1: risk_0 risk_1  0.9978953    -0.002030621
+#> 2: risk_1 risk_0  1.0021092     0.002030621
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -99,7 +185,8 @@ options <- SEQopts(km.curves = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
                    excused.cols = c("excusedZero", "excusedOne"), 
-                   treat.level = c(0, 1))
+                   treat.level = c(0, 1),
+                   weight.p99 = TRUE)
 data <- SEQdata                                
 model <- SEQuential(data, 
                     id.col = "ID",
@@ -111,9 +198,36 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> censoring model created successfully
+#> Creating Survival curves
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> Completed
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> [[1]]
+```
+
+![](censoring_files/figure-html/unnamed-chunk-5-1.png)
+
+``` r
+risk_data(model)
+#> [[1]]
+#>       Method      A      Risk
+#>       <char> <char>     <num>
+#> 1: censoring      0 0.6371076
+#> 2: censoring      1 0.9909442
+risk_comparison(model)
+#> [[1]]
+#>       A_x    A_y Risk Ratio Risk Difference
+#>    <fctr> <fctr>      <num>           <num>
+#> 1: risk_0 risk_1  1.5553797       0.3538366
+#> 2: risk_1 risk_0  0.6429298      -0.3538366
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
@@ -139,9 +253,38 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Non-required columns provided, pruning for efficiency
+#> Pruned
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> censoring model created successfully
+#> Creating Survival curves
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> Completed
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+#> Scale for colour is already present.
+#> Adding another scale for colour, which will replace the existing scale.
+#> [[1]]
+```
+
+![](censoring_files/figure-html/unnamed-chunk-6-1.png)
+
+``` r
+risk_data(model)
+#> [[1]]
+#>       Method      A       Risk
+#>       <char> <char>      <num>
+#> 1: censoring      0 0.02761456
+#> 2: censoring      1 0.01770405
+risk_comparison(model)
+#> [[1]]
+#>       A_x    A_y Risk Ratio Risk Difference
+#>    <fctr> <fctr>      <num>           <num>
+#> 1: risk_0 risk_1  0.6411128    -0.009910512
+#> 2: risk_1 risk_0  1.5597880     0.009910512
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
@@ -152,7 +295,8 @@ options <- SEQopts(# tell SEQuential to run hazard ratios
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
                    excused = TRUE,                               
-                   excused.cols = c("excusedZero", "excusedOne"))
+                   excused.cols = c("excusedZero", "excusedOne"),
+                   weight.p99 = TRUE)
 
 data <- SEQdata                              
 model <- SEQuential(data,
@@ -165,4 +309,12 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> Expanding Data...
+#> Expansion Successful
+#> Moving forward with censoring analysis
+#> Completed
+hazard_ratio(model)
+#> [[1]]
+#>   Hazard      LCI      UCI 
+#> 2.993715       NA       NA
 ```

@@ -16,4 +16,4 @@ covariates(object)
 
 ## Value
 
-list of SEQuential covariates
+List of SEQuential covariates

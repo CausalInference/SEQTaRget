@@ -16,4 +16,4 @@ km_data(object)
 
 ## Value
 
-list of dataframes of survival values
+List of dataframes of survival values

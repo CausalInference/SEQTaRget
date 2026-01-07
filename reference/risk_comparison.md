@@ -16,5 +16,5 @@ risk_comparison(object)
 
 ## Value
 
-a data frame of risk information at end of followup (risk ratios, risk
+A data frame of risk information at end of followup (risk ratios, risk
 differences and confidence intervals, if bootstrapped)

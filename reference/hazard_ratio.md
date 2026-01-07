@@ -16,4 +16,4 @@ hazard_ratio(object)
 
 ## Value
 
-list of hazard ratios
+List of hazard ratios

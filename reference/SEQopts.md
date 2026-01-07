@@ -37,7 +37,7 @@ SEQopts(
   indicator.squared = "_sq",
   km.curves = FALSE,
   multinomial = FALSE,
-  ncores = availableCores() - 1,
+  ncores = availableCores(omit = 1L),
   nthreads = getDTthreads(),
   numerator = NA,
   parallel = FALSE,
@@ -54,6 +54,9 @@ SEQopts(
   survival.max = Inf,
   treat.level = c(0, 1),
   trial.include = TRUE,
+  visit = NA,
+  visit.denominator = NA,
+  visit.numerator = NA,
   weight.eligible_cols = c(),
   weight.lower = -Inf,
   weight.lag_condition = TRUE,
@@ -68,27 +71,28 @@ SEQopts(
 
 - bootstrap:
 
-  Logical: defines if SEQuential should run bootstrapping, default is
-  FALSE
+  Logical: defines if
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
+  should run bootstrapping, default is `FALSE`
 
 - bootstrap.nboot:
 
-  Integer: number of bootstraps
+  Integer: number of bootstraps, default is `100`
 
 - bootstrap.sample:
 
-  Numeric: percentage of data to use when bootstrapping, should in \[0,
-  1\], default is 0.8
+  Numeric: percentage of data to use when bootstrapping, should be in
+  \[0, 1\], default is `0.8`
 
 - bootstrap.CI:
 
   Numeric: defines the confidence interval after bootstrapping, default
-  is 0.95 (95% CI)
+  is `0.95` (95% CI)
 
 - bootstrap.CI_method:
 
   Character: selects which way to calculate bootstraps confidence
-  intervals ("se", "percentile")
+  intervals (`"se"`, `"percentile"`), default is `"se"`
 
 - cense:
 
@@ -121,7 +125,7 @@ SEQopts(
 - data.return:
 
   Logical: whether to return the expanded dataframe with weighting
-  information
+  information, default is `FALSE`
 
 - denominator:
 
@@ -130,7 +134,8 @@ SEQopts(
 
 - deviation:
 
-  Logical: create switch based on deviation from column `deviation.col`
+  Logical: create switch based on deviation from column `deviation.col`,
+  default is `FALSE`
 
 - deviation.col:
 
@@ -143,7 +148,7 @@ SEQopts(
 - deviation.excused:
 
   Logical: whether deviations should be excused by
-  `deviation.excused_cols`
+  `deviation.excused_cols`, default is `FALSE`
 
 - deviation.excused_cols:
 
@@ -152,7 +157,7 @@ SEQopts(
 - excused:
 
   Logical: in the case of censoring, whether there is an excused
-  condition
+  condition, default is `FALSE`
 
 - excused.cols:
 
@@ -162,33 +167,34 @@ SEQopts(
 - fastglm.method:
 
   Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT,
-  4-QR.FPIV)
+  4-QR.FPIV), default is `2L`
 
 - followup.class:
 
   Logical: treat followup as a class, e.g. expands every time to it's
-  own indicator column
+  own indicator column, default is `FALSE`
 
 - followup.include:
 
   Logical: whether or not to include 'followup' and 'followup_squared'
-  in the outcome model
+  in the outcome model, default is `TRUE`
 
 - followup.max:
 
-  Numeric: maximum time to expand about, default is Inf (no maximum)
+  Numeric: maximum time to expand about, default is `Inf` (no maximum)
 
 - followup.min:
 
-  Numeric: minimum time to expand aboud, default is -Inf (no minimum)
+  Numeric: minimum time to expand about, default is `-Inf` (no minimum)
 
 - followup.spline:
 
-  Logical: treat followup as a cubic spline
+  Logical: treat followup as a cubic spline, default is `FALSE`
 
 - hazard:
 
-  Logical: hazard error calculation instead of survival estimation
+  Logical: hazard error calculation instead of survival estimation,
+  default is `FALSE`
 
 - indicator.baseline:
 
@@ -202,20 +208,25 @@ SEQopts(
 
 - km.curves:
 
-  Logical: Kaplan-Meier survival curve creation and data return
+  Logical: Kaplan-Meier survival curve creation and data return, default
+  is `FALSE`
 
 - multinomial:
 
-  Logical: whether to expect multilevel treatment values
+  Logical: whether to expect multilevel treatment values, default is
+  `FALSE`
 
 - ncores:
 
   Integer: number of cores to use in parallel processing, default is one
-  less than system max
+  less than system max, see
+  [`parallelly::availableCores()`](https://parallelly.futureverse.org/reference/availableCores.html)
 
 - nthreads:
 
-  Integer: number of threads to use for data.table processing
+  Integer: number of threads to use for data.table processing, default
+  is
+  [`data.table::getDTthreads()`](https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html)
 
 - numerator:
 
@@ -225,7 +236,7 @@ SEQopts(
 - parallel:
 
   Logical: define if the SEQuential process is run in parallel, default
-  is FALSE
+  is `FALSE`
 
 - plot.colors:
 
@@ -248,7 +259,8 @@ SEQopts(
 - plot.type:
 
   Character: Type of plot to create if `km.curves = TRUE`, available
-  options are 'survival', 'risk', and 'inc' (in the case of censoring)
+  options are `'survival'` (the default), `'risk'`, and `'inc'` (in the
+  case of censoring)
 
 - seed:
 
@@ -256,16 +268,18 @@ SEQopts(
 
 - selection.first_trial:
 
-  Logical: selects only the first eligible trial in the expanded dataset
+  Logical: selects only the first eligible trial in the expanded
+  dataset, default `FALSE`
 
 - selection.prob:
 
   Numeric: percent of total IDs to select for `selection.random`, should
-  be bound \[0, 1\]
+  be bound \[0, 1\], default is `0.8`
 
 - selection.random:
 
-  Logical: randomly selects IDs with replacement to run analysis
+  Logical: randomly selects IDs with replacement to run analysis,
+  default `FALSE`
 
 - subgroup:
 
@@ -273,16 +287,31 @@ SEQopts(
 
 - survival.max:
 
-  Numeric: maximum time for survival curves, default is Inf (no maximum)
+  Numeric: maximum time for survival curves, default is `Inf` (no
+  maximum)
 
 - treat.level:
 
-  List: treatment levels to compare
+  List: treatment levels to compare, default is `c(0, 1)`
 
 - trial.include:
 
   Logical: whether or not to include 'trial' and 'trial_squared' in the
-  outcome model
+  outcome model, default is `TRUE`
+
+- visit:
+
+  String: column name for visit indicator variable, e.g. `"visit"`
+
+- visit.denominator:
+
+  String: visit denominator covariates to the right hand side of a
+  formula object
+
+- visit.numerator:
+
+  String: visit numerator covariates to the right hand side of a formula
+  object
 
 - weight.eligible_cols:
 
@@ -291,11 +320,13 @@ SEQopts(
 
 - weight.lower:
 
-  Numeric: weights truncated at lower end at this weight
+  Numeric: weights truncated at lower end at this weight, default is
+  `-Inf`
 
 - weight.lag_condition:
 
-  Logical: whether weights should be conditioned on treatment lag value
+  Logical: whether weights should be conditioned on treatment lag value,
+  default `TRUE`
 
 - weight.p99:
 
@@ -304,15 +335,18 @@ SEQopts(
 
 - weight.preexpansion:
 
-  Logical: whether weighting should be done on pre-expanded data
+  Logical: whether weighting should be done on pre-expanded data,
+  default `TRUE`
 
 - weight.upper:
 
-  Numeric: weights truncated at upper end at this weight
+  Numeric: weights truncated at upper end at this weight, default is
+  `Inf`
 
 - weighted:
 
-  Logical: whether or not to preform weighted analysis, default is FALSE
+  Logical: whether or not to preform weighted analysis, default is
+  `FALSE`
 
 ## Value
 

@@ -1,6 +1,6 @@
-# Function to print kaplan-meier curves
+# Function to print Kaplan-Meier curves
 
-Function to print kaplan-meier curves
+Function to print Kaplan-Meier curves
 
 ## Usage
 

@@ -25,7 +25,8 @@ SEQestimate(
 
 - data:
 
-  data.frame or data.table, if not already expanded with `SEQexpand`,
+  data.frame or data.table, if not already expanded with
+  [`SEQexpand()`](https://causalinference.github.io/SEQTaRget/reference/SEQexpand.md),
   will preform expansion according to arguments passed to either
   `params` or `...`
 
@@ -63,11 +64,12 @@ SEQestimate(
 
 - options:
 
-  List: optional list of parameters from `SEQopts`
+  List: optional list of parameters from
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
 
 - verbose:
 
-  Logical: if TRUE, cats progress to console
+  Logical: if `TRUE`, cats progress to console, default is `TRUE`
 
 ## Value
 

@@ -1,6 +1,7 @@
 # Simulated observational example data for SEQuential
 
-Simulated observational example data for SEQuential
+Simulated observational example data for
+[`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
 
 ## Usage
 
@@ -39,15 +40,15 @@ A data frame with 54,687 rows and 13 columns:
 
 - N:
 
-  Numeric: Normal random variable from N\\10,5\\
+  Numeric: Normal random variable from N(10,5)
 
 - L:
 
-  Numeric: 4% continuously increase from U\\0, 1\\
+  Numeric: 4% continuously increase from U(0, 1)
 
 - P:
 
-  Numeric: 2% continuously decrease from U\\9, 10\\
+  Numeric: 2% continuously decrease from U(9, 10)
 
 - excusedOne:
 
