@@ -35,7 +35,7 @@ SEQuential(
 
 \item{fixed.cols}{List: column names for fixed columns}
 
-\item{method}{String: method of analysis to preform}
+\item{method}{String: method of analysis to preform; should be one of \code{"ITT"}, \code{"dose-response"}, or \code{"censoring"}}
 
 \item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 
