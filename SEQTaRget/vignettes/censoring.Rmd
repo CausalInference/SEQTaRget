@@ -47,6 +47,8 @@ model <- SEQuential(data,
 km_curve(model, plot.type = "risk")
 # retrieve survival and risk data
 survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
