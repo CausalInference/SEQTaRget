@@ -262,7 +262,7 @@ compevent <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns A data table of risk information at every followup
+#' @returns A data table of risk information at the end of followup
 #' @export
 risk_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
