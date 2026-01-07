@@ -92,7 +92,7 @@ equalizer <- function(list, levels) {
   return(list)
 }
 
-outcome.table <- function(type, params, filter = NA) {
+outcome.table <- function(params, type, filter = NA) {
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   
   if (is.na(params@subgroup)) {
@@ -106,10 +106,11 @@ outcome.table <- function(type, params, filter = NA) {
     }
   } else {
     out <- if (type == "unique") {
-      copy(params@DT)[get(params@outcome) == 1 & params@subgroup == filter, 
-                      .SD[1], by = c(params@id, tx_bas, params@outcome)] 
+      copy(params@DT)[get(params@outcome) == 1 & get(params@subgroup) == filter, 
+                      .SD[1], by = c(params@id, tx_bas, params@outcome)
+                      ][, list(n = .N), by = c(tx_bas, params@outcome)] 
     } else {
-      copy(params@DT)[get(params@outcome) == 1 & params@subgroup == filter, 
+      copy(params@DT)[get(params@outcome) == 1 & get(params@subgroup) == filter, 
                       list(n = .N), by = c(tx_bas, params@outcome)]
     }
   }

@@ -185,8 +185,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     filter <- sort(unique(data[[params@subgroup]]))
-    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter)
-    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter)
+    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
+    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
   }
   
   # Output ======================================================
