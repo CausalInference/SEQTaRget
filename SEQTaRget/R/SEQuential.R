@@ -15,7 +15,7 @@
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
 #' @param fixed.cols List: column names for fixed columns
-#' @param method String: method of analysis to preform
+#' @param method String: method of analysis to preform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
