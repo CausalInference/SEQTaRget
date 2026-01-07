@@ -31,10 +31,11 @@ SEQexpand <- function(params) {
     } else {
       vars.intake <- c(params@covariates, params@numerator, params@denominator,
                        params@cense.denominator, params@cense.numerator, 
+                       params@visit.denominator, params@visit.numerator,
                        params@deviation.col, tx_bas)
     }
     vars <- unique(c(unlist(strsplit(vars.intake, "\\+|\\*|\\:")),
-                     params@treatment, params@cense, params@cense.eligible,
+                     params@treatment, params@cense, params@cense.eligible, params@visit,
                      params@compevent, unlist(params@weight.eligible_cols), params@subgroup))
     vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
