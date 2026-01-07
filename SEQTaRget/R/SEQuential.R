@@ -87,6 +87,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")
     if (is.na(params@cense.denominator)) params@cense.denominator <- create.default.LTFU.covariates(params, "denominator")
   }
+  if (!is.na(params@visit)) {
+    # Visit uses the same params as LTFU unless otherwise specified
+    if (is.na(params@visit.numerator)) params@visit.numerator <- create.default.LTFU.covariates(params, "numerator")
+    if (is.na(params@visit.denominator)) params@visit.denominator <- create.default.LTFU.covariates(params, "denominator")
+  }
 
   # Parallel Setup ==================================
   if (params@parallel) {
