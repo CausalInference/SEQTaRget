@@ -193,19 +193,20 @@ test_that("Pre-Expansion ITT: visit variable", {
   data <- data.table::copy(SEQdata.LTFU)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",
-                      options = SEQopts(visit = "LTFU", weight.preexpansion = TRUE, fastglm.method = 1))
+                      options = SEQopts(visit = "LTFU", weight.preexpansion = TRUE, fastglm.method = 1,
+                                        weighted = TRUE))
   
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -21.6405620525594, tx_init_bas1 = 0.0685251597169625,
-                   followup = 0.0287510195589004, followup_sq = -0.000576218149982575,
-                   trial = 0.285543817417294, trial_sq = -0.00137304711207655,
-                   sex1 = -0.190047710435459, N_bas = 0.00658945184598712, L_bas = -0.448999735097287,
-                   P_bas = 1.3875130950729)
+  expected <- list(`(Intercept)` = -21.6363470211732, tx_init_bas1 = 0.0681370591202886, 
+                   followup = 0.0287415276768208, followup_sq = -0.000573404701373437, 
+                   trial = 0.285474021791075, trial_sq = -0.00137296623436822, 
+                   sex1 = -0.193955597012598, N_bas = 0.00650191598271096, L_bas = -0.446707997333715, 
+                   P_bas = 1.38704735078189)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
   expect_equal(model@params@visit, "LTFU")
-  expect_equal(model@params@visit.denominator, as.character(NA))
-  expect_equal(model@params@visit.numerator, as.character(NA))
+  expect_equal(model@params@visit.denominator, "tx_lag+time+time_sq+sex+N+L+P")
+  expect_equal(model@params@visit.numerator, "tx_lag+time+time_sq+sex")
 })
