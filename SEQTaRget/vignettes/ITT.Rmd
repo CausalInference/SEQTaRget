@@ -44,7 +44,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")        # retrieve risk plot
-survival_data <- km_data(model)            # retrieve survival and risk data
+risk_data(model)
+risk_comparison(model)
 ```
 
 ## ITT with 5 bootstrap samples and losses-to-followup
@@ -72,7 +73,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 
@@ -97,7 +99,8 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
 
 
@@ -148,5 +151,6 @@ model <- SEQuential(data, id.col = "ID",
                           options = options)
 
 km_curve(model, plot.type = "risk")
-survival_data <- km_data(model)
+risk_data(model)
+risk_comparison(model)
 ```
