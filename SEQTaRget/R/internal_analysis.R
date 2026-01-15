@@ -77,15 +77,16 @@ internal.analysis <- function(params) {
         if (params@LTFU) WDT[, weight := weight * cense1]
         if (!is.na(params@visit)) WDT[, weight := weight * visit]
 
-        percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
+        weights_valid <- WDT[!is.na(get(params@outcome)), weight]
+        percentile <- quantile(weights_valid, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
         stats <- list(
           coef.numerator = WT@coef.numerator,
           coef.denominator = WT@coef.denominator,
           ncense.coef = WT@coef.ncense,
           dcense.coef = WT@coef.dcense,
-          min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
-          max = max(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
-          sd = sd(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
+          min = min(weights_valid, na.rm = TRUE),
+          max = max(weights_valid, na.rm = TRUE),
+          sd = sd(weights_valid, na.rm = TRUE),
           p01 = percentile[[1]],
           p25 = percentile[[2]],
           p50 = percentile[[3]],
