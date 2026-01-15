@@ -114,7 +114,7 @@ internal.weights <- function(DT, data, params) {
 
     # Estimating ====================================================
     if (params@method != "ITT") {
-      out <- copy(weight)[, `:=`(numerator = NA_real_, denominator = NA_real_)]
+      out <- weight[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
       if (!(params@excused | params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {
