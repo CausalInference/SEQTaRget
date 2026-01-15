@@ -125,7 +125,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
-  gc()
   if (params@verbose) cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Switch Diagnostics (Censoring) =============================

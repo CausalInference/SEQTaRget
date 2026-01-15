@@ -7,7 +7,6 @@ internal.analysis <- function(params) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
     trial <- trial.first <- NULL

@@ -9,7 +9,6 @@ SEQexpand <- function(params) {
   out <- local({
     on.exit({
       rm(list = setdiff(ls(), "out"))
-      gc()
     }, add = TRUE)
 
     # Variable pre-definition ===================================

@@ -82,7 +82,6 @@ internal.hazard <- function(model, params) {
       })
     }
   }
-  gc()
   if (params@bootstrap) {
     bootstrap <- unlist(bootstrap)
     if (all(is.na(bootstrap))) return(c(Hazard = NA_real_, LCI = NA_real_, UCI = NA_real_))

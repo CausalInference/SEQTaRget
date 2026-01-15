@@ -10,7 +10,6 @@ internal.survival <- function(params, outcome) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
     # Variable pre-definition ===================================
@@ -95,7 +94,7 @@ internal.survival <- function(params, outcome) {
           }))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
-          rm(RMDT); gc()
+          rm(RMDT)
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
@@ -110,7 +109,7 @@ internal.survival <- function(params, outcome) {
           }))
           
           out <- handler(RMDT, params, outcome[[x]]$model)
-          rm(RMDT); gc()
+          rm(RMDT)
           return(out)
         })
       }

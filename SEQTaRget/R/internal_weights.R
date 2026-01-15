@@ -13,7 +13,6 @@ internal.weights <- function(DT, data, params) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
     # Variable pre-definition ===================================
@@ -111,7 +110,6 @@ internal.weights <- function(DT, data, params) {
       }
 
       rm(model.data)
-      gc()
     }
 
     # Estimating ====================================================
