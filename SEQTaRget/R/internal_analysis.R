@@ -111,30 +111,46 @@ internal.analysis <- function(params) {
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 
+    if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
+    if (!identical(key(params@data), params@id)) setkeyv(params@data, params@id)
+    
+    # Helper function for efficient bootstrap resampling
+    bootstrap_sample <- function(DT, data, params, UIDs, lnID) {
+      n_sample <- round(params@bootstrap.sample * lnID)
+    
+      # Create lookup table with sampled IDs and unique suffixes
+      id_lookup <- data.table(
+        orig_id = sample(UIDs, n_sample, replace = TRUE),
+        boot_idx = seq_len(n_sample)
+      )
+    
+      # Single keyed join instead of n_sample separate filters
+      RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+                 ][, (params@id) := paste0(get(params@id), "_", boot_idx)
+                    ][, boot_idx := NULL]
+      
+      
+      RMdata <- data[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+                     ][, (params@id) := paste0(get(params@id), "_", boot_idx)
+                        ][, boot_idx := NULL]
+      
+      return(list(RMDT = RMDT, RMdata = RMdata))
+    }
+    
     bootstrap <- if (params@bootstrap) {
       if (params@parallel) {
         setDTthreads(1)
-        future_lapply(1:params@bootstrap.nboot, function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
-                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
-                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          out <- handler(RMDT, RMdata, params)
+        future_lapply(seq_len(params@bootstrap.nboot), function(x) {
+          bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
+          out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
-          
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
-        lapply(1:params@bootstrap.nboot, function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
-                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
-                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          out <- handler(RMDT, RMdata, params)
+        lapply(seq_len(params@bootstrap.nboot), function(x) {
+          bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
+          out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
-          
           return(out)
         })
       }
