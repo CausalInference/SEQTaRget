@@ -4,7 +4,7 @@
 #' @import data.table
 #' @importFrom survival finegray coxph Surv
 
-internal.hazard <- function(model, params) {
+internal.hazard <- function(model, params, cache) {
   event <- firstEvent <- outcomeProb <- ce <- ceProb <- trial <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   kept <- names(params@DT)[!names(params@DT) %in% c(paste0("followup", c("", params@indicator.squared)),
@@ -12,7 +12,7 @@ internal.hazard <- function(model, params) {
                                                     "period", params@outcome)]
   
   if (!is.na(params@compevent)) {
-    ce.data <- prepare.data(params@DT, params, case = "surv", type = "compevent", model = NA)
+    ce.data <- prepare.data_cached(params@DT, params, case = "surv", type = "compevent", model = NA, cache)
     ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
     rm(ce.data)
   }

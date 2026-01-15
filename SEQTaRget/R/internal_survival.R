@@ -16,13 +16,16 @@ internal.survival <- function(params, outcome) {
     ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
-    handler <- function(DT, params, model) {
+    # Initialize formula cache
+    formula_cache <- init_formula_cache(params)
+
+    handler <- function(DT, params, model, cache) {
       DT <- DT[!is.na(get(params@outcome)), ]
       if (params@multinomial) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }
       if (!is.na(params@compevent)) {
-        ce.data <- prepare.data(DT, params, case = "surv", type = "compevent", model = NA)
+        ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, formula_cache)
         ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
         rm(ce.data)
       }

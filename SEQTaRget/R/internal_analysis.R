@@ -1,3 +1,48 @@
+#' Create formula cache
+#' @param params parameter from SEQuential
+#' @keywords internal
+init_formula_cache <- function(params) {
+  
+  cache <- new.env(hash = TRUE, parent = emptyenv())
+  
+  # Detect simple formulas:
+  is_simple_additive <- function(covs) {
+    # No interactions, no I(), no poly(), no factors expected
+    if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
+    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor", covs)
+  }
+  
+  # Helper to parse formula string and extract columns
+  parse_covs <- function(covs) {
+    if (is.null(covs) || is.na(covs) || covs == "") return(NULL)
+    list(
+      formula = as.formula(paste0("~", covs)),
+      cols = unique(unlist(strsplit(covs, "\\+|\\*|\\:")))
+    )
+  }
+  
+  # Default case - numerator/denominator
+  cache$numerator <- parse_covs(params@numerator)
+  cache$denominator <- parse_covs(params@denominator)
+  
+  # LTFU case
+  cache$cense_numerator <- parse_covs(params@cense.numerator)
+  cache$cense_denominator <- parse_covs(params@cense.denominator)
+  
+  # Visit case
+  cache$visit_numerator <- parse_covs(params@visit.numerator)
+  cache$visit_denominator <- parse_covs(params@visit.denominator)
+  
+  # Surv/outcome case
+  cache$covariates <- parse_covs(params@covariates)
+  
+  # Store indicator strings for quick access
+  cache$time_sq_col <- paste0(params@time, params@indicator.squared)
+  cache$tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  
+  return(cache)
+}
+
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
@@ -9,6 +54,8 @@ internal.analysis <- function(params) {
       rm(list = setdiff(ls(), "result"))
     }, add = TRUE)
 
+    formula_cache <- init_formula_cache(params)
+    
     trial <- trial.first <- NULL
     numerator <- denominator <- NULL
     wt <- weight <- cense1 <- visit <- NULL
@@ -21,7 +68,7 @@ internal.analysis <- function(params) {
         model <- internal.model(DT, params)
         WDT <- data.table()
       } else if (params@weighted) {
-        WT <- internal.weights(DT, data, params)
+        WT <- internal.weights(DT, data, params, formula_cache)
 
         if (params@weight.preexpansion) {
           if (params@excused | params@deviation.excused) {
