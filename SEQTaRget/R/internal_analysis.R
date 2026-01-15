@@ -129,14 +129,18 @@ internal.analysis <- function(params) {
         boot_idx = seq_len(n_sample)
       )
     
+      # Integer ID: guaranteed unique if boot_idx < max_periods
+      # e.g., orig_id * 1e6 + boot_idx, or use a pre-computed multiplier
+      id_mult <- max(UIDs) + 1L
+      
       # Single keyed join instead of n_sample separate filters
       RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                 ][, (params@id) := paste0(get(params@id), "_", boot_idx)
+                 ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
                     ][, boot_idx := NULL]
       
       
       RMdata <- data[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                     ][, (params@id) := paste0(get(params@id), "_", boot_idx)
+                     ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
                         ][, boot_idx := NULL]
       
       return(list(RMDT = RMDT, RMdata = RMdata))
