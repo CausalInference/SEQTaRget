@@ -125,7 +125,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
-  gc()
   if (params@verbose) cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
 
   # Switch Diagnostics (Censoring) =============================
@@ -174,10 +173,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
+    # Initialize formula cache for hazard calculations
+    formula_cache <- init_formula_cache(params)
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
       models <- lapply(analytic, function(x) x$model[[i]])
-      hazard[[label]] <- internal.hazard(models, params)
+      hazard[[label]] <- internal.hazard(models, params, formula_cache)
     }
   }
   

@@ -4,7 +4,7 @@
 \alias{internal.weights}
 \title{Internal function for defining weights}
 \usage{
-internal.weights(DT, data, params)
+internal.weights(DT, data, params, cache)
 }
 \arguments{
 \item{DT}{data.table after expansion}
@@ -12,6 +12,8 @@ internal.weights(DT, data, params)
 \item{data}{data.table for data before expansion}
 
 \item{params}{object of class SEQparams (defined in SEQuential)}
+
+\item{cache}{cache}
 }
 \description{
 Internal function for defining weights

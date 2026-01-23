@@ -10,20 +10,22 @@ internal.survival <- function(params, outcome) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
     # Variable pre-definition ===================================
     ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
-    handler <- function(DT, params, model) {
+    # Initialize formula cache
+    formula_cache <- init_formula_cache(params)
+
+    handler <- function(DT, params, model, cache) {
       DT <- DT[!is.na(get(params@outcome)), ]
       if (params@multinomial) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }
       if (!is.na(params@compevent)) {
-        ce.data <- prepare.data(DT, params, case = "surv", type = "compevent", model = NA)
+        ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, cache)
         ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
         rm(ce.data)
       }
@@ -47,9 +49,9 @@ internal.survival <- function(params, outcome) {
           } else if (params@method == "dose-response" & i != 1) {
             RMDT[, `:=`(dose = followup, dose_sq = followup_sq)]
             }
-        RMDT[, (psurv) := inline.pred(model, newdata = .SD, params, case = "surv")]
+        RMDT[, (psurv) := inline.pred(model, newdata = .SD, params, case = "surv", cache = cache)]
         
-        if (!is.na(params@compevent)) RMDT[, eval(pce) := inline.pred(ce.model, newdata = .SD, params, case = "surv")]
+        if (!is.na(params@compevent)) RMDT[, eval(pce) := inline.pred(ce.model, newdata = .SD, params, case = "surv", cache = cache)]
         RMDT[, eval(surv) := cumprod(1 - get(psurv)), by = "trialID"]
         
         if (!is.na(params@compevent)) {
@@ -77,40 +79,47 @@ internal.survival <- function(params, outcome) {
     }
 
     full <- handler(copy(params@DT)[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))
-                                    ][get("followup") == 0, ], params, outcome[[1]]$model)
+                                    ][get("followup") == 0, ], params, outcome[[1]]$model, formula_cache)
     
     if (params@bootstrap) {
       UIDs <- unique(params@DT[[params@id]])
       lnID <- length(UIDs)
+      
+      # Pre-filter and key the data for efficient bootstrap resampling
+      baseDT <- params@DT[get("followup") == 0, ]
+      if (!identical(key(baseDT), params@id)) setkeyv(baseDT, params@id)
+      
+      # Helper for efficient keyed bootstrap sampling
+      bootstrap_survival_sample <- function(baseDT, params, UIDs, lnID) {
+        n_sample <- round(params@bootstrap.sample * lnID)
+        id_lookup <- data.table(
+          orig_id = sample(UIDs, n_sample, replace = TRUE),
+          boot_idx = seq_len(n_sample)
+        )
+        id_mult <- max(UIDs) + 1L
+        
+        # Single keyed join instead of N separate filters
+        RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+                       ][, "trialID" := paste0(get(params@id), "_", boot_idx, "_", get("trial"))
+                         ][, boot_idx := NULL]
+        return(RMDT)
+      }
+      
       if (params@parallel) {
         setDTthreads(1)
         
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          replicate <- ave(seq_along(id.sample), id.sample, FUN = seq_along)
-          
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) { 
-            copy(params@DT)[get(params@id) == id.sample[x] & get("followup") == 0,
-                            ][, "trialID" := paste0(get(params@id), "_", replicate[x], "_", get("trial"))]
-          }))
-          
-          out <- handler(RMDT, params, outcome[[x]]$model)
-          rm(RMDT); gc()
+          RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
+          out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
+          rm(RMDT)
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
           set.seed(params@seed + x)
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          replicate <- ave(seq_along(id.sample), id.sample, FUN = seq_along)
-          
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(i) { 
-            copy(params@DT)[get(params@id) == id.sample[i] & get("followup") == 0,
-                            ][, "trialID" := paste0(get(params@id), "_", replicate[i], "_", get("trial"))]
-          }))
-          
-          out <- handler(RMDT, params, outcome[[x]]$model)
-          rm(RMDT); gc()
+          RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
+          out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
+          rm(RMDT)
           return(out)
         })
       }

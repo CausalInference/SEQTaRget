@@ -3,17 +3,15 @@
 #' @param DT data.table after expansion
 #' @param data data.table for data before expansion
 #' @param params object of class SEQparams (defined in SEQuential)
-#'
+#' @param cache cache
 #' @import data.table
 #' @importFrom stats quasibinomial coef predict qnorm quantile sd
 #' @importFrom fastglm fastglm
-#'
 #' @keywords internal
-internal.weights <- function(DT, data, params) {
+internal.weights <- function(DT, data, params, cache) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
     # Variable pre-definition ===================================
@@ -56,8 +54,8 @@ internal.weights <- function(DT, data, params) {
       if (params@LTFU) {
         if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
         
-        cense.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "LTFU")
-        cense.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "LTFU")
+        cense.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "LTFU", cache)
+        cense.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "LTFU", cache)
         
         cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
         cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
@@ -66,8 +64,8 @@ internal.weights <- function(DT, data, params) {
       }
       
       if (!is.na(params@visit)) {
-        visit.numerator.data <- prepare.data(model.data, params, type = "numerator", model = NA, case = "visit")
-        visit.denominator.data <- prepare.data(model.data, params, type = "denominator", model = NA, case = "visit")
+        visit.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "visit", cache)
+        visit.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "visit", cache)
         
         visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
         visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
@@ -97,7 +95,7 @@ internal.weights <- function(DT, data, params) {
       if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
-          n.data <- prepare.data(model.data, params, type = "numerator", model = level, case = "default")
+          n.data <- prepare.data_cached(model.data, params, type = "numerator", model = level, case = "default", cache)
           numerator_models[[i]] <- model.passer(n.data$X, n.data$y, params)
           rm(n.data)
         }
@@ -105,18 +103,17 @@ internal.weights <- function(DT, data, params) {
 
       for (i in seq_along(params@treat.level)) {
         level <- params@treat.level[[i]]
-        d.data <- prepare.data(model.data, params, type = "denominator", level, case = "default")
+        d.data <- prepare.data_cached(model.data, params, type = "denominator", level, case = "default", cache)
         denominator_models[[i]] <- model.passer(d.data$X, d.data$y, params)
         rm(d.data)
       }
 
       rm(model.data)
-      gc()
     }
 
     # Estimating ====================================================
     if (params@method != "ITT") {
-      out <- copy(weight)[, `:=`(numerator = NA_real_, denominator = NA_real_)]
+      out <- weight[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
       if (!(params@excused | params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {

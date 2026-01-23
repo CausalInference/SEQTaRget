@@ -4,7 +4,7 @@
 \alias{internal.hazard}
 \title{Generic function to format a dataset for hazard ratio calculation}
 \usage{
-internal.hazard(model, params)
+internal.hazard(model, params, cache)
 }
 \description{
 Generic function to format a dataset for hazard ratio calculation

@@ -65,7 +65,7 @@ In general these only affect analytic methods of 'dose-response' and 'censoring'
 | `cense.denominator` | If provided, forces denominator covariates for censoring models | Character | `"A1+A2*A3+A4"` |
 | `cense.eligible` | Column name for indicator column defining which rows to use for censoring model | Character | `"eligible_cense"` |
 | `cense.numerator` | If provided, forces numerator covariates for censoring models | Character | `"Z1+Z2*Z3+Z4"` |
-| `denominator` | If provided, forces denominator covariates for weight models | Character | `"C1+C2\*C3+B4"` |
+| `denominator` | If provided, forces denominator covariates for weight models | Character | `"C1+C2*C3+B4"` |
 | `numerator` | If provided, forces numerator covariates for weight models | Character | `"B1+B2*B3+B4"` |
 | `weight.eligible_cols` | List of column names for indicator columns defining which weights are eligible for weight models | Character list | `list("eligible1", "eligible2")` |
 | `weight.lag_condition` | Whether weights should be conditioned on treatment lag value | Logical | `TRUE` |

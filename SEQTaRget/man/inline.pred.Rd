@@ -11,7 +11,8 @@ inline.pred(
   type,
   case = "default",
   multi = FALSE,
-  target = NULL
+  target = NULL,
+  cache = NULL
 )
 }
 \arguments{
@@ -22,6 +23,14 @@ inline.pred(
 \item{params}{parameter from SEQuential}
 
 \item{type}{type of prediction}
+
+\item{case}{case type: "default", "LTFU", "visit", "surv"}
+
+\item{multi}{multinomial flag}
+
+\item{target}{target level for multinomial}
+
+\item{cache}{optional formula cache from init_formula_cache}
 }
 \description{
 Helper Function to inline predict a fastglm object

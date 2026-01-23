@@ -1,3 +1,51 @@
+#' Create formula cache
+#' @param params parameter from SEQuential
+#' @keywords internal
+init_formula_cache <- function(params) {
+  
+  cache <- new.env(hash = TRUE, parent = emptyenv())
+  
+  # Detect simple formulas (no interactions, no I(), no poly(), no factors)
+  is_simple_additive <- function(covs) {
+    if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
+    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
+  }
+  
+  # Helper to parse formula string and extract columns
+  parse_covs <- function(covs) {
+    if (is.null(covs) || is.na(covs) || covs == "") return(NULL)
+    # Clean column names by trimming whitespace
+    cols <- unique(trimws(unlist(strsplit(covs, "\\+|\\*|\\:"))))
+    cols <- cols[nchar(cols) > 0]
+    list(
+      formula = as.formula(paste0("~", covs)),
+      cols = cols,
+      is_simple = is_simple_additive(covs)
+    )
+  }
+  
+  # Default case - numerator/denominator
+  cache$numerator <- parse_covs(params@numerator)
+  cache$denominator <- parse_covs(params@denominator)
+  
+  # LTFU case
+  cache$cense_numerator <- parse_covs(params@cense.numerator)
+  cache$cense_denominator <- parse_covs(params@cense.denominator)
+  
+  # Visit case
+  cache$visit_numerator <- parse_covs(params@visit.numerator)
+  cache$visit_denominator <- parse_covs(params@visit.denominator)
+  
+  # Surv/outcome case
+  cache$covariates <- parse_covs(params@covariates)
+  
+  # Store indicator strings for quick access
+  cache$time_sq_col <- paste0(params@time, params@indicator.squared)
+  cache$tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  
+  return(cache)
+}
+
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
@@ -7,9 +55,10 @@ internal.analysis <- function(params) {
   result <- local({
     on.exit({
       rm(list = setdiff(ls(), "result"))
-      gc()
     }, add = TRUE)
 
+    formula_cache <- init_formula_cache(params)
+    
     trial <- trial.first <- NULL
     numerator <- denominator <- NULL
     wt <- weight <- cense1 <- visit <- NULL
@@ -22,7 +71,7 @@ internal.analysis <- function(params) {
         model <- internal.model(DT, params)
         WDT <- data.table()
       } else if (params@weighted) {
-        WT <- internal.weights(DT, data, params)
+        WT <- internal.weights(DT, data, params, formula_cache)
 
         if (params@weight.preexpansion) {
           if (params@excused | params@deviation.excused) {
@@ -78,15 +127,16 @@ internal.analysis <- function(params) {
         if (params@LTFU) WDT[, weight := weight * cense1]
         if (!is.na(params@visit)) WDT[, weight := weight * visit]
 
-        percentile <- quantile(WDT[!is.na(get(params@outcome))]$weight, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
+        weights_valid <- WDT[!is.na(get(params@outcome)), weight]
+        percentile <- quantile(weights_valid, probs = c(.01, .25, .5, .75, .99), na.rm = TRUE)
         stats <- list(
           coef.numerator = WT@coef.numerator,
           coef.denominator = WT@coef.denominator,
           ncense.coef = WT@coef.ncense,
           dcense.coef = WT@coef.dcense,
-          min = min(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
-          max = max(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
-          sd = sd(WDT[!is.na(get(params@outcome))]$weight, na.rm = TRUE),
+          min = min(weights_valid, na.rm = TRUE),
+          max = max(weights_valid, na.rm = TRUE),
+          sd = sd(weights_valid, na.rm = TRUE),
           p01 = percentile[[1]],
           p25 = percentile[[2]],
           p50 = percentile[[3]],
@@ -106,36 +156,60 @@ internal.analysis <- function(params) {
       ))
     }
 
-    full <- handler(copy(params@DT), copy(params@data), params)
-
+    original_nrow <- nrow(params@DT)
+    original_names <- names(params@DT)
+    full <- handler(params@DT, params@data, params)
+    stopifnot(identical(nrow(params@DT), original_nrow))
+    stopifnot(identical(names(params@DT), original_names))
+    
     if (params@bootstrap & params@verbose) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
 
+    if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
+    if (!identical(key(params@data), params@id)) setkeyv(params@data, params@id)
+    
+    # Helper function for efficient bootstrap resampling
+    bootstrap_sample <- function(DT, data, params, UIDs, lnID) {
+      n_sample <- round(params@bootstrap.sample * lnID)
+    
+      # Create lookup table with sampled IDs and unique suffixes
+      id_lookup <- data.table(
+        orig_id = sample(UIDs, n_sample, replace = TRUE),
+        boot_idx = seq_len(n_sample)
+      )
+    
+      # Integer ID: guaranteed unique if boot_idx < max_periods
+      # e.g., orig_id * 1e6 + boot_idx, or use a pre-computed multiplier
+      id_mult <- max(UIDs) + 1L
+      
+      # Single keyed join instead of n_sample separate filters
+      RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+                 ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
+                    ][, boot_idx := NULL]
+      
+      
+      RMdata <- data[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+                     ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
+                        ][, boot_idx := NULL]
+      
+      return(list(RMDT = RMDT, RMdata = RMdata))
+    }
+    
     bootstrap <- if (params@bootstrap) {
       if (params@parallel) {
         setDTthreads(1)
-        future_lapply(1:params@bootstrap.nboot, function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
-                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
-                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          out <- handler(RMDT, RMdata, params)
+        future_lapply(seq_len(params@bootstrap.nboot), function(x) {
+          bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
+          out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
-          
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
-        lapply(1:params@bootstrap.nboot, function(x) {
-          id.sample <- sample(UIDs, round(params@bootstrap.sample * lnID), replace = TRUE)
-          RMDT <- rbindlist(lapply(seq_along(id.sample), function(x) params@DT[get(params@id) == id.sample[x],
-                                                                               ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          RMdata <- rbindlist(lapply(seq_along(id.sample), function(x) params@data[get(params@id) == id.sample[x],
-                                                                                   ][, eval(params@id) := paste0(get(params@id), "_", x)]))
-          out <- handler(RMDT, RMdata, params)
+        lapply(seq_len(params@bootstrap.nboot), function(x) {
+          bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
+          out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
-          
           return(out)
         })
       }
