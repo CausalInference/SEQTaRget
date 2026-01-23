@@ -1,4 +1,4 @@
-# SEQTaRget v1.3.3.9000
+# SEQTaRget v1.3.4
 
 - Implemented some code optimizations
   - Replace a `table()` call with data.table's `.N`
