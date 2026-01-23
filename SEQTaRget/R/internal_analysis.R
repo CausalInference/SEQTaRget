@@ -5,19 +5,22 @@ init_formula_cache <- function(params) {
   
   cache <- new.env(hash = TRUE, parent = emptyenv())
   
-  # Detect simple formulas:
+  # Detect simple formulas (no interactions, no I(), no poly(), no factors)
   is_simple_additive <- function(covs) {
-    # No interactions, no I(), no poly(), no factors expected
     if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
-    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor", covs)
+    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
   }
   
   # Helper to parse formula string and extract columns
   parse_covs <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(NULL)
+    # Clean column names by trimming whitespace
+    cols <- unique(trimws(unlist(strsplit(covs, "\\+|\\*|\\:"))))
+    cols <- cols[nchar(cols) > 0]
     list(
       formula = as.formula(paste0("~", covs)),
-      cols = unique(unlist(strsplit(covs, "\\+|\\*|\\:")))
+      cols = cols,
+      is_simple = is_simple_additive(covs)
     )
   }
   
