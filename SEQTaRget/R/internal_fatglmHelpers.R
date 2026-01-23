@@ -3,10 +3,45 @@
 #' @param newdata filler for a .SD from data.table
 #' @param params parameter from SEQuential
 #' @param type type of prediction
+#' @param case case type: "default", "LTFU", "visit", "surv"
+#' @param multi multinomial flag
+#' @param target target level for multinomial
+#' @param cache optional formula cache from init_formula_cache
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL) {
+inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL, cache = NULL) {
+  # Use cache if provided, otherwise fall back to parsing
+  if (!is.null(cache)) {
+    cached <- switch(
+      case,
+      "default" = switch(
+        type,
+        "numerator" = cache$numerator,
+        "denominator" = cache$denominator,
+        "outcome" = cache$covariates
+      ),
+      "LTFU" = switch(
+        type,
+        "numerator" = cache$cense_numerator,
+        "denominator" = cache$cense_denominator
+      ),
+      "visit" = switch(
+        type,
+        "numerator" = cache$visit_numerator,
+        "denominator" = cache$visit_denominator
+      ),
+      "surv" = cache$covariates
+    )
+    
+    if (!is.null(cached)) {
+      X <- fast_model_matrix(cached$formula, newdata, cached$cols, is_simple = cached$is_simple)
+      pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
+      return(pred)
+    }
+  }
+  
+  # Fallback to original parsing (for backwards compatibility)
   covs <- switch(
     case,
     "default" = switch(
