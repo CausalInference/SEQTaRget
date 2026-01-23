@@ -35,6 +35,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/format.time.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/hazard_ratio.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/index.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/init_formula_cache.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/inline.pred.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/internal.analysis.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/internal.hazard.html</loc></url>
@@ -51,7 +52,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/outcome.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/parameter.setter.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/parameter.simplifier.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQTaRget/reference/prepare.data.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/prepare.data_cached.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/prepare.output.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/risk_comparison.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/risk_data.html</loc></url>

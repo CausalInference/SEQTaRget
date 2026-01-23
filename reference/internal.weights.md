@@ -5,7 +5,7 @@ Internal function for defining weights
 ## Usage
 
 ``` r
-internal.weights(DT, data, params)
+internal.weights(DT, data, params, cache)
 ```
 
 ## Arguments
@@ -21,3 +21,7 @@ internal.weights(DT, data, params)
 - params:
 
   object of class SEQparams (defined in SEQuential)
+
+- cache:
+
+  cache

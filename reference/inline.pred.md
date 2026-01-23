@@ -12,7 +12,8 @@ inline.pred(
   type,
   case = "default",
   multi = FALSE,
-  target = NULL
+  target = NULL,
+  cache = NULL
 )
 ```
 
@@ -33,3 +34,19 @@ inline.pred(
 - type:
 
   type of prediction
+
+- case:
+
+  case type: "default", "LTFU", "visit", "surv"
+
+- multi:
+
+  multinomial flag
+
+- target:
+
+  target level for multinomial
+
+- cache:
+
+  optional formula cache from init_formula_cache

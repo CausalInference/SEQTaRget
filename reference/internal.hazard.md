@@ -5,5 +5,5 @@ Generic function to format a dataset for hazard ratio calculation
 ## Usage
 
 ``` r
-internal.hazard(model, params)
+internal.hazard(model, params, cache)
 ```

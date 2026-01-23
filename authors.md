@@ -11,21 +11,21 @@
 - **Tom Palmer**. Author.
   [](https://orcid.org/0000-0003-4655-4511)[![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/0524sp257)
 
-- **Miguel Hernan**. Author. [](https://orcid.org/0000-0003-1619-8456)
+- **Miguel Hernán**. Author. [](https://orcid.org/0000-0003-1619-8456)
 
 - **The President and Fellows of Harvard College**. Copyright holder.
   [![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/03vek6s52)
 
 ## Citation
 
-O'Dea R, Szmulewicz A, Palmer T, Hernan M (2026). *SEQTaRget: Sequential
-Trial Emulation*. R package version 1.3.3,
+O'Dea R, Szmulewicz A, Palmer T, Hernán M (2026). *SEQTaRget: Sequential
+Trial Emulation*. R package version 1.3.4,
 <https://causalinference.github.io/SEQTaRget/>.
 
     @Manual{,
       title = {SEQTaRget: Sequential Trial Emulation},
-      author = {Ryan O'Dea and Alejandro Szmulewicz and Tom Palmer and Miguel Hernan},
+      author = {Ryan O'Dea and Alejandro Szmulewicz and Tom Palmer and Miguel Hernán},
       year = {2026},
-      note = {R package version 1.3.3},
+      note = {R package version 1.3.4},
       url = {https://causalinference.github.io/SEQTaRget/},
     }
