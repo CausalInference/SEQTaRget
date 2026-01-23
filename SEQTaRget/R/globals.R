@@ -1,1 +1,1 @@
-utils::globalVariables(c("boot_idx"))
+utils::globalVariables(c("..cols", "boot_idx", "followup", "tx_lag"))
