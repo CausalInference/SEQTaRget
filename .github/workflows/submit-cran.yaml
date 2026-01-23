@@ -15,7 +15,7 @@ jobs:
       PACKAGE_DIR: 'SEQTaRget'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
