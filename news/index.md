@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.3.4
 
+CRAN release: 2026-01-23
+
 - Implemented some code optimizations
   - Replace a [`table()`](https://rdrr.io/r/base/table.html) call with
     data.table’s `.N`
