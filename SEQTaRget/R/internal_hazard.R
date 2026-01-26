@@ -112,6 +112,6 @@ internal.hazard <- function(model, params, cache) {
   }
   
   out <- c(full, ci)
-  names(out) <- c("Hazard", "LCI", "UCI")
+  names(out) <- c("Hazard ratio", "LCI", "UCI")
   return(out)
 }
