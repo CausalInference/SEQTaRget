@@ -226,7 +226,7 @@ SEQopts(
 
   Integer: number of threads to use for data.table processing, default
   is
-  [`data.table::getDTthreads()`](https://rdatatable.gitlab.io/data.table/reference/openmp-utils.html)
+  [`data.table::getDTthreads()`](https://rdrr.io/pkg/data.table/man/openmp-utils.html)
 
 - numerator:
 
