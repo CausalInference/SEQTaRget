@@ -1,3 +1,7 @@
+# SEQTaRget v1.3.5
+
+- The bootstrapping now collects the log hazard ratio instead of the hazard ratio because the log hazard ratio has better normality properties.
+
 # SEQTaRget v1.3.4
 
 - Implemented some code optimizations
