@@ -56,10 +56,10 @@ internal.hazard <- function(model, params, cache) {
       hr.data <- finegray(Surv(followup, event) ~ ., data, etype = 1)
       hr.res <- coxph(Surv(fgstart, fgstop, fgstatus) ~ get(tx_bas), data = hr.data)
     } else hr.res <- coxph(Surv(followup, event == 1) ~ get(tx_bas), data)
-    exp(hr.res$coefficients)
+    hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring
   }
   full <- handler(params@DT, params, model[[1]]$model, cache)
-  if (is.na(full)) return(c(Hazard = NA_real_, LCI = NA_real_, UCI = NA_real_))
+  if (is.na(full)) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
   bootstrap <- if (params@bootstrap) {
     UIDs <- unique(params@DT[[params@id]])
@@ -97,21 +97,22 @@ internal.hazard <- function(model, params, cache) {
     }
   }
   if (params@bootstrap) {
-    bootstrap <- unlist(bootstrap)
-    if (all(is.na(bootstrap))) return(c(Hazard = NA_real_, LCI = NA_real_, UCI = NA_real_))
+    bootstrap <- unlist(bootstrap)  # log hazard ratios from bootstrap samples
+    if (all(is.na(bootstrap))) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
     
+    # Calculate CI on log scale, then exponentiate
     if (params@bootstrap.CI_method == "se") {
       z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
       se <- sd(bootstrap, na.rm = TRUE)
-      ci <- sort(c(full + z*se, full - z*se), decreasing = FALSE) 
-    } else ci <- quantile(bootstrap, 
-                          probs = c((1 - params@bootstrap.CI)/2, 
-                                    1 - (1 - params@bootstrap.CI)/2))
+      ci <- exp(sort(c(full + z*se, full - z*se), decreasing = FALSE))
+    } else ci <- exp(quantile(bootstrap, 
+                              probs = c((1 - params@bootstrap.CI)/2, 
+                                        1 - (1 - params@bootstrap.CI)/2)))
   } else {
     ci <- c(NA_real_, NA_real_)
   }
   
-  out <- c(full, ci)
-  names(out) <- c("Hazard", "LCI", "UCI")
+  out <- c(exp(full), ci)  # Exponentiate log HR to get HR
+  names(out) <- c("Hazard ratio", "LCI", "UCI")
   return(out)
 }

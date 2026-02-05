@@ -194,9 +194,13 @@ outcome <- function(object) {
 #' @export
 covariates <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
-  return(list(Outcome = object@outcome,
-              Numerator = object@numerator,
-              Denominator = object@denominator))
+  format_formula <- function(x) {
+    if (is.na(x)) return(NA_character_)
+    gsub("~", " ~ ", gsub("\\+", " + ", x))
+  }
+  return(list(Outcome = format_formula(object@outcome),
+              Numerator = format_formula(object@numerator),
+              Denominator = format_formula(object@denominator)))
 }
 
 #' Function to print Kaplan-Meier curves
