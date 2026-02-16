@@ -1,3 +1,7 @@
+# SEQTaRget v1.3.6
+
+- Added a `set.seed()` call in `internal.hazard()` to make main estimate reproducible. And also implement fix to ensure the bootstrap standard error is deterministic given the seed.
+
 # SEQTaRget v1.3.5
 
 - The `hazard_ratio()` function now correctly desscribes the estimate as "Hazard ratio"
