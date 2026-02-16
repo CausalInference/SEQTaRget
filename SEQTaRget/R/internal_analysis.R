@@ -207,6 +207,7 @@ internal.analysis <- function(params) {
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
+          set.seed(params@seed + x)
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL

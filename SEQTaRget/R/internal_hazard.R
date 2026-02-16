@@ -88,7 +88,7 @@ internal.hazard <- function(model, params, cache) {
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x]]$model, cache)
-      }, future.seed = params@seed)
+      }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         set.seed(params@seed + x)
