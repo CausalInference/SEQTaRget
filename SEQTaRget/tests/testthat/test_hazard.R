@@ -14,3 +14,13 @@ test_that("Hazard estimate is reproducible with same seed", {
   
   expect_identical(run1@hazard, run2@hazard)
 })
+
+test_that("Hazard bootstrap CIs are reproducible with same seed", {
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "ITT", options = SEQopts(hazard = TRUE, bootstrap = TRUE, bootstrap.nboot = 3, seed = 42L))
+  
+  run1 <- do.call(SEQuential, c(list(data = data.table::copy(SEQdata)), args))
+  run2 <- do.call(SEQuential, c(list(data = data.table::copy(SEQdata)), args))
+  
+  expect_identical(run1@hazard, run2@hazard)
+})
