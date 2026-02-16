@@ -1,5 +1,13 @@
 # Changelog
 
+## SEQTaRget v1.3.6
+
+- Added a [`set.seed()`](https://rdrr.io/r/base/Random.html) call in
+  [`internal.hazard()`](https://causalinference.github.io/SEQTaRget/reference/internal.hazard.md)
+  to make main estimate reproducible. And also implement fix to ensure
+  the bootstrapping, including both standard error and percentiles, is
+  deterministic given the seed.
+
 ## SEQTaRget v1.3.5
 
 CRAN release: 2026-02-05

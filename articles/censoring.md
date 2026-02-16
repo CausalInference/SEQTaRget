@@ -316,5 +316,5 @@ model <- SEQuential(data,
 hazard_ratio(model)
 #> [[1]]
 #> Hazard ratio          LCI          UCI 
-#>     2.993715           NA           NA
+#>     3.005085           NA           NA
 ```
