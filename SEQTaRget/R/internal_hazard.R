@@ -58,6 +58,7 @@ internal.hazard <- function(model, params, cache) {
     } else hr.res <- coxph(Surv(followup, event == 1) ~ get(tx_bas), data)
     hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring
   }
+  set.seed(params@seed)
   full <- handler(params@DT, params, model[[1]]$model, cache)
   if (is.na(full)) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
@@ -87,7 +88,7 @@ internal.hazard <- function(model, params, cache) {
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x]]$model, cache)
-      }, future.seed = params@seed)
+      }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         set.seed(params@seed + x)
