@@ -101,13 +101,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -5.70666923            0.13330124            0.03787358 
+#>           -7.46906316            0.16075823            0.03968600 
 #>           followup_sq                 trial              trial_sq 
-#>           -0.00035674            0.02644011            0.00086039 
+#>           -0.00016337            0.06317372            0.00051575 
 #>                  sex1                 N_bas                 L_bas 
-#>            0.36001344            0.00145292           -0.19058426 
+#>            0.00464424            0.00241233           -0.06868235 
 #>                 P_bas tx_init_bas1:followup 
-#>            0.11295147           -0.00267922 
+#>            0.27365946           -0.00077319 
 #> 
 #> [[1]][[3]]
 #> 
@@ -116,13 +116,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -9.1712e+00            2.2831e-01            5.4841e-02 
+#>           -9.87523938            0.26235241            0.02797899 
 #>           followup_sq                 trial              trial_sq 
-#>           -4.0688e-04            1.0570e-01           -4.0883e-05 
+#>           -0.00021462            0.10306998            0.00018159 
 #>                  sex1                 N_bas                 L_bas 
-#>           -4.2007e-02            2.0687e-03           -5.2355e-02 
+#>            0.00388615            0.00070528           -0.09600071 
 #>                 P_bas tx_init_bas1:followup 
-#>            4.1592e-01           -4.5406e-03 
+#>            0.55374949            0.00050784 
 #> 
 #> [[1]][[4]]
 #> 
@@ -131,13 +131,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -1.2717e+01            1.4785e-01            2.7985e-02 
+#>           -1.5069e+01            4.1291e-02            4.0264e-02 
 #>           followup_sq                 trial              trial_sq 
-#>           -5.0107e-05            1.5879e-01           -1.2503e-04 
+#>           -8.4252e-05            2.0695e-01           -3.7735e-04 
 #>                  sex1                 N_bas                 L_bas 
-#>            1.7735e-01            1.9286e-03           -8.5079e-02 
+#>           -8.5190e-02            2.0471e-04           -7.3809e-02 
 #>                 P_bas tx_init_bas1:followup 
-#>            8.3786e-01            5.3018e-03 
+#>            1.0587e+00            5.3275e-03 
 #> 
 #> [[1]][[5]]
 #> 
@@ -146,13 +146,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -4.12618796            0.31433497            0.04437797 
+#>           -8.3657e+00            3.1649e-02            2.9451e-02 
 #>           followup_sq                 trial              trial_sq 
-#>           -0.00016160           -0.00266764            0.00077599 
+#>           -2.4690e-04            8.6897e-02           -8.0278e-05 
 #>                  sex1                 N_bas                 L_bas 
-#>            0.18135760            0.00240254            0.06506529 
+#>            1.0237e-01            1.8780e-03            1.6773e-02 
 #>                 P_bas tx_init_bas1:followup 
-#>           -0.09583373           -0.00892581 
+#>            3.8673e-01           -1.7781e-03 
 #> 
 #> [[1]][[6]]
 #> 
@@ -161,13 +161,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -4.6104e+00           -2.5621e-02            3.1344e-02 
+#>           -3.57307036            0.30009685            0.03605381 
 #>           followup_sq                 trial              trial_sq 
-#>           -6.0884e-05            1.8695e-04            9.5960e-04 
+#>           -0.00032383           -0.01642147            0.00095613 
 #>                  sex1                 N_bas                 L_bas 
-#>            1.9846e-01            3.8789e-03           -5.5887e-04 
+#>            0.12126892            0.00336200           -0.10718593 
 #>                 P_bas tx_init_bas1:followup 
-#>           -5.6365e-02            8.0484e-03 
+#>           -0.13662391           -0.00433469 
 #> 
 #> [[1]][[7]]
 #> 
@@ -176,13 +176,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -1.4647e+01           -7.5208e-03            4.9683e-02 
+#>           -9.41138584            0.10204396            0.01855281 
 #>           followup_sq                 trial              trial_sq 
-#>           -2.5384e-04            2.0944e-01           -6.0223e-04 
+#>           -0.00021491            0.08791803            0.00019225 
 #>                  sex1                 N_bas                 L_bas 
-#>           -3.2339e-02            6.3060e-03           -8.7478e-03 
+#>            0.23804524            0.00625242            0.03942423 
 #>                 P_bas tx_init_bas1:followup 
-#>            9.8581e-01           -6.3076e-04 
+#>            0.50596492            0.00706765 
 #> 
 #> [[1]][[8]]
 #> 
@@ -191,13 +191,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -9.39071557            0.20227298            0.02731706 
+#>           -8.29000818            0.46723157            0.04876310 
 #>           followup_sq                 trial              trial_sq 
-#>           -0.00012328            0.09938015            0.00014525 
+#>           -0.00031351            0.06089517            0.00053714 
 #>                  sex1                 N_bas                 L_bas 
-#>           -0.12188854           -0.00027847           -0.04695586 
+#>            0.15402934            0.00597165            0.00971093 
 #>                 P_bas tx_init_bas1:followup 
-#>            0.51985467           -0.00103007 
+#>            0.30350362           -0.00754251 
 #> 
 #> [[1]][[9]]
 #> 
@@ -206,13 +206,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>            2.5837e+00            1.0534e-01            3.2412e-02 
+#>           -5.22996278            0.39963780            0.03466171 
 #>           followup_sq                 trial              trial_sq 
-#>           -2.6869e-05           -1.2370e-01            1.6482e-03 
+#>           -0.00034686            0.00275831            0.00077561 
 #>                  sex1                 N_bas                 L_bas 
-#>           -1.3761e-01           -1.8333e-04           -4.8060e-03 
+#>            0.02237348            0.00637046            0.05135397 
 #>                 P_bas tx_init_bas1:followup 
-#>           -7.7720e-01            1.5539e-04 
+#>            0.05294198           -0.00600593 
 #> 
 #> [[1]][[10]]
 #> 
@@ -221,13 +221,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -7.43904169            0.41483864            0.03157776 
+#>            1.7772e+00            1.0381e-01            1.9651e-02 
 #>           followup_sq                 trial              trial_sq 
-#>           -0.00012752            0.05300735            0.00039862 
+#>            4.1896e-05           -1.1177e-01            1.6744e-03 
 #>                  sex1                 N_bas                 L_bas 
-#>            0.30994058            0.00253962           -0.03247561 
+#>           -9.6427e-02            1.8383e-03           -1.7448e-01 
 #>                 P_bas tx_init_bas1:followup 
-#>            0.24637872           -0.00390270 
+#>           -6.7275e-01            2.7958e-03 
 #> 
 #> [[1]][[11]]
 #> 
@@ -236,13 +236,13 @@ outcome(model)     # Returns a list of only the outcome models
 #> 
 #> Coefficients:
 #>           (Intercept)          tx_init_bas1              followup 
-#>           -1.3729e+01            4.3212e-01            4.9985e-02 
+#>           -1.3002e+01            3.4162e-01            3.9734e-02 
 #>           followup_sq                 trial              trial_sq 
-#>           -4.0294e-04            1.7345e-01           -2.2957e-04 
+#>           -2.9124e-04            1.6760e-01           -4.7647e-04 
 #>                  sex1                 N_bas                 L_bas 
-#>            2.8150e-01            1.8517e-03           -6.0796e-02 
+#>           -1.9991e-02           -3.3938e-03            1.8713e-02 
 #>                 P_bas tx_init_bas1:followup 
-#>            9.0134e-01           -5.5006e-03
+#>            8.8180e-01           -7.5343e-03
 km_curve(model)    # Prints the survival curve
 #> Scale for colour is already present.
 #> Adding another scale for colour, which will replace the existing scale.
@@ -256,16 +256,16 @@ risk_data(model)
 #> [[1]]
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
-#> 1:    ITT      0 0.8372582 0.7636821 0.9108343 0.03753953
-#> 2:    ITT      1 0.8744359 0.8332613 0.9156104 0.02100781
+#> 1:    ITT      0 0.8372582 0.7492100 0.9253064 0.04492340
+#> 2:    ITT      1 0.8744359 0.8090922 0.9397796 0.03333925
 risk_comparison(model)
 #> [[1]]
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
-#> 1: risk_0 risk_1  1.0444041  0.9453016   1.153896        0.03717768 -0.04713597
-#> 2: risk_1 risk_0  0.9574838  0.8666291   1.057863       -0.03717768 -0.12149133
+#> 1: risk_0 risk_1  1.0444041   0.917996   1.188219        0.03717768 -0.07246854
+#> 2: risk_1 risk_0  0.9574838   0.841596   1.089329       -0.03717768 -0.14682390
 #>    RD 95% UCI
 #>         <num>
-#> 1: 0.12149133
-#> 2: 0.04713597
+#> 1: 0.14682390
+#> 2: 0.07246854
 ```
