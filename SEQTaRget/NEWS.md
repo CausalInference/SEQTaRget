@@ -1,6 +1,6 @@
 # SEQTaRget v1.3.6
 
-- Added a `set.seed()` call in `internal.hazard()` to make main estimate reproducible. And also implement fix to ensure the bootstrap standard error is deterministic given the seed.
+- Added a `set.seed()` call in `internal.hazard()` to make main estimate reproducible. And also implement fix to ensure the bootstrapping, including both standard error and percentiles, is deterministic given the seed.
 
 # SEQTaRget v1.3.5
 
