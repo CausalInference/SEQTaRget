@@ -58,6 +58,7 @@ internal.hazard <- function(model, params, cache) {
     } else hr.res <- coxph(Surv(followup, event == 1) ~ get(tx_bas), data)
     hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring
   }
+  set.seed(params@seed)
   full <- handler(params@DT, params, model[[1]]$model, cache)
   if (is.na(full)) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
