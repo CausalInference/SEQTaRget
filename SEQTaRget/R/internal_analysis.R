@@ -193,7 +193,9 @@ internal.analysis <- function(params) {
     
     bootstrap <- if (params@bootstrap) {
       if (params@parallel) {
+        old_threads <- getDTthreads()
         setDTthreads(1)
+        on.exit(setDTthreads(old_threads), add = TRUE)
         future_lapply(seq_len(params@bootstrap.nboot), function(x) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params)
