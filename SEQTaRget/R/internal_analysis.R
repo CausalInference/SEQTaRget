@@ -8,7 +8,7 @@ init_formula_cache <- function(params) {
   # Detect simple formulas (no interactions, no I(), no poly(), no factors)
   is_simple_additive <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
-    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
+    !grepl(":|\\*|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
   }
   
   # Helper to parse formula string and extract columns
@@ -215,7 +215,7 @@ internal.analysis <- function(params) {
       list()
     }
 
-    result <- c(list(full), bootstrap)
+  result <- c(list(full), bootstrap)
 
   return(result)
 }
