@@ -52,12 +52,7 @@ init_formula_cache <- function(params) {
 #' @import data.table future doFuture doRNG future.apply
 #' @keywords internal
 internal.analysis <- function(params) {
-  result <- local({
-    on.exit({
-      rm(list = setdiff(ls(), "result"))
-    }, add = TRUE)
-
-    formula_cache <- init_formula_cache(params)
+  formula_cache <- init_formula_cache(params)
     
     trial <- trial.first <- NULL
     numerator <- denominator <- NULL
@@ -220,7 +215,5 @@ internal.analysis <- function(params) {
 
     result <- c(list(full), bootstrap)
 
-    return(result)
-  })
   return(result)
 }
