@@ -7,12 +7,7 @@
 #' @keywords internal
 internal.survival <- function(params, outcome) {
   SE <- NULL
-  result <- local({
-    on.exit({
-      rm(list = setdiff(ls(), "result"))
-    }, add = TRUE)
-
-    # Variable pre-definition ===================================
+  # Variable pre-definition ===================================
     ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
@@ -140,9 +135,7 @@ internal.survival <- function(params, outcome) {
                           ][DT.q, on = c("followup", "variable")]
       }
     } else  surv <- full$data
-    out <- list(data = surv, 
-                ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
-    return(out)
-  })
-  return(result)
+  out <- list(data = surv,
+              ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
+  return(out)
 }

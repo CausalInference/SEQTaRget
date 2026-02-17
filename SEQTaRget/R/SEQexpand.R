@@ -6,12 +6,7 @@
 #'
 #' @keywords internal
 SEQexpand <- function(params) {
-  out <- local({
-    on.exit({
-      rm(list = setdiff(ls(), "out"))
-    }, add = TRUE)
-
-    # Variable pre-definition ===================================
+  # Variable pre-definition ===================================
     sum_elig <- NULL
     followup <- NULL
     dose <- NULL
@@ -156,7 +151,5 @@ SEQexpand <- function(params) {
       out <- out[trialID %in% c(IDs, subset),
                  ][, trialID := NULL]
     }
-    return(out)
-  })
   return(out)
 }

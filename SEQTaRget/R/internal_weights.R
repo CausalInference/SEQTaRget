@@ -9,12 +9,7 @@
 #' @importFrom fastglm fastglm
 #' @keywords internal
 internal.weights <- function(DT, data, params, cache) {
-  result <- local({
-    on.exit({
-      rm(list = setdiff(ls(), "result"))
-    }, add = TRUE)
-
-    # Variable pre-definition ===================================
+  # Variable pre-definition ===================================
     tx_lag <- NULL
     numerator <- denominator <- NULL
     cense1 <- cense1.numerator <- cense1.denominator <- NULL
@@ -212,7 +207,5 @@ internal.weights <- function(DT, data, params, cache) {
       slot(weight.info, "coef.ncense") <- clean_fastglm(cense.numerator)
       slot(weight.info, "coef.dcense") <- clean_fastglm(cense.denominator)
     }
-    return(weight.info)
-  })
-  return(result)
+  return(weight.info)
 }
