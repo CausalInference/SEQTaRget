@@ -97,21 +97,21 @@ outcome.table <- function(params, type, filter = NA) {
   
   if (is.na(params@subgroup)) {
     out <- if (type == "unique") {
-      copy(params@DT)[get(params@outcome) == 1, .SD[1], 
-                      by = c(params@id, tx_bas, params@outcome)
-                      ][, list(n = .N), by = c(tx_bas, params@outcome)] 
+      params@DT[get(params@outcome) == 1, .SD[1],
+                by = c(params@id, tx_bas, params@outcome)
+                ][, list(n = .N), by = c(tx_bas, params@outcome)]
     } else {
-      copy(params@DT)[get(params@outcome) == 1, list(n = .N), 
-                      by = c(tx_bas, params@outcome)]
+      params@DT[get(params@outcome) == 1, list(n = .N),
+                by = c(tx_bas, params@outcome)]
     }
   } else {
     out <- if (type == "unique") {
-      copy(params@DT)[get(params@outcome) == 1 & get(params@subgroup) == filter, 
-                      .SD[1], by = c(params@id, tx_bas, params@outcome)
-                      ][, list(n = .N), by = c(tx_bas, params@outcome)] 
+      params@DT[get(params@outcome) == 1 & get(params@subgroup) == filter,
+                .SD[1], by = c(params@id, tx_bas, params@outcome)
+                ][, list(n = .N), by = c(tx_bas, params@outcome)]
     } else {
-      copy(params@DT)[get(params@outcome) == 1 & get(params@subgroup) == filter, 
-                      list(n = .N), by = c(tx_bas, params@outcome)]
+      params@DT[get(params@outcome) == 1 & get(params@subgroup) == filter,
+                list(n = .N), by = c(tx_bas, params@outcome)]
     }
   }
   return(out)
