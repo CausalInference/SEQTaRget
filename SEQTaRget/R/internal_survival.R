@@ -42,10 +42,11 @@ internal.survival <- function(params, outcome) {
         inc_accum <- if (!is.na(params@compevent)) rep(0.0, n_base) else NULL
 
         pred_DT <- copy(base_DT)
+        fup_sq_col <- paste0("followup", params@indicator.squared)
         results <- vector("list", params@survival.max + 1)
         for (fup in 0:params@survival.max) {
           set(pred_DT, j = "followup", value = as.integer(fup))
-          set(pred_DT, j = paste0("followup", params@indicator.squared), value = as.numeric(fup^2))
+          set(pred_DT, j = fup_sq_col, value = as.numeric(fup^2))
           set(pred_DT, j = tx_bas, value = as.character(params@treat.level[[i]]))
 
           if (params@method == "dose-response" & i == 1) {
