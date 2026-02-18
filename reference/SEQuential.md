@@ -80,10 +80,10 @@ An S4 object of class SEQoutput
 Implementation of sequential trial emulation for the analysis of
 observational databases. The SEQuential software accommodates
 time-varying treatments and confounders, as well as binary and failure
-time outcomes. SEQ allows to compare both static and dynamic strategies,
-can be used to estimate observational analogs of intention-to-treat and
-per-protocol effects, and can adjust for potential selection bias
-induced by losses-to-follow-up.
+time outcomes. `SEQuential` allows to compare both static and dynamic
+strategies, can be used to estimate observational analogs of
+intention-to-treat and per-protocol effects, and can adjust for
+potential selection bias induced by losses-to-follow-up.
 
 ## Examples
 

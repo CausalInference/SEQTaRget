@@ -1,5 +1,10 @@
 # Changelog
 
+## SEQTaRget v1.3.6.9000
+
+- Removed several [`local()`](https://rdrr.io/r/base/eval.html) wrappers
+  and made several code optimizations.
+
 ## SEQTaRget v1.3.6
 
 CRAN release: 2026-02-16
