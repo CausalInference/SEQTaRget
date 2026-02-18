@@ -41,9 +41,9 @@ internal.survival <- function(params, outcome) {
         ce_accum <- if (!is.na(params@compevent)) rep(1.0, n_base) else NULL
         inc_accum <- if (!is.na(params@compevent)) rep(0.0, n_base) else NULL
 
+        pred_DT <- copy(base_DT)
         results <- vector("list", params@survival.max + 1)
         for (fup in 0:params@survival.max) {
-          pred_DT <- copy(base_DT)
           set(pred_DT, j = "followup", value = as.integer(fup))
           set(pred_DT, j = paste0("followup", params@indicator.squared), value = as.numeric(fup^2))
           set(pred_DT, j = tx_bas, value = as.character(params@treat.level[[i]]))
