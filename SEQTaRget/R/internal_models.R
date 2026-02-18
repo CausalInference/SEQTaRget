@@ -32,7 +32,7 @@ internal.model <- function(data, params) {
     subgroups <- sort(unique(data[[params@subgroup]]))
     for (i in seq_along(subgroups)) {
       label <- paste0(params@subgroup, "_", subgroups[[i]]) 
-      subDT <- copy(data)[get(params@subgroup) == subgroups[[i]], ][, eval(params@subgroup) := NULL]
+      subDT <- data[get(params@subgroup) == subgroups[[i]], ][, eval(params@subgroup) := NULL]
       model[[label]] <- handler(subDT, params)
     }
   }

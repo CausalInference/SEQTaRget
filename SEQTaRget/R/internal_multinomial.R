@@ -54,34 +54,31 @@ multinomial.predict <- function(model, X, target = NULL) {
 #' @keywords internal
 multinomial.summary <- function(model) {
   models <- model$models
-  baseline <- model$baseline
+  baseline_level <- model$baseline
   levels <- model$levels
-  
-  summarytable <- data.frame()
-  
-  for (class in names(models)) {
-    coef <- coef(models[[class]])
-    se <- sqrt(diag(vcov(models[[class]])))
-    
-    summary <- data.frame(
-      Class = class,
+
+  summaries <- lapply(names(models), function(cls) {
+    coef <- coef(models[[cls]])
+    se <- sqrt(diag(vcov(models[[cls]])))
+    data.frame(
+      Class = cls,
       Term = names(coef),
       Std.Error = se,
       Z.Value = coef / se,
       P.Value = 2 * pnorm(-abs(coef / se))
     )
-    summarytable <- rbind(summarytable, summary)
-  }
-  
-  baseline <- data.frame(
-    Class = baseline,
+  })
+  summarytable <- do.call(rbind, summaries)
+
+  baseline_row <- data.frame(
+    Class = baseline_level,
     Term = "(Intercept)",
     Coefficient = 0,
     Std.Error = NA,
     Z.Value = NA,
     P.Value = NA
   )
-  return(rbind(baseline, summarytable))
+  return(rbind(baseline_row, summarytable))
 }
 
 model.passer <- function(X, y, params) {

@@ -84,7 +84,9 @@ internal.hazard <- function(model, params, cache) {
     }
 
     if (params@parallel) {
+      old_threads <- getDTthreads()
       setDTthreads(1)
+      on.exit(setDTthreads(old_threads), add = TRUE)
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x]]$model, cache)

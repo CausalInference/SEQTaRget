@@ -8,7 +8,7 @@ init_formula_cache <- function(params) {
   # Detect simple formulas (no interactions, no I(), no poly(), no factors)
   is_simple_additive <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
-    !grepl(":|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
+    !grepl(":|\\*|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
   }
   
   # Helper to parse formula string and extract columns
@@ -52,12 +52,7 @@ init_formula_cache <- function(params) {
 #' @import data.table future doFuture doRNG future.apply
 #' @keywords internal
 internal.analysis <- function(params) {
-  result <- local({
-    on.exit({
-      rm(list = setdiff(ls(), "result"))
-    }, add = TRUE)
-
-    formula_cache <- init_formula_cache(params)
+  formula_cache <- init_formula_cache(params)
     
     trial <- trial.first <- NULL
     numerator <- denominator <- NULL
@@ -198,7 +193,9 @@ internal.analysis <- function(params) {
     
     bootstrap <- if (params@bootstrap) {
       if (params@parallel) {
+        old_threads <- getDTthreads()
         setDTthreads(1)
+        on.exit(setDTthreads(old_threads), add = TRUE)
         future_lapply(seq_len(params@bootstrap.nboot), function(x) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params)
@@ -218,9 +215,7 @@ internal.analysis <- function(params) {
       list()
     }
 
-    result <- c(list(full), bootstrap)
+  result <- c(list(full), bootstrap)
 
-    return(result)
-  })
   return(result)
 }

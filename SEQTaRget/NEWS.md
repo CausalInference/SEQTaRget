@@ -1,3 +1,7 @@
+# SEQTaRget v1.3.6.9000
+
+- Removed several `local()` wrappers and made several code optimizations.
+
 # SEQTaRget v1.3.6
 
 - Added a `set.seed()` call in `internal.hazard()` to make main estimate reproducible. And also implement fix to ensure the bootstrapping, including both standard error and percentiles, is deterministic given the seed.
