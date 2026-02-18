@@ -36,8 +36,8 @@ You can install the development version of SEQTaRget from
 [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("devtools")
-devtools::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
+install.packages("remotes")
+remotes::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
 ```
 
 ## Setting up your Analysis
