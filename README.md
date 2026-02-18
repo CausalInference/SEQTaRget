@@ -26,7 +26,13 @@ potential selection bias <br/> <br/>
 
 ## Installation
 
-You can install the development version of SEQ from
+You can install the release version of SEQTaRget from CRAN with:
+
+``` r
+install.packages("SEQTaRget")
+```
+
+You can install the development version of SEQTaRget from
 [GitHub](https://github.com/) with:
 
 ``` r
