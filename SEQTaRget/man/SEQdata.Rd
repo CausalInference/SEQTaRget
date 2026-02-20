@@ -26,4 +26,4 @@ SEQdata
 \description{
 Simulated observational example data for \code{\link[=SEQuential]{SEQuential()}}
 }
-\keyword{internal}
+\keyword{datasets}

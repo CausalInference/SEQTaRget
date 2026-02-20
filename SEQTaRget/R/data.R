@@ -16,7 +16,6 @@
 #' }
 #' @usage SEQdata
 #' @description Simulated observational example data for [SEQuential()]
-#' @keywords internal
 "SEQdata"
 
 #' Simulated lost-to-followup example data for [SEQuential()]
