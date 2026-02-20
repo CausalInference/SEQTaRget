@@ -31,9 +31,9 @@
 #'   \item{L}{Numeric: 4% continuously increase from U(0, 1)}
 #'   \item{P}{Numeric: 2% continuously decrease from U(9, 10)}
 #'   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
-#'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
+#'   \item{excusedZero}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 #'   \item{LTFU}{Binary: Flag for losing a simulated ID to followup, if 1 there are no more records of the ID afterwards}
-#'   \item{eligible_cense}{A column of 1s.}
+#'   \item{eligible_cense}{Binary: emulates columns which are eligible to entering into censoring models (e.g. if you want to limit columns for the LTFU model) }
 #' }
 "SEQdata.LTFU"
 
