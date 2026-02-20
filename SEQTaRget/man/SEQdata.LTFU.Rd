@@ -19,6 +19,7 @@ A dataframe with 54,687 rows and 13 columns:
 \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
 \item{LTFU}{Binary: Flag for losing a simulated ID to followup, if 1 there are no more records of the ID afterwards}
+\item{eligible_cense}{A column of 1s.}
 }
 }
 \usage{
