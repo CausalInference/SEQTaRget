@@ -11,7 +11,7 @@ SEQdata.LTFU
 
 ## Format
 
-A dataframe with 4,139 rows and 13 columns:
+A dataframe with 54,687 rows and 13 columns:
 
 - ID:
 
@@ -57,10 +57,15 @@ A dataframe with 4,139 rows and 13 columns:
 
 - excusedZero:
 
-  Binary: Once zero, always zero variable emulating an excuse for
+  Binary: Once one, always one variable emulating an excuse for
   treatment switch
 
 - LTFU:
 
   Binary: Flag for losing a simulated ID to followup, if 1 there are no
   more records of the ID afterwards
+
+- eligible_cense:
+
+  Binary: emulates columns which are eligible to entering into censoring
+  models (e.g. if you want to limit columns for the LTFU model)

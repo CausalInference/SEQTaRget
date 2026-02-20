@@ -4,6 +4,7 @@
 
 - Removed several [`local()`](https://rdrr.io/r/base/eval.html) wrappers
   and made several code optimizations.
+- Improved documentation of the datasets in the package.
 
 ## SEQTaRget v1.3.6
 

@@ -11,7 +11,7 @@ SEQdata
 
 ## Format
 
-A data frame with 54,687 rows and 13 columns:
+A data frame with 12,180 rows and 11 columns:
 
 - ID:
 

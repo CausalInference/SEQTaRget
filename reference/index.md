@@ -11,6 +11,9 @@
   Simulated lost-to-followup example data for
   [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
 
+- [`SEQdata`](https://causalinference.github.io/SEQTaRget/reference/SEQdata.md)
+  : Simulated observational example data for SEQuential
+
 - [`SEQdata.multitreatment`](https://causalinference.github.io/SEQTaRget/reference/SEQdata.multitreatment.md)
   :
 

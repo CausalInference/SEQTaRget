@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A dataframe with 4,139 rows and 13 columns:</p><dl><dt>ID</dt>
+    <p>A dataframe with 54,687 rows and 13 columns:</p><dl><dt>ID</dt>
 <dd><p>Integer: Unique ID emulating individual patients</p></dd>
 
 <dt>time</dt>
@@ -81,10 +81,13 @@
 <dd><p>Binary: Once one, always one variable emulating an excuse for treatment switch</p></dd>
 
 <dt>excusedZero</dt>
-<dd><p>Binary: Once zero, always zero variable emulating an excuse for treatment switch</p></dd>
+<dd><p>Binary: Once one, always one variable emulating an excuse for treatment switch</p></dd>
 
 <dt>LTFU</dt>
 <dd><p>Binary: Flag for losing a simulated ID to followup, if 1 there are no more records of the ID afterwards</p></dd>
+
+<dt>eligible_cense</dt>
+<dd><p>Binary: emulates columns which are eligible to entering into censoring models (e.g. if you want to limit columns for the LTFU model)</p></dd>
 
 
 </dl></div>
