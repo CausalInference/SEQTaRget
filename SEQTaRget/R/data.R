@@ -1,6 +1,6 @@
 #' Simulated observational example data for SEQuential
 #'
-#' @format A data frame with 54,687 rows and 13 columns:
+#' @format A data frame with 12,180 rows and 11 columns:
 #' \describe{
 #'   \item{ID}{Integer: Unique ID emulating individual patients}
 #'   \item{time}{Integer: Time of observation, always begins at 0, max time of 59. Should be continuous}
@@ -16,11 +16,10 @@
 #' }
 #' @usage SEQdata
 #' @description Simulated observational example data for [SEQuential()]
-#' @keywords internal
 "SEQdata"
 
 #' Simulated lost-to-followup example data for [SEQuential()]
-#' @format A dataframe with 4,139 rows and 13 columns:
+#' @format A dataframe with 54,687 rows and 13 columns:
 #' \describe{
 #'   \item{ID}{Integer: Unique ID emulating individual patients}
 #'   \item{time}{Integer: Time of observation, always begins at 0, max time of 59; however, if lost-to-followup, time is truncated at a random point}
@@ -32,8 +31,9 @@
 #'   \item{L}{Numeric: 4% continuously increase from U(0, 1)}
 #'   \item{P}{Numeric: 2% continuously decrease from U(9, 10)}
 #'   \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
-#'   \item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
+#'   \item{excusedZero}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 #'   \item{LTFU}{Binary: Flag for losing a simulated ID to followup, if 1 there are no more records of the ID afterwards}
+#'   \item{eligible_cense}{Binary: emulates columns which are eligible to entering into censoring models (e.g. if you want to limit columns for the LTFU model) }
 #' }
 "SEQdata.LTFU"
 
