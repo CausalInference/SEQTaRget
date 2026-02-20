@@ -5,7 +5,7 @@
 \alias{SEQdata.LTFU}
 \title{Simulated lost-to-followup example data for \code{\link[=SEQuential]{SEQuential()}}}
 \format{
-A dataframe with 4,139 rows and 13 columns:
+A dataframe with 54,687 rows and 13 columns:
 \describe{
 \item{ID}{Integer: Unique ID emulating individual patients}
 \item{time}{Integer: Time of observation, always begins at 0, max time of 59; however, if lost-to-followup, time is truncated at a random point}
