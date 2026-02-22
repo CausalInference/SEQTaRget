@@ -20,7 +20,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
         LTFU.time <- sample(1:max.time, 1)
         LTFU_vector <- c(rep(0, LTFU.time), 1)
       } else {
-        LTFU_vector <- rep(0, max.time+1)
+        LTFU_vector <- rep(0, max.time + 1)
       }
     }
 
@@ -34,7 +34,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
     }
 
     tx_vector <- numeric(max.time + 1)
-    if(n_treatments == 1) {
+    if (n_treatments == 1) {
       for (j in 1:max.time + 1) {
         if (j == 1) tx_vector[j] <- 0
         if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(c(0, 1), prob = c(0.8, 0.2))
@@ -49,7 +49,9 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
           if (switch) {
             valid <- setdiff(0:n_treatments, tx_vector[j - 1])
             tx_vector[j] <- sample(valid)
-          } else tx_vector[j] <- tx_vector[j-1]
+          } else {
+            tx_vector[j] <- tx_vector[j - 1]
+          }
         }
       }
     }
@@ -91,7 +93,7 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
       if (LTFU.ind == 1) ID <- ID[time <= LTFU.time, ]
       ID <- cbind(ID, LTFU = LTFU_vector)
       ID <- cbind(ID, cense.eligible = rep(1, nrow(ID)))
-#      ID <- ID[outcome == 1, LTFU := NA]
+      #      ID <- ID[outcome == 1, LTFU := NA]
     }
     if (outcome == 1) ID <- ID[time <= outcome_time]
 
