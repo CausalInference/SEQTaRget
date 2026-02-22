@@ -1,7 +1,8 @@
-# SEQTaRget v1.3.6.9000
+# SEQTaRget v1.3.6.9002
 
 - Removed several `local()` wrappers and made several code optimizations.
 - Improved documentation of the datasets in the package.
+- Fixed a small issue in the example dataset generation code and regenerated datsets.
 
 # SEQTaRget v1.3.6
 
