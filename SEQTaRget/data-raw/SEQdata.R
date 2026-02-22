@@ -58,13 +58,13 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
     excused1_vector <- numeric(max.time + 1)
     for (j in 1:max.time + 1) {
       if (j == 1) {
-        excused0_vector[j] <- 0
+        excused0_vector[j] <- 1
         excused1_vector[j] <- 0
       }
-      if (excused0_vector[j - 1] == 0) excused0_vector[j] <- rbinom(1, 1, 0.05)
-      if (excused1_vector[j - 1] == 0) excused1_vector[j] <- rbinom(1, 1, 0.05)
+      if (excused0_vector[j - 1] == 1) excused0_vector[j] <- rbinom(1, 1, 0.95)
+      if (excused0_vector[j - 1] == 0) excused0_vector[j] <- 0
 
-      if (excused0_vector[j - 1] == 1) excused0_vector[j] <- 1
+      if (excused1_vector[j - 1] == 0) excused1_vector[j] <- rbinom(1, 1, 0.05)
       if (excused1_vector[j - 1] == 1) excused1_vector[j] <- 1
     }
 
