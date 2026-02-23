@@ -17,7 +17,7 @@ A dataframe with 5,976 rows and 11 columns:
 \item{L}{Numeric: 4\% continuously increase from U(0, 1)}
 \item{P}{Numeric: 2\% continuously decrease from U(9, 10)}
 \item{excusedOne}{Binary: Once one, always one variable emulating an excuse for treatment switch}
-\item{excusedZero}{Binary: Once zero, always zero variable emulating an excuse for treatment switch}
+\item{excusedZero}{Binary: Once one, always one variable emulating an excuse for treatment switch}
 }
 }
 \usage{
