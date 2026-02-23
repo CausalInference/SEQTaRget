@@ -57,5 +57,5 @@ A data frame with 12,180 rows and 11 columns:
 
 - excusedZero:
 
-  Binary: Once zero, always zero variable emulating an excuse for
+  Binary: Once one, always one variable emulating an excuse for
   treatment switch
