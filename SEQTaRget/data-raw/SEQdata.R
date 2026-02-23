@@ -35,14 +35,20 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
 
     tx_vector <- numeric(max.time + 1)
     if(n_treatments == 1) {
-      for (j in 1:max.time + 1) {
-        if (j == 1) tx_vector[j] <- 0
+      for (j in 1:(max.time + 1)) {
+        if (j == 1) {
+          tx_vector[j] <- 0
+          next
+        }
         if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(c(0, 1), prob = c(0.8, 0.2))
         if (tx_vector[j - 1] == 1) tx_vector[j] <- sample(c(0, 1), prob = c(0.05, 0.95))
       }
     } else {
-      for (j in 1:max.time + 1) {
-        if (j == 1) tx_vector[j] <- 0
+      for (j in 1:(max.time + 1)) {
+        if (j == 1) {
+          tx_vector[j] <- 0
+          next
+        }
         if (tx_vector[j - 1] == 0) tx_vector[j] <- sample(0:n_treatments, 1, prob = c(0.8, rep((1 - 0.8) / n_treatments, n_treatments)))
         if (tx_vector[j - 1] != 0) {
           switch <- as.logical(rbinom(1, 1, 0.05))
@@ -56,11 +62,12 @@ generate_data <- function(n = 1e3, max.time = 59, LTFU = TRUE, n_treatments = 1)
 
     excused0_vector <- numeric(max.time + 1)
     excused1_vector <- numeric(max.time + 1)
-    for (j in 1:max.time + 1) {
+    for (j in 1:(max.time + 1)) {
       if (j == 1) {
         excused0_vector[j] <- 0
         excused1_vector[j] <- 0
-      }
+        next
+      } 
       if (excused0_vector[j - 1] == 0) excused0_vector[j] <- rbinom(1, 1, 0.05)
       if (excused1_vector[j - 1] == 0) excused1_vector[j] <- rbinom(1, 1, 0.05)
 
