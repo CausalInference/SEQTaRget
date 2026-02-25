@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SEQTaRget - Sequentially Nested Target Trial Emulation
+# SEQTaRget - Sequentially Nested Target Trial Emulation <a href="https://causalinference.github.io/SEQTaRget/"><img src="SEQTaRget/man/figures/logo.png" align="right" height="138" alt="SEQTaRget logo with link to website." /></a>
 
 <!-- badges: start -->
 
@@ -13,8 +13,6 @@
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 
 <!-- badges: end -->
-
-<img src="https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png" align="right" style="float" width="200" alt="SEQTaRget package icon which is a visual representation of the original dataset mapping to the expanded dataset."/>
 
 Implementation of sequential trial emulation for the analysis of
 observational databases. The ‘SEQTaRget’ software accommodates
