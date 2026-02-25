@@ -37,7 +37,7 @@ multinomial <- function(X, y, family = quasibinomial(), method) {
 
   baseline <- ylevels[1]
   models <- list()
-  
+
   for (class in ylevels[-1]) {
     ybin <- ifelse(y == class, 1, 0)
     model <- fastglm(X, ybin, family, method = method)
@@ -114,7 +114,7 @@ model.passer <- function(X, y, params) {
   multi <- if (params@multinomial &&
                !params@weight.preexpansion &&
                (params@excused || params@deviation.excused)) FALSE else params@multinomial
-      
+
   model <- if (!multi) {
     m <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
     check_separation(m, label = "logistic regression")
@@ -122,6 +122,6 @@ model.passer <- function(X, y, params) {
   } else  {
     multinomial(X, y, family = quasibinomial(), method = params@fastglm.method)
   }
-  
+
   return(model)
 }
