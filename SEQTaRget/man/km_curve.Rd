@@ -16,7 +16,7 @@ km_curve(
 \arguments{
 \item{object}{SEQoutput object to plot}
 
-\item{plot.type}{character: type of plot to print}
+\item{plot.type}{character: type of plot to print; one of: \code{"survival"} (default), \code{"risk"}, \code{"inc"}}
 
 \item{plot.title}{character: defines the title of the plot}
 

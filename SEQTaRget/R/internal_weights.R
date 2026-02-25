@@ -53,7 +53,9 @@ internal.weights <- function(DT, data, params, cache) {
         cense.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "LTFU", cache)
         
         cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(cense.numerator, label = "censoring numerator")
         cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(cense.denominator, label = "censoring denominator")
         
         rm(cense.numerator.data, cense.denominator.data)
       }
@@ -63,7 +65,9 @@ internal.weights <- function(DT, data, params, cache) {
         visit.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "visit", cache)
         
         visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(visit.numerator, label = "visit numerator")
         visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(visit.denominator, label = "visit denominator")
         
         rm(visit.numerator.data, visit.denominator.data)
       }
@@ -78,28 +82,32 @@ internal.weights <- function(DT, data, params, cache) {
       model.data <- copy(weight)
       if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
-      for (i in seq_along(params@treat.level)) {
-        level <- params@treat.level[[i]]
-        if (!is.na(params@weight.eligible_cols[[i]])) {
-          model.data[get(params@treatment) == level & 
-                       get(params@weight.eligible_col) == 0, names(model.data) := NULL]
-        }
-      }
-
       # Fit models for each treatment level
       if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
-          n.data <- prepare.data_cached(model.data, params, type = "numerator", model = level, case = "default", cache)
-          numerator_models[[i]] <- model.passer(n.data$X, n.data$y, params)
+          eligible_col <- params@weight.eligible_cols[[i]]
+          level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+          n.data <- prepare.data_cached(level_data, params, type = "numerator", model = level, case = "default", cache)
+          if (length(unique(n.data$y)) < 2L) {
+            numerator_models[[i]] <- list(skip = TRUE)
+          } else {
+            numerator_models[[i]] <- model.passer(n.data$X, n.data$y, params)
+          }
           rm(n.data)
         }
       }
 
       for (i in seq_along(params@treat.level)) {
         level <- params@treat.level[[i]]
-        d.data <- prepare.data_cached(model.data, params, type = "denominator", level, case = "default", cache)
-        denominator_models[[i]] <- model.passer(d.data$X, d.data$y, params)
+        eligible_col <- params@weight.eligible_cols[[i]]
+        level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+        d.data <- prepare.data_cached(level_data, params, type = "denominator", level, case = "default", cache)
+        if (length(unique(d.data$y)) < 2L) {
+          denominator_models[[i]] <- list(skip = TRUE)
+        } else {
+          denominator_models[[i]] <- model.passer(d.data$X, d.data$y, params)
+        }
         rm(d.data)
       }
 
@@ -113,16 +121,20 @@ internal.weights <- function(DT, data, params, cache) {
       if (!(params@excused | params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
-          out[tx_lag == level, `:=`(
-            numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level),
-            denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level))]
-          
-          if (i == 1) {
-            out[tx_lag == level & get(params@treatment) == params@treat.level[[i]], 
-                `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+          if (isTRUE(numerator_models[[i]]$skip) || isTRUE(denominator_models[[i]]$skip)) {
+            out[tx_lag == level, `:=`(numerator = 1, denominator = 1)]
           } else {
-            out[tx_lag == level & get(params@treatment) != params@treat.level[[i]], 
-                `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+            out[tx_lag == level, `:=`(
+              numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level),
+              denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level))]
+
+            if (i == 1) {
+              out[tx_lag == level & get(params@treatment) == params@treat.level[[i]],
+                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+            } else {
+              out[tx_lag == level & get(params@treatment) != params@treat.level[[i]],
+                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+            }
           }
         }
       } else {
@@ -190,15 +202,15 @@ internal.weights <- function(DT, data, params, cache) {
     if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
       coef.numerator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.numerator[[i]] <- clean_fastglm(numerator_models[[i]])
+        coef.numerator[[i]] <- if (!isTRUE(numerator_models[[i]]$skip)) clean_fastglm(numerator_models[[i]]) else NULL
       }
       weight.info@coef.numerator <- coef.numerator
     }
-    
+
     if (params@method != "ITT") {
       coef.denominator <- c()
       for (i in seq_along(params@treat.level)) {
-        coef.denominator[[i]] <- clean_fastglm(denominator_models[[i]])
+        coef.denominator[[i]] <- if (!isTRUE(denominator_models[[i]]$skip)) clean_fastglm(denominator_models[[i]]) else NULL
       }
       weight.info@coef.denominator <- coef.denominator
     }

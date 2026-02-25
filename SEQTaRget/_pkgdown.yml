@@ -1,5 +1,13 @@
 url: https://causalinference.github.io/SEQTaRget/
 template:
   bootstrap: 5
+  light-switch: true
 destination: ../docs
-
+navbar:
+  structure:
+    right: [search, cran, github, lightswitch]
+  components:
+    cran:
+      icon: fab fa-r-project
+      href: https://cran.r-project.org/package=SEQTaRget
+      aria-label: View on CRAN

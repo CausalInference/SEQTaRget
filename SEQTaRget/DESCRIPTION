@@ -1,7 +1,7 @@
 Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
-Version: 1.3.6.9002
+Version: 1.3.6.9003
 Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
@@ -55,6 +55,6 @@ Imports:
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
-URL: https://causalinference.github.io/SEQTaRget/
+URL: https://causalinference.github.io/SEQTaRget/, https://github.com/CausalInference/SEQTaRget
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

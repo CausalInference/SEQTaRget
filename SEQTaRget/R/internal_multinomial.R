@@ -1,3 +1,31 @@
+#' Check a fitted fastglm model for signs of perfect or quasi-complete separation
+#'
+#' Issues a warning when separation is detected. Because \code{fastglm} uses
+#' IWLS and stops at its iteration limit rather than diverging to \code{Inf},
+#' separation is identified by two complementary signals:
+#' \enumerate{
+#'   \item Any coefficient with \code{|coef| > 25} (logit > 25 implies
+#'         P > 1 - 1e-11, unreachable without separation).
+#'   \item Non-finite coefficients (\code{Inf}/\code{-Inf}/\code{NaN}),
+#'         which can occur with other solvers.
+#' }
+#'
+#' @param model a fastglm model object
+#' @param label a short string identifying the model (used in the warning message)
+#' @keywords internal
+check_separation <- function(model, label = "logistic regression") {
+  coefs <- model$coefficients
+  if (any(!is.finite(coefs)) || any(abs(coefs) > 25)) {
+    warning(
+      "Perfect or quasi-complete separation detected in the ", label, " model. ",
+      "One or more coefficients are non-finite or extremely large, ",
+      "which typically indicates that a predictor perfectly discriminates the outcome. ",
+      "The resulting weights may be unreliable.",
+      call. = FALSE
+    )
+  }
+}
+
 #' Helper function for nested logistic
 #'
 #' @importFrom fastglm fastglm
@@ -6,14 +34,14 @@
 multinomial <- function(X, y, family = quasibinomial(), method) {
   y <- as.factor(y)
   ylevels <- levels(y)
-  
+
   baseline <- ylevels[1]
   models <- list()
-  
+
   for (class in ylevels[-1]) {
     ybin <- ifelse(y == class, 1, 0)
     model <- fastglm(X, ybin, family, method = method)
-    
+    check_separation(model, label = paste0("multinomial (class = ", class, ")"))
     models[[class]] <- model
   }
   return(list(models = models,
@@ -83,15 +111,17 @@ multinomial.summary <- function(model) {
 
 model.passer <- function(X, y, params) {
   y <- as.numeric(as.character(y))
-  multi <- if (params@multinomial && 
-               !params@weight.preexpansion && 
+  multi <- if (params@multinomial &&
+               !params@weight.preexpansion &&
                (params@excused || params@deviation.excused)) FALSE else params@multinomial
-      
+
   model <- if (!multi) {
-    fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+    m <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+    check_separation(m, label = "logistic regression")
+    m
   } else  {
     multinomial(X, y, family = quasibinomial(), method = params@fastglm.method)
   }
-  
+
   return(model)
 }
