@@ -59,7 +59,7 @@ model <- SEQuential(data, id.col = "ID",
 
 `SEQuential` produces a lot of internal diagnostics, models, and dataframes out of its main function in an S4 class. We provide a few different methods to handle obtaining your results.
 
-```{r outcome}
+```{r outcome, fig.alt="Survival curve by treatment group."}
 outcome(model)     # Returns a list of only the outcome models 
 km_curve(model)    # Prints the survival curve
 risk_data(model)
