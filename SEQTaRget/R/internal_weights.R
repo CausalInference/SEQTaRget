@@ -53,7 +53,9 @@ internal.weights <- function(DT, data, params, cache) {
         cense.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "LTFU", cache)
         
         cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(cense.numerator, label = "censoring numerator")
         cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(cense.denominator, label = "censoring denominator")
         
         rm(cense.numerator.data, cense.denominator.data)
       }
@@ -63,7 +65,9 @@ internal.weights <- function(DT, data, params, cache) {
         visit.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "visit", cache)
         
         visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(visit.numerator, label = "visit numerator")
         visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        check_separation(visit.denominator, label = "visit denominator")
         
         rm(visit.numerator.data, visit.denominator.data)
       }
