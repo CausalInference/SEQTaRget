@@ -206,7 +206,7 @@ covariates <- function(object) {
 #' Function to print Kaplan-Meier curves
 #'
 #' @param object SEQoutput object to plot
-#' @param plot.type character: type of plot to print
+#' @param plot.type character: type of plot to print; one of: `"survival"` (default), `"risk"`, `"inc"`
 #' @param plot.title character: defines the title of the plot
 #' @param plot.subtitle character: plot subtitle
 #' @param plot.labels length 2 character: plot labels
