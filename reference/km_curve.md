@@ -23,7 +23,8 @@ km_curve(
 
 - plot.type:
 
-  character: type of plot to print
+  character: type of plot to print; one of: `"survival"` (default),
+  `"risk"`, `"inc"`
 
 - plot.title:
 

@@ -18,14 +18,17 @@
 
 ## Citation
 
+Source:
+[`DESCRIPTION`](https://github.com/CausalInference/SEQTaRget/blob/main/DESCRIPTION)
+
 O'Dea R, Szmulewicz A, Palmer T, Hernán M (2026). *SEQTaRget: Sequential
-Trial Emulation*. R package version 1.3.6.9002,
+Trial Emulation*. R package version 1.3.6.9003,
 <https://causalinference.github.io/SEQTaRget/>.
 
     @Manual{,
       title = {SEQTaRget: Sequential Trial Emulation},
       author = {Ryan O'Dea and Alejandro Szmulewicz and Tom Palmer and Miguel Hernán},
       year = {2026},
-      note = {R package version 1.3.6.9002},
+      note = {R package version 1.3.6.9003},
       url = {https://causalinference.github.io/SEQTaRget/},
     }

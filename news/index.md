@@ -1,10 +1,16 @@
 # Changelog
 
-## SEQTaRget v1.3.6.9000
+## SEQTaRget v1.3.6.9003
 
 - Removed several [`local()`](https://rdrr.io/r/base/eval.html) wrappers
   and made several code optimizations.
 - Improved documentation of the datasets in the package.
+- Implement check for perfect separation when fitting logistic
+  regression models.
+- Fixed a bug in and make some improvements to
+  [`internal.weights()`](https://causalinference.github.io/SEQTaRget/reference/internal.weights.md).
+- Removed three unused slots in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md).
 
 ## SEQTaRget v1.3.6
 
@@ -47,5 +53,7 @@ CRAN release: 2026-01-23
 CRAN release: 2026-01-08
 
 - Found and fixed a bug which caused excused switches to be overwritten.
-- Fix excusing override (#115)
-- Added visit option (#116)
+- Fix excusing override
+  ([\#115](https://github.com/CausalInference/SEQTaRget/issues/115))
+- Added visit option
+  ([\#116](https://github.com/CausalInference/SEQTaRget/issues/116))

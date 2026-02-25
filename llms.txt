@@ -1,6 +1,8 @@
 # SEQTaRget - Sequentially Nested Target Trial Emulation
 
-![](https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png)
+![SEQTaRget package icon which is a visual representation of the
+original dataset mapping to the expanded
+dataset.](https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png)
 
 Implementation of sequential trial emulation for the analysis of
 observational databases. The ‘SEQTaRget’ software accommodates
@@ -23,8 +25,8 @@ You can install the development version of SEQTaRget from
 [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("devtools")
-devtools::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
+install.packages("remotes")
+remotes::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
 ```
 
 ## Setting up your Analysis
