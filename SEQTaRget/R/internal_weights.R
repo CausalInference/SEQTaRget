@@ -82,19 +82,13 @@ internal.weights <- function(DT, data, params, cache) {
       model.data <- copy(weight)
       if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
-      for (i in seq_along(params@treat.level)) {
-        level <- params@treat.level[[i]]
-        if (!is.na(params@weight.eligible_cols[[i]])) {
-          model.data[get(params@treatment) == level & 
-                       get(params@weight.eligible_col) == 0, names(model.data) := NULL]
-        }
-      }
-
       # Fit models for each treatment level
       if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
-          n.data <- prepare.data_cached(model.data, params, type = "numerator", model = level, case = "default", cache)
+          eligible_col <- params@weight.eligible_cols[[i]]
+          level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+          n.data <- prepare.data_cached(level_data, params, type = "numerator", model = level, case = "default", cache)
           numerator_models[[i]] <- model.passer(n.data$X, n.data$y, params)
           rm(n.data)
         }
@@ -102,7 +96,9 @@ internal.weights <- function(DT, data, params, cache) {
 
       for (i in seq_along(params@treat.level)) {
         level <- params@treat.level[[i]]
-        d.data <- prepare.data_cached(model.data, params, type = "denominator", level, case = "default", cache)
+        eligible_col <- params@weight.eligible_cols[[i]]
+        level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+        d.data <- prepare.data_cached(level_data, params, type = "denominator", level, case = "default", cache)
         denominator_models[[i]] <- model.passer(d.data$X, d.data$y, params)
         rm(d.data)
       }
