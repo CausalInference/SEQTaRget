@@ -22,7 +22,7 @@ library(SEQTaRget)
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r}
+```{r fig.alt="Risk plot by treatment group."}
 options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
@@ -53,7 +53,7 @@ risk_comparison(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
-```{r}
+```{r fig.alt="Risk plot by treatment group."}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE, 
                    # tells SEQuential to build weights from the post-expanded data
@@ -78,7 +78,7 @@ risk_comparison(model)
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r}
+```{r fig.alt="Risk plot by treatment group."}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = TRUE,
@@ -109,7 +109,7 @@ risk_comparison(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
-```{r}
+```{r fig.alt="Risk plot by treatment group."}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -136,7 +136,7 @@ risk_comparison(model)
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
 
-```{r}
+```{r fig.alt="Risk plot by treatment group."}
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
