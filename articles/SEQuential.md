@@ -249,7 +249,8 @@ km_curve(model)    # Prints the survival curve
 #> [[1]]
 ```
 
-![](SEQuential_files/figure-html/outcome-1.png)
+![Survival curve by treatment
+group.](SEQuential_files/figure-html/outcome-1.png)
 
 ``` r
 risk_data(model)

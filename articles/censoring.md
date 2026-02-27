@@ -48,7 +48,8 @@ km_curve(model, plot.type = "risk")
 #> [[1]]
 ```
 
-![](censoring_files/figure-html/unnamed-chunk-2-1.png)
+![Risk plot by treatment
+group.](censoring_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
 # retrieve survival and risk data
@@ -103,7 +104,8 @@ km_curve(model, plot.type = "risk")
 #> [[1]]
 ```
 
-![](censoring_files/figure-html/unnamed-chunk-3-1.png)
+![Risk plot by treatment
+group.](censoring_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
 risk_data(model)
@@ -160,7 +162,8 @@ km_curve(model, plot.type = "risk")
 #> [[1]]
 ```
 
-![](censoring_files/figure-html/unnamed-chunk-4-1.png)
+![Risk plot by treatment
+group.](censoring_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
 risk_data(model)
@@ -213,7 +216,8 @@ km_curve(model, plot.type = "risk")
 #> [[1]]
 ```
 
-![](censoring_files/figure-html/unnamed-chunk-5-1.png)
+![Risk plot by treatment
+group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
 risk_data(model)
@@ -270,7 +274,8 @@ km_curve(model, plot.type = "risk")
 #> [[1]]
 ```
 
-![](censoring_files/figure-html/unnamed-chunk-6-1.png)
+![Risk plot by treatment
+group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
 risk_data(model)

@@ -1,9 +1,5 @@
 # SEQTaRget - Sequentially Nested Target Trial Emulation
 
-![SEQTaRget package icon which is a visual representation of the
-original dataset mapping to the expanded
-dataset.](https://github.com/CausalInference/SEQTaRget/blob/main/SEQ.png)
-
 Implementation of sequential trial emulation for the analysis of
 observational databases. The ‘SEQTaRget’ software accommodates
 time-varying treatments and confounders, as well as binary and failure

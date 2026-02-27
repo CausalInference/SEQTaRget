@@ -1,6 +1,6 @@
 # Changelog
 
-## SEQTaRget v1.3.6.9003
+## SEQTaRget v1.3.6.9004
 
 - Removed several [`local()`](https://rdrr.io/r/base/eval.html) wrappers
   and made several code optimizations.
@@ -11,6 +11,7 @@
   [`internal.weights()`](https://causalinference.github.io/SEQTaRget/reference/internal.weights.md).
 - Removed three unused slots in
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md).
+- Add alt text to figures in vignettes.
 
 ## SEQTaRget v1.3.6
 
