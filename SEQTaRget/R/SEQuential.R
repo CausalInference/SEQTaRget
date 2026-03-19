@@ -127,6 +127,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
   if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
                                         "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
+  excused_cols_active <- unlist(params@excused.cols)[!is.na(unlist(params@excused.cols))]
+  for (col in excused_cols_active) {
+    col_vals <- unique(data[[col]])
+    if (!all(col_vals %in% c(0L, 1L))) stop("'", col, "' in excused.cols must be binary (0/1) but contains values: ",
+                                             paste(setdiff(col_vals, c(0L, 1L)), collapse = ", "))
+    col_switches <- data[, sum(abs(diff(get(col)))), by = eval(params@id)]
+    if (any(col_switches$V1 > 1L)) stop("'", col, "' in excused.cols must transition at most once per subject, ",
+                                         "but ", sum(col_switches$V1 > 1L), " subject(s) have multiple switches")
+  }
   missing_levels <- setdiff(unlist(params@treat.level), unique(data[[params@treatment]]))
   if (length(missing_levels) > 0L) stop("treat.level value(s) not found in '", treatment.col, "': ",
                                          paste(missing_levels, collapse = ", "))
