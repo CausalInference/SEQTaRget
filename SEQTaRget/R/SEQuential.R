@@ -132,6 +132,17 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
   if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
                                         "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
+  if (!is.na(params@cense.eligible)) {
+    cense_elig_vals <- unique(data[[params@cense.eligible]])
+    if (!all(cense_elig_vals %in% c(0L, 1L))) stop("'", params@cense.eligible, "' (cense.eligible) must be binary (0/1) but contains values: ",
+                                                    paste(setdiff(cense_elig_vals, c(0L, 1L)), collapse = ", "))
+  }
+  weight_elig_cols_active <- unlist(params@weight.eligible_cols)[!is.na(unlist(params@weight.eligible_cols))]
+  for (col in weight_elig_cols_active) {
+    col_vals <- unique(data[[col]])
+    if (!all(col_vals %in% c(0L, 1L))) stop("'", col, "' in weight.eligible_cols must be binary (0/1) but contains values: ",
+                                             paste(setdiff(col_vals, c(0L, 1L)), collapse = ", "))
+  }
   excused_cols_active <- unlist(params@excused.cols)[!is.na(unlist(params@excused.cols))]
   for (col in excused_cols_active) {
     col_vals <- unique(data[[col]])
