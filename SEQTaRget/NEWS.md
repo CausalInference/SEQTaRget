@@ -7,6 +7,7 @@
 - Removed three unused slots in `SEQopts()`.
 - Add alt text to figures in vignettes.
 - Fixed `SEQuential()` `time.col` validation detecting and repairing non-zero-indexed time.
+- Add validation for `eligible.col` values and transition constraint
 
 # SEQTaRget v1.3.6
 
