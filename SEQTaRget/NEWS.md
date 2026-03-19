@@ -6,6 +6,7 @@
 - Fixed a bug in and make some improvements to `internal.weights()`.
 - Removed three unused slots in `SEQopts()`.
 - Add alt text to figures in vignettes.
+- Fixed `SEQuential()` `time.col` validation detecting and repairing non-zero-indexed time.
 
 # SEQTaRget v1.3.6
 
