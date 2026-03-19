@@ -15,6 +15,7 @@
 - Add check that `treat.level` values exist in the treatment column
 - Add validation for `excused.cols` flags
 - Add validation for `followup.min`/`max` ordering
+- Add binary check for outcome.col in non-hazard analyses
 
 # SEQTaRget v1.3.6
 
