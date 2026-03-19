@@ -147,6 +147,9 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   if (ncores < 1L) stop("'ncores' must be a positive integer")
   if (nthreads < 1L) stop("'nthreads' must be a positive integer")
 
+  if (!is.infinite(followup.min) && !is.infinite(followup.max) && followup.min >= followup.max)
+    stop("'followup.min' (", followup.min, ") must be less than 'followup.max' (", followup.max, ")")
+
   plot.title <- as.character(plot.title)
   plot.subtitle <- as.character(plot.subtitle)
   plot.labels <- as.character(plot.labels)
