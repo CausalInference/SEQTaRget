@@ -141,6 +141,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (any(col_switches$V1 > 1L)) stop("'", col, "' in excused.cols must transition at most once per subject, ",
                                          "but ", sum(col_switches$V1 > 1L), " subject(s) have multiple switches")
   }
+  if (params@multinomial && length(params@treat.level) < 2L) stop("'treat.level' must have at least 2 values for multinomial analysis")
+  if (!params@multinomial && length(params@treat.level) != 2L) stop("'treat.level' must have exactly 2 values for non-multinomial analysis but ", length(params@treat.level), " were supplied")
   missing_levels <- setdiff(unlist(params@treat.level), unique(data[[params@treatment]]))
   if (length(missing_levels) > 0L) stop("treat.level value(s) not found in '", treatment.col, "': ",
                                          paste(missing_levels, collapse = ", "))
