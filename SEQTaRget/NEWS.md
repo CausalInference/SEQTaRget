@@ -17,6 +17,7 @@
 - Add validation for `followup.min`/`max` ordering
 - Add binary check for outcome.col in non-hazard analyses
 - Add `treat.level` length validation for multinomial and non-multinomial analyses
+- Add binary validation for `cense.eligible` and `weight.eligible_cols`
 
 # SEQTaRget v1.3.6
 
