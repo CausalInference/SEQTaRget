@@ -11,6 +11,7 @@
 - Add Paul Madley-Dowd as a co-author
 - Add check for overlapping `time_varying.cols` and `fixed.cols`
 - Add bounds validation for numeric and integer options in `SEQopts()`
+- Add check for duplicate id/time combinations in input data
 
 # SEQTaRget v1.3.6
 
