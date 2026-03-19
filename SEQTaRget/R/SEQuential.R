@@ -127,6 +127,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
   if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
                                         "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
+  missing_levels <- setdiff(unlist(params@treat.level), unique(data[[params@treatment]]))
+  if (length(missing_levels) > 0L) stop("treat.level value(s) not found in '", treatment.col, "': ",
+                                         paste(missing_levels, collapse = ", "))
   time_check <- data[, max(get(params@time)) > (.N - 1L), by = eval(params@id)]
   if (any(time_check$V1)) {
     if (verbose) cat("Non zero-indexed time identified. Attempting Repair...\n")
