@@ -1,4 +1,4 @@
-# SEQTaRget v1.3.6.9004
+# SEQTaRget (development version)
 
 - Removed several `local()` wrappers and made several code optimizations.
 - Improved documentation of the datasets in the package.
@@ -6,6 +6,18 @@
 - Fixed a bug in and make some improvements to `internal.weights()`.
 - Removed three unused slots in `SEQopts()`.
 - Add alt text to figures in vignettes.
+- Fixed `SEQuential()` `time.col` validation detecting and repairing non-zero-indexed time.
+- Add validation for `eligible.col` values and transition constraint
+- Add Paul Madley-Dowd as a co-author
+- Add check for overlapping `time_varying.cols` and `fixed.cols`
+- Add bounds validation for numeric and integer options in `SEQopts()`
+- Add check for duplicate id/time combinations in input data
+- Add check that `treat.level` values exist in the treatment column
+- Add validation for `excused.cols` flags
+- Add validation for `followup.min`/`max` ordering
+- Add binary check for outcome.col in non-hazard analyses
+- Add `treat.level` length validation for multinomial and non-multinomial analyses
+- Add binary validation for `cense.eligible` and `weight.eligible_cols`
 
 # SEQTaRget v1.3.6
 

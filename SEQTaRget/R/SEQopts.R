@@ -133,6 +133,22 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   indicator.squared <- as.character(indicator.squared)
 
   fastglm.method <- as.integer(fastglm.method)
+  if (!fastglm.method %in% 1L:4L) stop("'fastglm.method' must be one of 1 (QR), 2 (Cholesky), 3 (LDLT), or 4 (QR.FPIV)")
+
+  if (bootstrap.sample <= 0 || bootstrap.sample > 1) stop("'bootstrap.sample' must be in (0, 1]")
+  if (bootstrap.CI <= 0 || bootstrap.CI >= 1) stop("'bootstrap.CI' must be in (0, 1)")
+  if (bootstrap.nboot < 1L) stop("'bootstrap.nboot' must be a positive integer")
+
+  if (selection.prob <= 0 || selection.prob > 1) stop("'selection.prob' must be in (0, 1]")
+
+  if (!is.infinite(weight.lower) && !is.infinite(weight.upper) && weight.lower >= weight.upper)
+    stop("'weight.lower' must be less than 'weight.upper'")
+
+  if (ncores < 1L) stop("'ncores' must be a positive integer")
+  if (nthreads < 1L) stop("'nthreads' must be a positive integer")
+
+  if (!is.infinite(followup.min) && !is.infinite(followup.max) && followup.min >= followup.max)
+    stop("'followup.min' (", followup.min, ") must be less than 'followup.max' (", followup.max, ")")
 
   plot.title <- as.character(plot.title)
   plot.subtitle <- as.character(plot.subtitle)

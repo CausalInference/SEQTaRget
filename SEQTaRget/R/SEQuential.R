@@ -54,6 +54,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                                                                'dose-response', 'ITT', and 'censoring'")
   if (length(time_varying.cols) < 1) warning("Time varying columns were not supplied")
   if (length(fixed.cols) < 1) warning("Fixed columns were not supplied")
+  overlap <- intersect(time_varying.cols, fixed.cols)
+  if (length(overlap) > 0) stop("Column(s) supplied in both time_varying.cols and fixed.cols: ",
+                                 paste(overlap, collapse = ", "))
 
   cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
   missing.cols <- cols[!cols %in% names(data)]
@@ -114,10 +117,51 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
-  if (nrow(copy(data)[max(get(params@time)) > .N, .SD, by = eval(params@id)]) > 0) {
+  if (!params@hazard) {
+    outcome_vals <- unique(data[[params@outcome]])
+    if (!all(outcome_vals %in% c(0L, 1L))) stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ",
+                                                 paste(setdiff(outcome_vals, c(0L, 1L)), collapse = ", "))
+  }
+  dup_check <- data[, .N, by = c(id.col, time.col)]
+  dup_check <- dup_check[dup_check$N > 1L, ]
+  if (nrow(dup_check) > 0L) stop("Data contains duplicate ", id.col, "/", time.col, " combinations for ",
+                                  length(unique(dup_check[[id.col]])), " subject(s). Each subject must have exactly one row per time point")
+  elig_vals <- unique(data[[params@eligible]])
+  if (!all(elig_vals %in% c(0L, 1L))) stop("'", eligible.col, "' must be binary (0/1) but contains values: ",
+                                            paste(setdiff(elig_vals, c(0L, 1L)), collapse = ", "))
+  elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
+  if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
+                                        "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
+  if (!is.na(params@cense.eligible)) {
+    cense_elig_vals <- unique(data[[params@cense.eligible]])
+    if (!all(cense_elig_vals %in% c(0L, 1L))) stop("'", params@cense.eligible, "' (cense.eligible) must be binary (0/1) but contains values: ",
+                                                    paste(setdiff(cense_elig_vals, c(0L, 1L)), collapse = ", "))
+  }
+  weight_elig_cols_active <- unlist(params@weight.eligible_cols)[!is.na(unlist(params@weight.eligible_cols))]
+  for (col in weight_elig_cols_active) {
+    col_vals <- unique(data[[col]])
+    if (!all(col_vals %in% c(0L, 1L))) stop("'", col, "' in weight.eligible_cols must be binary (0/1) but contains values: ",
+                                             paste(setdiff(col_vals, c(0L, 1L)), collapse = ", "))
+  }
+  excused_cols_active <- unlist(params@excused.cols)[!is.na(unlist(params@excused.cols))]
+  for (col in excused_cols_active) {
+    col_vals <- unique(data[[col]])
+    if (!all(col_vals %in% c(0L, 1L))) stop("'", col, "' in excused.cols must be binary (0/1) but contains values: ",
+                                             paste(setdiff(col_vals, c(0L, 1L)), collapse = ", "))
+    col_switches <- data[, sum(abs(diff(get(col)))), by = eval(params@id)]
+    if (any(col_switches$V1 > 1L)) stop("'", col, "' in excused.cols must transition at most once per subject, ",
+                                         "but ", sum(col_switches$V1 > 1L), " subject(s) have multiple switches")
+  }
+  if (params@multinomial && length(params@treat.level) < 2L) stop("'treat.level' must have at least 2 values for multinomial analysis")
+  if (!params@multinomial && length(params@treat.level) != 2L) stop("'treat.level' must have exactly 2 values for non-multinomial analysis but ", length(params@treat.level), " were supplied")
+  missing_levels <- setdiff(unlist(params@treat.level), unique(data[[params@treatment]]))
+  if (length(missing_levels) > 0L) stop("treat.level value(s) not found in '", treatment.col, "': ",
+                                         paste(missing_levels, collapse = ", "))
+  time_check <- data[, max(get(params@time)) > (.N - 1L), by = eval(params@id)]
+  if (any(time_check$V1)) {
     if (verbose) cat("Non zero-indexed time identified. Attempting Repair...\n")
-    data[, get(params@time) := 0:(.N - 1), by = eval(params@id)]
-    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identifed, Repair attempted and succeeded\n")
+    data[, (params@time) := seq(0L, .N - 1L), by = eval(params@id)]
+    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identified, Repair attempted and succeeded\n")
   }
   # Expansion ==================================================
   if (params@verbose) cat("Expanding Data...\n")
