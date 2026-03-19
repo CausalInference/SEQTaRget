@@ -114,10 +114,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
-  if (nrow(copy(data)[max(get(params@time)) > .N, .SD, by = eval(params@id)]) > 0) {
+  time_check <- data[, max(get(params@time)) > (.N - 1L), by = eval(params@id)]
+  if (any(time_check$V1)) {
     if (verbose) cat("Non zero-indexed time identified. Attempting Repair...\n")
-    data[, get(params@time) := 0:(.N - 1), by = eval(params@id)]
-    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identifed, Repair attempted and succeeded\n")
+    data[, (params@time) := seq(0L, .N - 1L), by = eval(params@id)]
+    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identified, Repair attempted and succeeded\n")
   }
   # Expansion ==================================================
   if (params@verbose) cat("Expanding Data...\n")
