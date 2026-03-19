@@ -1,0 +1,13 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  censoring: censoring.html
+  doseresponse: doseresponse.html
+  ITT: ITT.html
+  seqopts: seqopts.html
+  SEQuential: SEQuential.html
+last_built: 2026-03-19T14:53Z
+urls:
+  reference: https://causalinference.github.io/SEQTaRget/reference
+  article: https://causalinference.github.io/SEQTaRget/articles

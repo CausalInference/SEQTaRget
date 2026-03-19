@@ -1,0 +1,142 @@
+# Intention-To-Treat Analysis
+
+Here, we’ll go over some examples of using ITT. First we need to load
+the library before getting in to some sample use cases.
+
+``` r
+library(SEQTaRget)
+```
+
+## ITT With 5 bootstrap samples
+
+``` r
+options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
+                   km.curves = TRUE,
+                   # tells SEQuential to bootstrap
+                   bootstrap = TRUE,
+                   # tells SEQuential to run bootstraps 5 times
+                   bootstrap.nboot = 5)
+
+# use example data
+data <- SEQdata                             
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible", 
+                          treatment.col = "tx_init", 
+                          outcome.col = "outcome", 
+                          time_varying.cols = c("N", "L", "P"), 
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = options)
+
+km_curve(model, plot.type = "risk")        # retrieve risk plot
+risk_data(model)
+risk_comparison(model)
+```
+
+## ITT with 5 bootstrap samples and losses-to-followup
+
+``` r
+options <- SEQopts(km.curves = TRUE,               
+                   bootstrap = TRUE,                
+                   bootstrap.nboot = 5,
+                   # tells SEQuential to expect LTFU as the censoring column
+                   cense = "LTFU",
+                   # tells SEQuential to treat this column as the 
+                   # censoring eligibility column
+                   cense.eligible = "eligible_cense")
+
+# use example data for LTFU
+data <- SEQdata.LTFU
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible", 
+                          treatment.col = "tx_init", 
+                          outcome.col = "outcome", 
+                          time_varying.cols = c("N", "L", "P"), 
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = options)
+
+km_curve(model, plot.type = "risk")
+risk_data(model)
+risk_comparison(model)
+```
+
+## ITT with 5 bootstrap samples and competing events
+
+``` r
+options <- SEQopts(km.curves = TRUE,               
+                   bootstrap = TRUE,                
+                   bootstrap.nboot = 5,
+                   # Using LTFU as our competing event
+                   compevent = "LTFU")
+
+data <- SEQdata.LTFU
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible", 
+                          treatment.col = "tx_init", 
+                          outcome.col = "outcome", 
+                          time_varying.cols = c("N", "L", "P"), 
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = options)
+
+km_curve(model, plot.type = "risk")
+risk_data(model)
+risk_comparison(model)
+```
+
+## ITT hazard ratio with 5 bootstrap samples and competing events
+
+``` r
+options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
+                   # ratio creation
+                   km.curves = FALSE,
+                   # set hazard to TRUE for hazard ratio creation
+                   hazard = TRUE,
+                   bootstrap = TRUE,                
+                   bootstrap.nboot = 5,     
+                   compevent = "LTFU")
+
+data <- SEQdata.LTFU                          
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible", 
+                          treatment.col = "tx_init", 
+                          outcome.col = "outcome", 
+                          time_varying.cols = c("N", "L", "P"), 
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = options)
+
+# retrieve hazard ratios
+hazard_ratio(model)
+```
+
+## ITT with 5 bootstrap samples and competing events in subgroups defined by sex
+
+``` r
+options <- SEQopts(km.curves = TRUE,               
+                   bootstrap = TRUE,                
+                   bootstrap.nboot = 5,     
+                   compevent = "LTFU",
+                   # define the subgroup
+                   subgroup = "sex")
+
+data <- SEQdata.LTFU
+model <- SEQuential(data, id.col = "ID", 
+                          time.col = "time", 
+                          eligible.col = "eligible", 
+                          treatment.col = "tx_init", 
+                          outcome.col = "outcome", 
+                          time_varying.cols = c("N", "L", "P"), 
+                          fixed.cols = "sex",
+                          method = "ITT", 
+                          options = options)
+
+km_curve(model, plot.type = "risk")
+risk_data(model)
+risk_comparison(model)
+```
