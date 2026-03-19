@@ -117,6 +117,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
+  dup_check <- data[, .N, by = c(id.col, time.col)]
+  dup_check <- dup_check[dup_check$N > 1L, ]
+  if (nrow(dup_check) > 0L) stop("Data contains duplicate ", id.col, "/", time.col, " combinations for ",
+                                  length(unique(dup_check[[id.col]])), " subject(s). Each subject must have exactly one row per time point")
   elig_vals <- unique(data[[params@eligible]])
   if (!all(elig_vals %in% c(0L, 1L))) stop("'", eligible.col, "' must be binary (0/1) but contains values: ",
                                             paste(setdiff(elig_vals, c(0L, 1L)), collapse = ", "))
