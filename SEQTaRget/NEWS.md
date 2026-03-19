@@ -8,6 +8,8 @@
 - Add alt text to figures in vignettes.
 - Fixed `SEQuential()` `time.col` validation detecting and repairing non-zero-indexed time.
 - Add validation for `eligible.col` values and transition constraint
+- Add Paul Madley-Dowd as a co-author
+- Add check for overlapping time_varying.cols and fixed.cols
 
 # SEQTaRget v1.3.6
 
