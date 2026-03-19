@@ -13,6 +13,7 @@
 - Add bounds validation for numeric and integer options in `SEQopts()`
 - Add check for duplicate id/time combinations in input data
 - Add check that `treat.level` values exist in the treatment column
+- Add validation for `excused.cols` flags
 
 # SEQTaRget v1.3.6
 
