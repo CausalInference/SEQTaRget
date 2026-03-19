@@ -14,6 +14,7 @@
 - Add check for duplicate id/time combinations in input data
 - Add check that `treat.level` values exist in the treatment column
 - Add validation for `excused.cols` flags
+- Add validation for `followup.min`/`max` ordering
 
 # SEQTaRget v1.3.6
 
