@@ -54,6 +54,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                                                                'dose-response', 'ITT', and 'censoring'")
   if (length(time_varying.cols) < 1) warning("Time varying columns were not supplied")
   if (length(fixed.cols) < 1) warning("Fixed columns were not supplied")
+  overlap <- intersect(time_varying.cols, fixed.cols)
+  if (length(overlap) > 0) stop("Column(s) supplied in both time_varying.cols and fixed.cols: ",
+                                 paste(overlap, collapse = ", "))
 
   cols <- c(id.col, time.col, treatment.col, eligible.col, outcome.col, time_varying.cols, fixed.cols)
   missing.cols <- cols[!cols %in% names(data)]
