@@ -129,9 +129,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   elig_vals <- unique(data[[params@eligible]])
   if (!all(elig_vals %in% c(0L, 1L))) stop("'", eligible.col, "' must be binary (0/1) but contains values: ",
                                             paste(setdiff(elig_vals, c(0L, 1L)), collapse = ", "))
-  elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
-  if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
-                                        "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
   if (!is.na(params@cense.eligible)) {
     cense_elig_vals <- unique(data[[params@cense.eligible]])
     if (!all(cense_elig_vals %in% c(0L, 1L))) stop("'", params@cense.eligible, "' (cense.eligible) must be binary (0/1) but contains values: ",
