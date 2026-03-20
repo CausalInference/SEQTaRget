@@ -145,9 +145,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     col_vals <- unique(data[[col]])
     if (!all(col_vals %in% c(0L, 1L))) stop("'", col, "' in excused.cols must be binary (0/1) but contains values: ",
                                              paste(setdiff(col_vals, c(0L, 1L)), collapse = ", "))
-    col_switches <- data[, sum(abs(diff(get(col)))), by = eval(params@id)]
-    if (any(col_switches$V1 > 1L)) stop("'", col, "' in excused.cols must transition at most once per subject, ",
-                                         "but ", sum(col_switches$V1 > 1L), " subject(s) have multiple switches")
   }
   if (params@multinomial && length(params@treat.level) < 2L) stop("'treat.level' must have at least 2 values for multinomial analysis")
   if (!params@multinomial && length(params@treat.level) != 2L) stop("'treat.level' must have exactly 2 values for non-multinomial analysis but ", length(params@treat.level), " were supplied")
