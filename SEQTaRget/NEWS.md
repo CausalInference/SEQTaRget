@@ -18,6 +18,7 @@
 - Add binary check for outcome.col in non-hazard analyses
 - Add `treat.level` length validation for multinomial and non-multinomial analyses
 - Add binary validation for `cense.eligible` and `weight.eligible_cols`
+- Removed too strict validation for `eligible.col` transition constraint
 
 # SEQTaRget v1.3.6
 
