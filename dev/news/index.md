@@ -15,7 +15,7 @@
 - Fixed
   [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
   `time.col` validation detecting and repairing non-zero-indexed time.
-- Add validation for `eligible.col` values and transition constraint
+- Add validation for `eligible.col` values
 - Add Paul Madley-Dowd as a co-author
 - Add check for overlapping `time_varying.cols` and `fixed.cols`
 - Add bounds validation for numeric and integer options in
@@ -28,6 +28,7 @@
 - Add `treat.level` length validation for multinomial and
   non-multinomial analyses
 - Add binary validation for `cense.eligible` and `weight.eligible_cols`
+- Remove additional eligibility rows if not needed
 
 ## SEQTaRget v1.3.6
 
