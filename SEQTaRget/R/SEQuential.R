@@ -129,9 +129,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   elig_vals <- unique(data[[params@eligible]])
   if (!all(elig_vals %in% c(0L, 1L))) stop("'", eligible.col, "' must be binary (0/1) but contains values: ",
                                             paste(setdiff(elig_vals, c(0L, 1L)), collapse = ", "))
-  elig_switches <- data[, sum(abs(diff(get(params@eligible)))), by = eval(params@id)]
-  if (any(elig_switches$V1 > 1L)) stop("'", eligible.col, "' must transition at most once per subject, ",
-                                        "but ", sum(elig_switches$V1 > 1L), " subject(s) have multiple switches")
   if (!is.na(params@cense.eligible)) {
     cense_elig_vals <- unique(data[[params@cense.eligible]])
     if (!all(cense_elig_vals %in% c(0L, 1L))) stop("'", params@cense.eligible, "' (cense.eligible) must be binary (0/1) but contains values: ",
@@ -163,6 +160,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data[, (params@time) := seq(0L, .N - 1L), by = eval(params@id)]
     if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identified, Repair attempted and succeeded\n")
   }
+  
+  # If max elig has been reached, remove future rows
+  data <- data[data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1]
+  
   # Expansion ==================================================
   if (params@verbose) cat("Expanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
