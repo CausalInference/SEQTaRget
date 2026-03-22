@@ -29,7 +29,7 @@ SEQopts(
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
-  followup.min = -Inf,
+  followup.min = 0,
   followup.spline = FALSE,
   hazard = FALSE,
   indicator.baseline = "_bas",
@@ -57,7 +57,7 @@ SEQopts(
   visit.denominator = NA,
   visit.numerator = NA,
   weight.eligible_cols = c(),
-  weight.lower = -Inf,
+  weight.lower = 0,
   weight.lag_condition = TRUE,
   weight.p99 = FALSE,
   weight.preexpansion = TRUE,
@@ -114,7 +114,7 @@ SEQopts(
 
 \item{followup.max}{Numeric: maximum time to expand about, default is \code{Inf} (no maximum)}
 
-\item{followup.min}{Numeric: minimum time to expand about, default is \code{-Inf} (no minimum)}
+\item{followup.min}{Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is \code{0}}
 
 \item{followup.spline}{Logical: treat followup as a cubic spline, default is \code{FALSE}}
 
@@ -170,7 +170,7 @@ SEQopts(
 
 \item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
 
-\item{weight.lower}{Numeric: weights truncated at lower end at this weight, default is \code{-Inf}}
+\item{weight.lower}{Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is \code{0}}
 
 \item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value, default \code{TRUE}}
 
