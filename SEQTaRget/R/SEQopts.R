@@ -24,7 +24,7 @@
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
-#' @param followup.min Numeric: minimum time to expand about, default is `-Inf` (no minimum)
+#' @param followup.min Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is `0`
 #' @param followup.spline Logical: treat followup as a cubic spline, default is `FALSE`
 #' @param hazard Logical: hazard error calculation instead of survival estimation, default is `FALSE`
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
@@ -52,7 +52,7 @@
 #' @param visit.denominator String: visit denominator covariates to the right hand side of a formula object
 #' @param visit.numerator String: visit numerator covariates to the right hand side of a formula object
 #' @param weight.eligible_cols List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}
-#' @param weight.lower Numeric: weights truncated at lower end at this weight, default is `-Inf`
+#' @param weight.lower Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is `0`
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value, default `TRUE`
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
@@ -68,7 +68,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
                     excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
-                    followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = -Inf, followup.spline = FALSE,
+                    followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
@@ -76,7 +76,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     treat.level = c(0, 1), trial.include = TRUE,
                     visit = NA, visit.denominator = NA, visit.numerator = NA,
                     weight.eligible_cols = c(),
-                    weight.lower = -Inf, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
+                    weight.lower = 0, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -141,11 +141,17 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
   if (selection.prob <= 0 || selection.prob > 1) stop("'selection.prob' must be in (0, 1]")
 
+  if (!is.infinite(weight.lower) && weight.lower < 0)
+    stop("'weight.lower' must be non-negative: IPCW weights are ratios of probabilities and cannot be negative")
+
   if (!is.infinite(weight.lower) && !is.infinite(weight.upper) && weight.lower >= weight.upper)
     stop("'weight.lower' must be less than 'weight.upper'")
 
   if (ncores < 1L) stop("'ncores' must be a positive integer")
   if (nthreads < 1L) stop("'nthreads' must be a positive integer")
+
+  if (!is.infinite(followup.min) && followup.min < 0)
+    stop("'followup.min' must be non-negative: follow-up time since trial enrollment cannot be negative")
 
   if (!is.infinite(followup.min) && !is.infinite(followup.max) && followup.min >= followup.max)
     stop("'followup.min' (", followup.min, ") must be less than 'followup.max' (", followup.max, ")")
