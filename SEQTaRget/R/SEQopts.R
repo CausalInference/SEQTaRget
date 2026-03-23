@@ -12,7 +12,7 @@
 #' @param compevent String: column name for competing event indicator
 #' @param covariates String: covariates to the right hand side of a formula object
 #' @param data.return Logical: whether to return the expanded dataframe with weighting information, default is `FALSE`
-#' @param denominator String: denominator covariates to the right hand side of a  to formula object
+#' @param denominator String: denominator covariates to the right hand side of a formula object
 #' @param deviation Logical: create switch based on deviation from column \code{deviation.col}, default is `FALSE`
 #' @param deviation.col Character: column name for deviation
 #' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
@@ -33,7 +33,7 @@
 #' @param multinomial Logical: whether to expect multilevel treatment values, default is `FALSE`
 #' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max, see [parallelly::availableCores()]
 #' @param nthreads Integer: number of threads to use for data.table processing, default is [data.table::getDTthreads()]
-#' @param numerator String: numerator covariates to the right hand side of a  to formula object
+#' @param numerator String: numerator covariates to the right hand side of a formula object
 #' @param parallel Logical: define if the SEQuential process is run in parallel, default is `FALSE`
 #' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
