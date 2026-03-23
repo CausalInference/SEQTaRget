@@ -10,7 +10,7 @@ denominator(object)
 \item{object}{object of class SEQoutput}
 }
 \value{
-List of both numerator models
+List of both denominator models
 }
 \description{
 Retrieves Denominator Models from SEQuential object

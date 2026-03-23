@@ -90,7 +90,7 @@ SEQopts(
 
 \item{data.return}{Logical: whether to return the expanded dataframe with weighting information, default is \code{FALSE}}
 
-\item{denominator}{String: denominator covariates to the right hand side of a  to formula object}
+\item{denominator}{String: denominator covariates to the right hand side of a formula object}
 
 \item{deviation}{Logical: create switch based on deviation from column \code{deviation.col}, default is \code{FALSE}}
 
@@ -132,7 +132,7 @@ SEQopts(
 
 \item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:openmp-utils]{data.table::getDTthreads()}}}
 
-\item{numerator}{String: numerator covariates to the right hand side of a  to formula object}
+\item{numerator}{String: numerator covariates to the right hand side of a formula object}
 
 \item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
 
