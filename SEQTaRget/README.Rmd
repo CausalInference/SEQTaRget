@@ -86,7 +86,7 @@ km_data(model)[[1]]                  # Returns a dataframe of survival data in l
 ### Assumptions
 
 This package places several assumptions onto the input data and
-unexpected results and errors may arise if these are not followed-
+unexpected results and errors may arise if these are not followed:
 
 1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
     also assume that the column contains only integers and continues by
