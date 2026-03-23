@@ -212,7 +212,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
         survival.plot[[label]] <- internal.plot(survival$data, params)
-        risk[[label]] <- create.risk(survival$data, params) 
+        risk[[label]] <- create.risk(survival$data, params, survival$boot_risks)
       }
       outcome[[label]] <- lapply(models, function(x) x$model)
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
