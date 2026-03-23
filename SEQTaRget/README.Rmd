@@ -153,7 +153,7 @@ feel free to open a discussion.
 ## Contributing to the package
 
 Community members are welcome to contribute to this package through
-several different avenues-
+several different avenues:
 
 -   Asking/Answering questions about the package via [GitHub
     Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a).
