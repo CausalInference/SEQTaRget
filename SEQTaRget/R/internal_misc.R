@@ -1,12 +1,13 @@
 #' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
 #'
 #' @keywords internal
-create.risk <- function(data, params) {
+create.risk <- function(data, params, boot_risks = NULL) {
   variable <- followup <- V1 <- V2 <- NULL
   i.value <- i.LCI <- i.UCI <- i.SE <- NULL
   UCI <- LCI <- SE <- NULL
   rd_lb <- rd_ub <- rr_lb <- rr_ub <- NULL
   rd <- rd_se <- rr <- rr_se <- NULL
+  boot_idx <- boot_wide <- NULL
   
   var <- if ("inc0" %in% data[["variable"]]) "inc" else "risk"
   table <- data[, .SD[.N], by = "variable"
@@ -24,16 +25,35 @@ create.risk <- function(data, params) {
   
   if (all(c("LCI", "UCI") %in% names(out))) {
     z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
-    
-    out[, `:=` (rd_se = sqrt(SE^2 + i.SE^2),
-                rr_se = sqrt((SE/value)^2 + (i.SE/i.value)^2))
-        ][, `:=` (rd_lci = rd - z*rd_se,
-                  rd_uci = rd + z*rd_se,
-                  rr_lci = exp(log(rr) - z*rr_se),
-                  rr_uci = exp(log(rr) + z*rr_se))
-          ][, `:=` (value = NULL, i.value = NULL, LCI = NULL, UCI = NULL, 
-                    i.LCI = NULL, i.UCI = NULL, SE = NULL, i.SE = NULL, 
-                    rd_se = NULL, rr_se = NULL)]
+    alpha <- (1 - params@bootstrap.CI) / 2
+
+    # Paired bootstrap: pair both arms by boot_idx and compute per-iteration
+    # RD and RR so that the shared bootstrap samples are accounted for
+    boot_wide <- dcast(boot_risks, boot_idx ~ variable, value.var = "value")
+
+    rd_lci_vec <- rd_uci_vec <- rr_lci_vec <- rr_uci_vec <- numeric(nrow(out))
+    for (k in seq_len(nrow(out))) {
+      v1 <- as.character(out$V1[k]); v2 <- as.character(out$V2[k])
+      rd_i  <- boot_wide[[v2]] - boot_wide[[v1]]
+      rr_i  <- boot_wide[[v2]] / boot_wide[[v1]]
+      valid_rr <- rr_i[rr_i > 0 & is.finite(rr_i)]
+      if (params@bootstrap.CI_method == "se") {
+        rd_lci_vec[k] <- out$rd[k] - z * sd(rd_i, na.rm = TRUE)
+        rd_uci_vec[k] <- out$rd[k] + z * sd(rd_i, na.rm = TRUE)
+        rr_log_se      <- sd(log(valid_rr), na.rm = TRUE)
+        rr_lci_vec[k] <- exp(log(out$rr[k]) - z * rr_log_se)
+        rr_uci_vec[k] <- exp(log(out$rr[k]) + z * rr_log_se)
+      } else {
+        rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
+        rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
+        rr_lci_vec[k] <- quantile(valid_rr,  alpha,     na.rm = TRUE)
+        rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
+      }
+    }
+    out[, `:=` (rd_lci = rd_lci_vec, rd_uci = rd_uci_vec,
+                rr_lci = rr_lci_vec, rr_uci = rr_uci_vec)
+        ][, `:=` (value = NULL, i.value = NULL, LCI = NULL, UCI = NULL,
+                  i.LCI = NULL, i.UCI = NULL, SE = NULL, i.SE = NULL)]
     setnames(out, names(out), c("A_x", "A_y", 
                                 "Risk Ratio", "Risk Differerence",
                                 "RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI"))

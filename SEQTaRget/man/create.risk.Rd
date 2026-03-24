@@ -4,7 +4,7 @@
 \alias{create.risk}
 \title{Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}}
 \usage{
-create.risk(data, params)
+create.risk(data, params, boot_risks = NULL)
 }
 \description{
 Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}

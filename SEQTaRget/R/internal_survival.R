@@ -8,6 +8,7 @@
 internal.survival <- function(params, outcome) {
   SE <- NULL
   # Variable pre-definition ===================================
+    . <- variable <- NULL
     ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
@@ -139,22 +140,38 @@ internal.survival <- function(params, outcome) {
       }
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
-      DT.se <- rbindlist(data)[, list(SE = sd(value)), by = c("followup", "variable")]
-      
+
+      # Bind all iterations once; reuse for SE, quantile, and paired RD/RR computation
+      data_all <- rbindlist(lapply(seq_along(data), function(i) {
+        copy(data[[i]])[, boot_idx := i]
+      }))
+      DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
+
+      # Per-iteration final risks for paired RD/RR CI computation in create.risk()
+      var_type <- if (any(grepl("^inc_", data_all[["variable"]]))) "^inc_" else "^risk_"
+      boot_risks <- data_all[variable %like% var_type
+                             ][, variable := as.character(variable)
+                               ][, .SD[.N], by = c("variable", "boot_idx")
+                                 ][, .(variable, boot_idx, value)]
+
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
         surv <- full$data[DT.se, on = c("followup", "variable")
                           ][, `:=` (LCI = max(0, value - z*SE), UCI = min(1, value + z*SE)), by = .I]
       } else {
-        DT.q<- rbindlist(data)[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
-                                   UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),
-                               by = c("followup", "variable")]
-        
+        DT.q <- data_all[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
+                                UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),
+                         by = c("followup", "variable")]
+
         surv <- full$data[DT.se, on = c("followup", "variable")
                           ][DT.q, on = c("followup", "variable")]
       }
-    } else  surv <- full$data
+    } else {
+      surv <- full$data
+      boot_risks <- NULL
+    }
   out <- list(data = surv,
+              boot_risks = boot_risks,
               ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
   return(out)
 }

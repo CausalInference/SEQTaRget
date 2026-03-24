@@ -1,5 +1,17 @@
 library(data.table)
 
+test_that("Expanded dataset contains no trials beyond the last eligible row per subject", {
+  # max(trial) in the expanded data must equal the 0-based index of the last
+  # eligible row across all subjects — trailing ineligible rows must not become trials.
+  model <- suppressWarnings(SEQuential(copy(SEQdata),
+    "ID", "time", "eligible", "tx_init", "outcome",
+    list("N", "L", "P"), list("sex"), method = "ITT",
+    options = SEQopts(data.return = TRUE)
+  ))
+  last_elig_idx <- SEQdata[, .(last_elig = max(which(eligible == 1L)) - 1L), by = ID]
+  expect_equal(max(model@DT$trial), max(last_elig_idx$last_elig))
+})
+
 test_that("Pre-Expansion Excused Censoring - No excusedOne given", {
   data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",

@@ -162,7 +162,7 @@ numerator <- function(object) {
 #' Retrieves Denominator Models from SEQuential object
 #' @param object object of class SEQoutput
 #'
-#' @returns List of both numerator models
+#' @returns List of both denominator models
 #' @importFrom methods is slot
 #'
 #' @export
