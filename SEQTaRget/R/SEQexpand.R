@@ -17,7 +17,7 @@ SEQexpand <- function(params) {
     trialID <- NULL
     lag <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
-    DT <- copy(params@data)
+    DT <- params@data
 
     # Expansion =======================================================
     if (!params@weighted) {
@@ -43,7 +43,7 @@ SEQexpand <- function(params) {
     vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
     vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
-    data <- DT[, list(period = Map(seq, get(params@time), .N - 1)), by = eval(params@id),
+    data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
                ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
                  ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
                    ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
@@ -71,6 +71,9 @@ SEQexpand <- function(params) {
     } else if (length(data_list) == 1) {
       out <- data_list[[1]]
     }
+    rm(data_list)
+    if (exists("data.time")) rm(data.time)
+    if (exists("data.base")) rm(data.base)
 
     out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
                ][, paste0(params@eligible, params@indicator.baseline) := NULL]
@@ -101,8 +104,9 @@ SEQexpand <- function(params) {
           }
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
               ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
-                ][, excused_tmp := FALSE]
-        } 
+                ][, excused_tmp := NULL]
+          if ("isExcused" %in% names(out)) out[, isExcused := NULL]
+        }
       }  else {
         # Automatic switch definition (based on treatment and treatment lag)
         out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
@@ -128,6 +132,7 @@ SEQexpand <- function(params) {
             trial_sq = trial^2,
             switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(params@id, "trial")]
         }
+        out[, lag := NULL]
       }
       out[, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(params@id, "trial")]
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1

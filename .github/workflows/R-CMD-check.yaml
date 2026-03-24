@@ -46,6 +46,7 @@ jobs:
           working-directory: SEQTaRget
           extra-packages: any::rcmdcheck
           needs: check
+          upgrade: 'TRUE'
 
       - uses: r-lib/actions/check-r-package@v2
         with:
