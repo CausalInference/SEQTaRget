@@ -104,8 +104,9 @@ SEQexpand <- function(params) {
           }
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
               ][(excused_tmp) > 0, switch := FALSE, by = c(params@id, "trial")
-                ][, excused_tmp := FALSE]
-        } 
+                ][, excused_tmp := NULL]
+          if ("isExcused" %in% names(out)) out[, isExcused := NULL]
+        }
       }  else {
         # Automatic switch definition (based on treatment and treatment lag)
         out[, lag := shift(get(params@treatment), fill = get(params@treatment)[1]), by = c(params@id, "trial")]
@@ -131,6 +132,7 @@ SEQexpand <- function(params) {
             trial_sq = trial^2,
             switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(params@id, "trial")]
         }
+        out[, lag := NULL]
       }
       out[, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(params@id, "trial")]
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
