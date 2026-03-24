@@ -156,13 +156,14 @@ internal.survival <- function(params, outcome) {
 
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
+        rm(data_all)
         surv <- full$data[DT.se, on = c("followup", "variable")
                           ][, `:=` (LCI = max(0, value - z*SE), UCI = min(1, value + z*SE)), by = .I]
       } else {
         DT.q <- data_all[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
                                 UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),
                          by = c("followup", "variable")]
-
+        rm(data_all)
         surv <- full$data[DT.se, on = c("followup", "variable")
                           ][DT.q, on = c("followup", "variable")]
       }
