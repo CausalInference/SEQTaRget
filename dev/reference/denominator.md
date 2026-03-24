@@ -16,4 +16,4 @@ denominator(object)
 
 ## Value
 
-List of both numerator models
+List of both denominator models

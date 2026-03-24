@@ -29,6 +29,10 @@
   non-multinomial analyses
 - Add binary validation for `cense.eligible` and `weight.eligible_cols`
 - Remove additional eligibility rows if not needed
+- Amend defaults for `followup.min` and `weight.lower` from `-Inf` to
+  `0`
+- Fix bootstrapping for risk difference and risk ratio estimates to use
+  paired per-iteration estimates
 
 ## SEQTaRget v1.3.6
 

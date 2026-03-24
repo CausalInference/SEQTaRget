@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
 <span>  followup.class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  followup.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  followup.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  followup.min <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  followup.min <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  followup.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  hazard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  indicator.baseline <span class="op">=</span> <span class="st">"_bas"</span>,</span>
@@ -106,7 +106,7 @@
 <span>  visit.denominator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  visit.numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  weight.eligible_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  weight.lower <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>,</span>
+<span>  weight.lower <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  weight.lag_condition <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  weight.p99 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  weight.preexpansion <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -168,7 +168,7 @@
 
 
 <dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
-<dd><p>String: denominator covariates to the right hand side of a  to formula object</p></dd>
+<dd><p>String: denominator covariates to the right hand side of a formula object</p></dd>
 
 
 <dt id="arg-deviation">deviation<a class="anchor" aria-label="anchor" href="#arg-deviation"></a></dt>
@@ -216,7 +216,7 @@
 
 
 <dt id="arg-followup-min">followup.min<a class="anchor" aria-label="anchor" href="#arg-followup-min"></a></dt>
-<dd><p>Numeric: minimum time to expand about, default is <code>-Inf</code> (no minimum)</p></dd>
+<dd><p>Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is <code>0</code></p></dd>
 
 
 <dt id="arg-followup-spline">followup.spline<a class="anchor" aria-label="anchor" href="#arg-followup-spline"></a></dt>
@@ -252,7 +252,7 @@
 
 
 <dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
-<dd><p>String: numerator covariates to the right hand side of a  to formula object</p></dd>
+<dd><p>String: numerator covariates to the right hand side of a formula object</p></dd>
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
@@ -328,7 +328,7 @@
 
 
 <dt id="arg-weight-lower">weight.lower<a class="anchor" aria-label="anchor" href="#arg-weight-lower"></a></dt>
-<dd><p>Numeric: weights truncated at lower end at this weight, default is <code>-Inf</code></p></dd>
+<dd><p>Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is <code>0</code></p></dd>
 
 
 <dt id="arg-weight-lag-condition">weight.lag_condition<a class="anchor" aria-label="anchor" href="#arg-weight-lag-condition"></a></dt>

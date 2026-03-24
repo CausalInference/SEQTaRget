@@ -13,8 +13,8 @@ when using SEQuential. These are:
     enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
     is valid because it begins at 0 and is continuously increasing by
     increments of 1, even though it is not ordered.
-3.  `eligible` and column names provided to and `excused.cols` are once
-    one only one (with respect to `time.col`) flag variables
+3.  `eligible` and column names provided to `excused.cols` are binary
+    (0/1) flag variables (with respect to `time.col`)
 
 ### Step 1 - Defining your options
 
@@ -263,10 +263,10 @@ risk_comparison(model)
 #> [[1]]
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
-#> 1: risk_0 risk_1  1.0444041  0.9453016   1.153896        0.03717768 -0.04713597
-#> 2: risk_1 risk_0  0.9574838  0.8666291   1.057863       -0.03717768 -0.12149133
+#> 1: risk_0 risk_1  1.0444041  0.9745862   1.119224        0.03717768 -0.02133086
+#> 2: risk_1 risk_0  0.9574838  0.8934765   1.026076       -0.03717768 -0.09568622
 #>    RD 95% UCI
 #>         <num>
-#> 1: 0.12149133
-#> 2: 0.04713597
+#> 1: 0.09568622
+#> 2: 0.02133086
 ```

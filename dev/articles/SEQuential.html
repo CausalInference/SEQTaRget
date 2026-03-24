@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,9 +98,9 @@ is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …) is
 valid because it begins at 0 and is continuously increasing by
 increments of 1, even though it is not ordered.</li>
 <li>
-<code>eligible</code> and column names provided to and
-<code>excused.cols</code> are once one only one (with respect to
-<code>time.col</code>) flag variables</li>
+<code>eligible</code> and column names provided to
+<code>excused.cols</code> are binary (0/1) flag variables (with respect
+to <code>time.col</code>)</li>
 </ol>
 <div class="section level3">
 <h3 id="step-1---defining-your-options">Step 1 - Defining your options<a class="anchor" aria-label="anchor" href="#step-1---defining-your-options"></a>
@@ -345,12 +345,12 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9453016   1.153896        0.03717768 -0.04713597</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8666291   1.057863       -0.03717768 -0.12149133</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9745862   1.119224        0.03717768 -0.02133086</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8934765   1.026076       -0.03717768 -0.09568622</span></span>
 <span><span class="co">#&gt;    RD 95% UCI</span></span>
 <span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.12149133</span></span>
-<span><span class="co">#&gt; 2: 0.04713597</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: 0.09568622</span></span>
+<span><span class="co">#&gt; 2: 0.02133086</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
