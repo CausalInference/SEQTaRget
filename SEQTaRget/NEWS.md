@@ -21,6 +21,7 @@
 - Remove additional eligibility rows if not needed
 - Amend defaults for `followup.min` and `weight.lower` from `-Inf` to `0`
 - Fix bootstrapping for risk difference and risk ratio estimates to use paired per-iteration estimates
+- Optimizations to use less RAM
 
 # SEQTaRget v1.3.6
 
