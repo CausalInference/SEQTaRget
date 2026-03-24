@@ -21,6 +21,10 @@ internal.weights <- function(DT, data, params, cache) {
     if (!params@weight.preexpansion) {
       subtable.kept <- c(params@treatment, params@id, params@time)
       params@time <- "period"
+      # DT is passed by reference; a previous handler call (e.g. main analysis before
+      # bootstrap) may have added tx_lag in-place. Remove it so the join below does not
+      # produce an i.tx_lag duplicate column that causes rbind to fail.
+      if ("tx_lag" %in% names(DT)) DT[, tx_lag := NULL]
 
       baseline.lag <- data[, subtable.kept, with = FALSE
                            ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
