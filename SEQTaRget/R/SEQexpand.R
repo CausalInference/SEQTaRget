@@ -17,7 +17,7 @@ SEQexpand <- function(params) {
     trialID <- NULL
     lag <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
-    DT <- copy(params@data)
+    DT <- params@data
 
     # Expansion =======================================================
     if (!params@weighted) {
