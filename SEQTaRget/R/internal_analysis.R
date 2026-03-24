@@ -174,19 +174,23 @@ internal.analysis <- function(params) {
         boot_idx = seq_len(n_sample)
       )
     
-      # Integer ID: guaranteed unique if boot_idx < max_periods
-      # e.g., orig_id * 1e6 + boot_idx, or use a pre-computed multiplier
-      id_mult <- max(UIDs) + 1L
-      
-      # Single keyed join instead of n_sample separate filters
+      # Create unique IDs for each bootstrap copy of a subject.
+      # Numeric IDs: use arithmetic (orig_id * multiplier + boot_idx).
+      # Character IDs: use string concatenation (orig_id_b<boot_idx>).
+      if (is.numeric(UIDs)) {
+        id_mult <- max(UIDs) + 1L
+        make_id <- function(id_col, idx) as.integer(id_col * id_mult + idx)
+      } else {
+        make_id <- function(id_col, idx) paste0(id_col, "_b", idx)
+      }
+
       RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                 ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
-                    ][, boot_idx := NULL]
-      
-      
+                 ][, (params@id) := make_id(get(params@id), boot_idx)
+                   ][, boot_idx := NULL]
+
       RMdata <- data[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                     ][, (params@id) := as.integer(get(params@id) * id_mult + boot_idx)
-                        ][, boot_idx := NULL]
+                     ][, (params@id) := make_id(get(params@id), boot_idx)
+                       ][, boot_idx := NULL]
       
       return(list(RMDT = RMDT, RMdata = RMdata))
     }
