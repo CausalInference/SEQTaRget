@@ -71,6 +71,9 @@ SEQexpand <- function(params) {
     } else if (length(data_list) == 1) {
       out <- data_list[[1]]
     }
+    rm(data_list)
+    if (exists("data.time")) rm(data.time)
+    if (exists("data.base")) rm(data.base)
 
     out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
                ][, paste0(params@eligible, params@indicator.baseline) := NULL]
