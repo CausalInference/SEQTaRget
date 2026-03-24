@@ -178,8 +178,8 @@ internal.analysis <- function(params) {
       # Numeric IDs: use arithmetic (orig_id * multiplier + boot_idx).
       # Character IDs: use string concatenation (orig_id_b<boot_idx>).
       if (is.numeric(UIDs)) {
-        id_mult <- max(UIDs) + 1L
-        make_id <- function(id_col, idx) as.integer(id_col * id_mult + idx)
+        id_mult <- as.numeric(max(UIDs)) + 1
+        make_id <- function(id_col, idx) as.numeric(id_col) * id_mult + idx
       } else {
         make_id <- function(id_col, idx) paste0(id_col, "_b", idx)
       }
