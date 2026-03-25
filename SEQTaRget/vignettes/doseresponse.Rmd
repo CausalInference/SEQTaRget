@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = identical(Sys.getenv("GITHUB_ACTIONS"), "true")
+  eval = identical(Sys.getenv("IN_PKGDOWN"), "true") && identical(Sys.getenv("GITHUB_ACTIONS"), "true")
 )
 ```
 Here, we'll go over some examples of using dose-response. First we need to load the library before getting in to some sample use cases.
