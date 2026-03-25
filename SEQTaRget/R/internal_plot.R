@@ -24,7 +24,7 @@ internal.plot <- function(survival.data, params) {
     labs(x = "Followup",
          y = str_to_title(params@plot.type),
          col = "") + 
-    scale_color_manual(values = pal)
+    scale_color_manual(labels = guide, values = pal)
   if (params@bootstrap) {
     p <- p + geom_ribbon(aes(ymax = UCI, ymin = LCI, fill = variable), alpha = 0.5, color = NA) +
       scale_fill_manual(labels = guide, values = pal) +
@@ -33,8 +33,7 @@ internal.plot <- function(survival.data, params) {
   }
 
   if (!is.na(params@plot.title)) p <- p + labs(title = params@plot.title)
-  if (!is.na(params@plot.subtitle)) p <- p + labs(title = params@plot.subtitle)
-  p <- p + scale_color_manual(labels = guide, values = params@plot.colors)
+  if (!is.na(params@plot.subtitle)) p <- p + labs(subtitle = params@plot.subtitle)
 
   return(p)
 }
