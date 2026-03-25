@@ -234,6 +234,7 @@ km_curve <- function(object, plot.type = "survival",
     label <- groups[[i]]
     out[[label]] <- internal.plot(object@survival.data[[i]], params)
   }
+  if (is.na(object@params@subgroup)) return(out[[1]])
   return(out)
 }
 
