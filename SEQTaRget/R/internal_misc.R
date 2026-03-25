@@ -9,7 +9,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
   rd <- rd_se <- rr <- rr_se <- NULL
   boot_idx <- boot_wide <- NULL
   
-  var <- if ("inc0" %in% data[["variable"]]) "inc" else "risk"
+  var <- if (any(grepl("^inc_", data[["variable"]]))) "inc" else "risk"
   table <- data[, .SD[.N], by = "variable"
                 ][variable %like% var, 
                   ][, followup := NULL]

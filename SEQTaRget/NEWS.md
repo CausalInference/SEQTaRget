@@ -22,6 +22,11 @@
 - Amend defaults for `followup.min` and `weight.lower` from `-Inf` to `0`
 - Fix bootstrapping for risk difference and risk ratio estimates to use paired per-iteration estimates
 - Optimizations to use less RAM
+- Fix duplicate scale_color_manual warning and plot.subtitle label bug in `internal.plot()`
+- Run doseresponse and ITT vignette chunks on GitHub Actions
+- Fix `km_curve()` returning list instead of ggplot for non-subgroup case
+- Fix `km_curve()` subtitle condition
+- Fix `risk.comparison()` CIs being `NA` with competing events
 
 # SEQTaRget v1.3.6
 

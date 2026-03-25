@@ -225,7 +225,7 @@ km_curve <- function(object, plot.type = "survival",
   if (!missing(plot.type)) slot(params, "plot.type") <- plot.type
   if (!missing(plot.colors)) slot(params, "plot.colors") <- plot.colors
   if (!missing(plot.title)) slot(params, "plot.title") <- plot.title
-  if (!missing(plot.title)) slot(params, "plot.subtitle") <- plot.subtitle
+  if (!missing(plot.subtitle)) slot(params, "plot.subtitle") <- plot.subtitle
   if (!missing(plot.labels)) slot(params, "plot.labels") <- plot.labels
   
   out <- c()
@@ -234,6 +234,7 @@ km_curve <- function(object, plot.type = "survival",
     label <- groups[[i]]
     out[[label]] <- internal.plot(object@survival.data[[i]], params)
   }
+  if (is.na(object@params@subgroup)) return(out[[1]])
   return(out)
 }
 
