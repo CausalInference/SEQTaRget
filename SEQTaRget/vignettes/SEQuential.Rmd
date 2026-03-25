@@ -31,7 +31,7 @@ library(SEQTaRget)
 
 options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
                    bootstrap = TRUE, #asks the model to preform bootstrapping
-                   bootstrap.nboot = 10) #asks the model for 10 bootstrap samples
+                   bootstrap.nboot = 20) #asks the model for 20 bootstrap samples
 ```
 
 In general, options will be in the form `{option}.{parameter}` - here you may notice that we use `bootstrap.nboot` indicating that this parameter affects the `bootstrap`
