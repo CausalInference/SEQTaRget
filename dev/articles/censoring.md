@@ -37,15 +37,10 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 # retrieve risk plot
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -94,14 +89,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -152,14 +142,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -206,14 +191,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -264,14 +244,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -282,14 +257,14 @@ risk_data(model)
 #> [[1]]
 #>       Method      A       Risk
 #>       <char> <char>      <num>
-#> 1: censoring      0 0.02761456
-#> 2: censoring      1 0.01770405
+#> 1: censoring      0 0.02542994
+#> 2: censoring      1 0.01646542
 risk_comparison(model)
 #> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  0.6411128    -0.009910512
-#> 2: risk_1 risk_0  1.5597880     0.009910512
+#> 1:  inc_0  inc_1  0.6474815    -0.008964524
+#> 2:  inc_1  inc_0  1.5444456     0.008964524
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
