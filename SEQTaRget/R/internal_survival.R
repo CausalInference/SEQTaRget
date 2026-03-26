@@ -86,8 +86,10 @@ internal.survival <- function(params, outcome) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    full <- handler(copy(params@DT)[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))
-                                    ][get("followup") == 0, ], params, outcome[[1]]$model, formula_cache)
+    baseDT_main <- params@DT[get("followup") == 0, ]
+    baseDT_main[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))]
+    full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
+    rm(baseDT_main)
     
     if (params@bootstrap) {
       UIDs <- unique(params@DT[[params@id]])
