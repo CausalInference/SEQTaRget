@@ -80,7 +80,7 @@ SEQexpand <- function(params) {
       data_list[["base"]] <- data.base[, vars.found, with = FALSE]
     }
     if (length(data_list) > 1) {
-      out <- Reduce(function(x, y) merge(x, y, by = c(params@id, "trial", "period"), all = TRUE), data_list)
+      out <- Reduce(function(x, y) x[y, on = c(params@id, "trial", "period"), nomatch = NULL], data_list)
     } else if (length(data_list) == 1) {
       out <- data_list[[1]]
     }
