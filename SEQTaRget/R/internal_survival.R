@@ -136,6 +136,7 @@ internal.survival <- function(params, outcome) {
           return(out)
         })
       }
+      rm(baseDT)
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       rm(result)
