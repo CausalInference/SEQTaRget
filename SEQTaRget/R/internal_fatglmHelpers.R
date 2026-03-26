@@ -161,18 +161,16 @@ prepare.data_cached <- function(weight, params, type, model, case, cache) {
 
 # Fast model matrix builder - avoids overhead for simple cases
 fast_model_matrix <- function(formula, data, cols, is_simple = FALSE) {
-  # Extract only needed columns as data.frame (model.matrix requires it)
-  # Using as.data.frame.list is faster than as.data.frame.data.table
-  subset_data <- setDF(data[, ..cols])
-  
-  # Fast path for simple additive numeric-only models
+  subset_data <- data[, ..cols]
+
+  # Fast path for simple additive numeric-only models: no setDF needed
   if (isTRUE(is_simple) && all(vapply(subset_data, is.numeric, logical(1)))) {
     X <- as.matrix(subset_data)
     X <- cbind(Intercept = 1, X)
     return(X)
   }
-  
-  # Standard path
+
+  # Standard path: setDF in-place on the temp subset, then model.matrix
   X <- model.matrix(formula, data = setDF(subset_data), na.action = stats::na.pass)
   return(X)
 }
