@@ -139,8 +139,9 @@ internal.survival <- function(params, outcome) {
 
       # Bind all iterations once; reuse for SE, quantile, and paired RD/RR computation
       data_all <- rbindlist(lapply(seq_along(data), function(i) {
-        copy(data[[i]])[, boot_idx := i]
+        data[[i]][, boot_idx := i]
       }))
+      rm(data)
       DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
 
       # Per-iteration final risks for paired RD/RR CI computation in create.risk()
