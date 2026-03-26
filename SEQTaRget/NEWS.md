@@ -27,6 +27,7 @@
 - Fix `km_curve()` returning list instead of ggplot for non-subgroup case
 - Fix `km_curve()` subtitle condition
 - Fix `risk.comparison()` CIs being `NA` with competing events
+- Move selection.random before expansion to reduce peak memory usage
 
 # SEQTaRget v1.3.6
 
