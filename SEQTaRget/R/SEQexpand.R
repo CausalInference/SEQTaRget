@@ -147,7 +147,7 @@ SEQexpand <- function(params) {
         }
         out[, lag := NULL]
       }
-      out[, firstSwitch := if (any(switch)) which(switch)[1] else .N, by = c(params@id, "trial")]
+      out[, firstSwitch := { m <- match(TRUE, switch); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
       out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
                    ][, `:=`(firstSwitch = NULL)
