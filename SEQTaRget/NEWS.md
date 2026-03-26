@@ -30,6 +30,7 @@
 - Move selection.random before expansion to reduce peak memory usage
 - Replace `cbind()` with `:=` in expansion chain to avoid intermediate copy
 - Replace `merge()` with data.table native join in expansion data_list combine step
+- Replace rbind weight construction with copy+in-place to reduce peak memory
 
 # SEQTaRget v1.3.6
 
