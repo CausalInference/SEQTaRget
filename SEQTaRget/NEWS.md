@@ -38,6 +38,7 @@
 - Replace `sapply` loop with single matrix multiply in multinomial prediction
 - Vectorise survival curve predictions into a single inline.pred call per treatment level
 - Free result list after extraction in internal_survival.R to reduce peak memory during bootstrap
+- Free analytic list after subgroup loop in SEQuential.R to reduce peak memory during survival curve computation
 
 # SEQTaRget v1.3.6
 
