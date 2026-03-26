@@ -33,7 +33,8 @@
 - Replace rbind weight construction with copy+in-place to reduce peak memory
 - Drop wt and tmp columns immediately after weight is computed in all code paths
 - Remove redundant setDF calls in fast_model_matrix
-- Free WDT before bootstrap loop when data.return is FALSE
+- Free WDT before bootstrap loop when data.return is `FALSE`
+- Use `match(TRUE, ...)` instead of `which(...)[1]` to find first switch/event per group
 
 # SEQTaRget v1.3.6
 
