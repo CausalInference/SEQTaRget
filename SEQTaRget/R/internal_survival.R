@@ -135,6 +135,7 @@ internal.survival <- function(params, outcome) {
       }
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
+      rm(result)
 
       # Bind all iterations once; reuse for SE, quantile, and paired RD/RR computation
       data_all <- rbindlist(lapply(seq_along(data), function(i) {
