@@ -35,6 +35,7 @@
 - Remove redundant setDF calls in fast_model_matrix
 - Free WDT before bootstrap loop when data.return is `FALSE`
 - Use `match(TRUE, ...)` instead of `which(...)[1]` to find first switch/event per group
+- Replace `sapply` loop with single matrix multiply in multinomial prediction
 
 # SEQTaRget v1.3.6
 
