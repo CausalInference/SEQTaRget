@@ -29,6 +29,7 @@
 - Fix `risk.comparison()` CIs being `NA` with competing events
 - Move selection.random before expansion to reduce peak memory usage
 - Replace `cbind()` with `:=` in expansion chain to avoid intermediate copy
+- Replace `merge()` with data.table native join in expansion data_list combine step
 
 # SEQTaRget v1.3.6
 
