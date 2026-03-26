@@ -36,6 +36,7 @@
 - Free WDT before bootstrap loop when data.return is `FALSE`
 - Use `match(TRUE, ...)` instead of `which(...)[1]` to find first switch/event per group
 - Replace `sapply` loop with single matrix multiply in multinomial prediction
+- Vectorise survival curve predictions into a single inline.pred call per treatment level
 
 # SEQTaRget v1.3.6
 
