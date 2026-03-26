@@ -45,6 +45,16 @@
   [`km_curve()`](https://causalinference.github.io/SEQTaRget/dev/reference/km_curve.md)
   subtitle condition
 - Fix `risk.comparison()` CIs being `NA` with competing events
+- Move selection.random before expansion to reduce peak memory usage
+- Replace [`cbind()`](https://rdrr.io/r/base/cbind.html) with `:=` in
+  expansion chain to avoid intermediate copy
+- Replace [`merge()`](https://rdrr.io/r/base/merge.html) with data.table
+  native join in expansion data_list combine step
+- Replace rbind weight construction with copy+in-place to reduce peak
+  memory
+- Drop wt and tmp columns immediately after weight is computed in all
+  code paths
+- Remove redundant setDF calls in fast_model_matrix
 
 ## SEQTaRget v1.3.6
 

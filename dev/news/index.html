@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,12 @@
 <li>Fix <code><a href="../reference/km_curve.html">km_curve()</a></code> returning list instead of ggplot for non-subgroup case</li>
 <li>Fix <code><a href="../reference/km_curve.html">km_curve()</a></code> subtitle condition</li>
 <li>Fix <code>risk.comparison()</code> CIs being <code>NA</code> with competing events</li>
+<li>Move selection.random before expansion to reduce peak memory usage</li>
+<li>Replace <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind()</a></code> with <code>:=</code> in expansion chain to avoid intermediate copy</li>
+<li>Replace <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code> with data.table native join in expansion data_list combine step</li>
+<li>Replace rbind weight construction with copy+in-place to reduce peak memory</li>
+<li>Drop wt and tmp columns immediately after weight is computed in all code paths</li>
+<li>Remove redundant setDF calls in fast_model_matrix</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.6" id="seqtarget-v136">SEQTaRget v1.3.6<a class="anchor" aria-label="anchor" href="#seqtarget-v136"></a></h2><p class="text-muted">CRAN release: 2026-02-16</p>
