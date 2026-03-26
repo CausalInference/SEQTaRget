@@ -76,7 +76,7 @@ multinomial.predict <- function(model, X, target = NULL) {
 
 #' Helper function to get the summary table from multinomial
 #'
-#' @importFrom stats pnorm vcov
+#' @importFrom stats pnorm
 #' @keywords internal
 multinomial.summary <- function(model) {
   models <- model$models
@@ -85,10 +85,11 @@ multinomial.summary <- function(model) {
 
   summaries <- lapply(names(models), function(cls) {
     coef <- coef(models[[cls]])
-    se <- sqrt(diag(vcov(models[[cls]])))
+    se <- models[[cls]]$se
     data.frame(
       Class = cls,
       Term = names(coef),
+      Coefficient = as.numeric(coef),
       Std.Error = se,
       Z.Value = coef / se,
       P.Value = 2 * pnorm(-abs(coef / se))
