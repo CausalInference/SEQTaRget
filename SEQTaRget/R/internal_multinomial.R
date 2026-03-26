@@ -56,10 +56,8 @@ multinomial.predict <- function(model, X, target = NULL) {
   levels <- model$levels
   X <- as.matrix(X)
   
-  pred <- sapply(models, function(x) {
-    coefs <- as.numeric(coef(x))
-    as.vector(X %*% coefs)
-  })
+  coefs_matrix <- do.call(cbind, lapply(models, function(x) as.numeric(coef(x))))
+  pred <- X %*% coefs_matrix
   
   exppred <- exp(cbind(0, pred))
   probabilities <- exppred / rowSums(exppred)
