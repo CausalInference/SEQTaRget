@@ -81,7 +81,8 @@ internal.analysis <- function(params) {
                                   ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
                                    ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
                                      ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                       ][, weight := weight[1], list(cumsum(!is.na(weight)))]
+                                       ][, weight := weight[1], list(cumsum(!is.na(weight)))
+                                         ][, c("wt", "tmp") := NULL]
           } else {
             # Static - pre-expansion
             params@time <- "period"
@@ -91,7 +92,7 @@ internal.analysis <- function(params) {
                           ][, wt := numerator / denominator
                             ][is.na(wt), wt := 1
                               ][, weight := cumprod(wt), by = c(eval(params@id), "trial")
-                                ][, trial.first := NULL]
+                                ][, c("wt", "trial.first") := NULL]
           }
         } else {
           if (params@excused | params@deviation.excused) {
@@ -107,7 +108,8 @@ internal.analysis <- function(params) {
                                     ][, tmp := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")
                                       ][tmp > 0, wt := 1, by = c(eval(params@id), "trial")
                                         ][, weight := cumprod(ifelse(is.na(wt), 1, wt)), by = c(eval(params@id), "trial")
-                                          ][, weight := weight[1], list(cumsum(!is.na(weight)))]
+                                          ][, weight := weight[1], list(cumsum(!is.na(weight)))
+                                            ][, c("wt", "tmp") := NULL]
           } else {
             # Static - post-expansion
             params@time <- "period"
@@ -116,7 +118,8 @@ internal.analysis <- function(params) {
                         ][, wt := numerator / denominator
                           ][is.na(wt), wt := 1
                             ][followup == 0, wt := 1
-                              ][, weight := cumprod(wt), by = c(eval(params@id), "trial")]
+                              ][, weight := cumprod(wt), by = c(eval(params@id), "trial")
+                                ][, wt := NULL]
           }
         }
         if (params@LTFU) WDT[, weight := weight * cense1]
