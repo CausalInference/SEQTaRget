@@ -33,6 +33,13 @@
 - Replace rbind weight construction with copy+in-place to reduce peak memory
 - Drop wt and tmp columns immediately after weight is computed in all code paths
 - Remove redundant setDF calls in fast_model_matrix
+- Free WDT before bootstrap loop when data.return is `FALSE`
+- Use `match(TRUE, ...)` instead of `which(...)[1]` to find first switch/event per group
+- Replace `sapply` loop with single matrix multiply in multinomial prediction
+- Vectorise survival curve predictions into a single inline.pred call per treatment level
+- Free result list after extraction in internal_survival.R to reduce peak memory during bootstrap
+- Free analytic list after subgroup loop in SEQuential.R to reduce peak memory during survival curve computation
+- Avoid `copy()` in data_all construction and free data list in internal_survival.R to reduce peak memory during bootstrap
 
 # SEQTaRget v1.3.6
 

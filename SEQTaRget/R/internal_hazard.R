@@ -32,8 +32,8 @@ internal.hazard <- function(model, params, cache) {
       if (!is.na(params@compevent)) {
         tmp[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv", cache = cache)
             ][, "ce" := rbinom(.N, 1, ceProb)
-              ][, "firstEvent" := if (any(outcome == 1 | ce == 1)) which(outcome == 1 | ce == 1)[1] else .N, by = c(params@id, "trial")]
-      } else tmp[, "firstEvent" := if (any(outcome == 1)) which(outcome == 1)[1] else .N, by = c(params@id, "trial")]
+              ][, "firstEvent" := { m <- match(TRUE, outcome == 1 | ce == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
+      } else tmp[, "firstEvent" := { m <- match(TRUE, outcome == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
       
       out_list[[i]] <- tmp
       rm(tmp)

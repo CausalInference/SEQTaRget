@@ -226,7 +226,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       hazard[[label]] <- internal.hazard(models, params, formula_cache)
     }
   }
-  
+  rm(analytic)
+
   outcome.unique  <- outcome.nonunique <- c()
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
