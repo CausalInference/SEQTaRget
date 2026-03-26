@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9011</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9012</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,10 @@
 <li>Free result list after extraction in internal_survival.R to reduce peak memory during bootstrap</li>
 <li>Free analytic list after subgroup loop in SEQuential.R to reduce peak memory during survival curve computation</li>
 <li>Avoid <code>copy()</code> in data_all construction and free data list in internal_survival.R to reduce peak memory during bootstrap</li>
+<li>Filter to <code>followup==0</code> before adding trialID in internal.survival to avoid copying entire expanded dataset</li>
+<li>Trim base_DT to only prediction-needed columns before replication in internal.survival to reduce peak memory</li>
+<li>Remove unnecessary copy(weight) for model.data in internal.weights since it is never modified in-place</li>
+<li>Free baseDT after bootstrap loop in internal.survival to reduce peak memory during survival curve computation</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.6" id="seqtarget-v136">SEQTaRget v1.3.6<a class="anchor" aria-label="anchor" href="#seqtarget-v136"></a></h2><p class="text-muted">CRAN release: 2026-02-16</p>

@@ -160,20 +160,20 @@ km_curve(model, plot.type = "risk")
 ``` r
 risk_data(model)
 #> [[1]]
-#>           Method      A        Risk 95% LCI   95% UCI         SE
-#>           <char> <char>       <num>   <num>     <num>      <num>
-#> 1: dose-response      0 0.007586789       0 0.2597230 0.12864328
-#> 2: dose-response      1 0.012004295       0 0.0353936 0.01193354
+#>           Method      A        Risk 95% LCI    95% UCI         SE
+#>           <char> <char>       <num>   <num>      <num>      <num>
+#> 1: dose-response      0 0.007586789       0 0.25972299 0.12864328
+#> 2: dose-response      1 0.003641046       0 0.02703035 0.01193354
 risk_comparison(model)
 #> [[1]]
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>      <num>
-#> 1:  inc_0  inc_1  1.5822630 0.09075531   27.58578       0.004417506 -0.2379084
-#> 2:  inc_1  inc_0  0.6320062 0.03625056   11.01864      -0.004417506 -0.2467434
+#> 1:  inc_0  inc_1  0.4799192 0.02752717   8.367096      -0.003945743 -0.2462717
+#> 2:  inc_1  inc_0  2.0836841 0.11951578  36.327751       0.003945743 -0.2383802
 #>    RD 95% UCI
 #>         <num>
-#> 1:  0.2467434
-#> 2:  0.2379084
+#> 1:  0.2383802
+#> 2:  0.2462717
 ```
 
 ## dose-response hazard ratio with 5 bootstrap samples and competing events
@@ -258,34 +258,34 @@ km_curve(model, plot.type = "risk")
 ``` r
 risk_data(model)
 #> $sex_0
-#>           Method      A       Risk 95% LCI    95% UCI         SE
-#>           <char> <char>      <num>   <num>      <num>      <num>
-#> 1: dose-response      0 0.01125753       0 0.04037236 0.01485477
-#> 2: dose-response      1 0.01869016       0 0.06389465 0.02306394
+#>           Method      A        Risk 95% LCI    95% UCI         SE
+#>           <char> <char>       <num>   <num>      <num>      <num>
+#> 1: dose-response      0 0.011257533       0 0.04037236 0.01485477
+#> 2: dose-response      1 0.004588216       0 0.04979271 0.02306394
 #> 
 #> $sex_1
-#>           Method      A       Risk 95% LCI    95% UCI         SE
-#>           <char> <char>      <num>   <num>      <num>      <num>
-#> 1: dose-response      0 0.00659838       0 0.47302574 0.23797751
-#> 2: dose-response      1 0.01221464       0 0.04633477 0.01740855
+#>           Method      A        Risk 95% LCI    95% UCI         SE
+#>           <char> <char>       <num>   <num>      <num>      <num>
+#> 1: dose-response      0 0.006598380       0 0.47302574 0.23797751
+#> 2: dose-response      1 0.004921131       0 0.03904126 0.01740855
 risk_comparison(model)
 #> $sex_0
 #>       A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Differerence
 #>    <fctr> <fctr>      <num>        <num>      <num>             <num>
-#> 1:  inc_0  inc_1  1.6602358 3.328249e-05   82817.79       0.007432626
-#> 2:  inc_1  inc_0  0.6023241 1.207470e-05   30045.82      -0.007432626
+#> 1:  inc_0  inc_1  0.4075685 8.170464e-06    20330.8      -0.006669317
+#> 2:  inc_1  inc_0  2.4535753 4.918645e-05   122392.1       0.006669317
 #>     RD 95% LCI RD 95% UCI
 #>          <num>      <num>
-#> 1: -0.04444686 0.05931211
-#> 2: -0.05931211 0.04444686
+#> 1: -0.05854881 0.04521017
+#> 2: -0.04521017 0.05854881
 #> 
 #> $sex_1
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>      <num>
-#> 1:  inc_0  inc_1  1.8511568 0.06372359   53.77571       0.005616256 -0.4304995
-#> 2:  inc_1  inc_0  0.5402028 0.01859576   15.69278      -0.005616256 -0.4417320
+#> 1:  inc_0  inc_1   0.745809 0.02567347   21.66559      -0.001677249 -0.4377930
+#> 2:  inc_1  inc_0   1.340826 0.04615613   38.95071       0.001677249 -0.4344385
 #>    RD 95% UCI
 #>         <num>
-#> 1:  0.4417320
-#> 2:  0.4304995
+#> 1:  0.4344385
+#> 2:  0.4377930
 ```

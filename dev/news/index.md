@@ -68,6 +68,14 @@
   memory during survival curve computation
 - Avoid `copy()` in data_all construction and free data list in
   internal_survival.R to reduce peak memory during bootstrap
+- Filter to `followup==0` before adding trialID in internal.survival to
+  avoid copying entire expanded dataset
+- Trim base_DT to only prediction-needed columns before replication in
+  internal.survival to reduce peak memory
+- Remove unnecessary copy(weight) for model.data in internal.weights
+  since it is never modified in-place
+- Free baseDT after bootstrap loop in internal.survival to reduce peak
+  memory during survival curve computation
 
 ## SEQTaRget v1.3.6
 
