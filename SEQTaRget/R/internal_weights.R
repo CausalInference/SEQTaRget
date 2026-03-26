@@ -48,7 +48,7 @@ internal.weights <- function(DT, data, params, cache) {
 
     # Modeling ======================================================
     if (params@method == "ITT" || params@LTFU || !is.na(params@visit)) {
-      model.data <- copy(weight)
+      model.data <- weight
       if (params@LTFU) {
         if (!is.na(params@cense.eligible)) model.data <- model.data[get(params@cense.eligible) == 1, ]
         
@@ -82,7 +82,7 @@ internal.weights <- function(DT, data, params, cache) {
     denominator_models <- list()
     
     if (params@method != "ITT") {
-      model.data <- copy(weight)
+      model.data <- weight
       if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
       # Fit models for each treatment level

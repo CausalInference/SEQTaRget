@@ -27,9 +27,11 @@ internal.survival <- function(params, outcome) {
         rm(ce.data)
       }
       
-      # Get baseline columns (everything except followup-related)
-      base_cols <- names(DT)[!names(DT) %in% c("followup", paste0("followup", params@indicator.squared))]
-      base_DT <- DT[, base_cols, with = FALSE]
+      # Only keep columns needed for prediction to minimize memory during replication
+      fup_sq_col <- paste0("followup", params@indicator.squared)
+      pred_cols <- unique(c(cache$covariates$cols, tx_bas))
+      pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", "dose_sq")]
+      base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
 
       out_list <- c()
@@ -39,7 +41,6 @@ internal.survival <- function(params, outcome) {
         risk <- paste0("risk_", params@treat.level[[i]])
 
         # Vectorised predictions across all followup steps at once
-        fup_sq_col <- paste0("followup", params@indicator.squared)
         n_fup <- params@survival.max + 1L
         fup_seq <- 0L:as.integer(params@survival.max)
 
@@ -86,8 +87,10 @@ internal.survival <- function(params, outcome) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    full <- handler(copy(params@DT)[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))
-                                    ][get("followup") == 0, ], params, outcome[[1]]$model, formula_cache)
+    baseDT_main <- params@DT[get("followup") == 0, ]
+    baseDT_main[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))]
+    full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
+    rm(baseDT_main)
     
     if (params@bootstrap) {
       UIDs <- unique(params@DT[[params@id]])
@@ -133,6 +136,7 @@ internal.survival <- function(params, outcome) {
           return(out)
         })
       }
+      rm(baseDT)
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       rm(result)
