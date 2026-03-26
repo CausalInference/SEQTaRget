@@ -44,6 +44,7 @@
 - Trim base_DT to only prediction-needed columns before replication in internal.survival to reduce peak memory
 - Remove unnecessary copy(weight) for model.data in internal.weights since it is never modified in-place
 - Free baseDT after bootstrap loop in internal.survival to reduce peak memory during survival curve computation
+- Fix multinomial.summary: replace vcov() with fastglm $se field and add missing Coefficient column to prevent rbind mismatch
 
 # SEQTaRget v1.3.6
 
