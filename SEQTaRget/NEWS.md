@@ -40,6 +40,7 @@
 - Free result list after extraction in internal_survival.R to reduce peak memory during bootstrap
 - Free analytic list after subgroup loop in SEQuential.R to reduce peak memory during survival curve computation
 - Avoid `copy()` in data_all construction and free data list in internal_survival.R to reduce peak memory during bootstrap
+- Filter to `followup==0` before adding trialID in internal.survival to avoid copying entire expanded dataset
 
 # SEQTaRget v1.3.6
 
