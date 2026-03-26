@@ -16,6 +16,7 @@ SEQexpand <- function(params) {
     firstSwitch <- NULL
     trialID <- NULL
     lag <- NULL
+    treatment_val <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
     DT <- params@data
 
@@ -44,11 +45,23 @@ SEQexpand <- function(params) {
     vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
     data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
-               ][, cbind(.SD, trial = rowid(get(params@id)) - 1)
+               ][, trial := rowid(get(params@id)) - 1
                  ][, list(period = unlist(.SD)), by = c(eval(params@id), "trial")
                    ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
                      ][followup <= params@followup.max,
                        ][followup >= params@followup.min, ]
+
+    if (params@selection.random && !params@selection.first_trial) {
+      set.seed(params@seed)
+      eligible_starts <- DT[get(params@eligible) == 1,
+                             list(trialID = paste0(get(params@id), "-", get(params@time)),
+                                  treatment_val = get(params@treatment))]
+      IDs_treated <- unique(eligible_starts[treatment_val != params@treat.level[[1]], trialID])
+      set_control <- unique(eligible_starts[treatment_val == params@treat.level[[1]], trialID])
+      subset_control <- sample(set_control, round(length(set_control) * params@selection.prob))
+      data[, trialID := paste0(get(params@id), "-", trial)]
+      data <- data[trialID %in% c(IDs_treated, subset_control)][, trialID := NULL]
+    }
 
     data_list <- list()
     if (length(c(vars.time, vars.sq)) > 0) {
@@ -67,7 +80,7 @@ SEQexpand <- function(params) {
       data_list[["base"]] <- data.base[, vars.found, with = FALSE]
     }
     if (length(data_list) > 1) {
-      out <- Reduce(function(x, y) merge(x, y, by = c(params@id, "trial", "period"), all = TRUE), data_list)
+      out <- Reduce(function(x, y) x[y, on = c(params@id, "trial", "period"), nomatch = NULL], data_list)
     } else if (length(data_list) == 1) {
       out <- data_list[[1]]
     }
@@ -147,14 +160,5 @@ SEQexpand <- function(params) {
                    ][, "trial.first" := NULL]
     }
     
-    if (params@selection.random) {
-      set.seed(params@seed)
-      out[, "trialID" := paste0(params@id, "-", trial)]
-      IDs <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) != params@treat.level[[1]], ][["trialID"]])
-      set <- unique(out[get(paste0(params@treatment, params@indicator.baseline)) == params@treat.level[[1]], ][["trialID"]])
-      subset <- sample(set, round(length(set) * params@selection.prob))
-      out <- out[trialID %in% c(IDs, subset),
-                 ][, trialID := NULL]
-    }
   return(out)
 }

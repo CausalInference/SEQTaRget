@@ -10,7 +10,7 @@
 #' @keywords internal
 internal.weights <- function(DT, data, params, cache) {
   # Variable pre-definition ===================================
-    tx_lag <- NULL
+    tx_lag <- i.tx_lag <- NULL
     numerator <- denominator <- NULL
     cense1 <- cense1.numerator <- cense1.denominator <- NULL
     followup <- NULL
@@ -32,12 +32,11 @@ internal.weights <- function(DT, data, params, cache) {
                                ][, eval(params@treatment) := NULL]
 
       setnames(baseline.lag, 2, params@time)
-      # Conditional join
-      weight <- rbind(
-        DT[followup == 0,
-           ][baseline.lag, on = c(params@id, params@time), nomatch = 0],
-        DT[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")
-           ][followup != 0, ])[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
+      weight <- copy(DT)
+      weight[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")]
+      weight[baseline.lag, on = c(params@id, params@time),
+             tx_lag := fifelse(followup == 0L, i.tx_lag, tx_lag)]
+      weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
 
       if (params@excused | params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 

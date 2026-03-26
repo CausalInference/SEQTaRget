@@ -27,6 +27,12 @@
 - Fix `km_curve()` returning list instead of ggplot for non-subgroup case
 - Fix `km_curve()` subtitle condition
 - Fix `risk.comparison()` CIs being `NA` with competing events
+- Move selection.random before expansion to reduce peak memory usage
+- Replace `cbind()` with `:=` in expansion chain to avoid intermediate copy
+- Replace `merge()` with data.table native join in expansion data_list combine step
+- Replace rbind weight construction with copy+in-place to reduce peak memory
+- Drop wt and tmp columns immediately after weight is computed in all code paths
+- Remove redundant setDF calls in fast_model_matrix
 
 # SEQTaRget v1.3.6
 
