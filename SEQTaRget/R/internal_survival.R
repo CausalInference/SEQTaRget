@@ -10,6 +10,7 @@ internal.survival <- function(params, outcome) {
   # Variable pre-definition ===================================
     . <- variable <- NULL
     ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
+    row_id <- surv_accum <- ce_accum <- inc_accum <- p_surv <- p_ce <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
     # Initialize formula cache
@@ -37,43 +38,37 @@ internal.survival <- function(params, outcome) {
         inc <- paste0("inc_", params@treat.level[[i]])
         risk <- paste0("risk_", params@treat.level[[i]])
 
-        # Compute predictions per followup step, accumulating cumprod
-        surv_accum <- rep(1.0, n_base)
-        ce_accum <- if (!is.na(params@compevent)) rep(1.0, n_base) else NULL
-        inc_accum <- if (!is.na(params@compevent)) rep(0.0, n_base) else NULL
-
-        pred_DT <- copy(base_DT)
+        # Vectorised predictions across all followup steps at once
         fup_sq_col <- paste0("followup", params@indicator.squared)
-        results <- vector("list", params@survival.max + 1)
-        for (fup in 0:params@survival.max) {
-          set(pred_DT, j = "followup", value = as.integer(fup))
-          set(pred_DT, j = fup_sq_col, value = as.numeric(fup^2))
-          set(pred_DT, j = tx_bas, value = as.character(params@treat.level[[i]]))
+        n_fup <- params@survival.max + 1L
+        fup_seq <- 0L:as.integer(params@survival.max)
 
-          if (params@method == "dose-response" & i == 1) {
-            set(pred_DT, j = "dose", value = FALSE)
-            set(pred_DT, j = "dose_sq", value = FALSE)
-          } else if (params@method == "dose-response" & i != 1) {
-            set(pred_DT, j = "dose", value = as.numeric(fup))
-            set(pred_DT, j = "dose_sq", value = as.numeric(fup^2))
-          }
+        pred_all <- base_DT[rep(seq_len(n_base), each = n_fup)]
+        pred_all[, `:=`(followup = rep(fup_seq, times = n_base),
+                        row_id = rep(seq_len(n_base), each = n_fup))]
+        pred_all[, (fup_sq_col) := as.numeric(followup^2)]
+        pred_all[, (tx_bas) := as.character(params@treat.level[[i]])]
 
-          p_surv <- inline.pred(model, newdata = pred_DT, params, case = "surv", cache = cache)
-          surv_accum <- surv_accum * (1 - p_surv)
-
-          if (!is.na(params@compevent)) {
-            p_ce <- inline.pred(ce.model, newdata = pred_DT, params, case = "surv", cache = cache)
-            ce_accum <- ce_accum * (1 - p_surv) * (1 - p_ce)
-            inc_accum <- inc_accum + p_surv * (1 - p_ce) * ce_accum
-            results[[fup + 1]] <- list(followup = fup, surv_mean = mean(surv_accum), inc_mean = mean(inc_accum))
-          } else {
-            results[[fup + 1]] <- list(followup = fup, surv_mean = mean(surv_accum))
-          }
+        if (params@method == "dose-response" && i == 1) {
+          pred_all[, `:=`(dose = FALSE, dose_sq = FALSE)]
+        } else if (params@method == "dose-response" && i != 1) {
+          pred_all[, `:=`(dose = as.numeric(followup), dose_sq = as.numeric(followup^2))]
         }
 
-        result_dt <- rbindlist(results)
-        setnames(result_dt, "surv_mean", surv)
-        if (!is.na(params@compevent)) setnames(result_dt, "inc_mean", inc)
+        pred_all[, p_surv := inline.pred(model, newdata = pred_all, params, case = "surv", cache = cache)]
+        pred_all[, surv_accum := cumprod(1 - p_surv), by = row_id]
+
+        if (!is.na(params@compevent)) {
+          pred_all[, p_ce := inline.pred(ce.model, newdata = pred_all, params, case = "surv", cache = cache)]
+          pred_all[, ce_accum := cumprod((1 - p_surv) * (1 - p_ce)), by = row_id]
+          pred_all[, inc_accum := cumsum(p_surv * (1 - p_ce) * ce_accum), by = row_id]
+          result_dt <- pred_all[, list(surv_mean = mean(surv_accum), inc_mean = mean(inc_accum)), by = followup]
+          setnames(result_dt, c("surv_mean", "inc_mean"), c(surv, inc))
+        } else {
+          result_dt <- pred_all[, list(surv_mean = mean(surv_accum)), by = followup]
+          setnames(result_dt, "surv_mean", surv)
+        }
+        rm(pred_all)
 
         fup0 <- data.table(followup = 0)[, (surv) := 1]
         if (!is.na(params@compevent)) fup0[, (inc) := 0]
