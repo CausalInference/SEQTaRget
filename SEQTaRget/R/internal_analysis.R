@@ -159,7 +159,9 @@ internal.analysis <- function(params) {
     full <- handler(params@DT, params@data, params)
     stopifnot(identical(nrow(params@DT), original_nrow))
     stopifnot(identical(names(params@DT), original_names))
-    
+
+    if (!params@data.return) full$WDT <- data.table()
+
     if (params@bootstrap & params@verbose) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
