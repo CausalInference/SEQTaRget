@@ -85,12 +85,14 @@ internal.weights <- function(DT, data, params, cache) {
       model.data <- weight
       if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
-      # Fit models for each treatment level
-      if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
-        for (i in seq_along(params@treat.level)) {
-          level <- params@treat.level[[i]]
-          eligible_col <- params@weight.eligible_cols[[i]]
-          level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+      # Fit models for each treatment level - combined loop to avoid redundant filtering
+      for (i in seq_along(params@treat.level)) {
+        level <- params@treat.level[[i]]
+        eligible_col <- params@weight.eligible_cols[[i]]
+        level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+
+        # Fit numerator model (skip if excused & preexpansion)
+        if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
           n.data <- prepare.data_cached(level_data, params, type = "numerator", model = level, case = "default", cache)
           if (length(unique(n.data$y)) < 2L) {
             numerator_models[[i]] <- list(skip = TRUE)
@@ -99,12 +101,8 @@ internal.weights <- function(DT, data, params, cache) {
           }
           rm(n.data)
         }
-      }
 
-      for (i in seq_along(params@treat.level)) {
-        level <- params@treat.level[[i]]
-        eligible_col <- params@weight.eligible_cols[[i]]
-        level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
+        # Fit denominator model
         d.data <- prepare.data_cached(level_data, params, type = "denominator", level, case = "default", cache)
         if (length(unique(d.data$y)) < 2L) {
           denominator_models[[i]] <- list(skip = TRUE)
