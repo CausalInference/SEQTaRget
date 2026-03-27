@@ -193,11 +193,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
-  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- outcome <- weights <- list()
   analytic <- internal.analysis(params)
   WDT <- analytic[[1]]$WDT
-  
+
   subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
+  n_subgroups <- length(subgroups)
+  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
+  if (n_subgroups > 0) names(survival.data) <- names(survival.plot) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
   if (!params@hazard) {
     if (params@verbose) cat(method, "model created successfully\n")
 
