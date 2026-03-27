@@ -50,6 +50,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
         rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
       }
     }
+    rm(boot_wide)
     out[, `:=` (rd_lci = rd_lci_vec, rd_uci = rd_uci_vec,
                 rr_lci = rr_lci_vec, rr_uci = rr_uci_vec)
         ][, `:=` (value = NULL, i.value = NULL, LCI = NULL, UCI = NULL,
