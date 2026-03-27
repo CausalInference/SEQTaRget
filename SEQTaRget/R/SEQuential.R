@@ -193,7 +193,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   } else switch.unique <- switch.nonunique <- NA
 
   # Model Dispersion ===========================================
-  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- vcov <- outcome <- weights <- list()
+  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- outcome <- weights <- list()
   analytic <- internal.analysis(params)
   WDT <- analytic[[1]]$WDT
   
