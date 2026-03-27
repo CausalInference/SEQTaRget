@@ -80,6 +80,8 @@
   add missing Coefficient column to prevent rbind mismatch
 - Add test_coverage.R with tests targeting uncovered code paths to
   increase coverage
+- Remove some no longer used variables and dead code
+- Further memory reduction optimizations
 
 ## SEQTaRget v1.3.6
 

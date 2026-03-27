@@ -45,13 +45,13 @@ km_curve(model, plot.type = "risk")        # retrieve risk plot
 
 ``` r
 risk_data(model)
-#> [[1]]
+#> $`1`
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
 #> 1:    ITT      0 0.8372582 0.7646336 0.9098829 0.03705407
 #> 2:    ITT      1 0.8744359 0.8299662 0.9189056 0.02268902
 risk_comparison(model)
-#> [[1]]
+#> $`1`
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
 #> 1: risk_0 risk_1  1.0444041  0.9685600   1.126187        0.03717768 -0.02814011
@@ -102,13 +102,13 @@ km_curve(model, plot.type = "risk")
 
 ``` r
 risk_data(model)
-#> [[1]]
+#> $`1`
 #>    Method      A       Risk 95% LCI    95% UCI         SE
 #>    <char> <char>      <num>   <num>      <num>      <num>
 #> 1:    ITT      0 0.02374360       0 0.05930116 0.01814195
 #> 2:    ITT      1 0.02614576       0 0.05307095 0.01373759
 risk_comparison(model)
-#> [[1]]
+#> $`1`
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>
 #> 1: risk_0 risk_1  1.1011710  0.5047356   2.402402       0.002402164
@@ -155,13 +155,13 @@ km_curve(model, plot.type = "risk")
 
 ``` r
 risk_data(model)
-#> [[1]]
+#> $`1`
 #>    Method      A       Risk 95% LCI    95% UCI         SE
 #>    <char> <char>      <num>   <num>      <num>      <num>
 #> 1:    ITT      0 0.02185652       0 0.05286838 0.01582267
 #> 2:    ITT      1 0.02381601       0 0.04835280 0.01251900
 risk_comparison(model)
-#> [[1]]
+#> $`1`
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>
 #> 1:  inc_0  inc_1  1.0896524  0.5100805   2.327755       0.001959489
@@ -204,7 +204,7 @@ model <- SEQuential(data, id.col = "ID",
 
 # retrieve hazard ratios
 hazard_ratio(model)
-#> [[1]]
+#> $`1`
 #> Hazard ratio          LCI          UCI 
 #>    1.0033697    0.5993046    1.6798651
 ```

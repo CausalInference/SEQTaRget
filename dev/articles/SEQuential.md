@@ -80,8 +80,8 @@ handle obtaining your results.
 
 ``` r
 outcome(model)     # Returns a list of only the outcome models 
-#> [[1]]
-#> [[1]][[1]]
+#> $`1`
+#> $`1`[[1]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -96,7 +96,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.20092890           -0.00170402 
 #> 
-#> [[1]][[2]]
+#> $`1`[[2]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -111,7 +111,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.11295147           -0.00267922 
 #> 
-#> [[1]][[3]]
+#> $`1`[[3]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -126,7 +126,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            4.1592e-01           -4.5406e-03 
 #> 
-#> [[1]][[4]]
+#> $`1`[[4]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -141,7 +141,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            8.3786e-01            5.3018e-03 
 #> 
-#> [[1]][[5]]
+#> $`1`[[5]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -156,7 +156,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>           -0.09583373           -0.00892581 
 #> 
-#> [[1]][[6]]
+#> $`1`[[6]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -171,7 +171,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>           -5.6365e-02            8.0484e-03 
 #> 
-#> [[1]][[7]]
+#> $`1`[[7]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -186,7 +186,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            9.8581e-01           -6.3076e-04 
 #> 
-#> [[1]][[8]]
+#> $`1`[[8]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -201,7 +201,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.51985467           -0.00103007 
 #> 
-#> [[1]][[9]]
+#> $`1`[[9]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -216,7 +216,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>           -7.7720e-01            1.5539e-04 
 #> 
-#> [[1]][[10]]
+#> $`1`[[10]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -231,7 +231,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.24637872           -0.00390270 
 #> 
-#> [[1]][[11]]
+#> $`1`[[11]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -246,7 +246,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            9.0134e-01           -5.5006e-03 
 #> 
-#> [[1]][[12]]
+#> $`1`[[12]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -261,7 +261,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.12925425            0.00468215 
 #> 
-#> [[1]][[13]]
+#> $`1`[[13]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -276,7 +276,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            2.8434e-01            9.7276e-04 
 #> 
-#> [[1]][[14]]
+#> $`1`[[14]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -291,7 +291,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            5.9746e-01           -1.3830e-03 
 #> 
-#> [[1]][[15]]
+#> $`1`[[15]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -306,7 +306,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            3.2306e-01            5.9596e-03 
 #> 
-#> [[1]][[16]]
+#> $`1`[[16]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -321,7 +321,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            5.9723e-01            1.5975e-03 
 #> 
-#> [[1]][[17]]
+#> $`1`[[17]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -336,7 +336,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            5.1168e-01           -7.6077e-03 
 #> 
-#> [[1]][[18]]
+#> $`1`[[18]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -351,7 +351,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>           -0.12648565           -0.00869196 
 #> 
-#> [[1]][[19]]
+#> $`1`[[19]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -366,7 +366,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>           -0.11657712            0.00271366 
 #> 
-#> [[1]][[20]]
+#> $`1`[[20]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -381,7 +381,7 @@ outcome(model)     # Returns a list of only the outcome models
 #>                 P_bas tx_init_bas1:followup 
 #>            0.03571644           -0.01100419 
 #> 
-#> [[1]][[21]]
+#> $`1`[[21]]
 #> 
 #> Call:
 #> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
@@ -403,13 +403,13 @@ group.](SEQuential_files/figure-html/outcome-1.png)
 
 ``` r
 risk_data(model)
-#> [[1]]
+#> $`1`
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
 #> 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859
 #> 2:    ITT      1 0.8744359 0.8135711 0.9353007 0.03105406
 risk_comparison(model)
-#> [[1]]
+#> $`1`
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
 #> 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957
