@@ -154,7 +154,6 @@ setMethod("show", "SEQoutput", function(object) {
 numerator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@weighted) stop("SEQuential process was not weighted")
-  weight_statistics <- slot(object, "weight.statistics")
   return(list(numerator0 = lapply(object@weight.statistics, function(x) x[[1]]$n0.coef),
               numerator1 = lapply(object@weight.statistics, function(x) x[[1]]$n1.coef)))
 }
