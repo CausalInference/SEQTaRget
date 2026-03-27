@@ -168,7 +168,6 @@ numerator <- function(object) {
 denominator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@weighted) stop("SEQuential process was not weighted")
-  weight_statistics <- slot(object, "weight.statistics")
   return(list(denominator0 = lapply(object@weight.statistics, function(x) x[[1]]$d0.coef),
               denominator1 = lapply(object@weight.statistics, function(x) x[[1]]$d1.coef)))
 }
