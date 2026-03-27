@@ -175,19 +175,6 @@ fast_model_matrix <- function(formula, data, cols, is_simple = FALSE) {
   return(X)
 }
 
-# Even faster: for purely additive numeric models
-fast_model_matrix_simple <- function(data, cols) {
-  
-  # Only use this if you KNOW the formula is purely additive
-  # with no factors, interactions, or transformations
-  X <- as.matrix(data[, ..cols])
-  
-  # Add intercept column
-  X <- cbind(Intercept = 1, X)
-  
-  return(X)
-}
-
 #' Function to clean out non needed elements from fastglm return
 #' @param model a fastglm model
 #' @keywords internal
