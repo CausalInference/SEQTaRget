@@ -69,6 +69,8 @@ internal.survival <- function(params, outcome) {
           result_dt <- pred_all[, list(surv_mean = mean(surv_accum)), by = followup]
           setnames(result_dt, "surv_mean", surv)
         }
+        pred_all[, c("p_surv", "surv_accum") := NULL]  # Free intermediate columns before rm
+        if (!is.na(params@compevent)) pred_all[, c("p_ce", "ce_accum", "inc_accum") := NULL]
         rm(pred_all)
 
         fup0 <- data.table(followup = 0)[, (surv) := 1]
