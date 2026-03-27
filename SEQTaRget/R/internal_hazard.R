@@ -23,22 +23,22 @@ internal.hazard <- function(model, params, cache) {
                      ][rep(seq_len(.N), each = params@followup.max + 1)
                        ][, "followup" := seq.int(1:.N) - 1, by = c(params@id, "trial")
                          ][, paste0("followup", params@indicator.squared) := get("followup")^2]
-    
-    out_list <- c()
+
+    # Pre-allocate output list instead of concatenating with c()
+    out_list <- vector("list", length(params@treat.level))
+
     for (i in seq_along(params@treat.level)) {
-      tmp <- copy(trials)[, eval(tx_bas) := params@treat.level[[i]]
-                          ][, "outcomeProb" := inline.pred(model, newdata = .SD, params, type = "outcome", cache = cache)
-                            ][, "outcome" := rbinom(.N, 1, fcoalesce(outcomeProb, 0.5))]
+      out_list[[i]] <- copy(trials)[, eval(tx_bas) := params@treat.level[[i]]
+                                    ][, "outcomeProb" := inline.pred(model, newdata = .SD, params, type = "outcome", cache = cache)
+                                      ][, "outcome" := rbinom(.N, 1, fcoalesce(outcomeProb, 0.5))]
+
       if (!is.na(params@compevent)) {
-        tmp[, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv", cache = cache)
-            ][, "ce" := rbinom(.N, 1, ceProb)
-              ][, "firstEvent" := { m <- match(TRUE, outcome == 1 | ce == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
-      } else tmp[, "firstEvent" := { m <- match(TRUE, outcome == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
-      
-      out_list[[i]] <- tmp
-      rm(tmp)
+        out_list[[i]][, "ceProb" := inline.pred(ce.model, newdata = .SD, params, case = "surv", cache = cache)
+                      ][, "ce" := rbinom(.N, 1, ceProb)
+                        ][, "firstEvent" := { m <- match(TRUE, outcome == 1 | ce == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
+      } else out_list[[i]][, "firstEvent" := { m <- match(TRUE, outcome == 1); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
     }
-    
+
     rm(trials)
     out <- rbindlist(out_list)
     rm(out_list)
