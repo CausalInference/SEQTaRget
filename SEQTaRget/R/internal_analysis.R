@@ -223,7 +223,10 @@ internal.analysis <- function(params) {
       list()
     }
 
-  result <- c(list(full), bootstrap)
+  n_boot <- length(bootstrap)
+  result <- vector("list", n_boot + 1)
+  result[[1]] <- full
+  if (n_boot > 0) result[-1] <- bootstrap
 
   return(result)
 }
