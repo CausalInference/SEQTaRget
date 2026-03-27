@@ -107,7 +107,6 @@ internal.survival <- function(params, outcome) {
           orig_id = sample(UIDs, n_sample, replace = TRUE),
           boot_idx = seq_len(n_sample)
         )
-        id_mult <- max(UIDs) + 1L
         
         # Single keyed join instead of N separate filters
         RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
