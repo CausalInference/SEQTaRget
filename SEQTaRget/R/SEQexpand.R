@@ -70,6 +70,7 @@ SEQexpand <- function(params) {
 
       vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
       data_list[["time"]] <- data.time[, vars.found, with = FALSE]
+      rm(data.time)
     }
     if (length(vars.base) > 0) {
       data.base <- data[DT, on = c(eval(params@id), "trial" = eval(params@time)), .SDcols = vars.base, nomatch = 0
@@ -78,6 +79,7 @@ SEQexpand <- function(params) {
       vars.found <- unique(c(paste0(vars.base, params@indicator.baseline), "period", "trial", params@id))
       setnames(data.base, old = vars.base, new = paste0(vars.base, params@indicator.baseline))
       data_list[["base"]] <- data.base[, vars.found, with = FALSE]
+      rm(data.base)
     }
     if (length(data_list) > 1) {
       out <- Reduce(function(x, y) x[y, on = c(params@id, "trial", "period"), nomatch = NULL], data_list)
@@ -85,8 +87,6 @@ SEQexpand <- function(params) {
       out <- data_list[[1]]
     }
     rm(data_list)
-    if (exists("data.time")) rm(data.time)
-    if (exists("data.base")) rm(data.base)
 
     out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
                ][, paste0(params@eligible, params@indicator.baseline) := NULL]

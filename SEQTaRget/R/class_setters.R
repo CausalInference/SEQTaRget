@@ -144,7 +144,7 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot,
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
-  DT <- if (params@data.return) if (params@weighted) WDT else copy(params@DT) else data.table()
+  DT <- if (params@data.return) if (params@weighted) WDT else params@DT else data.table()
   params@DT <- params@data <- data.table()
   
   new("SEQoutput",

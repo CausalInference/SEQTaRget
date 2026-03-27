@@ -69,6 +69,8 @@ internal.survival <- function(params, outcome) {
           result_dt <- pred_all[, list(surv_mean = mean(surv_accum)), by = followup]
           setnames(result_dt, "surv_mean", surv)
         }
+        pred_all[, c("p_surv", "surv_accum") := NULL]  # Free intermediate columns before rm
+        if (!is.na(params@compevent)) pred_all[, c("p_ce", "ce_accum", "inc_accum") := NULL]
         rm(pred_all)
 
         fup0 <- data.table(followup = 0)[, (surv) := 1]
@@ -107,7 +109,6 @@ internal.survival <- function(params, outcome) {
           orig_id = sample(UIDs, n_sample, replace = TRUE),
           boot_idx = seq_len(n_sample)
         )
-        id_mult <- max(UIDs) + 1L
         
         # Single keyed join instead of N separate filters
         RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
