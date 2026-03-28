@@ -242,7 +242,7 @@ km_curve <- function(object, plot.type = "survival",
 #' @param object SEQoutput object
 #'
 #' @importFrom methods is slot
-#' @returns List of dataframes of survival values
+#' @returns A data frame of survival values, or a named list of data frames when subgroups are specified
 #' @export
 km_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -255,7 +255,7 @@ km_data <- function(object) {
 #' @param object SEQoutput object
 #' 
 #' @importFrom methods is slot
-#' @returns List of fastglm objects
+#' @returns A fastglm object, or a named list of fastglm objects when subgroups are specified
 #' @export
 compevent <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
@@ -294,7 +294,7 @@ risk_comparison <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns List of hazard ratios
+#' @returns A named vector of hazard ratios, or a named list of vectors when subgroups are specified
 #' @export
 hazard_ratio <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
