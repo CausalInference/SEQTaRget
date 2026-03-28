@@ -226,8 +226,9 @@ km_curve <- function(object, plot.type = "survival",
   if (!missing(plot.subtitle)) slot(params, "plot.subtitle") <- plot.subtitle
   if (!missing(plot.labels)) slot(params, "plot.labels") <- plot.labels
   
-  out <- c()
   groups <- if(!is.na(object@params@subgroup)) names(object@survival.data) else 1L
+  out <- vector("list", length(groups))
+  if (length(groups) > 0) names(out) <- groups
   for (i in seq_along(object@survival.data)) {
     label <- groups[[i]]
     out[[label]] <- internal.plot(object@survival.data[[i]], params)
