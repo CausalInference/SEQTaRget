@@ -34,7 +34,7 @@ internal.survival <- function(params, outcome) {
       base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
 
-      out_list <- c()
+      out_list <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         surv <- paste0("surv_", params@treat.level[[i]])
         inc <- paste0("inc_", params@treat.level[[i]])
