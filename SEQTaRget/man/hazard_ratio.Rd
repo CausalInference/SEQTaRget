@@ -10,7 +10,7 @@ hazard_ratio(object)
 \item{object}{SEQoutput object}
 }
 \value{
-List of hazard ratios
+A named vector of hazard ratios, or a named list of vectors when subgroups are specified
 }
 \description{
 Function to return hazard ratios from a SEQuential object

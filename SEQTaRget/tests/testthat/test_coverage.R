@@ -7,10 +7,10 @@ test_that("risk_data and risk_comparison return data when km.curves = TRUE", {
                       list("N", "L", "P"), list("sex"),
                       method = "censoring",
                       options = SEQopts(km.curves = TRUE, weighted = TRUE))
-  expect_true(is.list(risk_data(model)))
-  expect_true(is.list(risk_comparison(model)))
-  expect_true(nrow(risk_data(model)[[1]]) > 0)
-  expect_true(nrow(risk_comparison(model)[[1]]) > 0)
+  expect_true(is.data.table(risk_data(model)))
+  expect_true(is.data.table(risk_comparison(model)))
+  expect_true(nrow(risk_data(model)) > 0)
+  expect_true(nrow(risk_comparison(model)) > 0)
 })
 
 test_that("risk_data and risk_comparison error when km.curves = FALSE", {
@@ -295,8 +295,8 @@ test_that("Hazard bootstrap with competing event", {
                       options = SEQopts(hazard = TRUE, compevent = "compevent",
                                         bootstrap = TRUE, bootstrap.nboot = 2))
   hr <- hazard_ratio(model)
-  expect_true("LCI" %in% names(hr[[1]]))
-  expect_true("UCI" %in% names(hr[[1]]))
+  expect_true("LCI" %in% names(hr))
+  expect_true("UCI" %in% names(hr))
 })
 
 # ── SEQestimate.R: additional branches ──────────────────────────────────────

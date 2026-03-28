@@ -226,8 +226,9 @@ km_curve <- function(object, plot.type = "survival",
   if (!missing(plot.subtitle)) slot(params, "plot.subtitle") <- plot.subtitle
   if (!missing(plot.labels)) slot(params, "plot.labels") <- plot.labels
   
-  out <- c()
   groups <- if(!is.na(object@params@subgroup)) names(object@survival.data) else 1L
+  out <- vector("list", length(groups))
+  if (length(groups) > 0) names(out) <- groups
   for (i in seq_along(object@survival.data)) {
     label <- groups[[i]]
     out[[label]] <- internal.plot(object@survival.data[[i]], params)
@@ -241,10 +242,11 @@ km_curve <- function(object, plot.type = "survival",
 #' @param object SEQoutput object
 #'
 #' @importFrom methods is slot
-#' @returns List of dataframes of survival values
+#' @returns A data frame of survival values, or a named list of data frames when subgroups are specified
 #' @export
 km_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (is.na(object@params@subgroup)) return(slot(object, "survival.data")[[1]])
   return(slot(object, "survival.data"))
 }
 
@@ -253,11 +255,12 @@ km_data <- function(object) {
 #' @param object SEQoutput object
 #' 
 #' @importFrom methods is slot
-#' @returns List of fastglm objects
+#' @returns A fastglm object, or a named list of fastglm objects when subgroups are specified
 #' @export
 compevent <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (is.na(object@params@compevent)) stop("No competing event was specified during SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "ce.model")[[1]])
   return(slot(object, "ce.model"))
 }
 
@@ -270,6 +273,7 @@ compevent <- function(object) {
 risk_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "risk.data")[[1]])
   return(slot(object, "risk.data"))
 }
 
@@ -282,6 +286,7 @@ risk_data <- function(object) {
 risk_comparison <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "risk.comparison")[[1]])
   return(slot(object, "risk.comparison"))
 }
 
@@ -289,11 +294,12 @@ risk_comparison <- function(object) {
 #' 
 #' @param object SEQoutput object
 #' @importFrom methods is slot
-#' @returns List of hazard ratios
+#' @returns A named vector of hazard ratios, or a named list of vectors when subgroups are specified
 #' @export
 hazard_ratio <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@hazard) stop("Hazard Ratios were not created through `hazard = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "hazard")[[1]])
   return(slot(object, "hazard"))
 }
 

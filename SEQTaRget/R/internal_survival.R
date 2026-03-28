@@ -34,7 +34,7 @@ internal.survival <- function(params, outcome) {
       base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
 
-      out_list <- c()
+      out_list <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         surv <- paste0("surv_", params@treat.level[[i]])
         inc <- paste0("inc_", params@treat.level[[i]])
@@ -82,6 +82,7 @@ internal.survival <- function(params, outcome) {
         out_list[[i]] <- rbind(fup0, result_dt[followup > 0
                                                 ][, c(unlist(kept)), with = FALSE]
                                )[, eval(risk) := 1 - get(surv)]
+        rm(result_dt)
       }
       
       out <- melt(Reduce(function(x, y) merge(x, y, by = "followup"), out_list), id.vars = "followup")

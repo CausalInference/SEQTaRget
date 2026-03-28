@@ -12,7 +12,7 @@ test_that("Output Methods Testing", {
   expect_length(covariates(model), 3)
   
   expect_s3_class(km_curve(model), "ggplot")
-  expect_length(km_data(model), 1)
+  expect_length(km_data(model), 6)
   
   nonWeightModel <- SEQuential(SEQdata, "ID", "time", "eligible", "tx_init", "outcome",
                                list("N", "L", "P"), list("sex"),
