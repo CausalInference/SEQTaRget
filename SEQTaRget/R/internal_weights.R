@@ -210,7 +210,7 @@ internal.weights <- function(DT, data, params, cache) {
     }
 
     if (params@method != "ITT") {
-      coef.denominator <- c()
+      coef.denominator <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         coef.denominator[[i]] <- if (!isTRUE(denominator_models[[i]]$skip)) clean_fastglm(denominator_models[[i]]) else NULL
       }
