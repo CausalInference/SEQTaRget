@@ -36,6 +36,7 @@ internal.weights <- function(DT, data, params, cache) {
       weight[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")]
       weight[baseline.lag, on = c(params@id, params@time),
              tx_lag := fifelse(followup == 0L, i.tx_lag, tx_lag)]
+      rm(baseline.lag)
       weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
 
       if (params@excused | params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
