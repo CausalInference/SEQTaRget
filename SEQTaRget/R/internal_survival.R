@@ -82,6 +82,7 @@ internal.survival <- function(params, outcome) {
         out_list[[i]] <- rbind(fup0, result_dt[followup > 0
                                                 ][, c(unlist(kept)), with = FALSE]
                                )[, eval(risk) := 1 - get(surv)]
+        rm(result_dt)
       }
       
       out <- melt(Reduce(function(x, y) merge(x, y, by = "followup"), out_list), id.vars = "followup")
