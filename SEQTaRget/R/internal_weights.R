@@ -202,7 +202,7 @@ internal.weights <- function(DT, data, params, cache) {
     weight.info <- new("SEQweights", weights = out)
     
     if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
-      coef.numerator <- c()
+      coef.numerator <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         coef.numerator[[i]] <- if (!isTRUE(numerator_models[[i]]$skip)) clean_fastglm(numerator_models[[i]]) else NULL
       }
