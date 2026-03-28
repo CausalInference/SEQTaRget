@@ -10,7 +10,7 @@ km_data(object)
 \item{object}{SEQoutput object}
 }
 \value{
-List of dataframes of survival values
+A data frame of survival values, or a named list of data frames when subgroups are specified
 }
 \description{
 Function to return survival data from a SEQuential object
