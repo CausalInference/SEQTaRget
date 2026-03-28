@@ -16,4 +16,5 @@ compevent(object)
 
 ## Value
 
-List of fastglm objects
+A fastglm object, or a named list of fastglm objects when subgroups are
+specified

@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9015</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,13 +126,11 @@ to errors.</p>
 <p><img src="doseresponse_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;           Method      A      Risk   95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: dose-response      0 0.5282782 0.1234894 0.9330671 0.20652872</span></span>
 <span><span class="co">#&gt; 2: dose-response      1 0.8949096 0.8385037 0.9513155 0.02877903</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.6940120  0.7764767   3.695766         0.3666314 -0.07309331</span></span>
@@ -180,13 +178,11 @@ to errors.</p>
 <p><img src="doseresponse_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;           Method      A        Risk     95% LCI    95% UCI          SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: dose-response      0 0.007847443 0.000000000 0.02684988 0.009695299</span></span>
 <span><span class="co">#&gt; 2: dose-response      1 0.018827788 0.001997953 0.03565762 0.008586808</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  2.3992259 0.44856850  12.832566        0.01098034 -0.01349983</span></span>
@@ -230,13 +226,11 @@ to errors.</p>
 <p><img src="doseresponse_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;           Method      A        Risk 95% LCI    95% UCI         SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: dose-response      0 0.007586789       0 0.25972299 0.12864328</span></span>
 <span><span class="co">#&gt; 2: dose-response      1 0.003641046       0 0.02703035 0.01193354</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1:  inc_0  inc_1  0.4799192 0.02752717   8.367096      -0.003945743 -0.2462717</span></span>
@@ -280,7 +274,6 @@ events<a class="anchor" aria-label="anchor" href="#dose-response-hazard-ratio-wi
 <span></span>
 <span><span class="co"># retrieve hazard ratios</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
 <span><span class="co">#&gt;    0.9582143    0.7107252    1.2918841</span></span></code></pre></div>
 </div>

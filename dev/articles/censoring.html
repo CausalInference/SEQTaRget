@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9015</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -128,13 +128,11 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <code class="sourceCode R"><span><span class="co"># retrieve survival and risk data</span></span>
 <span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6596589</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9243520</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.4012576       0.2646931</span></span>
@@ -174,13 +172,11 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <p><img src="censoring_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6533049</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9281893</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.4207598       0.2748844</span></span>
@@ -225,13 +221,11 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.9647942</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9627635</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  0.9978953    -0.002030621</span></span>
@@ -272,13 +266,11 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6371076</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9909442</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.5553797       0.3538366</span></span>
@@ -323,13 +315,11 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       Method      A       Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.02542994</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.01646542</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1:  inc_0  inc_1  0.6474815    -0.008964524</span></span>
@@ -365,7 +355,6 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
 <span><span class="co">#&gt;     3.005085           NA           NA</span></span></code></pre></div>
 </div>

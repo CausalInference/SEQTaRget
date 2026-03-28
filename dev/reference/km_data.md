@@ -16,4 +16,5 @@ km_data(object)
 
 ## Value
 
-List of dataframes of survival values
+A data frame of survival values, or a named list of data frames when
+subgroups are specified

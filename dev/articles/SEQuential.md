@@ -403,13 +403,11 @@ group.](SEQuential_files/figure-html/outcome-1.png)
 
 ``` r
 risk_data(model)
-#> $`1`
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
 #> 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859
 #> 2:    ITT      1 0.8744359 0.8135711 0.9353007 0.03105406
 risk_comparison(model)
-#> $`1`
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
 #> 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957

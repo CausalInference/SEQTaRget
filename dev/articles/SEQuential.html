@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.6.9015</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -480,13 +480,11 @@ provide a few different methods to handle obtaining your results.</p>
 <p><img src="SEQuential_files/figure-html/outcome-1.png" class="r-plt" alt="Survival curve by treatment group." width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;    Method      A      Risk   95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859</span></span>
 <span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8135711 0.9353007 0.03105406</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`1`</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957</span></span>
