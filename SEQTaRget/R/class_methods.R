@@ -246,6 +246,7 @@ km_curve <- function(object, plot.type = "survival",
 #' @export
 km_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (is.na(object@params@subgroup)) return(slot(object, "survival.data")[[1]])
   return(slot(object, "survival.data"))
 }
 
@@ -259,6 +260,7 @@ km_data <- function(object) {
 compevent <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (is.na(object@params@compevent)) stop("No competing event was specified during SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "ce.model")[[1]])
   return(slot(object, "ce.model"))
 }
 
@@ -271,6 +273,7 @@ compevent <- function(object) {
 risk_data <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "risk.data")[[1]])
   return(slot(object, "risk.data"))
 }
 
@@ -283,6 +286,7 @@ risk_data <- function(object) {
 risk_comparison <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@km.curves) stop("Survival Data and Risks were not created through `km.curves = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "risk.comparison")[[1]])
   return(slot(object, "risk.comparison"))
 }
 
@@ -295,6 +299,7 @@ risk_comparison <- function(object) {
 hazard_ratio <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@hazard) stop("Hazard Ratios were not created through `hazard = TRUE` in SEQuential process")
+  if (is.na(object@params@subgroup)) return(slot(object, "hazard")[[1]])
   return(slot(object, "hazard"))
 }
 
