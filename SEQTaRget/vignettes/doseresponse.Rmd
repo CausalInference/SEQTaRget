@@ -48,7 +48,7 @@ risk_data(model)
 risk_comparison(model)
 ```
 
-## dose-response with 5 bootstrap samples and losses-to-followup
+## Dose-response with 5 bootstrap samples and losses-to-followup
 
 ```{r}
 options <- SEQopts(km.curves = TRUE,               
@@ -78,7 +78,7 @@ risk_comparison(model)
 ```
 
 
-## dose-response with 5 bootstrap samples and competing events
+## Dose-response with 5 bootstrap samples and competing events
 
 ```{r}
 options <- SEQopts(km.curves = TRUE,               
@@ -104,7 +104,8 @@ risk_comparison(model)
 ```
 
 
-## dose-response hazard ratio with 5 bootstrap samples and competing events
+## Dose-response hazard ratio with 5 bootstrap samples and competing events
+
 ```{r}
 options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
                    # ratio creation
@@ -130,7 +131,8 @@ model <- SEQuential(data, id.col = "ID",
 hazard_ratio(model)
 ```
 
-## dose-response with 5 bootstrap samples and competing events in subgroups defined by sex
+## Dose-response with 5 bootstrap samples and competing events in subgroups defined by sex
+
 ```{r}
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
