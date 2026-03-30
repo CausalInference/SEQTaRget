@@ -64,7 +64,7 @@ risk_comparison(model)
 #> 2: 0.07309331
 ```
 
-## dose-response with 5 bootstrap samples and losses-to-followup
+## Dose-response with 5 bootstrap samples and losses-to-followup
 
 ``` r
 options <- SEQopts(km.curves = TRUE,               
@@ -119,7 +119,7 @@ risk_comparison(model)
 #> 2: 0.01349983
 ```
 
-## dose-response with 5 bootstrap samples and competing events
+## Dose-response with 5 bootstrap samples and competing events
 
 ``` r
 options <- SEQopts(km.curves = TRUE,               
@@ -170,7 +170,7 @@ risk_comparison(model)
 #> 2:  0.2462717
 ```
 
-## dose-response hazard ratio with 5 bootstrap samples and competing events
+## Dose-response hazard ratio with 5 bootstrap samples and competing events
 
 ``` r
 options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
@@ -206,7 +206,7 @@ hazard_ratio(model)
 #>    0.9582143    0.7107252    1.2918841
 ```
 
-## dose-response with 5 bootstrap samples and competing events in subgroups defined by sex
+## Dose-response with 5 bootstrap samples and competing events in subgroups defined by sex
 
 ``` r
 options <- SEQopts(km.curves = TRUE,               
