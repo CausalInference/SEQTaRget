@@ -13,3 +13,19 @@ navbar:
       icon: fab fa-r-project
       href: https://cran.r-project.org/package=SEQTaRget
       aria-label: View on CRAN
+    articles:
+      text: Articles
+      menu:
+      - text: "Getting started"
+      - text: SEQuential
+        href: articles/SEQuential.html
+      - text: Defining your SEQopts()
+        href: articles/seqopts.html
+      - text: -------
+      - text: "Analyses"
+      - text: Intention-To-Treat Analysis
+        href: articles/ITT.html
+      - text: "Per Protocol: Censoring Analysis"
+        href: articles/censoring.html
+      - text: "Per-Protocol: Dose-Response Analysis"
+        href: articles/doseresponse.html
