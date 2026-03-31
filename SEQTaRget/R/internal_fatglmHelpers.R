@@ -179,8 +179,21 @@ fast_model_matrix <- function(formula, data, cols, is_simple = FALSE) {
 #' @param model a fastglm model
 #' @keywords internal
 clean_fastglm <- function(model) {
-  model$x <- NULL
-  model$y <- NULL
-  model$model <- NULL
-  return(model)
+  strip <- function(m) {
+    m$x <- NULL
+    m$y <- NULL
+    m$model <- NULL
+    m$fitted.values <- NULL
+    m$residuals <- NULL
+    m$linear.predictors <- NULL
+    m$weights <- NULL
+    m$prior.weights <- NULL
+    m$qr <- NULL
+    m
+  }
+  if (!is.null(model$models)) {
+    model$models <- lapply(model$models, strip)
+    return(model)
+  }
+  strip(model)
 }

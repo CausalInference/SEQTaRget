@@ -3,7 +3,7 @@ test_that("Survival Return", {
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE))
   expect_s4_class(model, "SEQoutput")
-  expect_s3_class(model@survival.curve[[1]], "ggplot")
+  expect_s3_class(km_curve(model), "ggplot")
 })
 
 test_that("Bootstrapped Survival", {
@@ -11,7 +11,7 @@ test_that("Bootstrapped Survival", {
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2))
   expect_s4_class(model, "SEQoutput")
-  expect_s3_class(model@survival.curve[[1]], "ggplot")
+  expect_s3_class(km_curve(model), "ggplot")
 })
 
 test_that("Bootstrapped Survival - Percentile", {
@@ -19,7 +19,7 @@ test_that("Bootstrapped Survival - Percentile", {
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2, bootstrap.CI_method = "percentile"))
   expect_s4_class(model, "SEQoutput")
-  expect_s3_class(model@survival.curve[[1]], "ggplot")
+  expect_s3_class(km_curve(model), "ggplot")
 })
 
 test_that("Bootstrapped Survival - Competing Event CIs present", {

@@ -1,9 +1,24 @@
+#' Print a coefficient table from a cleaned fastglm object
+#' @param model a fastglm object (may have row-level vectors stripped)
+#' @keywords internal
+.coef_table <- function(model) {
+  if (is.null(model) || !is.list(model)) return(invisible(NULL))
+  coefs <- model$coefficients
+  if (is.null(coefs)) return(invisible(NULL))
+  se <- model$se
+  if (!is.null(se) && length(se) == length(coefs)) {
+    data.frame(Estimate = coefs, `Std. Error` = se, check.names = FALSE)
+  } else {
+    data.frame(Estimate = coefs)
+  }
+}
+
 #' Show method for S4 object - SEQoutput.
-#' 
+#'
 #' @param object A SEQoutput object - usually generated from [SEQuential()]
 #' @importFrom knitr kable
 #' @importMethodsFrom methods show
-#' 
+#'
 #' @returns No return value, sends information about SEQoutput to the console
 #' @exportMethod show
 setMethod("show", "SEQoutput", function(object) {
@@ -37,7 +52,7 @@ setMethod("show", "SEQoutput", function(object) {
     cat("Coefficients and Weighting:\n")
     for (i in seq_along(outcome_model)) {
       if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
-      print(summary(outcome_model[[i]]))
+      print(.coef_table(outcome_model[[i]]))
     }
     
     if (params@weighted) {
@@ -51,26 +66,26 @@ setMethod("show", "SEQoutput", function(object) {
           }
           if (length(weight_statistics$coef.numerator) > 1) {
             cat("Numerator ========================== \n")
-            if (!params@multinomial | 
-                (params@multinomial & !params@weight.preexpansion & 
+            if (!params@multinomial |
+                (params@multinomial & !params@weight.preexpansion &
                  (params@excused | params@deviation.excused))
-                ) print(summary(weight_statistics$coef.numerator[[i]])) else {
+                ) print(.coef_table(weight_statistics$coef.numerator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
                 cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
-                print(summary(weight_statistics$coef.numerator[[i]]$models[[j]]))
+                print(.coef_table(weight_statistics$coef.numerator[[i]]$models[[j]]))
               }
             }
           }
             cat("Denominator ========================== \n")
-            if (!params@multinomial | 
-                (params@multinomial & !params@weight.preexpansion & 
+            if (!params@multinomial |
+                (params@multinomial & !params@weight.preexpansion &
                  (params@excused | params@deviation.excused))
-                ) print(summary(weight_statistics$coef.denominator[[i]])) else {
+                ) print(.coef_table(weight_statistics$coef.denominator[[i]])) else {
               nonbaseline <- params@treat.level[-1]
               for (j in seq_along(nonbaseline)) {
                 cat("Nested Model: Treatment =", nonbaseline[[j]], "=========\n")
-                print(summary(weight_statistics$coef.denominator[[i]]$models[[j]]))
+                print(.coef_table(weight_statistics$coef.denominator[[i]]$models[[j]]))
               }
             }
           }
@@ -88,16 +103,16 @@ setMethod("show", "SEQoutput", function(object) {
         
       if (params@LTFU) {
         cat("LTFU Numerator: \n")
-        print(summary(weight_statistics$ncense.coef))
+        print(.coef_table(weight_statistics$ncense.coef))
         cat("LTFU Denominator: ")
-        print(summary(weight_statistics$dcense.coef))
+        print(.coef_table(weight_statistics$dcense.coef))
       }
     }
     if (!is.na(params@compevent)) {
       cat("Competing Event Model ============================================ \n")
       for (i in seq_along(slot(object, "ce.model"))) {
         if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]], "\n")
-        print(summary(slot(object, "ce.model")[[i]][[1]])) 
+        print(.coef_table(slot(object, "ce.model")[[i]][[1]]))
       }
     }
     

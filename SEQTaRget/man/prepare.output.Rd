@@ -10,7 +10,6 @@ prepare.output(
   outcome,
   weights,
   hazard,
-  survival.plot,
   survival.data,
   survival.ce,
   risk,

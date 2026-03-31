@@ -332,7 +332,7 @@ test_that("Survival curve with inc plot type for competing event", {
                       method = "ITT",
                       options = SEQopts(km.curves = TRUE, compevent = "compevent",
                                         plot.type = "inc"))
-  expect_s3_class(model@survival.curve[[1]], "ggplot")
+  expect_s3_class(km_curve(model), "ggplot")
 })
 
 # ── internal_models.R: subgroup path ────────────────────────────────────────

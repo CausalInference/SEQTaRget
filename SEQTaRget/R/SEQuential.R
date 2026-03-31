@@ -198,8 +198,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
-  survival.data <- survival.plot <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
-  if (n_subgroups > 0) names(survival.data) <- names(survival.plot) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
+  survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
+  if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
   if (!params@hazard) {
     if (params@verbose) cat(method, "model created successfully\n")
 
@@ -213,10 +213,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
-        survival.plot[[label]] <- internal.plot(survival$data, params)
         risk[[label]] <- create.risk(survival$data, params, survival$boot_risks)
       }
-      outcome[[label]] <- lapply(models, function(x) x$model)
+      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
@@ -249,7 +248,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                                                                                   ][[params@compevent]]) else NA)
   
   runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
-  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)
 
   if (params@verbose) cat("Completed\n")
   plan("sequential")
