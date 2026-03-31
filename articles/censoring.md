@@ -37,15 +37,10 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 # retrieve risk plot
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -55,13 +50,11 @@ group.](censoring_files/figure-html/unnamed-chunk-2-1.png)
 # retrieve survival and risk data
 survival_data <- km_data(model)
 risk_data(model)
-#> [[1]]
 #>       Method      A      Risk
 #>       <char> <char>     <num>
 #> 1: censoring      0 0.6596589
 #> 2: censoring      1 0.9243520
 risk_comparison(model)
-#> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
 #> 1: risk_0 risk_1  1.4012576       0.2646931
@@ -94,14 +87,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -109,13 +97,11 @@ group.](censoring_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
 risk_data(model)
-#> [[1]]
 #>       Method      A      Risk
 #>       <char> <char>     <num>
 #> 1: censoring      0 0.6533049
 #> 2: censoring      1 0.9281893
 risk_comparison(model)
-#> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
 #> 1: risk_0 risk_1  1.4207598       0.2748844
@@ -152,14 +138,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -167,13 +148,11 @@ group.](censoring_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
 risk_data(model)
-#> [[1]]
 #>       Method      A      Risk
 #>       <char> <char>     <num>
 #> 1: censoring      0 0.9647942
 #> 2: censoring      1 0.9627635
 risk_comparison(model)
-#> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
 #> 1: risk_0 risk_1  0.9978953    -0.002030621
@@ -206,14 +185,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -221,13 +195,11 @@ group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
 risk_data(model)
-#> [[1]]
 #>       Method      A      Risk
 #>       <char> <char>     <num>
 #> 1: censoring      0 0.6371076
 #> 2: censoring      1 0.9909442
 risk_comparison(model)
-#> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
 #> 1: risk_0 risk_1  1.5553797       0.3538366
@@ -264,14 +236,9 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> censoring model created successfully
 #> Creating Survival curves
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
 #> Completed
 
 km_curve(model, plot.type = "risk")
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> [[1]]
 ```
 
 ![Risk plot by treatment
@@ -279,17 +246,15 @@ group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
 risk_data(model)
-#> [[1]]
 #>       Method      A       Risk
 #>       <char> <char>      <num>
-#> 1: censoring      0 0.02761456
-#> 2: censoring      1 0.01770405
+#> 1: censoring      0 0.02542994
+#> 2: censoring      1 0.01646542
 risk_comparison(model)
-#> [[1]]
 #>       A_x    A_y Risk Ratio Risk Difference
 #>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  0.6411128    -0.009910512
-#> 2: risk_1 risk_0  1.5597880     0.009910512
+#> 1:  inc_0  inc_1  0.6474815    -0.008964524
+#> 2:  inc_1  inc_0  1.5444456     0.008964524
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
@@ -319,7 +284,6 @@ model <- SEQuential(data,
 #> Moving forward with censoring analysis
 #> Completed
 hazard_ratio(model)
-#> [[1]]
 #> Hazard ratio          LCI          UCI 
 #>     3.005085           NA           NA
 ```

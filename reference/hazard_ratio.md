@@ -16,4 +16,5 @@ hazard_ratio(object)
 
 ## Value
 
-List of hazard ratios
+A named vector of hazard ratios, or a named list of vectors when
+subgroups are specified

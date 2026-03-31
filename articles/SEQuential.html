@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,11 +38,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Getting started</h6></li>
+    <li><a class="dropdown-item" href="../articles/SEQuential.html">SEQuential</a></li>
     <li><a class="dropdown-item" href="../articles/seqopts.html">Defining your SEQopts()</a></li>
-    <li><a class="dropdown-item" href="../articles/SEQuential.html">Introduction to SEQuential</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analyses</h6></li>
+    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -97,26 +100,26 @@ is enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …) is
 valid because it begins at 0 and is continuously increasing by
 increments of 1, even though it is not ordered.</li>
 <li>
-<code>eligible</code> and column names provided to and
-<code>excused.cols</code> are once one only one (with respect to
-<code>time.col</code>) flag variables</li>
+<code>eligible</code> and column names provided to
+<code>excused.cols</code> are binary (0/1) flag variables (with respect
+to <code>time.col</code>)</li>
 </ol>
 <div class="section level3">
 <h3 id="step-1---defining-your-options">Step 1 - Defining your options<a class="anchor" aria-label="anchor" href="#step-1---defining-your-options"></a>
 </h3>
 <p>In your R script, you will always start by defining your options
-object, through the <code>SEQopts</code> helper. There are many defaults
-which allow you to target exactly how you would like to change your
-analysis. Through this wiki there are specific pages dedicated to each
-causal contrast and the parameters which affect them, but for simplicity
-let’s start with an intention-to-treat analysis with 20 bootstrap
-samples.</p>
+object, through the <code><a href="../reference/SEQopts.html">SEQopts()</a></code> helper. There are many
+defaults which allow you to target exactly how you would like to change
+your analysis. Through this wiki there are specific pages dedicated to
+each causal contrast and the parameters which affect them, but for
+simplicity let’s start with an intention-to-treat analysis with 20
+bootstrap samples.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://causalinference.github.io/SEQTaRget/">SEQTaRget</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#asks the function to return survival and risk estimates</span></span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#asks the model to preform bootstrapping</span></span>
-<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="co">#asks the model for 10 bootstrap samples</span></span></code></pre></div>
+<span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="co">#asks the model for 20 bootstrap samples</span></span></code></pre></div>
 <p>In general, options will be in the form
 <code>{option}.{parameter}</code> - here you may notice that we use
 <code>bootstrap.nboot</code> indicating that this parameter affects the
@@ -126,7 +129,7 @@ samples.</p>
 <h3 id="step-2---running-the-primary-function">Step 2 - Running the Primary Function<a class="anchor" aria-label="anchor" href="#step-2---running-the-primary-function"></a>
 </h3>
 <p>The next step is running the primary R function,
-<code>SEQuential</code>. Here you will give your options, data, and
+<code><a href="../reference/SEQuential.html">SEQuential()</a></code>. Here you will give your options, data, and
 data-level information. We provide some small simulated datasets to test
 on.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -144,27 +147,24 @@ on.</p>
 <span><span class="co">#&gt; Expanding Data...</span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 10 times</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 20 times</span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span></code></pre></div>
-<p><code>SEQuential</code> is a rather chunky algorithm and will take
-some time to run, especially when bootstrapping. We provide some print
-statements to help track where the function is processing at any given
-point in time.</p>
+<p>We provide some print statements to help track where the
+<code><a href="../reference/SEQuential.html">SEQuential()</a></code> function is processing at any given point in
+time.</p>
 </div>
 <div class="section level3">
 <h3 id="step-3---recovering-your-results">Step 3 - Recovering your results<a class="anchor" aria-label="anchor" href="#step-3---recovering-your-results"></a>
 </h3>
-<p><code>SEQuential</code> produces a lot of internal diagnostics,
+<p><code><a href="../reference/SEQuential.html">SEQuential()</a></code> produces a lot of internal diagnostics,
 models, and dataframes out of its main function in an S4 class. We
 provide a few different methods to handle obtaining your results.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/outcome.html">outcome</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>     <span class="co"># Returns a list of only the outcome models </span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]][[1]]</span></span>
+<span><span class="co">#&gt; $`1`</span></span>
+<span><span class="co">#&gt; $`1`[[1]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -179,7 +179,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            0.20092890           -0.00170402 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[2]]</span></span>
+<span><span class="co">#&gt; $`1`[[2]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -194,7 +194,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            0.11295147           -0.00267922 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[3]]</span></span>
+<span><span class="co">#&gt; $`1`[[3]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -209,7 +209,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            4.1592e-01           -4.5406e-03 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[4]]</span></span>
+<span><span class="co">#&gt; $`1`[[4]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -224,7 +224,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            8.3786e-01            5.3018e-03 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[5]]</span></span>
+<span><span class="co">#&gt; $`1`[[5]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -239,7 +239,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;           -0.09583373           -0.00892581 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[6]]</span></span>
+<span><span class="co">#&gt; $`1`[[6]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -254,7 +254,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;           -5.6365e-02            8.0484e-03 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[7]]</span></span>
+<span><span class="co">#&gt; $`1`[[7]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -269,7 +269,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            9.8581e-01           -6.3076e-04 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[8]]</span></span>
+<span><span class="co">#&gt; $`1`[[8]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -284,7 +284,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            0.51985467           -0.00103007 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[9]]</span></span>
+<span><span class="co">#&gt; $`1`[[9]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -299,7 +299,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;           -7.7720e-01            1.5539e-04 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[10]]</span></span>
+<span><span class="co">#&gt; $`1`[[10]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -314,7 +314,7 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
 <span><span class="co">#&gt;            0.24637872           -0.00390270 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]][[11]]</span></span>
+<span><span class="co">#&gt; $`1`[[11]]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
@@ -327,29 +327,174 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
 <span><span class="co">#&gt;            2.8150e-01            1.8517e-03           -6.0796e-02 </span></span>
 <span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
-<span><span class="co">#&gt;            9.0134e-01           -5.5006e-03</span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>    <span class="co"># Prints the survival curve</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="co">#&gt;            9.0134e-01           -5.5006e-03 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[12]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -6.29810490            0.09170225            0.03106654 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -0.00010286            0.03338081            0.00076787 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            0.23858347            0.00521740           -0.08825751 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            0.12925425            0.00468215 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[13]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -7.7480e+00            2.7433e-01            3.3747e-02 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -5.5125e-05            5.8901e-02            4.7147e-04 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            2.1317e-02            5.3902e-03            2.1536e-02 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            2.8434e-01            9.7276e-04 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[14]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -1.0517e+01            2.4134e-01            3.3708e-02 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -2.3036e-04            1.1756e-01           -3.2449e-05 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            1.9467e-02            4.8640e-03           -1.9338e-02 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            5.9746e-01           -1.3830e-03 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[15]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -8.0412e+00            1.5762e-01            2.9162e-02 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -3.5884e-05            5.6090e-02            6.0089e-04 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            2.9079e-01            4.5356e-03            4.0074e-02 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            3.2306e-01            5.9596e-03 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[16]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -1.0158e+01            3.8860e-02            1.4169e-02 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;            3.8820e-05            1.0926e-01            1.0628e-04 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            2.8044e-01            8.4144e-03           -1.0576e-01 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            5.9723e-01            1.5975e-03 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[17]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -9.7258e+00            2.4666e-01            3.8501e-02 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -2.4445e-04            1.0169e-01            4.5839e-05 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;           -2.0150e-01            1.9064e-03            4.4528e-02 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            5.1168e-01           -7.6077e-03 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[18]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -3.70549908            0.41010698            0.04208706 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -0.00043094           -0.01937940            0.00087804 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            0.13180142            0.00940757            0.06088783 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;           -0.12648565           -0.00869196 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[19]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -3.63857072            0.08367455            0.03129809 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -0.00016821           -0.02134892            0.00116805 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            0.19346081            0.00214429            0.01152500 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;           -0.11657712            0.00271366 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[20]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -4.95028803            0.41972678            0.03416014 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -0.00027814            0.00948588            0.00081151 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;           -0.00093079            0.00497737           -0.18952225 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;            0.03571644           -0.01100419 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`1`[[21]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;           (Intercept)          tx_init_bas1              followup </span></span>
+<span><span class="co">#&gt;           -3.85162313            0.08993308            0.03265672 </span></span>
+<span><span class="co">#&gt;           followup_sq                 trial              trial_sq </span></span>
+<span><span class="co">#&gt;           -0.00022807           -0.01443944            0.00087488 </span></span>
+<span><span class="co">#&gt;                  sex1                 N_bas                 L_bas </span></span>
+<span><span class="co">#&gt;            0.47011613            0.00522408            0.12256776 </span></span>
+<span><span class="co">#&gt;                 P_bas tx_init_bas1:followup </span></span>
+<span><span class="co">#&gt;           -0.11681741           -0.00110875</span></span>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>    <span class="co"># Prints the survival curve</span></span></code></pre></div>
 <p><img src="SEQuential_files/figure-html/outcome-1.png" class="r-plt" alt="Survival curve by treatment group." width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;    Method      A      Risk   95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7636821 0.9108343 0.03753953</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8332613 0.9156104 0.02100781</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8135711 0.9353007 0.03105406</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9453016   1.153896        0.03717768 -0.04713597</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8666291   1.057863       -0.03717768 -0.12149133</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8979095   1.021011       -0.03717768 -0.09200493</span></span>
 <span><span class="co">#&gt;    RD 95% UCI</span></span>
 <span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.12149133</span></span>
-<span><span class="co">#&gt; 2: 0.04713597</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: 0.09200493</span></span>
+<span><span class="co">#&gt; 2: 0.01764957</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -359,7 +504,7 @@ provide a few different methods to handle obtaining your results.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">

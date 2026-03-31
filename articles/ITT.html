@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,11 +38,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Getting started</h6></li>
+    <li><a class="dropdown-item" href="../articles/SEQuential.html">SEQuential</a></li>
     <li><a class="dropdown-item" href="../articles/seqopts.html">Defining your SEQopts()</a></li>
-    <li><a class="dropdown-item" href="../articles/SEQuential.html">Introduction to SEQuential</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analyses</h6></li>
+    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -108,15 +111,38 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span></code></pre></div>
+<p><img src="ITT_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Method      A      Risk   95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7646336 0.9098829 0.03705407</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8299662 0.9189056 0.02268902</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9685600   1.126187        0.03717768 -0.02814011</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8879519   1.032461       -0.03717768 -0.10249547</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 0.10249547</span></span>
+<span><span class="co">#&gt; 2: 0.02814011</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -137,15 +163,38 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ITT_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Method      A       Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.02374360       0 0.05930116 0.01814195</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.02614576       0 0.05307095 0.01373759</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  1.1011710  0.5047356   2.402402       0.002402164</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.9081242  0.4162501   1.981235      -0.002402164</span></span>
+<span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
+<span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.009778817 0.014583145</span></span>
+<span><span class="co">#&gt; 2: -0.014583145 0.009778817</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -162,15 +211,38 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ITT_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Method      A       Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.02185652       0 0.05286838 0.01582267</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.02381601       0 0.04835280 0.01251900</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  1.0896524  0.5100805   2.327755       0.001959489</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  0.9177239  0.4295985   1.960475      -0.001959489</span></span>
+<span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
+<span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.007920832 0.011839810</span></span>
+<span><span class="co">#&gt; 2: -0.011839810 0.007920832</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="co"># km.curves must be set to FALSE to turn on hazard </span></span>
 <span>                   <span class="co"># ratio creation</span></span>
 <span>                   km.curves <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -190,15 +262,24 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="co"># retrieve hazard ratios</span></span>
-<span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
+<span><span class="co">#&gt;    1.0033697    0.5993046    1.6798651</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">ITT with 5 bootstrap samples and competing events in subgroups
 defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
@@ -216,10 +297,56 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_0 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_1 </span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; $sex_0</span></span></code></pre></div>
+<p><img src="ITT_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="700"></p>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span></code></pre>
+<p><img src="ITT_files/figure-html/unnamed-chunk-6-2.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $sex_0</span></span>
+<span><span class="co">#&gt;    Method      A       Risk 95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.04213833       0 0.1185452 0.03898383</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.04911213       0 0.1322803 0.04243352</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span>
+<span><span class="co">#&gt;    Method      A       Risk     95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT      0 0.01577026 0.000000000 0.03706622 0.010865485</span></span>
+<span><span class="co">#&gt; 2:    ITT      1 0.01484521 0.003496358 0.02619406 0.005790336</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $sex_0</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Differerence</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;        &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  1.1654977 1.876650e-08   72383489       0.006973797</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  0.8580026 1.381531e-08   53286436      -0.006973797</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.02096462 0.03491222</span></span>
+<span><span class="co">#&gt; 2: -0.03491222 0.02096462</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  0.9413422  0.4013911   2.207635     -0.0009250492 -0.01668972</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  1.0623130  0.4529734   2.491336      0.0009250492 -0.01483962</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 0.01483962</span></span>
+<span><span class="co">#&gt; 2: 0.01668972</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -228,7 +355,7 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">

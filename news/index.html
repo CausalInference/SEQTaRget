@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,11 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Getting started</h6></li>
+    <li><a class="dropdown-item" href="../articles/SEQuential.html">SEQuential</a></li>
     <li><a class="dropdown-item" href="../articles/seqopts.html">Defining your SEQopts()</a></li>
-    <li><a class="dropdown-item" href="../articles/SEQuential.html">Introduction to SEQuential</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analyses</h6></li>
+    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -47,13 +50,61 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.3.6.9004" id="seqtarget-v1369004">SEQTaRget v1.3.6.9004<a class="anchor" aria-label="anchor" href="#seqtarget-v1369004"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.4.0" id="seqtarget-v140">SEQTaRget v1.4.0<a class="anchor" aria-label="anchor" href="#seqtarget-v140"></a></h2>
 <ul><li>Removed several <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">local()</a></code> wrappers and made several code optimizations.</li>
 <li>Improved documentation of the datasets in the package.</li>
 <li>Implement check for perfect separation when fitting logistic regression models.</li>
 <li>Fixed a bug in and make some improvements to <code><a href="../reference/internal.weights.html">internal.weights()</a></code>.</li>
 <li>Removed three unused slots in <code><a href="../reference/SEQopts.html">SEQopts()</a></code>.</li>
 <li>Add alt text to figures in vignettes.</li>
+<li>Fixed <code><a href="../reference/SEQuential.html">SEQuential()</a></code> <code>time.col</code> validation detecting and repairing non-zero-indexed time.</li>
+<li>Add validation for <code>eligible.col</code> values</li>
+<li>Add Paul Madley-Dowd as a co-author</li>
+<li>Add check for overlapping <code>time_varying.cols</code> and <code>fixed.cols</code>
+</li>
+<li>Add bounds validation for numeric and integer options in <code><a href="../reference/SEQopts.html">SEQopts()</a></code>
+</li>
+<li>Add check for duplicate id/time combinations in input data</li>
+<li>Add check that <code>treat.level</code> values exist in the treatment column</li>
+<li>Add validation for <code>excused.cols</code> flags</li>
+<li>Add validation for <code>followup.min</code>/<code>max</code> ordering</li>
+<li>Add binary check for outcome.col in non-hazard analyses</li>
+<li>Add <code>treat.level</code> length validation for multinomial and non-multinomial analyses</li>
+<li>Add binary validation for <code>cense.eligible</code> and <code>weight.eligible_cols</code>
+</li>
+<li>Remove additional eligibility rows if not needed</li>
+<li>Amend defaults for <code>followup.min</code> and <code>weight.lower</code> from <code>-Inf</code> to <code>0</code>
+</li>
+<li>Fix bootstrapping for risk difference and risk ratio estimates to use paired per-iteration estimates</li>
+<li>Optimizations to use less RAM</li>
+<li>Fix duplicate scale_color_manual warning and plot.subtitle label bug in <code><a href="../reference/internal.plot.html">internal.plot()</a></code>
+</li>
+<li>Run doseresponse and ITT vignette chunks on GitHub Actions</li>
+<li>Fix <code><a href="../reference/km_curve.html">km_curve()</a></code> returning list instead of ggplot for non-subgroup case</li>
+<li>Fix <code><a href="../reference/km_curve.html">km_curve()</a></code> subtitle condition</li>
+<li>Fix <code>risk.comparison()</code> CIs being <code>NA</code> with competing events</li>
+<li>Move selection.random before expansion to reduce peak memory usage</li>
+<li>Replace <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind()</a></code> with <code>:=</code> in expansion chain to avoid intermediate copy</li>
+<li>Replace <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code> with data.table native join in expansion data_list combine step</li>
+<li>Replace rbind weight construction with copy+in-place to reduce peak memory</li>
+<li>Drop wt and tmp columns immediately after weight is computed in all code paths</li>
+<li>Remove redundant setDF calls in fast_model_matrix</li>
+<li>Free WDT before bootstrap loop when data.return is <code>FALSE</code>
+</li>
+<li>Use <code>match(TRUE, ...)</code> instead of <code>which(...)[1]</code> to find first switch/event per group</li>
+<li>Replace <code>sapply</code> loop with single matrix multiply in multinomial prediction</li>
+<li>Vectorise survival curve predictions into a single inline.pred call per treatment level</li>
+<li>Free result list after extraction in internal_survival.R to reduce peak memory during bootstrap</li>
+<li>Free analytic list after subgroup loop in SEQuential.R to reduce peak memory during survival curve computation</li>
+<li>Avoid <code>copy()</code> in data_all construction and free data list in internal_survival.R to reduce peak memory during bootstrap</li>
+<li>Filter to <code>followup==0</code> before adding trialID in internal.survival to avoid copying entire expanded dataset</li>
+<li>Trim base_DT to only prediction-needed columns before replication in internal.survival to reduce peak memory</li>
+<li>Remove unnecessary copy(weight) for model.data in internal.weights since it is never modified in-place</li>
+<li>Free baseDT after bootstrap loop in internal.survival to reduce peak memory during survival curve computation</li>
+<li>Fix multinomial.summary: replace vcov() with fastglm $se field and add missing Coefficient column to prevent rbind mismatch</li>
+<li>Add test_coverage.R with tests targeting uncovered code paths to increase coverage</li>
+<li>Remove some no longer used variables and dead code</li>
+<li>Further memory reduction optimizations</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.6" id="seqtarget-v136">SEQTaRget v1.3.6<a class="anchor" aria-label="anchor" href="#seqtarget-v136"></a></h2><p class="text-muted">CRAN release: 2026-02-16</p>
@@ -87,7 +138,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">

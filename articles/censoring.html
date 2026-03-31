@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,11 +38,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Getting started</h6></li>
+    <li><a class="dropdown-item" href="../articles/SEQuential.html">SEQuential</a></li>
     <li><a class="dropdown-item" href="../articles/seqopts.html">Defining your SEQopts()</a></li>
-    <li><a class="dropdown-item" href="../articles/SEQuential.html">Introduction to SEQuential</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analyses</h6></li>
+    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -118,27 +121,20 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="co"># retrieve risk plot</span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># retrieve survival and risk data</span></span>
 <span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6596589</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9243520</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.4012576       0.2646931</span></span>
@@ -172,24 +168,17 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6533049</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9281893</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.4207598       0.2748844</span></span>
@@ -228,24 +217,17 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.9647942</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9627635</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  0.9978953    -0.002030621</span></span>
@@ -280,24 +262,17 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       Method      A      Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: censoring      0 0.6371076</span></span>
 <span><span class="co">#&gt; 2: censoring      1 0.9909442</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: risk_0 risk_1  1.5553797       0.3538366</span></span>
@@ -336,28 +311,21 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       Method      A       Risk</span></span>
 <span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.02761456</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.01770405</span></span>
+<span><span class="co">#&gt; 1: censoring      0 0.02542994</span></span>
+<span><span class="co">#&gt; 2: censoring      1 0.01646542</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  0.6411128    -0.009910512</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  1.5597880     0.009910512</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  0.6474815    -0.008964524</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  1.5444456     0.008964524</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio">Per-protocol, censoring, weights in post-expanded data and no
@@ -389,7 +357,6 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
 <span><span class="co">#&gt;     3.005085           NA           NA</span></span></code></pre></div>
 </div>
@@ -400,7 +367,7 @@ truncation, excused conditions for initiators and non-initiators
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">

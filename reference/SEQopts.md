@@ -30,7 +30,7 @@ SEQopts(
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
-  followup.min = -Inf,
+  followup.min = 0,
   followup.spline = FALSE,
   hazard = FALSE,
   indicator.baseline = "_bas",
@@ -58,7 +58,7 @@ SEQopts(
   visit.denominator = NA,
   visit.numerator = NA,
   weight.eligible_cols = c(),
-  weight.lower = -Inf,
+  weight.lower = 0,
   weight.lag_condition = TRUE,
   weight.p99 = FALSE,
   weight.preexpansion = TRUE,
@@ -129,7 +129,7 @@ SEQopts(
 
 - denominator:
 
-  String: denominator covariates to the right hand side of a to formula
+  String: denominator covariates to the right hand side of a formula
   object
 
 - deviation:
@@ -185,7 +185,8 @@ SEQopts(
 
 - followup.min:
 
-  Numeric: minimum time to expand about, default is `-Inf` (no minimum)
+  Numeric: minimum follow-up time since trial enrollment to include,
+  must be non-negative, default is `0`
 
 - followup.spline:
 
@@ -230,7 +231,7 @@ SEQopts(
 
 - numerator:
 
-  String: numerator covariates to the right hand side of a to formula
+  String: numerator covariates to the right hand side of a formula
   object
 
 - parallel:
@@ -320,8 +321,8 @@ SEQopts(
 
 - weight.lower:
 
-  Numeric: weights truncated at lower end at this weight, default is
-  `-Inf`
+  Numeric: IPCW weights truncated at this lower bound, must be
+  non-negative, default is `0`
 
 - weight.lag_condition:
 

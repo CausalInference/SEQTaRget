@@ -58,7 +58,7 @@ km_data(model)[[1]]                  # Returns a dataframe of survival data in l
 ### Assumptions
 
 This package places several assumptions onto the input data and
-unexpected results and errors may arise if these are not followed-
+unexpected results and errors may arise if these are not followed:
 
 1.  User provided `time.col` begins at 0 per unique `id.col` entries, we
     also assume that the column contains only integers and continues by
@@ -68,8 +68,8 @@ unexpected results and errors may arise if these are not followed-
       enforced at the beginning of the function, e.g. (0, 2, 1, 4, 3, …)
       is valid because it begins at 0 and is continuously increasing by
       increments of 1, even though it is not ordered.
-2.  `eligible` and column names provided to types of `excused.cols` are
-    once one only one (with respect to `time.col`) flag variables
+2.  `eligible` and column names provided to `excused.cols` are binary
+    (0/1) flag variables (with respect to `time.col`)
 
 ## Return
 
@@ -94,11 +94,11 @@ The primary function, `SEQuential`, returns an S4 object of class
 14. info - list of diagnostic tables
 15. ce.model - Competing event model objects
 
-These can be handily and easily printed to the terminal with by calling
-the object as `model` (if continuing the example above). While this this
-the shape of the output object, not all slots will always be filled,
-e.g. if a user providers `hazard = TRUE`, then the survival curves,
-data, and associated risks will return `NA`.
+These can be easily printed to the terminal by calling the object as
+`model` (if continuing the example above). While this is the shape of
+the output object, not all slots will always be filled, e.g. if a user
+provides `hazard = TRUE`, then the survival curves, data, and associated
+risks will return `NA`.
 
 ## Imports
 
@@ -126,7 +126,7 @@ feel free to open a discussion.
 ## Contributing to the package
 
 Community members are welcome to contribute to this package through
-several different avenues-
+several different avenues:
 
 - Asking/Answering questions about the package via [GitHub
   Discussions](https://github.com/CausalInference/SEQTaRget/discussions/categories/q-a).

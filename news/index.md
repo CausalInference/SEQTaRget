@@ -1,6 +1,6 @@
 # Changelog
 
-## SEQTaRget v1.3.6.9004
+## SEQTaRget v1.4.0
 
 - Removed several [`local()`](https://rdrr.io/r/base/eval.html) wrappers
   and made several code optimizations.
@@ -12,6 +12,76 @@
 - Removed three unused slots in
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md).
 - Add alt text to figures in vignettes.
+- Fixed
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
+  `time.col` validation detecting and repairing non-zero-indexed time.
+- Add validation for `eligible.col` values
+- Add Paul Madley-Dowd as a co-author
+- Add check for overlapping `time_varying.cols` and `fixed.cols`
+- Add bounds validation for numeric and integer options in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
+- Add check for duplicate id/time combinations in input data
+- Add check that `treat.level` values exist in the treatment column
+- Add validation for `excused.cols` flags
+- Add validation for `followup.min`/`max` ordering
+- Add binary check for outcome.col in non-hazard analyses
+- Add `treat.level` length validation for multinomial and
+  non-multinomial analyses
+- Add binary validation for `cense.eligible` and `weight.eligible_cols`
+- Remove additional eligibility rows if not needed
+- Amend defaults for `followup.min` and `weight.lower` from `-Inf` to
+  `0`
+- Fix bootstrapping for risk difference and risk ratio estimates to use
+  paired per-iteration estimates
+- Optimizations to use less RAM
+- Fix duplicate scale_color_manual warning and plot.subtitle label bug
+  in
+  [`internal.plot()`](https://causalinference.github.io/SEQTaRget/reference/internal.plot.md)
+- Run doseresponse and ITT vignette chunks on GitHub Actions
+- Fix
+  [`km_curve()`](https://causalinference.github.io/SEQTaRget/reference/km_curve.md)
+  returning list instead of ggplot for non-subgroup case
+- Fix
+  [`km_curve()`](https://causalinference.github.io/SEQTaRget/reference/km_curve.md)
+  subtitle condition
+- Fix `risk.comparison()` CIs being `NA` with competing events
+- Move selection.random before expansion to reduce peak memory usage
+- Replace [`cbind()`](https://rdrr.io/r/base/cbind.html) with `:=` in
+  expansion chain to avoid intermediate copy
+- Replace [`merge()`](https://rdrr.io/r/base/merge.html) with data.table
+  native join in expansion data_list combine step
+- Replace rbind weight construction with copy+in-place to reduce peak
+  memory
+- Drop wt and tmp columns immediately after weight is computed in all
+  code paths
+- Remove redundant setDF calls in fast_model_matrix
+- Free WDT before bootstrap loop when data.return is `FALSE`
+- Use `match(TRUE, ...)` instead of `which(...)[1]` to find first
+  switch/event per group
+- Replace `sapply` loop with single matrix multiply in multinomial
+  prediction
+- Vectorise survival curve predictions into a single inline.pred call
+  per treatment level
+- Free result list after extraction in internal_survival.R to reduce
+  peak memory during bootstrap
+- Free analytic list after subgroup loop in SEQuential.R to reduce peak
+  memory during survival curve computation
+- Avoid `copy()` in data_all construction and free data list in
+  internal_survival.R to reduce peak memory during bootstrap
+- Filter to `followup==0` before adding trialID in internal.survival to
+  avoid copying entire expanded dataset
+- Trim base_DT to only prediction-needed columns before replication in
+  internal.survival to reduce peak memory
+- Remove unnecessary copy(weight) for model.data in internal.weights
+  since it is never modified in-place
+- Free baseDT after bootstrap loop in internal.survival to reduce peak
+  memory during survival curve computation
+- Fix multinomial.summary: replace vcov() with fastglm \$se field and
+  add missing Coefficient column to prevent rbind mismatch
+- Add test_coverage.R with tests targeting uncovered code paths to
+  increase coverage
+- Remove some no longer used variables and dead code
+- Further memory reduction optimizations
 
 ## SEQTaRget v1.3.6
 

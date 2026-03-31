@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,11 +38,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/censoring.html">Per-Protocol: Censoring Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Getting started</h6></li>
+    <li><a class="dropdown-item" href="../articles/SEQuential.html">SEQuential</a></li>
     <li><a class="dropdown-item" href="../articles/seqopts.html">Defining your SEQopts()</a></li>
-    <li><a class="dropdown-item" href="../articles/SEQuential.html">Introduction to SEQuential</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analyses</h6></li>
+    <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -111,15 +114,38 @@ to errors.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"dose-response"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; dose-response model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span></code></pre></div>
+<p><img src="doseresponse_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           Method      A      Risk   95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response      0 0.5282782 0.1234894 0.9330671 0.20652872</span></span>
+<span><span class="co">#&gt; 2: dose-response      1 0.8949096 0.8385037 0.9513155 0.02877903</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  1.6940120  0.7764767   3.695766         0.3666314 -0.07309331</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.5903146  0.2705799   1.287869        -0.3666314 -0.80635612</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 0.80635612</span></span>
+<span><span class="co">#&gt; 2: 0.07309331</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="dose-response-with-5-bootstrap-samples-and-losses-to-followup">dose-response with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-losses-to-followup"></a>
+<h2 id="dose-response-with-5-bootstrap-samples-and-losses-to-followup">Dose-response with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-losses-to-followup"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -140,15 +166,38 @@ to errors.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"dose-response"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; dose-response model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="doseresponse_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           Method      A        Risk     95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response      0 0.007847443 0.000000000 0.02684988 0.009695299</span></span>
+<span><span class="co">#&gt; 2: dose-response      1 0.018827788 0.001997953 0.03565762 0.008586808</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: risk_0 risk_1  2.3992259 0.44856850  12.832566        0.01098034 -0.01349983</span></span>
+<span><span class="co">#&gt; 2: risk_1 risk_0  0.4168011 0.07792674   2.229314       -0.01098034 -0.03546052</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 0.03546052</span></span>
+<span><span class="co">#&gt; 2: 0.01349983</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="dose-response-with-5-bootstrap-samples-and-competing-events">dose-response with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-competing-events"></a>
+<h2 id="dose-response-with-5-bootstrap-samples-and-competing-events">Dose-response with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -165,16 +214,39 @@ to errors.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"dose-response"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; dose-response model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="doseresponse_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           Method      A        Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response      0 0.007586789       0 0.25972299 0.12864328</span></span>
+<span><span class="co">#&gt; 2: dose-response      1 0.003641046       0 0.02703035 0.01193354</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  0.4799192 0.02752717   8.367096      -0.003945743 -0.2462717</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  2.0836841 0.11951578  36.327751       0.003945743 -0.2383802</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  0.2383802</span></span>
+<span><span class="co">#&gt; 2:  0.2462717</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="dose-response-hazard-ratio-with-5-bootstrap-samples-and-competing-events">dose-response hazard ratio with 5 bootstrap samples and competing
+<h2 id="dose-response-hazard-ratio-with-5-bootstrap-samples-and-competing-events">Dose-response hazard ratio with 5 bootstrap samples and competing
 events<a class="anchor" aria-label="anchor" href="#dose-response-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="co"># km.curves must be set to FALSE to turn on hazard </span></span>
 <span>                   <span class="co"># ratio creation</span></span>
 <span>                   km.curves <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -194,15 +266,24 @@ events<a class="anchor" aria-label="anchor" href="#dose-response-hazard-ratio-wi
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"dose-response"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="co"># retrieve hazard ratios</span></span>
-<span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
+<span><span class="co">#&gt;    0.9582143    0.7107252    1.2918841</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="dose-response-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">dose-response with 5 bootstrap samples and competing events in
+<h2 id="dose-response-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">Dose-response with 5 bootstrap samples and competing events in
 subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
@@ -220,10 +301,56 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"dose-response"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; dose-response model created successfully</span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_0 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_1 </span></span>
+<span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; $sex_0</span></span></code></pre></div>
+<p><img src="doseresponse_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="700"></p>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span></code></pre>
+<p><img src="doseresponse_files/figure-html/unnamed-chunk-6-2.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $sex_0</span></span>
+<span><span class="co">#&gt;           Method      A        Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response      0 0.011257533       0 0.04037236 0.01485477</span></span>
+<span><span class="co">#&gt; 2: dose-response      1 0.004588216       0 0.04979271 0.02306394</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span>
+<span><span class="co">#&gt;           Method      A        Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response      0 0.006598380       0 0.47302574 0.23797751</span></span>
+<span><span class="co">#&gt; 2: dose-response      1 0.004921131       0 0.03904126 0.01740855</span></span>
+<span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $sex_0</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Differerence</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;        &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1  0.4075685 8.170464e-06    20330.8      -0.006669317</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0  2.4535753 4.918645e-05   122392.1       0.006669317</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.05854881 0.04521017</span></span>
+<span><span class="co">#&gt; 2: -0.04521017 0.05854881</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sex_1</span></span>
+<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence RD 95% LCI</span></span>
+<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  inc_0  inc_1   0.745809 0.02567347   21.66559      -0.001677249 -0.4377930</span></span>
+<span><span class="co">#&gt; 2:  inc_1  inc_0   1.340826 0.04615613   38.95071       0.001677249 -0.4344385</span></span>
+<span><span class="co">#&gt;    RD 95% UCI</span></span>
+<span><span class="co">#&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  0.4344385</span></span>
+<span><span class="co">#&gt; 2:  0.4377930</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -232,7 +359,7 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
