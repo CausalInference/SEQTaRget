@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.4.0" id="seqtarget-v140">SEQTaRget v1.4.0<a class="anchor" aria-label="anchor" href="#seqtarget-v140"></a></h2>
-<ul><li>Removed several <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">local()</a></code> wrappers and made several code optimizations.</li>
+<h2 class="pkg-version" data-toc-text="1.4.1" id="seqtarget-v141">SEQTaRget v1.4.1<a class="anchor" aria-label="anchor" href="#seqtarget-v141"></a></h2>
+<ul><li>Strip row-level vectors from fastglm objects to reduce weight.statistics memory usage and use a new internal function to print the coefficient table.</li>
+<li>Strip row-level vectors from outcome models before storing in <a href="https://github.com/outcome" class="external-link">@outcome</a>.model</li>
+<li>Fix clean_fastglm to strip row-level vectors from nested multinomial weight models</li>
+<li>No longer store survival.curve ggplot object; regenerate on demand via <code><a href="../reference/km_curve.html">km_curve()</a></code>
+</li>
+<li>Removed several <code><a href="https://rdrr.io/r/base/eval.html" class="external-link">local()</a></code> wrappers and made several code optimizations.</li>
 <li>Improved documentation of the datasets in the package.</li>
 <li>Implement check for perfect separation when fitting logistic regression models.</li>
 <li>Fixed a bug in and make some improvements to <code><a href="../reference/internal.weights.html">internal.weights()</a></code>.</li>
