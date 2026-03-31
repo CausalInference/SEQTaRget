@@ -140,7 +140,7 @@ parameter.simplifier <- function(params) {
 #' @importFrom methods new
 #' @import data.table
 #' @keywords internal
-prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
@@ -160,7 +160,7 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.plot,
       outcome.model = outcome,
       hazard = if (!params@hazard) list() else hazard,
       weight.statistics = weights,
-      survival.curve = if (!params@km.curves) list() else survival.plot,
+      survival.curve = list(),
       survival.data = if (!params@km.curves) list() else survival.data,
       risk.comparison = if (!params@km.curves) list() else risk.comparison,
       risk.data = if (!params@km.curves) list() else risk.data,
