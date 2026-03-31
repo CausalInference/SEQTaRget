@@ -182,5 +182,11 @@ clean_fastglm <- function(model) {
   model$x <- NULL
   model$y <- NULL
   model$model <- NULL
+  model$fitted.values <- NULL
+  model$residuals <- NULL
+  model$linear.predictors <- NULL
+  model$weights <- NULL
+  model$prior.weights <- NULL
+  model$qr <- NULL
   return(model)
 }
