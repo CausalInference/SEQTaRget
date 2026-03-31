@@ -1,12 +1,9 @@
-# SEQTaRget (development version)
+# SEQTaRget 1.4.1
 
-* Strip row-level vectors from fastglm objects to reduce weight.statistics memory usage and use a new internal function to print the coefficient table.
-* Strip row-level vectors from outcome models before storing in @outcome.model
-* Fix clean_fastglm to strip row-level vectors from nested multinomial weight models
-* No longer store survival.curve ggplot object; regenerate on demand via `km_curve()`
-
-# SEQTaRget v1.4.0
-
+- Strip row-level vectors from fastglm objects to reduce weight.statistics memory usage and use a new internal function to print the coefficient table.
+- Strip row-level vectors from outcome models before storing in @outcome.model
+- Fix clean_fastglm to strip row-level vectors from nested multinomial weight models
+- No longer store survival.curve ggplot object; regenerate on demand via `km_curve()`
 - Removed several `local()` wrappers and made several code optimizations.
 - Improved documentation of the datasets in the package.
 - Implement check for perfect separation when fitting logistic regression models.
