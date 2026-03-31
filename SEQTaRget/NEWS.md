@@ -1,4 +1,4 @@
-# SEQTaRget 1.4.1
+# SEQTaRget v1.4.1
 
 - Strip row-level vectors from fastglm objects to reduce weight.statistics memory usage and use a new internal function to print the coefficient table.
 - Strip row-level vectors from outcome models before storing in @outcome.model
