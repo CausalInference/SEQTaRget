@@ -216,7 +216,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         survival.plot[[label]] <- internal.plot(survival$data, params)
         risk[[label]] <- create.risk(survival$data, params, survival$boot_risks)
       }
-      outcome[[label]] <- lapply(models, function(x) x$model)
+      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
