@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.4.1
 
+CRAN release: 2026-03-31
+
 - Strip row-level vectors from fastglm objects to reduce
   weight.statistics memory usage and use a new internal function to
   print the coefficient table.
