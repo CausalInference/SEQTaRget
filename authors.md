@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/CausalInference/SEQTaRget/blob/v1.4.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/CausalInference/SEQTaRget/blob/main/DESCRIPTION)
 
 O'Dea R, Szmulewicz A, Palmer T, Madley-Dowd P, Hernán M (2026).
 *SEQTaRget: Sequential Trial Emulation*. R package version 1.4.1,
