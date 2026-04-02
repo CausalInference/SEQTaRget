@@ -205,7 +205,7 @@ setClass("SEQweights",
 #' @slot survival.data data.table of survival data
 #' @slot risk.difference risk difference calculated from survival data
 #' @slot risk.ratio risk ratio calculated from survival data
-#' @slot time time in minutes used for the SEQuential process
+#' @slot time time used for the SEQuential process
 #' @slot weight.statistics information from the weighting process, containing weight coefficients and weight statistics
 #' @slot info list of outcome and switch information (if applicable)
 #' @slot ce.model list of competing event models if \code{compevent} is specified, NA otherwise
