@@ -1,6 +1,7 @@
 # SEQTaRget (development version)
 
 * Remove mention of units from time in docs.
+* Improve memory usage in the bootstrapping.
 
 # SEQTaRget v1.4.1
 
