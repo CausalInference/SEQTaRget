@@ -2,6 +2,7 @@
 
 * Remove mention of units from time in docs.
 * Improve memory usage in the bootstrapping.
+* Fix off-by-one labeling in survival output so that `followup = k` correctly represents survival after `k` intervals, adding a row at `followup = survival.max + 1` for the final interval's estimate.
 
 # SEQTaRget v1.4.1
 
