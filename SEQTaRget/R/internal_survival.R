@@ -79,8 +79,12 @@ internal.survival <- function(params, outcome) {
         keep <- list("followup", inc, surv)
         kept <- intersect(keep, names(result_dt))
 
-        out_list[[i]] <- rbind(fup0, result_dt[followup > 0
-                                                ][, c(unlist(kept)), with = FALSE]
+        # result_dt[k] = survival after completing interval k = S at time k+1.
+        # Shift labels by +1 so followup=k means "after k intervals elapsed",
+        # giving rows 0..survival.max+1 with the baseline row (followup=0, surv=1)
+        # correctly placed and the final interval's estimate at followup=survival.max+1.
+        result_dt[, followup := followup + 1L]
+        out_list[[i]] <- rbind(fup0, result_dt[, c(unlist(kept)), with = FALSE]
                                )[, eval(risk) := 1 - get(surv)]
         rm(result_dt)
       }
