@@ -3,6 +3,7 @@
 * Remove mention of units from time in docs.
 * Improve memory usage in the bootstrapping.
 * Fix off-by-one labeling in survival output so that `followup = k` correctly represents survival after `k` intervals, adding a row at `followup = survival.max + 1` for the final interval's estimate.
+* Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with `outcome=0` rows from subsequent periods by truncating each trial at the first event row
 
 # SEQTaRget v1.4.1
 
