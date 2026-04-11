@@ -91,6 +91,12 @@ SEQexpand <- function(params) {
     out <- out[get(paste0(params@eligible, params@indicator.baseline)) == 1,
                ][, paste0(params@eligible, params@indicator.baseline) := NULL]
 
+    # Truncate each trial at (and including) the first outcome event row, so that
+    # subjects who experience the outcome early are not carried forward with outcome=0
+    # from subsequent periods in the original data.
+    out <- out[out[, .I[seq_len(match(1L, get(params@outcome), nomatch = .N))],
+                   by = c(params@id, "trial")]$V1]
+
     if (params@method == "dose-response") {
       out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
         dose_sq = dose^2,
