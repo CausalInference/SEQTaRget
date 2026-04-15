@@ -1,7 +1,14 @@
+# SEQTaRget (development version)
+
+* Remove mention of units from time in docs.
+* Improve memory usage in the bootstrapping.
+* Fix off-by-one labeling in survival output so that `followup = k` correctly represents survival after `k` intervals, adding a row at `followup = survival.max + 1` for the final interval's estimate.
+* Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with `outcome=0` rows from subsequent periods by truncating each trial at the first event row
+
 # SEQTaRget v1.4.1
 
 - Strip row-level vectors from fastglm objects to reduce weight.statistics memory usage and use a new internal function to print the coefficient table.
-- Strip row-level vectors from outcome models before storing in @outcome.model
+- Strip row-level vectors from outcome models before storing in `@outcome.model`
 - Fix clean_fastglm to strip row-level vectors from nested multinomial weight models
 - No longer store survival.curve ggplot object; regenerate on demand via `km_curve()`
 - Removed several `local()` wrappers and made several code optimizations.

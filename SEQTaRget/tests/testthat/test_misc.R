@@ -12,6 +12,56 @@ test_that("Expanded dataset contains no trials beyond the last eligible row per 
   expect_equal(max(model@DT$trial), max(last_elig_idx$last_elig))
 })
 
+test_that("Expansion truncates trials at first outcome event - subject with early outcome not carried forward", {
+  # Subject 1 has outcome=1 at time=0 (the only eligible period), then continues in the
+  # dataset at times 1-3 with outcome=0. Without truncation they would appear in the
+  # expanded data for all four periods with the later outcome=0 rows overwriting the event.
+  # Subject 2 has no outcome and serves as a control.
+  dt <- data.table::data.table(
+    ID        = c(1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L),
+    time      = c(0L, 1L, 2L, 3L, 0L, 1L, 2L, 3L),
+    eligible  = c(1L, 0L, 0L, 0L, 1L, 1L, 1L, 1L),
+    treatment = c(1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L),
+    outcome   = c(1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L),
+    N         = c(1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L),
+    sex       = c(0L, 0L, 0L, 0L, 1L, 1L, 1L, 1L)
+  )
+  model <- SEQuential(dt, "ID", "time", "eligible", "treatment", "outcome",
+                      list("N"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(data.return = TRUE),
+                      verbose = FALSE)
+  # Subject 1's only trial (trial=0) should contain exactly one row (followup=0, outcome=1)
+  s1_trial0 <- model@DT[ID == 1L & trial == 0L]
+  expect_equal(nrow(s1_trial0), 1L)
+  expect_equal(s1_trial0$outcome, 1L)
+})
+
+test_that("Expansion truncates trials at first outcome event - subject with early outcome not carried forward - test 2", {
+  # Subject 1 has outcome=1 at time=0 (the only eligible period), then continues in the
+  # dataset at times 1-3 with outcome=1. Without truncation they would appear in the
+  # expanded data for all four periods with the later outcome=1 rows overwriting the event.
+  # Subject 2 has no outcome and serves as a control.
+  dt <- data.table::data.table(
+    ID        = c(1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L),
+    time      = c(0L, 1L, 2L, 3L, 0L, 1L, 2L, 3L),
+    eligible  = c(1L, 0L, 0L, 0L, 1L, 1L, 1L, 1L),
+    treatment = c(1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L),
+    outcome   = c(1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L),
+    N         = c(1L, 1L, 1L, 1L, 0L, 0L, 0L, 0L),
+    sex       = c(0L, 0L, 0L, 0L, 1L, 1L, 1L, 1L)
+  )
+  model <- SEQuential(dt, "ID", "time", "eligible", "treatment", "outcome",
+                      list("N"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(data.return = TRUE),
+                      verbose = FALSE)
+  # Subject 1's only trial (trial=0) should contain exactly one row (followup=0, outcome=1)
+  s1_trial0 <- model@DT[ID == 1L & trial == 0L]
+  expect_equal(nrow(s1_trial0), 1L)
+  expect_equal(s1_trial0$outcome, 1L)
+})
+
 test_that("Pre-Expansion Excused Censoring - No excusedOne given", {
   data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",

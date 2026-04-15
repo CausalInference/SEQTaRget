@@ -30,7 +30,7 @@ An S4 class used to hold the outputs for the SEQuential process
 
 \item{\code{risk.ratio}}{risk ratio calculated from survival data}
 
-\item{\code{time}}{time in minutes used for the SEQuential process}
+\item{\code{time}}{time used for the SEQuential process}
 
 \item{\code{weight.statistics}}{information from the weighting process, containing weight coefficients and weight statistics}
 

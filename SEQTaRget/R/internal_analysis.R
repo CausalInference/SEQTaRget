@@ -208,6 +208,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
+          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
@@ -216,6 +217,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params)
           out$WDT <- NULL
+          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
         })
       }
