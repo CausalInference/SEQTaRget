@@ -115,3 +115,32 @@ test_that("Error 107 - followup.include = FALSE failing to create covariates", {
                       options = SEQopts(followup.include = FALSE))
   expect_s4_class(model, "SEQoutput")
 })
+
+test_that("expand.only = TRUE returns expanded data.table and matches data.return DT", {
+  # When expand.only = TRUE, SEQuential should short-circuit after expansion and
+  # return the expanded data.table directly. The contents should match the DT slot
+  # from a full run with data.return = TRUE.
+  data <- copy(SEQdata)
+  expanded <- SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                         list("N", "L", "P"), list("sex"),
+                         method = "ITT",
+                         options = SEQopts(expand.only = TRUE),
+                         verbose = FALSE)
+  expect_s3_class(expanded, "data.table")
+  expect_true(nrow(expanded) > 0L)
+  expect_true(all(c("ID", "trial", "period", "followup", "outcome") %in% names(expanded)))
+
+  full <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                      list("N", "L", "P"), list("sex"),
+                                      method = "ITT",
+                                      options = SEQopts(data.return = TRUE),
+                                      verbose = FALSE))
+  setkeyv(expanded, c("ID", "trial", "followup"))
+  ref <- copy(full@DT)
+  setkeyv(ref, c("ID", "trial", "followup"))
+  expect_equal(nrow(expanded), nrow(ref))
+  expect_equal(expanded$ID, ref$ID)
+  expect_equal(expanded$trial, ref$trial)
+  expect_equal(expanded$followup, ref$followup)
+  expect_equal(expanded$outcome, ref$outcome)
+})

@@ -18,6 +18,7 @@
 #' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
 #' @param deviation.excused Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is `FALSE`
 #' @param deviation.excused_cols Character list: excused columns for deviation switches
+#' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is `2L`
@@ -67,7 +68,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
-                    excused = FALSE, excused.cols = c(NA, NA), fastglm.method = 2L,
+                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
@@ -214,6 +215,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       plot.type = plot.type,
       subgroup = subgroup,
       data.return = data.return,
+      expand.only = as.logical(expand.only),
       selection.first_trial = selection.first_trial,
       cense.denominator = cense.denominator,
       cense.numerator = cense.numerator,

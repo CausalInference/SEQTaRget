@@ -25,6 +25,7 @@ SEQopts(
   deviation.excused_cols = c(NA, NA),
   excused = FALSE,
   excused.cols = c(NA, NA),
+  expand.only = FALSE,
   fastglm.method = 2L,
   followup.class = FALSE,
   followup.include = TRUE,
@@ -105,6 +106,8 @@ SEQopts(
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
 \item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
+
+\item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
 \item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is \code{2L}}
 

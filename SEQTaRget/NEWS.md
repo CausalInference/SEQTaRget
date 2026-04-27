@@ -4,6 +4,7 @@
 * Improve memory usage in the bootstrapping.
 * Fix off-by-one labeling in survival output so that `followup = k` correctly represents survival after `k` intervals, adding a row at `followup = survival.max + 1` for the final interval's estimate.
 * Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with `outcome=0` rows from subsequent periods by truncating each trial at the first event row
+* Add `expand.only` option to `SEQopts()`. When `TRUE`, `SEQuential()` returns the expanded `data.table` directly and skips the analysis steps, for users who want to inspect or store the expanded dataset on its own.
 
 # SEQTaRget v1.4.1
 
