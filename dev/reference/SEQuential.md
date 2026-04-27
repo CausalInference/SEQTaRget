@@ -73,7 +73,9 @@ SEQuential(
 
 ## Value
 
-An S4 object of class SEQoutput
+An S4 object of class SEQoutput. If
+`options = SEQopts(expand.only = TRUE)`, returns the expanded
+`data.table` directly, with analysis steps skipped.
 
 ## Details
 

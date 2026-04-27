@@ -10,6 +10,13 @@
 - Fix expansion bug where subjects experiencing the outcome early were
   incorrectly carried forward with `outcome=0` rows from subsequent
   periods by truncating each trial at the first event row
+- Add `expand.only` option to
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md).
+  When `TRUE`,
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  returns the expanded `data.table` directly and skips the analysis
+  steps, for users who want to inspect or store the expanded dataset on
+  its own.
 
 ## SEQTaRget v1.4.1
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,6 +77,7 @@
 <span>  deviation.excused_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  expand.only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fastglm.method <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  followup.class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  followup.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -200,6 +201,10 @@
 
 <dt id="arg-excused-cols">excused.cols<a class="anchor" aria-label="anchor" href="#arg-excused-cols"></a></dt>
 <dd><p>List: list of column names for treatment switch excuses - should be the same length, and ordered the same as <code>treat.level</code></p></dd>
+
+
+<dt id="arg-expand-only">expand.only<a class="anchor" aria-label="anchor" href="#arg-expand-only"></a></dt>
+<dd><p>Logical: if <code>TRUE</code>, <code><a href="SEQuential.html">SEQuential()</a></code> returns the expanded <code>data.table</code> immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is <code>FALSE</code></p></dd>
 
 
 <dt id="arg-fastglm-method">fastglm.method<a class="anchor" aria-label="anchor" href="#arg-fastglm-method"></a></dt>

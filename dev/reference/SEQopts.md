@@ -26,6 +26,7 @@ SEQopts(
   deviation.excused_cols = c(NA, NA),
   excused = FALSE,
   excused.cols = c(NA, NA),
+  expand.only = FALSE,
   fastglm.method = 2L,
   followup.class = FALSE,
   followup.include = TRUE,
@@ -163,6 +164,15 @@ SEQopts(
 
   List: list of column names for treatment switch excuses - should be
   the same length, and ordered the same as `treat.level`
+
+- expand.only:
+
+  Logical: if `TRUE`,
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  returns the expanded `data.table` immediately after expansion and
+  skips weighting, outcome modelling and survival/risk steps. Useful
+  when you only need the expanded dataset (e.g. to inspect or store
+  separately). Default is `FALSE`
 
 - fastglm.method:
 

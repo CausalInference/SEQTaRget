@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@
 <li>Improve memory usage in the bootstrapping.</li>
 <li>Fix off-by-one labeling in survival output so that <code>followup = k</code> correctly represents survival after <code>k</code> intervals, adding a row at <code>followup = survival.max + 1</code> for the final interval’s estimate.</li>
 <li>Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with <code>outcome=0</code> rows from subsequent periods by truncating each trial at the first event row</li>
+<li>Add <code>expand.only</code> option to <code><a href="../reference/SEQopts.html">SEQopts()</a></code>. When <code>TRUE</code>, <code><a href="../reference/SEQuential.html">SEQuential()</a></code> returns the expanded <code>data.table</code> directly and skips the analysis steps, for users who want to inspect or store the expanded dataset on its own.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.1" id="seqtarget-v141">SEQTaRget v1.4.1<a class="anchor" aria-label="anchor" href="#seqtarget-v141"></a></h2><p class="text-muted">CRAN release: 2026-03-31</p>
