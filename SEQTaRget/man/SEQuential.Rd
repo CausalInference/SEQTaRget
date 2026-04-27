@@ -42,7 +42,7 @@ SEQuential(
 \item{verbose}{Logical: if TRUE, cats progress to console, default is \code{TRUE}}
 }
 \value{
-An S4 object of class SEQoutput
+An S4 object of class SEQoutput. If \code{options = SEQopts(expand.only = TRUE)}, returns the expanded \code{data.table} directly, with analysis steps skipped.
 }
 \description{
 \code{SEQuential} is an all-in-one API to SEQuential analysis, returning a SEQoutput object of results. More specific examples can be found on pages at \url{https://causalinference.github.io/SEQTaRget/}

@@ -25,7 +25,7 @@
 #' @importFrom doFuture registerDoFuture
 #' @importFrom stats complete.cases
 #' 
-#' @returns An S4 object of class SEQoutput
+#' @returns An S4 object of class SEQoutput. If `options = SEQopts(expand.only = TRUE)`, returns the expanded `data.table` directly, with analysis steps skipped.
 #' @examples
 #' \donttest{
 #' data <- SEQdata
@@ -170,7 +170,16 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
-  if (params@verbose) cat("Expansion Successful\nMoving forward with", params@method, "analysis\n")
+  if (params@verbose) cat("Expansion Successful\n")
+
+  # Early return if user only wants the expanded dataset =======
+  if (params@expand.only) {
+    if (params@verbose) cat("expand.only = TRUE: returning expanded data.table and skipping analysis\n")
+    plan("sequential")
+    return(params@DT)
+  }
+
+  if (params@verbose) cat("Moving forward with", params@method, "analysis\n")
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
