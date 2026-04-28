@@ -54,3 +54,5 @@ rsconnect/
 docs/
 SEQTaRget/docs
 *.html
+.Rproj.user
+.positai
