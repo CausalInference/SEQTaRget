@@ -104,7 +104,7 @@ SEQexpand <- function(params) {
       )]
     }
 
-    if (params@method == "censoring") {
+    if (params@method == "censoring" && !params@expand.only) {
       out[, switch := FALSE]
       if (params@deviation) {
         # Censoring on deviation condition

@@ -15,3 +15,4 @@ sticker.R
 ^pkgdown$
 ^docs$
 ^README\.Rmd$
+^\.positai$
