@@ -8,8 +8,11 @@ create.default.covariates <- function(params) {
   trial <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   dose <- paste0("dose", c("", params@indicator.squared), collapse = "+")
-  interaction <- paste0(tx_bas, "*", "followup")
-  interaction.dose <- paste0("followup*", c("dose", "dose_sq"), collapse = "+")
+  followup_term <- if (params@followup.spline) {
+    sprintf("ns(followup, df = %d)", params@followup.spline.df)
+  } else "followup"
+  interaction <- paste0(tx_bas, "*", followup_term)
+  interaction.dose <- paste0(followup_term, "*", c("dose", "dose_sq"), collapse = "+")
   if (params@hazard) interaction <- interaction.dose <- NULL
   if (!params@km.curves) interaction <- interaction.dose <- NULL
 
@@ -24,7 +27,8 @@ create.default.covariates <- function(params) {
   }
   if (params@trial.include) trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
   if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared)) else followup <- NULL
-  if ((params@followup.spline || params@followup.class) && !params@followup.include) followup <- "followup" 
+  if (params@followup.spline && !params@followup.include) followup <- followup_term
+  if (params@followup.class && !params@followup.include) followup <- "followup"
 
   if (params@method == "ITT") {
     out <- paste0(c(tx_bas, followup, trial, fixed, timeVarying_bas, interaction), collapse = "+")

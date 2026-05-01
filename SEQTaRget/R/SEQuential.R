@@ -181,6 +181,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (params@verbose) cat("Moving forward with", params@method, "analysis\n")
 
+  # Bake fixed knots for followup spline so the basis is identical at
+  # fit and prediction time across bootstraps and survival prediction grids.
+  if (params@followup.spline) params@covariates <- bake_followup_spline(params)
+
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
     if (!params@deviation) {
@@ -256,7 +260,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                compevent.nonunique = if(!is.na(params@compevent)) table(params@DT[!is.na(get(params@outcome)), 
                                                                                   ][[params@compevent]]) else NA)
   
-  runtime <- format.time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
+  runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)
 
   if (params@verbose) cat("Completed\n")

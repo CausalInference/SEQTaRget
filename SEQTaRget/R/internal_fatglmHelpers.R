@@ -62,7 +62,7 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
     ),
     "surv" = params@covariates
   )
-  cols <- unique(unlist(strsplit(covs, "\\*|\\+")))
+  cols <- formula_vars(covs)
   X <- model.matrix(as.formula(paste0("~", covs)),
                     data = newdata[, cols, with = FALSE])
   

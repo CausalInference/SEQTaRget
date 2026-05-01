@@ -32,6 +32,7 @@ SEQopts(
   followup.max = Inf,
   followup.min = 0,
   followup.spline = FALSE,
+  followup.spline.df = 4L,
   hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -119,7 +120,9 @@ SEQopts(
 
 \item{followup.min}{Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is \code{0}}
 
-\item{followup.spline}{Logical: treat followup as a cubic spline, default is \code{FALSE}}
+\item{followup.spline}{Logical: treat followup as a natural cubic spline (\code{splines::ns()}), default is \code{FALSE}}
+
+\item{followup.spline.df}{Integer: degrees of freedom passed to \code{splines::ns()} when \code{followup.spline = TRUE}. With \code{df = k}, \code{ns()} places \code{k - 1} interior knots at quantiles of \code{followup}. Must be \verb{>= 1}; \code{df = 1} is equivalent to a linear term and is generally not what you want. Default is \code{4} (3 interior knots).}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation, default is \code{FALSE}}
 

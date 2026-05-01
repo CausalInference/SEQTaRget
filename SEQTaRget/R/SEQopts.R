@@ -26,7 +26,8 @@
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
 #' @param followup.min Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is `0`
-#' @param followup.spline Logical: treat followup as a cubic spline, default is `FALSE`
+#' @param followup.spline Logical: treat followup as a natural cubic spline (`splines::ns()`), default is `FALSE`
+#' @param followup.spline.df Integer: degrees of freedom passed to `splines::ns()` when `followup.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is equivalent to a linear term and is generally not what you want. Default is `4` (3 interior knots).
 #' @param hazard Logical: hazard error calculation instead of survival estimation, default is `FALSE`
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
@@ -69,7 +70,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
                     excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
-                    followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE,
+                    followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE, followup.spline.df = 4L,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
@@ -135,6 +136,12 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
   fastglm.method <- as.integer(fastglm.method)
   if (!fastglm.method %in% 1L:4L) stop("'fastglm.method' must be one of 1 (QR), 2 (Cholesky), 3 (LDLT), or 4 (QR.FPIV)")
+
+  followup.spline.df <- as.integer(followup.spline.df)
+  if (length(followup.spline.df) != 1L || is.na(followup.spline.df) || followup.spline.df < 1L)
+    stop("'followup.spline.df' must be a single integer >= 1")
+  if (followup.spline && followup.spline.df < 3L)
+    warning("'followup.spline.df' < 3 will not give a meaningfully non-linear basis; consider df >= 3")
 
   if (bootstrap.sample <= 0 || bootstrap.sample > 1) stop("'bootstrap.sample' must be in (0, 1]")
   if (bootstrap.CI <= 0 || bootstrap.CI >= 1) stop("'bootstrap.CI' must be in (0, 1)")
@@ -208,6 +215,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       weight.eligible_cols = weight.eligible_cols,
       followup.class = followup.class,
       followup.spline = followup.spline,
+      followup.spline.df = followup.spline.df,
       plot.title = plot.title,
       plot.subtitle = plot.subtitle,
       plot.labels = plot.labels,

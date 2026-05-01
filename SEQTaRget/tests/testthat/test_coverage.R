@@ -192,12 +192,12 @@ test_that("multinomial.predict errors on invalid target", {
   expect_error(SEQTaRget:::multinomial.predict(model, X, target = "99"), "not found")
 })
 
-# ── internal_misc.R format.time ─────────────────────────────────────────────
+# ── internal_misc.R format_time ─────────────────────────────────────────────
 
-test_that("format.time handles seconds, minutes, and hours", {
-  expect_match(SEQTaRget:::format.time(30), "seconds")
-  expect_match(SEQTaRget:::format.time(90), "minute")
-  expect_match(SEQTaRget:::format.time(3700), "hour")
+test_that("format_time handles seconds, minutes, and hours", {
+  expect_match(SEQTaRget:::format_time(30), "seconds")
+  expect_match(SEQTaRget:::format_time(90), "minute")
+  expect_match(SEQTaRget:::format_time(3700), "hour")
 })
 
 # ── SEQexpand.R: selection.first_trial ──────────────────────────────────────

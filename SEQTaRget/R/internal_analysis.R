@@ -14,9 +14,8 @@ init_formula_cache <- function(params) {
   # Helper to parse formula string and extract columns
   parse_covs <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(NULL)
-    # Clean column names by trimming whitespace
-    cols <- unique(trimws(unlist(strsplit(covs, "\\+|\\*|\\:"))))
-    cols <- cols[nchar(cols) > 0]
+    # Underlying column names — strips function wrappers like ns(), I(), factor(), poly()
+    cols <- formula_vars(covs)
     list(
       formula = as.formula(paste0("~", covs)),
       cols = cols,
