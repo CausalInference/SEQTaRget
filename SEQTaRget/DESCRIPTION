@@ -40,7 +40,6 @@ Description: Implementation of sequential trial emulation for the analysis of ob
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
@@ -57,9 +56,10 @@ Imports:
     stringr,
     survival,
     parallelly
+Config/roxygen2/markdown: TRUE
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.1)
 URL: https://causalinference.github.io/SEQTaRget/, https://github.com/CausalInference/SEQTaRget
 VignetteBuilder: knitr
-Roxygen: list(markdown = TRUE)
