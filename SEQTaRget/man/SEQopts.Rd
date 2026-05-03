@@ -136,7 +136,7 @@ SEQopts(
 
 \item{ncores}{Integer: number of cores to use in parallel processing, default is one less than system max, see \code{\link[parallelly:availableCores]{parallelly::availableCores()}}}
 
-\item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:openmp-utils]{data.table::getDTthreads()}}}
+\item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:getDTthreads]{data.table::getDTthreads()}}}
 
 \item{numerator}{String: numerator covariates to the right hand side of a formula object}
 
