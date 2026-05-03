@@ -7,6 +7,7 @@
 * Add `expand.only` option to `SEQopts()`. When `TRUE`, `SEQuential()` returns the expanded `data.table` directly and skips the analysis steps, for users who want to inspect or store the expanded dataset on its own.
 * Fix `followup.spline = TRUE` so the basis is genuinely non-linear. Splines are now built into the model formula via `splines::ns()` instead of being applied as a single-column transform of `followup`, and the new `followup.spline.df` option (default `4`) controls the number of basis functions. The treatment-by-followup interaction now uses the same spline basis. Knots are baked from the full expanded `followup` once at fit time so the basis is identical at fit and prediction time across bootstraps and survival grids. Internally, formula column extraction now uses `all.vars()`, so user-supplied covariates may include `ns()`, `bs()`, `I()`, `factor()`, `poly()` etc. without breaking expansion.
 * Rename `format.time()` to `format_time()` because it wasn't an S3 method and hence was causing roxygen2 to write incorrect information in its helpfile.
+* Add package level helpfile and bump roxygen2 to 8.0.0.
 
 # SEQTaRget v1.4.1
 
