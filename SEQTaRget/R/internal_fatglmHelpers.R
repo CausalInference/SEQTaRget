@@ -31,10 +31,11 @@ fit_glm <- function(X, y, family, weights = NULL, params) {
     # equivalent standard family (coefficients are identical, only dispersion differs)
     if (identical(family$family, "quasibinomial")) family <- binomial(link = family$link)
     ctrl <- if (is.null(params@parglm.control)) parglm.control(method = "FAST") else params@parglm.control
+    ctrl$nthreads <- params@nthreads
     if (is.null(weights)) {
-      parglm.fit(X, y, family = family, nthreads = params@nthreads, control = ctrl)
+      parglm.fit(X, y, family = family, control = ctrl)
     } else {
-      parglm.fit(X, y, family = family, weights = weights, nthreads = params@nthreads, control = ctrl)
+      parglm.fit(X, y, family = family, weights = weights, control = ctrl)
     }
   }
 }
