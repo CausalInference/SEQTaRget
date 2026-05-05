@@ -2,14 +2,14 @@
 % Please edit documentation in R/internal_fatglmHelpers.R
 \name{clean_fastglm}
 \alias{clean_fastglm}
-\title{Function to clean out non needed elements from fastglm return}
+\title{Strip large components from a model object returned by fit_glm}
 \usage{
 clean_fastglm(model)
 }
 \arguments{
-\item{model}{a fastglm model}
+\item{model}{a model object (fastglm or parglm.fit)}
 }
 \description{
-Function to clean out non needed elements from fastglm return
+Strip large components from a model object returned by fit_glm
 }
 \keyword{internal}
