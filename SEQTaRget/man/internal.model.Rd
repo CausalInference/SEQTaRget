@@ -4,7 +4,7 @@
 \alias{internal.model}
 \title{Internal function for fitting outcome models}
 \usage{
-internal.model(data, params)
+internal.model(data, params, start = NULL)
 }
 \description{
 Internal function for fitting outcome models
