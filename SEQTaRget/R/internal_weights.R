@@ -6,7 +6,6 @@
 #' @param cache cache
 #' @import data.table
 #' @importFrom stats quasibinomial coef predict qnorm quantile sd
-#' @importFrom fastglm fastglm
 #' @keywords internal
 internal.weights <- function(DT, data, params, cache) {
   # Variable pre-definition ===================================
@@ -56,9 +55,9 @@ internal.weights <- function(DT, data, params, cache) {
         cense.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "LTFU", cache)
         cense.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "LTFU", cache)
         
-        cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.numerator <- fit_glm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), params = params)
         check_separation(cense.numerator, label = "censoring numerator")
-        cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.denominator <- fit_glm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), params = params)
         check_separation(cense.denominator, label = "censoring denominator")
         
         rm(cense.numerator.data, cense.denominator.data)
@@ -68,9 +67,9 @@ internal.weights <- function(DT, data, params, cache) {
         visit.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "visit", cache)
         visit.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "visit", cache)
         
-        visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.numerator <- fit_glm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), params = params)
         check_separation(visit.numerator, label = "visit numerator")
-        visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.denominator <- fit_glm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), params = params)
         check_separation(visit.denominator, label = "visit denominator")
         
         rm(visit.numerator.data, visit.denominator.data)
