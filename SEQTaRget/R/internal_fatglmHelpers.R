@@ -1,3 +1,6 @@
+.pkg_env <- new.env(parent = emptyenv())
+.pkg_env$parglm_hint_warned <- FALSE
+
 #' Fit a GLM using the package specified in params@glm.package
 #' @param X model matrix
 #' @param y response vector
@@ -9,6 +12,14 @@
 #' @keywords internal
 fit_glm <- function(X, y, family, weights = NULL, params) {
   if (params@glm.package == "fastglm") {
+    if (!.pkg_env$parglm_hint_warned && (nrow(X) >= 10000L || ncol(X) > 10L)) {
+      .pkg_env$parglm_hint_warned <- TRUE
+      warning(
+        "You may find your model fits faster using the parglm backend, ",
+        "specified by SEQopts(glm.package = 'parglm')",
+        call. = FALSE
+      )
+    }
     if (is.null(weights)) {
       fastglm(X, y, family = family, method = params@fastglm.method)
     } else {
