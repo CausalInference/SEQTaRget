@@ -1,3 +1,43 @@
+#' Fit a GLM using the package specified in params@glm.package
+#' @param X model matrix
+#' @param y response vector
+#' @param family family object (e.g. quasibinomial())
+#' @param weights optional prior weights vector
+#' @param params SEQparams object
+#' @importFrom fastglm fastglm
+#' @importFrom parglm parglm.fit parglm.control
+#' @keywords internal
+fit_glm <- function(X, y, family, weights = NULL, params) {
+  if (params@glm.package == "fastglm") {
+    if (is.null(weights)) {
+      fastglm(X, y, family = family, method = params@fastglm.method)
+    } else {
+      fastglm(X, y, family = family, weights = weights, method = params@fastglm.method)
+    }
+  } else {
+    ctrl <- if (is.null(params@parglm.control)) parglm.control(method = "FAST") else params@parglm.control
+    if (is.null(weights)) {
+      parglm.fit(X, y, family = family, nthreads = params@nthreads, control = ctrl)
+    } else {
+      parglm.fit(X, y, family = family, weights = weights, nthreads = params@nthreads, control = ctrl)
+    }
+  }
+}
+
+#' Predict from a model fitted by fit_glm
+#' @param model model object returned by fit_glm
+#' @param X model matrix for prediction
+#' @param type "response" or "link"
+#' @keywords internal
+predict_model <- function(model, X, type = "response") {
+  if (inherits(model, "fastglm")) {
+    predict(model, X, type)
+  } else {
+    eta <- drop(as.matrix(X) %*% coef(model))
+    if (type == "response") model$family$linkinv(eta) else eta
+  }
+}
+
 #' Helper Function to inline predict a fastglm object
 #' @param model a fastglm object
 #' @param newdata filler for a .SD from data.table
@@ -36,11 +76,11 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
     
     if (!is.null(cached)) {
       X <- fast_model_matrix(cached$formula, newdata, cached$cols, is_simple = cached$is_simple)
-      pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
+      pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
       return(pred)
     }
   }
-  
+
   # Fallback to original parsing (for backwards compatibility)
   covs <- switch(
     case,
@@ -65,8 +105,8 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
   cols <- formula_vars(covs)
   X <- model.matrix(as.formula(paste0("~", covs)),
                     data = newdata[, cols, with = FALSE])
-  
-  pred <- if (!multi) predict(model, X, "response") else multinomial.predict(model, X, target)
+
+  pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
 }
 
@@ -175,8 +215,8 @@ fast_model_matrix <- function(formula, data, cols, is_simple = FALSE) {
   return(X)
 }
 
-#' Function to clean out non needed elements from fastglm return
-#' @param model a fastglm model
+#' Strip large components from a model object returned by fit_glm
+#' @param model a model object (fastglm or parglm.fit)
 #' @keywords internal
 clean_fastglm <- function(model) {
   strip <- function(m) {

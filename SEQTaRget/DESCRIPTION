@@ -40,11 +40,12 @@ Description: Implementation of sequential trial emulation for the analysis of ob
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: 
+Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Imports:
     data.table,
+    parglm,
     doFuture,
     doRNG,
     fastglm,

@@ -28,10 +28,9 @@ check_separation <- function(model, label = "logistic regression") {
 
 #' Helper function for nested logistic
 #'
-#' @importFrom fastglm fastglm
 #' @importFrom stats quasibinomial
 #' @keywords internal
-multinomial <- function(X, y, family = quasibinomial(), method) {
+multinomial <- function(X, y, family = quasibinomial(), params) {
   y <- as.factor(y)
   ylevels <- levels(y)
 
@@ -40,7 +39,7 @@ multinomial <- function(X, y, family = quasibinomial(), method) {
 
   for (class in ylevels[-1]) {
     ybin <- ifelse(y == class, 1, 0)
-    model <- fastglm(X, ybin, family, method = method)
+    model <- fit_glm(X, ybin, family, params = params)
     check_separation(model, label = paste0("multinomial (class = ", class, ")"))
     models[[class]] <- model
   }
@@ -85,7 +84,7 @@ multinomial.summary <- function(model) {
 
   summaries <- lapply(names(models), function(cls) {
     coef <- coef(models[[cls]])
-    se <- models[[cls]]$se
+    se <- if (!is.null(models[[cls]]$se)) models[[cls]]$se else rep(NA_real_, length(coef))
     data.frame(
       Class = cls,
       Term = names(coef),
@@ -115,11 +114,11 @@ model.passer <- function(X, y, params) {
                (params@excused || params@deviation.excused)) FALSE else params@multinomial
 
   model <- if (!multi) {
-    m <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+    m <- fit_glm(X, y, family = quasibinomial(), params = params)
     check_separation(m, label = "logistic regression")
     m
   } else  {
-    multinomial(X, y, family = quasibinomial(), method = params@fastglm.method)
+    multinomial(X, y, family = quasibinomial(), params = params)
   }
 
   return(model)
