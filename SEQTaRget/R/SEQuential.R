@@ -214,7 +214,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
   if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
   if (!params@hazard) {
-    if (params@verbose) cat("\n", method, "model created successfully\n", sep = "")
+    if (params@verbose) cat("\n", method, " model created successfully\n", sep = "")
 
     # Survival Information =======================================
     for (i in seq_along(subgroups)) {
