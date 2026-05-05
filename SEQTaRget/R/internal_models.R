@@ -1,6 +1,5 @@
 #' Internal function for fitting outcome models
 #'
-#' @importFrom fastglm fastglm
 #' @importFrom stats as.formula model.matrix
 #' @importFrom splines ns
 #' @import data.table
@@ -16,12 +15,12 @@ internal.model <- function(data, params) {
     y <- data[[params@outcome]]
     
     if(!params@weighted) {
-        model <- fastglm(X, y, family = quasibinomial(), method = params@fastglm.method)
+        model <- fit_glm(X, y, family = quasibinomial(), params = params)
         weight <- NULL
       } else {
         weight <- data[weight < params@weight.lower, weight := params@weight.lower
                        ][weight > params@weight.upper, weight := params@weight.upper][['weight']]
-        model <- fastglm(X, y, family = quasibinomial(), weights = weight, method = params@fastglm.method)
+        model <- fit_glm(X, y, family = quasibinomial(), weights = weight, params = params)
       }
     return(list(model = model))
   }

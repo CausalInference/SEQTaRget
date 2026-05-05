@@ -1,7 +1,6 @@
 #' Internal function for creating survival curves
 #'
 #' @import data.table future doFuture doRNG future.apply
-#' @importFrom fastglm fastglm
 #' @importFrom stats setNames ave
 #'
 #' @keywords internal
@@ -23,7 +22,7 @@ internal.survival <- function(params, outcome) {
       }
       if (!is.na(params@compevent)) {
         ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, cache)
-        ce.model <- clean_fastglm(fastglm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), method = params@fastglm.method))
+        ce.model <- clean_fastglm(fit_glm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), params = params))
         rm(ce.data)
       }
       

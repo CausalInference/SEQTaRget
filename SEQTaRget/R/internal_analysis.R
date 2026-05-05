@@ -199,13 +199,15 @@ internal.analysis <- function(params) {
     }
     
     bootstrap <- if (params@bootstrap) {
+      params_boot <- params
+      params_boot@glm.package <- "fastglm"
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
         on.exit(setDTthreads(old_threads), add = TRUE)
         future_lapply(seq_len(params@bootstrap.nboot), function(x) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
@@ -214,7 +216,7 @@ internal.analysis <- function(params) {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
           set.seed(params@seed + x)
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
