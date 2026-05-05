@@ -16,3 +16,4 @@ sticker.R
 ^docs$
 ^README\.Rmd$
 ^\.positai$
+^\.claude$

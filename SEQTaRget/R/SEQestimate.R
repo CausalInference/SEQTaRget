@@ -99,7 +99,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
   if (params@bootstrap) modelTime <- modelTime*params@bootstrap.nboot
   if (params@parallel) modelTime <- modelTime / params@ncores
 
-  return(list(modelTime = format.time(modelTime),
-              expansionTime = format.time(expansionTime),
-              totalTime = format.time(modelTime + expansionTime)))
+  return(list(modelTime = format_time(modelTime),
+              expansionTime = format_time(expansionTime),
+              totalTime = format_time(modelTime + expansionTime)))
 }

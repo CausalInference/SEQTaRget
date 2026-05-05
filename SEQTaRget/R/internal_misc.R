@@ -85,7 +85,7 @@ factorize <- function(data, params) {
 #' Nicely cleans time for readability
 #'
 #' @keywords internal
-format.time <- function(seconds) {
+format_time <- function(seconds) {
   if (seconds < 60) {
     paste0(round(seconds, 2), " seconds")
   } else if (seconds < 3600) {
@@ -106,6 +106,65 @@ format.time <- function(seconds) {
 
 allNA <- function(x) {
   all(is.na(x))
+}
+
+#' Bake fixed knots into any `ns(followup, df = N)` term in `params@covariates`
+#'
+#' `splines::ns()` recomputes knots from whatever data it sees, so without fixed
+#' knots the basis at prediction time differs from the basis used at fit time.
+#' This helper rewrites every `ns(followup, df = N)` token in
+#' `params@covariates` to an explicit `ns(followup, knots = c(...), Boundary.knots = c(...))`
+#' computed once from the full expanded `followup` column. The result is a
+#' formula whose `model.matrix` output is invariant to the row subset passed in.
+#'
+#' Returns the original covariates string unchanged when no `ns(followup, df = ...)`
+#' token is present (e.g. user supplied custom covariates that already specify
+#' knots).
+#'
+#' @keywords internal
+bake_followup_spline <- function(params) {
+  covs <- params@covariates
+  if (is.null(covs) || is.na(covs) || !nzchar(covs)) return(covs)
+  re <- "ns\\(\\s*followup\\s*,\\s*df\\s*=\\s*(\\d+)\\s*\\)"
+  if (!grepl(re, covs)) return(covs)
+
+  fu <- params@DT[["followup"]]
+  if (is.null(fu) || length(fu) == 0L) return(covs)
+  bks <- range(fu, na.rm = TRUE)
+
+  m <- regmatches(covs, regexpr(re, covs))
+  df <- as.integer(sub(re, "\\1", m))
+
+  probs <- if (df >= 2L) seq(0, 1, length.out = df + 1L)[-c(1L, df + 1L)] else numeric(0)
+  knots <- if (length(probs) > 0L) as.numeric(quantile(fu, probs, names = FALSE, na.rm = TRUE)) else numeric(0)
+
+  replacement <- if (length(knots) == 0L) {
+    sprintf("ns(followup, df = 1, Boundary.knots = c(%s, %s))",
+            format(bks[1], digits = 15), format(bks[2], digits = 15))
+  } else {
+    sprintf("ns(followup, knots = c(%s), Boundary.knots = c(%s, %s))",
+            paste(format(knots, digits = 15), collapse = ", "),
+            format(bks[1], digits = 15), format(bks[2], digits = 15))
+  }
+  gsub(re, replacement, covs)
+}
+
+#' Extract underlying column names from RHS formula strings
+#'
+#' Wraps `all.vars(as.formula(...))` so that function-wrapped terms in
+#' formula strings (e.g. `ns(followup, df = 4)`, `I(x^2)`, `factor(grp)`)
+#' resolve to their underlying variable names rather than being treated
+#' as raw column names.
+#'
+#' @param x character vector of RHS formula strings (may contain `+`, `*`, `:`,
+#'   and function wrappers). NA / empty entries are ignored.
+#'
+#' @returns character vector of unique variable names referenced by `x`.
+#' @keywords internal
+formula_vars <- function(x) {
+  x <- x[!is.na(x) & nzchar(x)]
+  if (length(x) == 0L) return(character(0))
+  unique(unlist(lapply(x, function(s) all.vars(stats::as.formula(paste0("~", s))))))
 }
 
 equalizer <- function(list, levels) {

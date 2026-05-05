@@ -10,7 +10,6 @@ internal.model <- function(data, params) {
   data <- data[!is.na(get(params@outcome)), ]
 
   if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
-  if (params@followup.spline) data <- data[, "followup" := ns(get("followup"))]
 
   handler <- function(data, params) {
     X <- model.matrix(as.formula(paste0("~", params@covariates)), data)
