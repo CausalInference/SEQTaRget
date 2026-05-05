@@ -4,7 +4,7 @@
 \alias{multinomial}
 \title{Helper function for nested logistic}
 \usage{
-multinomial(X, y, family = quasibinomial(), method)
+multinomial(X, y, family = quasibinomial(), params)
 }
 \description{
 Helper function for nested logistic
