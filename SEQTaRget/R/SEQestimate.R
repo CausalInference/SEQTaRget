@@ -13,7 +13,6 @@
 #' @param verbose Logical: if `TRUE`, cats progress to console, default is `TRUE`
 #'
 #' @importFrom stats lm rbinom
-#' @importFrom fastglm fastglm
 #' @import data.table
 #'
 #' @returns A list of (very rough) estimates for the time required for SEQuential containing:
@@ -75,7 +74,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
     X <- matrix(as.numeric(rbinom(samples[i] * colspace, 1, 0.5)), nrow = samples[i])
     y <- rbinom(samples[i], 1, 0.5)
     times[i] <- system.time({
-      fastglm(X, y, family = quasibinomial())
+      fit_glm(X, y, family = quasibinomial(), params = params)
     })['elapsed']
   }
 
