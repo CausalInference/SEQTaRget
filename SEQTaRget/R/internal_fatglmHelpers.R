@@ -9,6 +9,7 @@
 #' @param params SEQparams object
 #' @importFrom fastglm fastglm
 #' @importFrom parglm parglm.fit parglm.control
+#' @importFrom stats binomial
 #' @keywords internal
 fit_glm <- function(X, y, family, weights = NULL, params) {
   if (params@glm.package == "fastglm") {
