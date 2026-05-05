@@ -23,7 +23,7 @@ test_that("fit_glm with parglm returns coefficients comparable to fastglm", {
   m_fg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts())
   m_pg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm"))
 
-  expect_equal(coef(m_fg), coef(m_pg), tolerance = 1e-4)
+  expect_equal(unname(coef(m_fg)), unname(coef(m_pg)), tolerance = 1e-4)
 })
 
 test_that("fit_glm with parglm respects prior weights", {
@@ -35,7 +35,7 @@ test_that("fit_glm with parglm respects prior weights", {
   m_fg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), weights = w, params = SEQopts())
   m_pg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), weights = w, params = SEQopts(glm.package = "parglm"))
 
-  expect_equal(coef(m_fg), coef(m_pg), tolerance = 1e-4)
+  expect_equal(unname(coef(m_fg)), unname(coef(m_pg)), tolerance = 1e-4)
 })
 
 # ── predict_model unit tests ───────────────────────────────────────────────────
@@ -120,8 +120,8 @@ test_that("SEQuential parglm accepts custom parglm.control", {
 # ── parglm hint warning ────────────────────────────────────────────────────────
 
 test_that("fastglm warns when nrow >= 10000", {
-  SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE
-  on.exit(SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE)
+  assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env)
+  on.exit(assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env))
   set.seed(1)
   X <- cbind(1, matrix(rnorm(10000 * 3), 10000, 3))  # ncol = 4, nrow = 10000
   y <- rbinom(10000, 1, 0.3)
@@ -132,8 +132,8 @@ test_that("fastglm warns when nrow >= 10000", {
 })
 
 test_that("fastglm warns when ncol > 10 regardless of nrow", {
-  SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE
-  on.exit(SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE)
+  assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env)
+  on.exit(assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env))
   set.seed(1)
   X <- cbind(1, matrix(rnorm(100 * 11), 100, 11))  # ncol = 12, nrow = 100
   y <- rbinom(100, 1, 0.3)
@@ -144,8 +144,8 @@ test_that("fastglm warns when ncol > 10 regardless of nrow", {
 })
 
 test_that("fastglm does not warn when nrow < 10000 and ncol <= 10", {
-  SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE
-  on.exit(SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE)
+  assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env)
+  on.exit(assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env))
   set.seed(1)
   X <- cbind(1, matrix(rnorm(100 * 5), 100, 5))  # ncol = 6, nrow = 100
   y <- rbinom(100, 1, 0.3)
@@ -155,8 +155,8 @@ test_that("fastglm does not warn when nrow < 10000 and ncol <= 10", {
 })
 
 test_that("parglm backend never triggers the fastglm hint warning", {
-  SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE
-  on.exit(SEQTaRget:::.pkg_env$parglm_hint_warned <- FALSE)
+  assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env)
+  on.exit(assign("parglm_hint_warned", FALSE, envir = SEQTaRget:::.pkg_env))
   set.seed(1)
   X <- cbind(1, matrix(rnorm(10000 * 11), 10000, 11))  # both thresholds met
   y <- rbinom(10000, 1, 0.3)
