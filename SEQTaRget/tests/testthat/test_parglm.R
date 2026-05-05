@@ -21,7 +21,7 @@ test_that("fit_glm with parglm returns coefficients comparable to fastglm", {
   y <- rbinom(100, 1, 0.3)
 
   m_fg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts())
-  m_pg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L))
+  m_pg <- suppressWarnings(SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L)))
 
   expect_equal(unname(coef(m_fg)), unname(coef(m_pg)), tolerance = 1e-4)
 })
@@ -33,7 +33,7 @@ test_that("fit_glm with parglm respects prior weights", {
   w <- runif(100, 0.5, 2)
 
   m_fg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), weights = w, params = SEQopts())
-  m_pg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), weights = w, params = SEQopts(glm.package = "parglm", nthreads = 1L))
+  m_pg <- suppressWarnings(SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), weights = w, params = SEQopts(glm.package = "parglm", nthreads = 1L)))
 
   expect_equal(unname(coef(m_fg)), unname(coef(m_pg)), tolerance = 1e-4)
 })
@@ -45,7 +45,7 @@ test_that("predict_model returns response-scale predictions in [0, 1] for parglm
   X <- cbind(1, matrix(rnorm(500), 100, 5))
   y <- rbinom(100, 1, 0.3)
 
-  m <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L))
+  m <- suppressWarnings(SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L)))
   pred <- SEQTaRget:::predict_model(m, X, "response")
 
   expect_equal(length(pred), 100)
@@ -58,7 +58,7 @@ test_that("predict_model parglm and fastglm give matching predictions", {
   y <- rbinom(100, 1, 0.3)
 
   m_fg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts())
-  m_pg <- SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L))
+  m_pg <- suppressWarnings(SEQTaRget:::fit_glm(X, y, family = stats::quasibinomial(), params = SEQopts(glm.package = "parglm", nthreads = 1L)))
 
   expect_equal(
     SEQTaRget:::predict_model(m_fg, X, "response"),
