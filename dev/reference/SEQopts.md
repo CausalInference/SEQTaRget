@@ -33,6 +33,7 @@ SEQopts(
   followup.max = Inf,
   followup.min = 0,
   followup.spline = FALSE,
+  followup.spline.df = 4L,
   hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -200,7 +201,18 @@ SEQopts(
 
 - followup.spline:
 
-  Logical: treat followup as a cubic spline, default is `FALSE`
+  Logical: treat followup as a natural cubic spline
+  ([`splines::ns()`](https://rdrr.io/r/splines/ns.html)), default is
+  `FALSE`
+
+- followup.spline.df:
+
+  Integer: degrees of freedom passed to
+  [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when
+  `followup.spline = TRUE`. With `df = k`, `ns()` places `k - 1`
+  interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is
+  equivalent to a linear term and is generally not what you want.
+  Default is `4` (3 interior knots).
 
 - hazard:
 

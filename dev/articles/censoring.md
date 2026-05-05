@@ -5,12 +5,14 @@ First we need to load the library before getting in to some sample use
 cases.
 
 ``` r
+
 library(SEQTaRget)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
 ``` r
+
 options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
@@ -47,6 +49,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
+
 # retrieve survival and risk data
 survival_data <- km_data(model)
 risk_data(model)
@@ -64,6 +67,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE, 
                    # tells SEQuential to build weights from the post-expanded data
@@ -96,6 +100,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -111,6 +116,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = TRUE,
@@ -147,6 +153,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -162,6 +169,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -194,6 +202,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -209,6 +218,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -245,6 +255,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A       Risk
 #>       <char> <char>      <num>
@@ -260,6 +271,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
 
 ``` r
+
 options <- SEQopts(# tell SEQuential to run hazard ratios
                    hazard = TRUE,
                    weighted = TRUE,

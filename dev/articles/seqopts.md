@@ -12,38 +12,38 @@ here in greater detail:
 
 #### General Options
 
-| Option Name             | Description                                                                             | Input Type              | Example         |
-|-------------------------|-----------------------------------------------------------------------------------------|-------------------------|-----------------|
-| `bootstrap`             | Whether bootstrapping should take place                                                 | Logical                 | `TRUE`          |
-| `bootstrap.CI`          | Defines the confidence interval after bootstrapping (should be within \[0, 1\])         | Numeric double          | `0.95`          |
-| `bootstrap.CI_method`   | Selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`) | Character               | `"se"`          |
-| `bootstrap.nboot`       | Number of bootstraps to run in addition to the full model                               | Integer                 | `100L`          |
-| `bootstrap.sample`      | Subsample of data to use when bootstrapping                                             | Numeric double \[0, 1\] | `0.8`           |
-| `compevent`             | Column name for competing event variable                                                | Character               | `"LTFU"`        |
-| `covariates`            | If provided, forces covariates for outcome models                                       | Char                    | `"X1+X2*X3+X4"` |
-| `data.return`           | Whether to return expanded data as output                                               | Logical                 | `TRUE`          |
-| `followup.class`        | Whether to expand followup values to an indicator matrix                                | Logical                 | `FALSE`         |
-| `followup.include`      | Whether to include `followup` and `followup_squared` in outcome models                  | Logical                 | `TRUE`          |
-| `followup.max`          | Maximum value of followup per trial                                                     | Numeric                 | `60`            |
-| `followup.min`          | Minimum value of followup per trial                                                     | Numeric                 | `0`             |
-| `followup.spline`       | Whether to format followup values to a spline                                           | Logical                 | `FALSE`         |
-| `hazard`                | Whether to estimate the hazard ratio                                                    | Logical                 | `FALSE`         |
-| `km.curves`             | Whether to estimate Kaplan-Meier survival curves and data                               | Logical                 | `TRUE`          |
-| `multinomial`           | Whether to expect more than 2 treatment types                                           | Logical                 | `FALSE`         |
-| `ncores`                | Number of cores to use in parallel multisession                                         | Integer                 | `8L`            |
-| `nthreads`              | Number of threads to use for **data.table** manipulations                               | Integer                 | `16L`           |
-| `parallel`              | Whether the SEQuential process should be run in parallel                                | Logical                 | `TRUE`          |
-| `seed`                  | Starting seed for random number generators                                              | Integer                 | `1636`          |
-| `selection.first_trial` | Selects only the first eligible trial in the expanded dataset                           | Logical                 | `TRUE`          |
-| `selection.prob`        | Subsample of total IDs to select                                                        | Numeric double \[0, 1\] | `0.8`           |
-| `selection.random`      | Whether to randomly select IDs with replacement to run analysis                         | Logical                 | `FALSE`         |
-| `subgroup`              | Column name for subgroup analysis                                                       | Character               | `"sex"`         |
-| `survival.max`          | Maximum value for Risk/Survival curves                                                  | Numeric double          | `60`            |
-| `treat.level`           | Treatment levels to compare                                                             | List                    | `c(0, 1)`       |
-| `trial.include`         | Whether to include `trial` and `trial_squared` in outcome models                        | Logical                 | `TRUE`          |
-| `visit`                 | Column name for visit indicator                                                         | Character               | `"visit"`       |
-| `visit.denominator`     | Visit denominator covariates to the right handside of a formula object                  | Character               | `"X1+X2"`       |
-| `visit.numerator`       | Visit numerator covariates to the right handside of a formula object                    | Character               | `"X1+X2"`       |
+| Option Name | Description | Input Type | Example |
+|----|----|----|----|
+| `bootstrap` | Whether bootstrapping should take place | Logical | `TRUE` |
+| `bootstrap.CI` | Defines the confidence interval after bootstrapping (should be within \[0, 1\]) | Numeric double | `0.95` |
+| `bootstrap.CI_method` | Selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`) | Character | `"se"` |
+| `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
+| `bootstrap.sample` | Subsample of data to use when bootstrapping | Numeric double \[0, 1\] | `0.8` |
+| `compevent` | Column name for competing event variable | Character | `"LTFU"` |
+| `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2*X3+X4"` |
+| `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
+| `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
+| `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |
+| `followup.max` | Maximum value of followup per trial | Numeric | `60` |
+| `followup.min` | Minimum value of followup per trial | Numeric | `0` |
+| `followup.spline` | Whether to format followup values to a spline | Logical | `FALSE` |
+| `hazard` | Whether to estimate the hazard ratio | Logical | `FALSE` |
+| `km.curves` | Whether to estimate Kaplan-Meier survival curves and data | Logical | `TRUE` |
+| `multinomial` | Whether to expect more than 2 treatment types | Logical | `FALSE` |
+| `ncores` | Number of cores to use in parallel multisession | Integer | `8L` |
+| `nthreads` | Number of threads to use for **data.table** manipulations | Integer | `16L` |
+| `parallel` | Whether the SEQuential process should be run in parallel | Logical | `TRUE` |
+| `seed` | Starting seed for random number generators | Integer | `1636` |
+| `selection.first_trial` | Selects only the first eligible trial in the expanded dataset | Logical | `TRUE` |
+| `selection.prob` | Subsample of total IDs to select | Numeric double \[0, 1\] | `0.8` |
+| `selection.random` | Whether to randomly select IDs with replacement to run analysis | Logical | `FALSE` |
+| `subgroup` | Column name for subgroup analysis | Character | `"sex"` |
+| `survival.max` | Maximum value for Risk/Survival curves | Numeric double | `60` |
+| `treat.level` | Treatment levels to compare | List | `c(0, 1)` |
+| `trial.include` | Whether to include `trial` and `trial_squared` in outcome models | Logical | `TRUE` |
+| `visit` | Column name for visit indicator | Character | `"visit"` |
+| `visit.denominator` | Visit denominator covariates to the right handside of a formula object | Character | `"X1+X2"` |
+| `visit.numerator` | Visit numerator covariates to the right handside of a formula object | Character | `"X1+X2"` |
 
 #### Weighting Options
 
@@ -51,21 +51,21 @@ In general these only affect analytic methods of ‘dose-response’ and
 ‘censoring’. However, providing `cense` will allow ITT to be weighted in
 the case of a censoring variable like loss-to-followup.
 
-| Option Name            | Description                                                                                      | Input Type     | Example                          |
-|------------------------|--------------------------------------------------------------------------------------------------|----------------|----------------------------------|
-| `cense`                | Column name for censoring variable                                                               | Character      | `"LTFU"`                         |
-| `cense.denominator`    | If provided, forces denominator covariates for censoring models                                  | Character      | `"A1+A2*A3+A4"`                  |
-| `cense.eligible`       | Column name for indicator column defining which rows to use for censoring model                  | Character      | `"eligible_cense"`               |
-| `cense.numerator`      | If provided, forces numerator covariates for censoring models                                    | Character      | `"Z1+Z2*Z3+Z4"`                  |
-| `denominator`          | If provided, forces denominator covariates for weight models                                     | Character      | `"C1+C2*C3+B4"`                  |
-| `numerator`            | If provided, forces numerator covariates for weight models                                       | Character      | `"B1+B2*B3+B4"`                  |
+| Option Name | Description | Input Type | Example |
+|----|----|----|----|
+| `cense` | Column name for censoring variable | Character | `"LTFU"` |
+| `cense.denominator` | If provided, forces denominator covariates for censoring models | Character | `"A1+A2*A3+A4"` |
+| `cense.eligible` | Column name for indicator column defining which rows to use for censoring model | Character | `"eligible_cense"` |
+| `cense.numerator` | If provided, forces numerator covariates for censoring models | Character | `"Z1+Z2*Z3+Z4"` |
+| `denominator` | If provided, forces denominator covariates for weight models | Character | `"C1+C2*C3+B4"` |
+| `numerator` | If provided, forces numerator covariates for weight models | Character | `"B1+B2*B3+B4"` |
 | `weight.eligible_cols` | List of column names for indicator columns defining which weights are eligible for weight models | Character list | `list("eligible1", "eligible2")` |
-| `weight.lag_condition` | Whether weights should be conditioned on treatment lag value                                     | Logical        | `TRUE`                           |
-| `weight.lower`         | Lower truncation for weight values                                                               | Numeric double | `0.0`                            |
-| `weight.p99`           | Whether to truncate weights at the 99% percentile                                                | Logical        | `TRUE`                           |
-| `weight.preexpansion`  | Whether weighting should be done on pre-expanded data                                            | Logical        | `TRUE`                           |
-| `weight.upper`         | Upper truncation for weight values                                                               | Numeric double | `1.0`                            |
-| `weighted`             | Whether the analysis should be weighted                                                          | Logical        | `TRUE`                           |
+| `weight.lag_condition` | Whether weights should be conditioned on treatment lag value | Logical | `TRUE` |
+| `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
+| `weight.p99` | Whether to truncate weights at the 99% percentile | Logical | `TRUE` |
+| `weight.preexpansion` | Whether weighting should be done on pre-expanded data | Logical | `TRUE` |
+| `weight.upper` | Upper truncation for weight values | Numeric double | `1.0` |
+| `weighted` | Whether the analysis should be weighted | Logical | `TRUE` |
 
 #### Plot Options (`km.curves = TRUE`)
 
@@ -77,33 +77,33 @@ restart. Additionally,
 will output the data used for the plot if you would like to customize it
 yourself through your preferred plotting software.
 
-| Option Name     | Description                                           | Input Type | Example                |
-|-----------------|-------------------------------------------------------|------------|------------------------|
-| `plot.colors`   | Figure colors for output plot                         | List       | `list("red", "blue")`  |
-| `plot.labels`   | Legend labels for output plot                         | List       | `list("Tx 0", "Tx 1")` |
-| `plot.subtitle` | Subtitle for plot output                              | Character  | `"My Plot Subtitle"`   |
-| `plot.title`    | Title for plot output                                 | Character  | `"My Plot Title"`      |
-| `plot.type`     | Type of output plot (`"survival"`, `"risk"`, `"inc"`) | Character  | `"survival"`           |
+| Option Name | Description | Input Type | Example |
+|----|----|----|----|
+| `plot.colors` | Figure colors for output plot | List | `list("red", "blue")` |
+| `plot.labels` | Legend labels for output plot | List | `list("Tx 0", "Tx 1")` |
+| `plot.subtitle` | Subtitle for plot output | Character | `"My Plot Subtitle"` |
+| `plot.title` | Title for plot output | Character | `"My Plot Title"` |
+| `plot.type` | Type of output plot (`"survival"`, `"risk"`, `"inc"`) | Character | `"survival"` |
 
 #### Special Cases
 
-| Option Name              | Description                                                      | Input Type | Example                      |
-|--------------------------|------------------------------------------------------------------|------------|------------------------------|
-| `deviation`              | Create switch based on deviation from column                     | Logical    | `TRUE`                       |
-| `deviation.col`          | Column name for deviation                                        | Character  | `"deviation_var"`            |
-| `deviation.conditions`   | RHS evaluations of the same length as `treat.levels`             | List       | `list(">3", "==1")`          |
-| `deviation.excused`      | Whether deviations should be excused by `deviation.excused_cols` | Logical    | `TRUE`                       |
-| `deviation.excused_cols` | Excused columns for deviation switches                           | List       | `list("excuse1", "excuse2")` |
-| `excused`                | When censoring, whether there is an excused condition            | Logical    | `TRUE`                       |
-| `excused.cols`           | List of column names for treatment switch excuses                | List       | `list("excuse1", "excuse2")` |
+| Option Name | Description | Input Type | Example |
+|----|----|----|----|
+| `deviation` | Create switch based on deviation from column | Logical | `TRUE` |
+| `deviation.col` | Column name for deviation | Character | `"deviation_var"` |
+| `deviation.conditions` | RHS evaluations of the same length as `treat.levels` | List | `list(">3", "==1")` |
+| `deviation.excused` | Whether deviations should be excused by `deviation.excused_cols` | Logical | `TRUE` |
+| `deviation.excused_cols` | Excused columns for deviation switches | List | `list("excuse1", "excuse2")` |
+| `excused` | When censoring, whether there is an excused condition | Logical | `TRUE` |
+| `excused.cols` | List of column names for treatment switch excuses | List | `list("excuse1", "excuse2")` |
 
 #### Internal Options
 
 These are internal options that change output name of covariates or the
 decomposition method when estimating coefficients.
 
-| Option Name          | Description                         | Input Type | Example  |
-|----------------------|-------------------------------------|------------|----------|
-| `fastglm.method`     | Method for decomposition by fastglm | Integer    | `3L`     |
-| `indicator.baseline` | Identifier for baseline variables   | Char       | `"_bas"` |
-| `indicator.squared`  | Identifier for squared variables    | Char       | `"_sq"`  |
+| Option Name | Description | Input Type | Example |
+|----|----|----|----|
+| `fastglm.method` | Method for decomposition by fastglm | Integer | `3L` |
+| `indicator.baseline` | Identifier for baseline variables | Char | `"_bas"` |
+| `indicator.squared` | Identifier for squared variables | Char | `"_sq"` |

@@ -28,6 +28,7 @@ which affect them, but for simplicity let’s start with an
 intention-to-treat analysis with 20 bootstrap samples.
 
 ``` r
+
 library(SEQTaRget)
 
 options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
@@ -47,6 +48,7 @@ Here you will give your options, data, and data-level information. We
 provide some small simulated datasets to test on.
 
 ``` r
+
 data <- SEQdata
 model <- SEQuential(data, id.col = "ID", 
                           time.col = "time", 
@@ -79,6 +81,7 @@ its main function in an S4 class. We provide a few different methods to
 handle obtaining your results.
 
 ``` r
+
 outcome(model)     # Returns a list of only the outcome models 
 #> $`1`
 #> $`1`[[1]]
@@ -402,6 +405,7 @@ km_curve(model)    # Prints the survival curve
 group.](SEQuential_files/figure-html/outcome-1.png)
 
 ``` r
+
 risk_data(model)
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>

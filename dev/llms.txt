@@ -14,6 +14,7 @@ potential selection bias
 You can install the release version of SEQTaRget from CRAN with:
 
 ``` r
+
 install.packages("SEQTaRget")
 ```
 
@@ -21,6 +22,7 @@ You can install the development version of SEQTaRget from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 install.packages("remotes")
 remotes::install_github("CausalInference/SEQTaRget", subdir = "SEQTaRget")
 ```
@@ -34,6 +36,7 @@ constructor `SEQopts` and then feeding that into `SEQuential`.
 rough) estimated time for analysis.
 
 ``` r
+
 library(SEQTaRget)
 data <- SEQdata
 

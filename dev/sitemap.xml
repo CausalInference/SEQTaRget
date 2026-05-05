@@ -10,6 +10,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/authors.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/index.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/news/index.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQTaRget-package.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQ_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQdata.LTFU.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQdata.html</loc></url>
@@ -22,6 +23,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQparams-class.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/SEQweights-class.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/bake_followup_spline.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/check_separation.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/clean_fastglm.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/compevent.html</loc></url>
@@ -33,7 +35,8 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/denominator.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/diagnostics.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/dot-coef_table.html</loc></url>
-<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/format.time.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/format_time.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/formula_vars.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/hazard_ratio.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/index.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/init_formula_cache.html</loc></url>

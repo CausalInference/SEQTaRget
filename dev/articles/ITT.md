@@ -4,12 +4,14 @@ Here, we’ll go over some examples of using ITT. First we need to load
 the library before getting in to some sample use cases.
 
 ``` r
+
 library(SEQTaRget)
 ```
 
 ## ITT With 5 bootstrap samples
 
 ``` r
+
 options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
@@ -44,6 +46,7 @@ km_curve(model, plot.type = "risk")        # retrieve risk plot
 ![](ITT_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
+
 risk_data(model)
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
@@ -63,6 +66,7 @@ risk_comparison(model)
 ## ITT with 5 bootstrap samples and losses-to-followup
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,
@@ -99,6 +103,7 @@ km_curve(model, plot.type = "risk")
 ![](ITT_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
+
 risk_data(model)
 #>    Method      A       Risk 95% LCI    95% UCI         SE
 #>    <char> <char>      <num>   <num>      <num>      <num>
@@ -118,6 +123,7 @@ risk_comparison(model)
 ## ITT with 5 bootstrap samples and competing events
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,
@@ -150,6 +156,7 @@ km_curve(model, plot.type = "risk")
 ![](ITT_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 risk_data(model)
 #>    Method      A       Risk 95% LCI    95% UCI         SE
 #>    <char> <char>      <num>   <num>      <num>      <num>
@@ -169,6 +176,7 @@ risk_comparison(model)
 ## ITT hazard ratio with 5 bootstrap samples and competing events
 
 ``` r
+
 options <- SEQopts(# km.curves must be set to FALSE to turn on hazard 
                    # ratio creation
                    km.curves = FALSE,
@@ -205,6 +213,7 @@ hazard_ratio(model)
 ## ITT with 5 bootstrap samples and competing events in subgroups defined by sex
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
                    bootstrap.nboot = 5,     
@@ -245,6 +254,7 @@ km_curve(model, plot.type = "risk")
 ![](ITT_files/figure-html/unnamed-chunk-6-2.png)
 
 ``` r
+
 risk_data(model)
 #> $sex_0
 #>    Method      A       Risk 95% LCI   95% UCI         SE

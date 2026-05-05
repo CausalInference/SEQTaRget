@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,9 @@
 <li>Fix off-by-one labeling in survival output so that <code>followup = k</code> correctly represents survival after <code>k</code> intervals, adding a row at <code>followup = survival.max + 1</code> for the final interval’s estimate.</li>
 <li>Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with <code>outcome=0</code> rows from subsequent periods by truncating each trial at the first event row</li>
 <li>Add <code>expand.only</code> option to <code><a href="../reference/SEQopts.html">SEQopts()</a></code>. When <code>TRUE</code>, <code><a href="../reference/SEQuential.html">SEQuential()</a></code> returns the expanded <code>data.table</code> directly and skips the analysis steps, for users who want to inspect or store the expanded dataset on its own.</li>
+<li>Fix <code>followup.spline = TRUE</code> so the basis is genuinely non-linear. Splines are now built into the model formula via <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> instead of being applied as a single-column transform of <code>followup</code>, and the new <code>followup.spline.df</code> option (default <code>4</code>) controls the number of basis functions. The treatment-by-followup interaction now uses the same spline basis. Knots are baked from the full expanded <code>followup</code> once at fit time so the basis is identical at fit and prediction time across bootstraps and survival grids. Internally, formula column extraction now uses <code><a href="https://rdrr.io/r/base/allnames.html" class="external-link">all.vars()</a></code>, so user-supplied covariates may include <code>ns()</code>, <code>bs()</code>, <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>, <code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor()</a></code>, <code><a href="https://rdrr.io/r/stats/poly.html" class="external-link">poly()</a></code> etc. without breaking expansion.</li>
+<li>Rename <code>format.time()</code> to <code><a href="../reference/format_time.html">format_time()</a></code> because it wasn’t an S3 method and hence was causing roxygen2 to write incorrect information in its helpfile.</li>
+<li>Add package level helpfile and bump roxygen2 to 8.0.0.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.1" id="seqtarget-v141">SEQTaRget v1.4.1<a class="anchor" aria-label="anchor" href="#seqtarget-v141"></a></h2><p class="text-muted">CRAN release: 2026-03-31</p>
