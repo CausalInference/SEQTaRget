@@ -26,6 +26,9 @@ fit_glm <- function(X, y, family, weights = NULL, params) {
       fastglm(X, y, family = family, weights = weights, method = params@fastglm.method)
     }
   } else {
+    # parglm does not support quasi-likelihood families; substitute the
+    # equivalent standard family (coefficients are identical, only dispersion differs)
+    if (identical(family$family, "quasibinomial")) family <- binomial(link = family$link)
     ctrl <- if (is.null(params@parglm.control)) parglm.control(method = "FAST") else params@parglm.control
     if (is.null(weights)) {
       parglm.fit(X, y, family = family, nthreads = params@nthreads, control = ctrl)
