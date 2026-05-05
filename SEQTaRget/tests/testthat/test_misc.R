@@ -121,11 +121,11 @@ test_that("expand.only = TRUE returns expanded data.table and matches data.retur
   # return the expanded data.table directly. The contents should match the DT slot
   # from a full run with data.return = TRUE.
   data <- copy(SEQdata)
-  expanded <- SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
-                         list("N", "L", "P"), list("sex"),
-                         method = "ITT",
-                         options = SEQopts(expand.only = TRUE),
-                         verbose = FALSE)
+  expanded <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                          list("N", "L", "P"), list("sex"),
+                                          method = "ITT",
+                                          options = SEQopts(expand.only = TRUE),
+                                          verbose = FALSE))
   expect_s3_class(expanded, "data.table")
   expect_true(nrow(expanded) > 0L)
   expect_true(all(c("ID", "trial", "period", "followup", "outcome") %in% names(expanded)))
