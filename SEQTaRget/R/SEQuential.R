@@ -111,9 +111,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   needed <- needed[!is.na(needed)]
   
   if (length(colnames(data)) > length(needed)) {
-    if (verbose) cat("Non-required columns provided, pruning for efficiency\n")
+    if (verbose) cat("\nNon-required columns provided, pruning for efficiency\n")
     data <- data[, needed, with = FALSE]
-    if (verbose) cat("Pruned\n") else warning("Non-required columns provided and pruned for efficiency\n")
+    if (verbose) cat("Pruned\n") else warning("\nNon-required columns provided and pruned for efficiency\n")
   }
   
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
