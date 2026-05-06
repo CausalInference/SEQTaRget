@@ -82,9 +82,9 @@ test_that("SEQuential parglm outcome coefficients match fastglm within tolerance
   data_fg <- data.table::copy(SEQdata)
   data_pg <- data.table::copy(SEQdata)
 
-  m_fg <- SEQuential(data_fg, "ID", "time", "eligible", "tx_init", "outcome",
-                     list("N", "L", "P"), list("sex"),
-                     method = "ITT", options = SEQopts(glm.package = "fastglm"))
+  m_fg <- suppressWarnings(SEQuential(data_fg, "ID", "time", "eligible", "tx_init", "outcome",
+                                      list("N", "L", "P"), list("sex"),
+                                      method = "ITT", options = SEQopts(glm.package = "fastglm")))
   m_pg <- SEQuential(data_pg, "ID", "time", "eligible", "tx_init", "outcome",
                      list("N", "L", "P"), list("sex"),
                      method = "ITT", options = SEQopts(glm.package = "parglm", nthreads = 1L))
@@ -115,6 +115,55 @@ test_that("SEQuential parglm accepts custom parglm.control", {
                       method = "ITT",
                       options = SEQopts(glm.package = "parglm", parglm.control = ctrl))
   expect_s4_class(model, "SEQoutput")
+})
+
+# ── Spline tests ──────────────────────────────────────────────────────────────
+
+test_that("SEQuential parglm works with followup.spline = TRUE", {
+  data <- data.table::copy(SEQdata)
+  model <- suppressWarnings(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+               list("N", "L", "P"), list("sex"),
+               method = "ITT",
+               options = SEQopts(glm.package = "parglm",
+                                 followup.spline = TRUE,
+                                 followup.spline.df = 4L,
+                                 followup.include = FALSE),
+               verbose = FALSE)
+  )
+  expect_s4_class(model, "SEQoutput")
+  coef_names <- names(model@outcome.model[[1]][[1]]$coefficients)
+  expect_true(any(grepl("^ns\\(followup,", coef_names)))
+})
+
+test_that("parglm spline coefficients match fastglm within tolerance", {
+  data_fg <- data.table::copy(SEQdata)
+  data_pg <- data.table::copy(SEQdata)
+
+  opts_base <- list("ID", "time", "eligible", "tx_init", "outcome",
+                    list("N", "L", "P"), list("sex"),
+                    method = "ITT", verbose = FALSE)
+
+  m_fg <- suppressWarnings(
+    do.call(SEQuential, c(list(data_fg), opts_base,
+                          list(options = SEQopts(glm.package = "fastglm",
+                                                 followup.spline = TRUE,
+                                                 followup.spline.df = 4L,
+                                                 followup.include = FALSE))))
+  )
+  m_pg <- suppressWarnings(
+    do.call(SEQuential, c(list(data_pg), opts_base,
+                          list(options = SEQopts(glm.package = "parglm",
+                                                 followup.spline = TRUE,
+                                                 followup.spline.df = 4L,
+                                                 followup.include = FALSE))))
+  )
+
+  expect_equal(
+    unname(coef(m_fg@outcome.model[[1]][[1]])),
+    unname(coef(m_pg@outcome.model[[1]][[1]])),
+    tolerance = 1e-4
+  )
 })
 
 # ── parglm hint warning ────────────────────────────────────────────────────────
