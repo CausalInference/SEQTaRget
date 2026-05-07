@@ -60,9 +60,9 @@ internal.analysis <- function(params) {
     followup <- NULL
     isExcused <- NULL
 
-    handler <- function(DT, data, params) {
+    handler <- function(DT, data, params, start = NULL) {
       if (!params@weighted) {
-        model <- internal.model(DT, params)
+        model <- internal.model(DT, params, start = start)
         WDT <- data.table()
       } else if (params@weighted) {
         WT <- internal.weights(DT, data, params, formula_cache)
@@ -144,7 +144,7 @@ internal.analysis <- function(params) {
           params@weight.lower <- stats$p01
           params@weight.upper <- stats$p99
         }
-        model <- internal.model(WDT, params)
+        model <- internal.model(WDT, params, start = start)
       }
       if (!params@data.return) WDT <- data.table()
       return(list(
@@ -201,13 +201,14 @@ internal.analysis <- function(params) {
     bootstrap <- if (params@bootstrap) {
       params_boot <- params
       params_boot@glm.package <- "fastglm"
+      boot_start <- lapply(full$model, function(sg) coef(sg$model))
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
         on.exit(setDTthreads(old_threads), add = TRUE)
         future_lapply(seq_len(params@bootstrap.nboot), function(x) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params_boot)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
@@ -216,7 +217,7 @@ internal.analysis <- function(params) {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
           set.seed(params@seed + x)
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params_boot)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)

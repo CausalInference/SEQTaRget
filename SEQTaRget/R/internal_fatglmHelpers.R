@@ -11,7 +11,8 @@
 #' @importFrom parglm parglm.fit parglm.control
 #' @importFrom stats binomial
 #' @keywords internal
-fit_glm <- function(X, y, family, weights = NULL, params) {
+fit_glm <- function(X, y, family, weights = NULL, params, start = NULL) {
+  if (!is.null(start) && length(start) != ncol(X)) start <- NULL
   if (params@glm.package == "fastglm") {
     if (!.pkg_env$parglm_hint_warned && (nrow(X) >= 10000L || ncol(X) > 10L)) {
       .pkg_env$parglm_hint_warned <- TRUE
@@ -22,9 +23,9 @@ fit_glm <- function(X, y, family, weights = NULL, params) {
       )
     }
     if (is.null(weights)) {
-      fastglm(X, y, family = family, method = params@fastglm.method)
+      fastglm(X, y, family = family, method = params@fastglm.method, start = start)
     } else {
-      fastglm(X, y, family = family, weights = weights, method = params@fastglm.method)
+      fastglm(X, y, family = family, weights = weights, method = params@fastglm.method, start = start)
     }
   } else {
     # parglm does not support quasi-likelihood families; substitute the
@@ -33,9 +34,9 @@ fit_glm <- function(X, y, family, weights = NULL, params) {
     ctrl <- if (is.null(params@parglm.control)) parglm.control(method = "FAST") else params@parglm.control
     ctrl$nthreads <- params@nthreads
     if (is.null(weights)) {
-      parglm.fit(X, y, family = family, control = ctrl)
+      parglm.fit(X, y, family = family, control = ctrl, start = start)
     } else {
-      parglm.fit(X, y, family = family, weights = weights, control = ctrl)
+      parglm.fit(X, y, family = family, weights = weights, control = ctrl, start = start)
     }
   }
 }
