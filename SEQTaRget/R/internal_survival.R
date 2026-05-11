@@ -47,10 +47,6 @@ internal.survival <- function(params, outcome) {
         pred_all[, `:=`(followup = rep(fup_seq, times = n_base),
                         row_id = rep(seq_len(n_base), each = n_fup))]
         pred_all[, (fup_sq_col) := as.numeric(followup^2)]
-        if (params@followup.class) {
-          fup_levels <- 0L:max(params@DT$followup, na.rm = TRUE)
-          pred_all[, followup := factor(followup, levels = fup_levels)]
-        }
         pred_all[, (tx_bas) := as.character(params@treat.level[[i]])]
 
         if (params@method == "dose-response" && i == 1) {
