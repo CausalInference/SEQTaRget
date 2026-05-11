@@ -23,7 +23,7 @@
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
 #' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is `2L`
 #' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`
-#' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`
+#' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`. If you encounter a `chol(): decomposition failed` error (e.g. with near-singular model matrices on large datasets), pass `parglm.control = parglm::parglm.control(method = "LAPACK")` to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
