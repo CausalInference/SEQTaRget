@@ -116,7 +116,7 @@ SEQopts(
 
 \item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}}
 
-\item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}}
+\item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
 
 \item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 
