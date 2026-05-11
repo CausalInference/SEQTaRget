@@ -100,6 +100,15 @@ test_that("ITT - Followup Class", {
   expect_s4_class(model, "SEQoutput")
 })
 
+test_that("followup.class + km.curves produces survival curves without predict mismatch", {
+  data <- copy(SEQdata)[time <= 5, ]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(followup.class = TRUE, followup.include = FALSE, km.curves = TRUE)))
+  expect_s4_class(model, "SEQoutput")
+  expect_true(nrow(model@survival.data[[1]]) > 0)
+})
+
 test_that("ITT - Followup Spline", {
   data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),

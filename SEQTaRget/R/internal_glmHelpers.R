@@ -56,7 +56,8 @@ predict_model <- function(model, X, type = "response") {
 #'
 #' @keywords internal
 
-inline.pred <- function(model, newdata, params, type, case = "default", multi = FALSE, target = NULL, cache = NULL) {
+inline.pred <- function(model, newdata, params, type = NULL, case = "default", multi = FALSE, target = NULL, cache = NULL) {
+  is_outcome_pred <- case == "surv" || identical(type, "outcome")
   # Use cache if provided, otherwise fall back to parsing
   if (!is.null(cache)) {
     cached <- switch(
@@ -79,9 +80,11 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
       ),
       "surv" = cache$covariates
     )
-    
+
     if (!is.null(cached)) {
-      X <- fast_model_matrix(cached$formula, newdata, cached$cols, is_simple = cached$is_simple)
+      factor_cols <- if (params@followup.class && is_outcome_pred && "followup" %in% cached$cols)
+        list(followup = 0L:max(params@DT$followup, na.rm = TRUE)) else NULL
+      X <- fast_model_matrix(cached$formula, newdata, cached$cols, is_simple = cached$is_simple, factor_cols = factor_cols)
       pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
       return(pred)
     }
@@ -109,8 +112,12 @@ inline.pred <- function(model, newdata, params, type, case = "default", multi = 
     "surv" = params@covariates
   )
   cols <- formula_vars(covs)
-  X <- model.matrix(as.formula(paste0("~", covs)),
-                    data = newdata[, cols, with = FALSE])
+  pred_data <- newdata[, cols, with = FALSE]
+  if (params@followup.class && is_outcome_pred && "followup" %in% cols) {
+    fup_levels <- 0L:max(params@DT$followup, na.rm = TRUE)
+    pred_data[, followup := factor(followup, levels = fup_levels)]
+  }
+  X <- model.matrix(as.formula(paste0("~", covs)), data = pred_data)
 
   pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
@@ -206,8 +213,15 @@ prepare.data_cached <- function(weight, params, type, model, case, cache) {
 }
 
 # Fast model matrix builder - avoids overhead for simple cases
-fast_model_matrix <- function(formula, data, cols, is_simple = FALSE) {
+fast_model_matrix <- function(formula, data, cols, is_simple = FALSE, factor_cols = NULL) {
   subset_data <- data[, ..cols]
+
+  if (!is.null(factor_cols)) {
+    for (nm in names(factor_cols)) {
+      if (nm %in% names(subset_data) && !is.factor(subset_data[[nm]]))
+        set(subset_data, j = nm, value = factor(subset_data[[nm]], levels = factor_cols[[nm]]))
+    }
+  }
 
   # Fast path for simple additive numeric-only models: no setDF needed
   if (isTRUE(is_simple) && all(vapply(subset_data, is.numeric, logical(1)))) {

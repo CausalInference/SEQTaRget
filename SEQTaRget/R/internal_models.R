@@ -8,7 +8,10 @@
 internal.model <- function(data, params, start = NULL) {
   data <- data[!is.na(get(params@outcome)), ]
 
-  if (params@followup.class) data <- data[, "followup" := as.factor(get("followup"))]
+  if (params@followup.class) {
+    fup_levels <- 0L:max(params@DT$followup, na.rm = TRUE)
+    data <- data[, "followup" := factor(get("followup"), levels = fup_levels)]
+  }
 
   handler <- function(data, params, start = NULL) {
     X <- model.matrix(as.formula(paste0("~", params@covariates)), data)
