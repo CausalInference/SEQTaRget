@@ -160,9 +160,17 @@ internal.analysis <- function(params) {
     stopifnot(identical(nrow(params@DT), original_nrow))
     stopifnot(identical(names(params@DT), original_names))
 
-    if (params@bootstrap & params@verbose) cat("\nBootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
+    if (params@bootstrap & params@verbose) {
+      n_sample <- round(params@bootstrap.sample * lnID)
+      n_obs_sample <- round(params@bootstrap.sample * nrow(params@DT))
+      cat("\nBootstrapping with", paste0(params@bootstrap.sample * 100, "% of"),
+          format(lnID, big.mark = ","), "subjects",
+          paste0("(", format(n_sample, big.mark = ","), " subjects, ~",
+                 format(n_obs_sample, big.mark = ","), " observations per resample)"),
+          params@bootstrap.nboot, "times\n")
+    }
 
     if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
     if (!identical(key(params@data), params@id)) setkeyv(params@data, params@id)
