@@ -165,12 +165,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   data <- data[data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1]
   
   # Expansion ==================================================
+  if (params@verbose) cat("\nOriginal dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   if (params@verbose) cat("\nExpanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
   if (params@verbose) cat("\nExpansion Successful\n")
+  if (params@verbose) cat("\nFinal analysis dataset:", format(nrow(params@DT), big.mark = ","), "observations,", ncol(params@DT), "variables\n")
 
   # Early return if user only wants the expanded dataset =======
   if (params@expand.only) {

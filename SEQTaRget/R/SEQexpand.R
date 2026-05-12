@@ -51,6 +51,8 @@ SEQexpand <- function(params) {
                      ][followup <= params@followup.max,
                        ][followup >= params@followup.min, ]
 
+    n_expanded <- nrow(data)
+
     if (params@selection.random && !params@selection.first_trial) {
       set.seed(params@seed)
       eligible_starts <- DT[get(params@eligible) == 1,
@@ -166,5 +168,12 @@ SEQexpand <- function(params) {
                    ][, "trial.first" := NULL]
     }
     
+  if (params@verbose) {
+    n_cols <- ncol(out)
+    cat("\nExpanded dataset:", format(n_expanded, big.mark = ","), "observations,", n_cols, "variables\n")
+    if (params@selection.random && !params@selection.first_trial)
+      cat("\nSampled expanded dataset:", format(nrow(out), big.mark = ","), "observations,", n_cols, "variables\n")
+  }
+
   return(out)
 }
