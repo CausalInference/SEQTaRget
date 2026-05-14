@@ -61,7 +61,7 @@
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
 #' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`
-#' @param weighted Logical: whether or not to preform weighted analysis, default is `FALSE`
+#' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
 #' @importFrom stats runif
