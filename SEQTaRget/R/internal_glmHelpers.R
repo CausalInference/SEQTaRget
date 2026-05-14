@@ -205,10 +205,9 @@ prepare.data_cached <- function(weight, params, type, model, case, cache) {
   }
   
   # ----- Build design matrix -----
-  
-  # Fast path: if formula has no interactions/special terms, build directly
-  # Check if simple additive (no :, no I(), no poly(), etc.)
-  X <- fast_model_matrix(formula, weight, cols, is_simple = cached$is_simple)
+  factor_cols <- if (params@followup.class && case == "surv" && "followup" %in% cols)
+    list(followup = 0L:max(params@DT$followup, na.rm = TRUE)) else NULL
+  X <- fast_model_matrix(formula, weight, cols, is_simple = cached$is_simple, factor_cols = factor_cols)
   return(list(y = y, X = X))
 }
 
