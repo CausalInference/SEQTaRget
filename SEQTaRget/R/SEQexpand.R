@@ -41,7 +41,6 @@ SEQexpand <- function(params) {
     vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
     vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
-    vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
     data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
                ][, trial := rowid(get(params@id)) - 1
