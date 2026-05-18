@@ -174,7 +174,9 @@ SEQexpand <- function(params) {
   if (params@verbose) {
     n_cols <- ncol(out)
     cat("\nPre-filter expansion:", format(n_expanded, big.mark = ","), "observations\n")
-    cat("\nExpanded dataset:", format(n_filtered, big.mark = ","), "observations,", n_cols, "variables\n")
+    expanded_label <- if (params@selection.random && !params@selection.first_trial)
+      "Expanded dataset (post-selection.random)" else "Expanded dataset"
+    cat("\n", expanded_label, ": ", format(n_filtered, big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
     if (params@selection.random && !params@selection.first_trial)
       cat("\nSampled expanded dataset:", format(nrow(out), big.mark = ","), "observations,", n_cols, "variables\n")
   }
