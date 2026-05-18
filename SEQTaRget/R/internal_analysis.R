@@ -68,7 +68,7 @@ internal.analysis <- function(params) {
         WT <- internal.weights(DT, data, params, formula_cache)
 
         if (params@weight.preexpansion) {
-          if (params@excused | params@deviation.excused) {
+          if (params@excused || params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, denominator := 1
@@ -94,7 +94,7 @@ internal.analysis <- function(params) {
                                 ][, c("wt", "trial.first") := NULL]
           }
         } else {
-          if (params@excused | params@deviation.excused) {
+          if (params@excused || params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)
@@ -162,7 +162,7 @@ internal.analysis <- function(params) {
 
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
-    if (params@bootstrap & params@verbose) {
+    if (params@bootstrap && params@verbose) {
       n_sample <- round(params@bootstrap.sample * lnID)
       n_obs_sample <- round(params@bootstrap.sample * nrow(params@DT))
       cat("\nBootstrapping with", paste0(params@bootstrap.sample * 100, "% of"),
