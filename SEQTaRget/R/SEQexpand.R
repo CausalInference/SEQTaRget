@@ -7,7 +7,6 @@
 #' @keywords internal
 SEQexpand <- function(params) {
   # Variable pre-definition ===================================
-    sum_elig <- NULL
     followup <- NULL
     dose <- NULL
     trial <- NULL
