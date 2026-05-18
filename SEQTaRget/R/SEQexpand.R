@@ -97,6 +97,11 @@ SEQexpand <- function(params) {
     out <- out[out[, .I[seq_len(match(1L, get(params@outcome), nomatch = .N))],
                    by = c(params@id, "trial")]$V1]
 
+    # Row count after eligibility filtering and outcome truncation, before any
+    # method-specific reduction (dose-response, PP censoring, first-trial selection).
+    # Matches the stage at which pySEQTarget reports "Expanded dataset".
+    n_filtered <- nrow(out)
+
     if (params@method == "dose-response") {
       out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
         dose_sq = dose^2,
@@ -168,7 +173,8 @@ SEQexpand <- function(params) {
     
   if (params@verbose) {
     n_cols <- ncol(out)
-    cat("\nExpanded dataset:", format(n_expanded, big.mark = ","), "observations,", n_cols, "variables\n")
+    cat("\nPre-filter expansion:", format(n_expanded, big.mark = ","), "observations\n")
+    cat("\nExpanded dataset:", format(n_filtered, big.mark = ","), "observations,", n_cols, "variables\n")
     if (params@selection.random && !params@selection.first_trial)
       cat("\nSampled expanded dataset:", format(nrow(out), big.mark = ","), "observations,", n_cols, "variables\n")
   }
