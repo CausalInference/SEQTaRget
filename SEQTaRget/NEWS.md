@@ -1,4 +1,4 @@
-# SEQTaRget (development version)
+# SEQTaRget v1.4.2
 
 * Remove mention of units from time in docs.
 * Improve memory usage in the bootstrapping.
@@ -8,6 +8,10 @@
 * Fix `followup.spline = TRUE` so the basis is genuinely non-linear. Splines are now built into the model formula via `splines::ns()` instead of being applied as a single-column transform of `followup`, and the new `followup.spline.df` option (default `4`) controls the number of basis functions. The treatment-by-followup interaction now uses the same spline basis. Knots are baked from the full expanded `followup` once at fit time so the basis is identical at fit and prediction time across bootstraps and survival grids. Internally, formula column extraction now uses `all.vars()`, so user-supplied covariates may include `ns()`, `bs()`, `I()`, `factor()`, `poly()` etc. without breaking expansion.
 * Rename `format.time()` to `format_time()` because it wasn't an S3 method and hence was causing roxygen2 to write incorrect information in its helpfile.
 * Add package level helpfile and bump roxygen2 to 8.0.0.
+* Add parglm as an alternative GLM fitting backend.
+* Add warm starts for bootstrap GLM fits.
+* Add dataset size summary to verbose output.
+* Fix `selection.random` not being propagated from `SEQopts()` to internal parameters.
 
 # SEQTaRget v1.4.1
 
@@ -70,7 +74,7 @@
 
 # SEQTaRget v1.3.5
 
-- The `hazard_ratio()` function now correctly desscribes the estimate as "Hazard ratio"
+- The `hazard_ratio()` function now correctly describes the estimate as "Hazard ratio"
 - The bootstrapping now collects the log hazard ratio instead of the hazard ratio because the log hazard ratio has better normality properties.
 - The `covariates()` function now returns more nicely formatted output (with spaces around `~` and `+` symbols in the model formulae)
 

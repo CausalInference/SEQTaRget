@@ -6,7 +6,6 @@
 #' @param cache cache
 #' @import data.table
 #' @importFrom stats quasibinomial coef predict qnorm quantile sd
-#' @importFrom fastglm fastglm
 #' @keywords internal
 internal.weights <- function(DT, data, params, cache) {
   # Variable pre-definition ===================================
@@ -39,7 +38,7 @@ internal.weights <- function(DT, data, params, cache) {
       rm(baseline.lag)
       weight[, paste0(params@time, params@indicator.squared) := get(params@time)^2]
 
-      if (params@excused | params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
+      if (params@excused || params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
     } else {
       weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
@@ -56,9 +55,9 @@ internal.weights <- function(DT, data, params, cache) {
         cense.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "LTFU", cache)
         cense.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "LTFU", cache)
         
-        cense.numerator <- fastglm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.numerator <- fit_glm(cense.numerator.data$X, cense.numerator.data$y, family = quasibinomial(), params = params)
         check_separation(cense.numerator, label = "censoring numerator")
-        cense.denominator <- fastglm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        cense.denominator <- fit_glm(cense.denominator.data$X, cense.denominator.data$y, family = quasibinomial(), params = params)
         check_separation(cense.denominator, label = "censoring denominator")
         
         rm(cense.numerator.data, cense.denominator.data)
@@ -68,9 +67,9 @@ internal.weights <- function(DT, data, params, cache) {
         visit.numerator.data <- prepare.data_cached(model.data, params, type = "numerator", model = NA, case = "visit", cache)
         visit.denominator.data <- prepare.data_cached(model.data, params, type = "denominator", model = NA, case = "visit", cache)
         
-        visit.numerator <- fastglm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.numerator <- fit_glm(visit.numerator.data$X, visit.numerator.data$y, family = quasibinomial(), params = params)
         check_separation(visit.numerator, label = "visit numerator")
-        visit.denominator <- fastglm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), method = params@fastglm.method)
+        visit.denominator <- fit_glm(visit.denominator.data$X, visit.denominator.data$y, family = quasibinomial(), params = params)
         check_separation(visit.denominator, label = "visit denominator")
         
         rm(visit.numerator.data, visit.denominator.data)
@@ -84,7 +83,7 @@ internal.weights <- function(DT, data, params, cache) {
     
     if (params@method != "ITT") {
       model.data <- weight
-      if (!params@weight.preexpansion & !(params@excused | params@deviation.excused)) model.data <- model.data[followup > 0, ]
+      if (!params@weight.preexpansion && !(params@excused || params@deviation.excused)) model.data <- model.data[followup > 0, ]
       
       # Fit models for each treatment level - combined loop to avoid redundant filtering
       for (i in seq_along(params@treat.level)) {
@@ -93,7 +92,7 @@ internal.weights <- function(DT, data, params, cache) {
         level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
 
         # Fit numerator model (skip if excused & preexpansion)
-        if (!((params@excused | params@deviation.excused) & params@weight.preexpansion)) {
+        if (!((params@excused || params@deviation.excused) && params@weight.preexpansion)) {
           n.data <- prepare.data_cached(level_data, params, type = "numerator", model = level, case = "default", cache)
           if (length(unique(n.data$y)) < 2L) {
             numerator_models[[i]] <- list(skip = TRUE)
@@ -120,7 +119,7 @@ internal.weights <- function(DT, data, params, cache) {
     if (params@method != "ITT") {
       out <- weight[, `:=`(numerator = NA_real_, denominator = NA_real_)]
       
-      if (!(params@excused | params@deviation.excused)) {
+      if (!(params@excused || params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           if (isTRUE(numerator_models[[i]]$skip) || isTRUE(denominator_models[[i]]$skip)) {
@@ -140,7 +139,7 @@ internal.weights <- function(DT, data, params, cache) {
           }
         }
       } else {
-        if (params@multinomial & !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
+        if (params@multinomial && !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
           col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
@@ -165,7 +164,7 @@ internal.weights <- function(DT, data, params, cache) {
         if (params@weight.preexpansion) {
           out[, numerator := 1]
         } else {
-          if (params@multinomial & !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
+          if (params@multinomial && !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
           for (i in seq_along(params@treat.level)) {
             level <- params@treat.level[[i]]
             col <- if (params@excused) params@excused.cols[[i]] else params@deviation.excused_cols[[i]]
@@ -201,7 +200,7 @@ internal.weights <- function(DT, data, params, cache) {
 
     weight.info <- new("SEQweights", weights = out)
     
-    if (!((params@excused | params@deviation.excused) & params@weight.preexpansion) & params@method != "ITT") {
+    if (!((params@excused || params@deviation.excused) && params@weight.preexpansion) && params@method != "ITT") {
       coef.numerator <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         coef.numerator[[i]] <- if (!isTRUE(numerator_models[[i]]$skip)) clean_fastglm(numerator_models[[i]]) else NULL

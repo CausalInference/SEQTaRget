@@ -7,7 +7,7 @@
 #' can be used to estimate observational analogs of intention-to-treat 
 #' and per-protocol effects, and can adjust for potential selection bias induced by losses-to-follow-up.
 #'
-#' @param data data.frame or data.table, will preform expansion according to arguments passed through the `options` argument
+#' @param data data.frame or data.table, will perform expansion according to arguments passed through the `options` argument
 #' @param id.col String: column name of the id column
 #' @param time.col String: column name of the time column
 #' @param eligible.col String: column name of the eligibility column
@@ -15,7 +15,7 @@
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
 #' @param fixed.cols List: column names for fixed columns
-#' @param method String: method of analysis to preform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
+#' @param method String: method of analysis to perform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
@@ -67,6 +67,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   
   setDT(data)
   setorderv(data, c(id.col, time.col))
+  if (verbose) cat("\nFull dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   time.start <- Sys.time()
 
   # Parameter Setup ==================================
@@ -111,9 +112,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   needed <- needed[!is.na(needed)]
   
   if (length(colnames(data)) > length(needed)) {
-    if (verbose) cat("Non-required columns provided, pruning for efficiency\n")
+    if (verbose) cat("\nNon-required columns provided, pruning for efficiency\n")
     data <- data[, needed, with = FALSE]
-    if (verbose) cat("Pruned\n") else warning("Non-required columns provided and pruned for efficiency\n")
+    if (verbose) cat("\nPruned\n") else warning("\nNon-required columns provided and pruned for efficiency\n")
   }
   
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
@@ -156,30 +157,32 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                                          paste(missing_levels, collapse = ", "))
   time_check <- data[, max(get(params@time)) > (.N - 1L), by = eval(params@id)]
   if (any(time_check$V1)) {
-    if (verbose) cat("Non zero-indexed time identified. Attempting Repair...\n")
+    if (verbose) cat("\nNon zero-indexed time identified. Attempting Repair...\n")
     data[, (params@time) := seq(0L, .N - 1L), by = eval(params@id)]
-    if (verbose) cat("Repaired\n") else warning("Non zero-indexed time identified, Repair attempted and succeeded\n")
+    if (verbose) cat("\nRepaired\n") else warning("\nNon zero-indexed time identified, Repair attempted and succeeded\n")
   }
   
   # If max elig has been reached, remove future rows
   data <- data[data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1]
   
   # Expansion ==================================================
-  if (params@verbose) cat("Expanding Data...\n")
+  if (params@verbose) cat("\nOriginal dataset (eligible subjects):", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
+  if (params@verbose) cat("\nExpanding Data...\n")
   if (params@multinomial) params@data[!get(params@treatment) %in% params@treat.level, eval(params@eligible) := 0]
   params@DT <- factorize(SEQexpand(params), params)
   params@data <- factorize(params@data, params)
   
-  if (params@verbose) cat("Expansion Successful\n")
+  if (params@verbose) cat("\nExpansion Successful\n")
+  if (params@verbose) cat("\nFinal analysis dataset:", format(nrow(params@DT), big.mark = ","), "observations,", ncol(params@DT), "variables\n")
 
   # Early return if user only wants the expanded dataset =======
   if (params@expand.only) {
-    if (params@verbose) cat("expand.only = TRUE: returning expanded data.table and skipping analysis\n")
+    if (params@verbose) cat("\nexpand.only = TRUE: returning expanded data.table and skipping analysis\n")
     plan("sequential")
     return(params@DT)
   }
 
-  if (params@verbose) cat("Moving forward with", params@method, "analysis\n")
+  if (params@verbose) cat("\nMoving forward with", params@method, "analysis\n")
 
   # Bake fixed knots for followup spline so the basis is identical at
   # fit and prediction time across bootstraps and survival prediction grids.
@@ -214,7 +217,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
   if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
   if (!params@hazard) {
-    if (params@verbose) cat(method, "model created successfully\n")
+    if (params@verbose) cat("\n", method, " model created successfully\n", sep = "")
 
     # Survival Information =======================================
     for (i in seq_along(subgroups)) {
@@ -222,7 +225,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- lapply(analytic, function(x) x$model[[i]])
         
       if (params@km.curves) {
-        if (is.na(params@subgroup) && params@verbose) cat("Creating Survival curves\n") else cat("Creating Survival Curves for", label, "\n")
+        if (is.na(params@subgroup) && params@verbose) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
@@ -263,7 +266,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)
 
-  if (params@verbose) cat("Completed\n")
+  if (params@verbose) cat("\nCompleted\n")
   plan("sequential")
   return(out)
 }

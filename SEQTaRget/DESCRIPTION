@@ -1,7 +1,7 @@
 Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
-Version: 1.4.1.9003
+Version: 1.4.2
 Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
@@ -40,11 +40,12 @@ Description: Implementation of sequential trial emulation for the analysis of ob
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: 
+Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Imports:
     data.table,
+    parglm,
     doFuture,
     doRNG,
     fastglm,

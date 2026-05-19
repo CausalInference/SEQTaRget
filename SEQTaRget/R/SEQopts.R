@@ -21,7 +21,9 @@
 #' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
-#' @param fastglm.method Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is `2L`
+#' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is `2L`
+#' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) `"fastglm"` is faster; `"parglm"` may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.
+#' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`. If you encounter a `chol(): decomposition failed` error (e.g. with near-singular model matrices on large datasets), pass `parglm.control = parglm::parglm.control(method = "LAPACK")` to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
@@ -59,7 +61,7 @@
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
 #' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`
-#' @param weighted Logical: whether or not to preform weighted analysis, default is `FALSE`
+#' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
 #' @importFrom stats runif
@@ -69,7 +71,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
-                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
+                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L, glm.package = "fastglm", parglm.control = NULL,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE, followup.spline.df = 4L,
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
@@ -136,6 +138,13 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
   fastglm.method <- as.integer(fastglm.method)
   if (!fastglm.method %in% 1L:4L) stop("'fastglm.method' must be one of 1 (QR), 2 (Cholesky), 3 (LDLT), or 4 (QR.FPIV)")
+
+  glm.package <- as.character(glm.package)
+  if (!glm.package %in% c("fastglm", "parglm"))
+    stop("'glm.package' must be one of \"fastglm\" or \"parglm\"")
+
+  if (!is.null(parglm.control) && !is.list(parglm.control))
+    stop("'parglm.control' must be NULL or an object from parglm::parglm.control()")
 
   followup.spline.df <- as.integer(followup.spline.df)
   if (length(followup.spline.df) != 1L || is.na(followup.spline.df) || followup.spline.df < 1L)
@@ -209,6 +218,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       indicator.baseline = indicator.baseline,
       indicator.squared = indicator.squared,
       fastglm.method = fastglm.method,
+      glm.package = glm.package,
+      parglm.control = parglm.control,
       treat.level = treat.level,
       multinomial = multinomial,
       hazard = hazard,

@@ -19,7 +19,7 @@ SEQestimate(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, if not already expanded with \code{\link[=SEQexpand]{SEQexpand()}}, will preform expansion according to arguments passed to either \code{params} or \code{...}}
+\item{data}{data.frame or data.table, if not already expanded with \code{\link[=SEQexpand]{SEQexpand()}}, will perform expansion according to arguments passed to either \code{params} or \code{...}}
 
 \item{id.col}{String: column name of the id column}
 
@@ -35,7 +35,7 @@ SEQestimate(
 
 \item{fixed.cols}{List: column names for fixed columns}
 
-\item{method}{String: method of analysis to preform}
+\item{method}{String: method of analysis to perform}
 
 \item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 

@@ -7,7 +7,6 @@
 #' @keywords internal
 SEQexpand <- function(params) {
   # Variable pre-definition ===================================
-    sum_elig <- NULL
     followup <- NULL
     dose <- NULL
     trial <- NULL
@@ -42,7 +41,6 @@ SEQexpand <- function(params) {
     vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
     vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
-    vars.kept <- c(vars, params@id, "trial", "period", "followup")
 
     data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
                ][, trial := rowid(get(params@id)) - 1
@@ -50,6 +48,8 @@ SEQexpand <- function(params) {
                    ][, followup := as.integer(seq_len(.N) - 1), by = c(eval(params@id), "trial")
                      ][followup <= params@followup.max,
                        ][followup >= params@followup.min, ]
+
+    n_expanded <- nrow(data)
 
     if (params@selection.random && !params@selection.first_trial) {
       set.seed(params@seed)
@@ -96,6 +96,11 @@ SEQexpand <- function(params) {
     # from subsequent periods in the original data.
     out <- out[out[, .I[seq_len(match(1L, get(params@outcome), nomatch = .N))],
                    by = c(params@id, "trial")]$V1]
+
+    # Row count after eligibility filtering and outcome truncation, before any
+    # method-specific reduction (dose-response, PP censoring, first-trial selection).
+    # Matches the stage at which pySEQTarget reports "Expanded dataset".
+    n_filtered <- nrow(out)
 
     if (params@method == "dose-response") {
       out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
@@ -166,5 +171,15 @@ SEQexpand <- function(params) {
                    ][, "trial.first" := NULL]
     }
     
+  if (params@verbose) {
+    n_cols <- ncol(out)
+    cat("\nPre-filter expansion:", format(n_expanded, big.mark = ","), "observations\n")
+    expanded_label <- if (params@selection.random && !params@selection.first_trial)
+      "Expanded dataset (post-selection.random)" else "Expanded dataset"
+    cat("\n", expanded_label, ": ", format(n_filtered, big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
+    if (params@selection.random && !params@selection.first_trial)
+      cat("\nSampled expanded dataset:", format(nrow(out), big.mark = ","), "observations,", n_cols, "variables\n")
+  }
+
   return(out)
 }

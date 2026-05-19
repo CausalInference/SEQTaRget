@@ -100,6 +100,27 @@ test_that("ITT - Followup Class", {
   expect_s4_class(model, "SEQoutput")
 })
 
+test_that("followup.class + km.curves produces survival curves without predict mismatch", {
+  data <- copy(SEQdata)[time <= 5, ]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(followup.class = TRUE, followup.include = FALSE, km.curves = TRUE)))
+  expect_s4_class(model, "SEQoutput")
+  expect_true(nrow(model@survival.data[[1]]) > 0)
+})
+
+test_that("followup.class + km.curves + compevent produces survival curves without predict mismatch", {
+  set.seed(42)
+  data <- copy(SEQdata)[time <= 5, ]
+  data[, compevent := as.integer(runif(.N) < 0.05)]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(followup.class = TRUE, followup.include = FALSE,
+                                        km.curves = TRUE, compevent = "compevent")))
+  expect_s4_class(model, "SEQoutput")
+  expect_true(nrow(model@survival.data[[1]]) > 0)
+})
+
 test_that("ITT - Followup Spline", {
   data <- copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
@@ -121,11 +142,11 @@ test_that("expand.only = TRUE returns expanded data.table and matches data.retur
   # return the expanded data.table directly. The contents should match the DT slot
   # from a full run with data.return = TRUE.
   data <- copy(SEQdata)
-  expanded <- SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
-                         list("N", "L", "P"), list("sex"),
-                         method = "ITT",
-                         options = SEQopts(expand.only = TRUE),
-                         verbose = FALSE)
+  expanded <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                          list("N", "L", "P"), list("sex"),
+                                          method = "ITT",
+                                          options = SEQopts(expand.only = TRUE),
+                                          verbose = FALSE))
   expect_s3_class(expanded, "data.table")
   expect_true(nrow(expanded) > 0L)
   expect_true(all(c("ID", "trial", "period", "followup", "outcome") %in% names(expanded)))

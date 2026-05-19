@@ -19,7 +19,7 @@ SEQuential(
 )
 }
 \arguments{
-\item{data}{data.frame or data.table, will preform expansion according to arguments passed through the \code{options} argument}
+\item{data}{data.frame or data.table, will perform expansion according to arguments passed through the \code{options} argument}
 
 \item{id.col}{String: column name of the id column}
 
@@ -35,7 +35,7 @@ SEQuential(
 
 \item{fixed.cols}{List: column names for fixed columns}
 
-\item{method}{String: method of analysis to preform; should be one of \code{"ITT"}, \code{"dose-response"}, or \code{"censoring"}}
+\item{method}{String: method of analysis to perform; should be one of \code{"ITT"}, \code{"dose-response"}, or \code{"censoring"}}
 
 \item{options}{List: optional list of parameters from \code{\link[=SEQopts]{SEQopts()}}}
 

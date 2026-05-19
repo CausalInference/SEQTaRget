@@ -60,15 +60,15 @@ internal.analysis <- function(params) {
     followup <- NULL
     isExcused <- NULL
 
-    handler <- function(DT, data, params) {
+    handler <- function(DT, data, params, start = NULL) {
       if (!params@weighted) {
-        model <- internal.model(DT, params)
+        model <- internal.model(DT, params, start = start)
         WDT <- data.table()
       } else if (params@weighted) {
         WT <- internal.weights(DT, data, params, formula_cache)
 
         if (params@weight.preexpansion) {
-          if (params@excused | params@deviation.excused) {
+          if (params@excused || params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time)), nomatch = NULL
                       ][get(params@time) == 0 & trial == 0, denominator := 1
@@ -94,7 +94,7 @@ internal.analysis <- function(params) {
                                 ][, c("wt", "trial.first") := NULL]
           }
         } else {
-          if (params@excused | params@deviation.excused) {
+          if (params@excused || params@deviation.excused) {
             params@time <- "period"
             WDT <- DT[WT@weights, on = c(eval(params@id), eval(params@time), "trial"), nomatch = NULL
                       ][followup == 0, `:=`(numerator = 1, denominator = 1)
@@ -144,7 +144,7 @@ internal.analysis <- function(params) {
           params@weight.lower <- stats$p01
           params@weight.upper <- stats$p99
         }
-        model <- internal.model(WDT, params)
+        model <- internal.model(WDT, params, start = start)
       }
       if (!params@data.return) WDT <- data.table()
       return(list(
@@ -160,9 +160,17 @@ internal.analysis <- function(params) {
     stopifnot(identical(nrow(params@DT), original_nrow))
     stopifnot(identical(names(params@DT), original_names))
 
-    if (params@bootstrap & params@verbose) cat("Bootstrapping with", params@bootstrap.sample * 100, "% of data", params@bootstrap.nboot, "times\n")
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
+    if (params@bootstrap && params@verbose) {
+      n_sample <- round(params@bootstrap.sample * lnID)
+      n_obs_sample <- round(params@bootstrap.sample * nrow(params@DT))
+      cat("\nBootstrapping with", paste0(params@bootstrap.sample * 100, "% of"),
+          format(lnID, big.mark = ","), "subjects",
+          paste0("(", format(n_sample, big.mark = ","), " subjects, ~",
+                 format(n_obs_sample, big.mark = ","), " observations per resample)"),
+          params@bootstrap.nboot, "times\n")
+    }
 
     if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
     if (!identical(key(params@data), params@id)) setkeyv(params@data, params@id)
@@ -199,13 +207,16 @@ internal.analysis <- function(params) {
     }
     
     bootstrap <- if (params@bootstrap) {
+      params_boot <- params
+      params_boot@glm.package <- "fastglm"
+      boot_start <- lapply(full$model, function(sg) coef(sg$model))
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
         on.exit(setDTthreads(old_threads), add = TRUE)
         future_lapply(seq_len(params@bootstrap.nboot), function(x) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)
@@ -214,7 +225,7 @@ internal.analysis <- function(params) {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
           set.seed(params@seed + x)
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
-          out <- handler(bs$RMDT, bs$RMdata, params)
+          out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
           out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
           return(out)

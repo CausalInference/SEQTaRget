@@ -27,6 +27,8 @@ SEQopts(
   excused.cols = c(NA, NA),
   expand.only = FALSE,
   fastglm.method = 2L,
+  glm.package = "fastglm",
+  parglm.control = NULL,
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
@@ -110,7 +112,11 @@ SEQopts(
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
-\item{fastglm.method}{Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT, 4-QR.FPIV), default is \code{2L}}
+\item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky), default is \code{2L}}
+
+\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.}
+
+\item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
 
 \item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 
@@ -186,7 +192,7 @@ SEQopts(
 
 \item{weight.upper}{Numeric: weights truncated at upper end at this weight, default is \code{Inf}}
 
-\item{weighted}{Logical: whether or not to preform weighted analysis, default is \code{FALSE}}
+\item{weighted}{Logical: whether or not to perform weighted analysis, default is \code{FALSE}}
 }
 \value{
 An object of class 'SEQopts'
