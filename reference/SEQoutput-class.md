@@ -46,7 +46,7 @@ An S4 class used to hold the outputs for the SEQuential process
 
 - `time`:
 
-  time in minutes used for the SEQuential process
+  time used for the SEQuential process
 
 - `weight.statistics`:
 

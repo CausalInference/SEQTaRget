@@ -1,6 +1,6 @@
-# Function to clean out non needed elements from fastglm return
+# Strip large components from a model object returned by fit_glm
 
-Function to clean out non needed elements from fastglm return
+Strip large components from a model object returned by fit_glm
 
 ## Usage
 
@@ -12,4 +12,4 @@ clean_fastglm(model)
 
 - model:
 
-  a fastglm model
+  a model object (fastglm or parglm.fit)

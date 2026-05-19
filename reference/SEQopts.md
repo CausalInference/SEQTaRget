@@ -26,12 +26,16 @@ SEQopts(
   deviation.excused_cols = c(NA, NA),
   excused = FALSE,
   excused.cols = c(NA, NA),
+  expand.only = FALSE,
   fastglm.method = 2L,
+  glm.package = "fastglm",
+  parglm.control = NULL,
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
   followup.min = 0,
   followup.spline = FALSE,
+  followup.spline.df = 4L,
   hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -164,10 +168,45 @@ SEQopts(
   List: list of column names for treatment switch excuses - should be
   the same length, and ordered the same as `treat.level`
 
+- expand.only:
+
+  Logical: if `TRUE`,
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md)
+  returns the expanded `data.table` immediately after expansion and
+  skips weighting, outcome modelling and survival/risk steps. Useful
+  when you only need the expanded dataset (e.g. to inspect or store
+  separately). Default is `FALSE`
+
 - fastglm.method:
 
-  Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT,
-  4-QR.FPIV), default is `2L`
+  Integer: decomposition method for fastglm (`0L`-column-pivoted QR,
+  `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is
+  `2L`
+
+- glm.package:
+
+  Character: package to use for fitting GLMs, either `"fastglm"`
+  (default) or `"parglm"`. When `"parglm"` is selected the `nthreads`
+  option controls the number of threads passed to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  For most realistic SEQTaRget workloads (expanded datasets up to
+  approximately a few million rows) `"fastglm"` is faster; `"parglm"`
+  may help only on substantially larger datasets where the parallel
+  chunking outweighs its setup overhead.
+
+- parglm.control:
+
+  A control object from
+  [`parglm::parglm.control()`](https://remlapmot.github.io/parglm/reference/parglm.control.html)
+  to pass to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  Only used when `glm.package = "parglm"`. Defaults to
+  `parglm::parglm.control(method = "FAST")`. If you encounter a
+  `chol(): decomposition failed` error (e.g. with near-singular model
+  matrices on large datasets), pass
+  `parglm.control = parglm::parglm.control(method = "LAPACK")` to use
+  the more numerically stable QR decomposition instead, or switch to
+  using the fastglm backend.
 
 - followup.class:
 
@@ -190,7 +229,18 @@ SEQopts(
 
 - followup.spline:
 
-  Logical: treat followup as a cubic spline, default is `FALSE`
+  Logical: treat followup as a natural cubic spline
+  ([`splines::ns()`](https://rdrr.io/r/splines/ns.html)), default is
+  `FALSE`
+
+- followup.spline.df:
+
+  Integer: degrees of freedom passed to
+  [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when
+  `followup.spline = TRUE`. With `df = k`, `ns()` places `k - 1`
+  interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is
+  equivalent to a linear term and is generally not what you want.
+  Default is `4` (3 interior knots).
 
 - hazard:
 
@@ -346,7 +396,7 @@ SEQopts(
 
 - weighted:
 
-  Logical: whether or not to preform weighted analysis, default is
+  Logical: whether or not to perform weighted analysis, default is
   `FALSE`
 
 ## Value

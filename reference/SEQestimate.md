@@ -27,7 +27,7 @@ SEQestimate(
 
   data.frame or data.table, if not already expanded with
   [`SEQexpand()`](https://causalinference.github.io/SEQTaRget/reference/SEQexpand.md),
-  will preform expansion according to arguments passed to either
+  will perform expansion according to arguments passed to either
   `params` or `...`
 
 - id.col:
@@ -60,7 +60,7 @@ SEQestimate(
 
 - method:
 
-  String: method of analysis to preform
+  String: method of analysis to perform
 
 - options:
 

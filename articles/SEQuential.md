@@ -28,10 +28,11 @@ which affect them, but for simplicity let’s start with an
 intention-to-treat analysis with 20 bootstrap samples.
 
 ``` r
+
 library(SEQTaRget)
 
 options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
-                   bootstrap = TRUE, #asks the model to preform bootstrapping
+                   bootstrap = TRUE, #asks the model to perform bootstrapping
                    bootstrap.nboot = 20) #asks the model for 20 bootstrap samples
 ```
 
@@ -47,6 +48,7 @@ Here you will give your options, data, and data-level information. We
 provide some small simulated datasets to test on.
 
 ``` r
+
 data <- SEQdata
 model <- SEQuential(data, id.col = "ID", 
                           time.col = "time", 
@@ -56,14 +58,33 @@ model <- SEQuential(data, id.col = "ID",
                           time_varying.cols = c("N", "L", "P"),
                           fixed.cols = "sex",
                           method = "ITT", options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 13 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 248,485 observations, 13 variables
+#> 
 #> Moving forward with ITT analysis
-#> Bootstrapping with 80 % of data 20 times
+#> 
+#> Bootstrapping with 80% of 300 subjects (240 subjects, ~198,788 observations per resample) 20 times
+#> 
 #> ITT model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 ```
 
@@ -79,322 +100,323 @@ its main function in an S4 class. We provide a few different methods to
 handle obtaining your results.
 
 ``` r
+
 outcome(model)     # Returns a list of only the outcome models 
 #> $`1`
 #> $`1`[[1]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -6.85931555            0.22530938            0.03538172 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00015987            0.04471790            0.00057617 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.12704583            0.00328671           -0.01385088 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.20092890           -0.00170402 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -6.8593155              0.2253094              0.0353817  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001599              0.0447179              0.0005762  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.1270458              0.0032867             -0.0138509  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.2009289             -0.0017040  
 #> 
 #> $`1`[[2]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -5.70666923            0.13330124            0.03787358 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00035674            0.02644011            0.00086039 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.36001344            0.00145292           -0.19058426 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.11295147           -0.00267922 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -5.7066694              0.1333013              0.0378736  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0003567              0.0264401              0.0008604  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.3600135              0.0014529             -0.1905843  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.1129515             -0.0026792  
 #> 
 #> $`1`[[3]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -9.1712e+00            2.2831e-01            5.4841e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -4.0688e-04            1.0570e-01           -4.0883e-05 
-#>                  sex1                 N_bas                 L_bas 
-#>           -4.2007e-02            2.0687e-03           -5.2355e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            4.1592e-01           -4.5406e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -9.171e+00              2.283e-01              5.484e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -4.069e-04              1.057e-01             -4.088e-05  
+#>                  sex1                  N_bas                  L_bas  
+#>            -4.201e-02              2.069e-03             -5.236e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             4.159e-01             -4.541e-03  
 #> 
 #> $`1`[[4]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -1.2717e+01            1.4785e-01            2.7985e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -5.0107e-05            1.5879e-01           -1.2503e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            1.7735e-01            1.9286e-03           -8.5079e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            8.3786e-01            5.3018e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -1.272e+01              1.479e-01              2.798e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -5.011e-05              1.588e-01             -1.250e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             1.773e-01              1.929e-03             -8.508e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             8.379e-01              5.302e-03  
 #> 
 #> $`1`[[5]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -4.12618796            0.31433497            0.04437797 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00016160           -0.00266764            0.00077599 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.18135760            0.00240254            0.06506529 
-#>                 P_bas tx_init_bas1:followup 
-#>           -0.09583373           -0.00892581 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -4.1261880              0.3143350              0.0443780  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001616             -0.0026676              0.0007760  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.1813576              0.0024025              0.0650653  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -0.0958337             -0.0089258  
 #> 
 #> $`1`[[6]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -4.6104e+00           -2.5621e-02            3.1344e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -6.0884e-05            1.8695e-04            9.5960e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            1.9846e-01            3.8789e-03           -5.5887e-04 
-#>                 P_bas tx_init_bas1:followup 
-#>           -5.6365e-02            8.0484e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -4.610e+00             -2.562e-02              3.134e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -6.088e-05              1.870e-04              9.596e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             1.985e-01              3.879e-03             -5.589e-04  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -5.636e-02              8.048e-03  
 #> 
 #> $`1`[[7]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -1.4647e+01           -7.5208e-03            4.9683e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -2.5384e-04            2.0944e-01           -6.0223e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>           -3.2339e-02            6.3060e-03           -8.7478e-03 
-#>                 P_bas tx_init_bas1:followup 
-#>            9.8581e-01           -6.3076e-04 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -1.465e+01             -7.521e-03              4.968e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -2.538e-04              2.094e-01             -6.022e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>            -3.234e-02              6.306e-03             -8.748e-03  
+#>                 P_bas  tx_init_bas1:followup  
+#>             9.858e-01             -6.308e-04  
 #> 
 #> $`1`[[8]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -9.39071557            0.20227298            0.02731706 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00012328            0.09938015            0.00014525 
-#>                  sex1                 N_bas                 L_bas 
-#>           -0.12188854           -0.00027847           -0.04695586 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.51985467           -0.00103007 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -9.3907160              0.2022729              0.0273171  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001233              0.0993802              0.0001453  
+#>                  sex1                  N_bas                  L_bas  
+#>            -0.1218886             -0.0002785             -0.0469558  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.5198547             -0.0010301  
 #> 
 #> $`1`[[9]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>            2.5837e+00            1.0534e-01            3.2412e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -2.6869e-05           -1.2370e-01            1.6482e-03 
-#>                  sex1                 N_bas                 L_bas 
-#>           -1.3761e-01           -1.8333e-04           -4.8060e-03 
-#>                 P_bas tx_init_bas1:followup 
-#>           -7.7720e-01            1.5539e-04 
+#>           (Intercept)           tx_init_bas1               followup  
+#>             2.584e+00              1.053e-01              3.241e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -2.687e-05             -1.237e-01              1.648e-03  
+#>                  sex1                  N_bas                  L_bas  
+#>            -1.376e-01             -1.833e-04             -4.806e-03  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -7.772e-01              1.554e-04  
 #> 
 #> $`1`[[10]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -7.43904169            0.41483864            0.03157776 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00012752            0.05300735            0.00039862 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.30994058            0.00253962           -0.03247561 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.24637872           -0.00390270 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -7.4390414              0.4148385              0.0315778  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001275              0.0530073              0.0003986  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.3099405              0.0025396             -0.0324756  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.2463787             -0.0039027  
 #> 
 #> $`1`[[11]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -1.3729e+01            4.3212e-01            4.9985e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -4.0294e-04            1.7345e-01           -2.2957e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            2.8150e-01            1.8517e-03           -6.0796e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            9.0134e-01           -5.5006e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -1.373e+01              4.321e-01              4.998e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -4.029e-04              1.734e-01             -2.296e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             2.815e-01              1.852e-03             -6.080e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             9.013e-01             -5.501e-03  
 #> 
 #> $`1`[[12]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -6.29810490            0.09170225            0.03106654 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00010286            0.03338081            0.00076787 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.23858347            0.00521740           -0.08825751 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.12925425            0.00468215 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -6.2981049              0.0917023              0.0310665  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001029              0.0333808              0.0007679  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.2385835              0.0052174             -0.0882575  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.1292543              0.0046821  
 #> 
 #> $`1`[[13]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -7.7480e+00            2.7433e-01            3.3747e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -5.5125e-05            5.8901e-02            4.7147e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            2.1317e-02            5.3902e-03            2.1536e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            2.8434e-01            9.7276e-04 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -7.748e+00              2.743e-01              3.375e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -5.512e-05              5.890e-02              4.715e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             2.132e-02              5.390e-03              2.154e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             2.843e-01              9.728e-04  
 #> 
 #> $`1`[[14]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -1.0517e+01            2.4134e-01            3.3708e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -2.3036e-04            1.1756e-01           -3.2449e-05 
-#>                  sex1                 N_bas                 L_bas 
-#>            1.9467e-02            4.8640e-03           -1.9338e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            5.9746e-01           -1.3830e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -1.052e+01              2.413e-01              3.371e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -2.304e-04              1.176e-01             -3.245e-05  
+#>                  sex1                  N_bas                  L_bas  
+#>             1.947e-02              4.864e-03             -1.934e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             5.975e-01             -1.383e-03  
 #> 
 #> $`1`[[15]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -8.0412e+00            1.5762e-01            2.9162e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -3.5884e-05            5.6090e-02            6.0089e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            2.9079e-01            4.5356e-03            4.0074e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            3.2306e-01            5.9596e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -8.041e+00              1.576e-01              2.916e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -3.588e-05              5.609e-02              6.009e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             2.908e-01              4.536e-03              4.007e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             3.231e-01              5.960e-03  
 #> 
 #> $`1`[[16]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -1.0158e+01            3.8860e-02            1.4169e-02 
-#>           followup_sq                 trial              trial_sq 
-#>            3.8820e-05            1.0926e-01            1.0628e-04 
-#>                  sex1                 N_bas                 L_bas 
-#>            2.8044e-01            8.4144e-03           -1.0576e-01 
-#>                 P_bas tx_init_bas1:followup 
-#>            5.9723e-01            1.5975e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -1.016e+01              3.886e-02              1.417e-02  
+#>           followup_sq                  trial               trial_sq  
+#>             3.882e-05              1.093e-01              1.063e-04  
+#>                  sex1                  N_bas                  L_bas  
+#>             2.804e-01              8.414e-03             -1.058e-01  
+#>                 P_bas  tx_init_bas1:followup  
+#>             5.972e-01              1.598e-03  
 #> 
 #> $`1`[[17]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -9.7258e+00            2.4666e-01            3.8501e-02 
-#>           followup_sq                 trial              trial_sq 
-#>           -2.4445e-04            1.0169e-01            4.5839e-05 
-#>                  sex1                 N_bas                 L_bas 
-#>           -2.0150e-01            1.9064e-03            4.4528e-02 
-#>                 P_bas tx_init_bas1:followup 
-#>            5.1168e-01           -7.6077e-03 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -9.726e+00              2.467e-01              3.850e-02  
+#>           followup_sq                  trial               trial_sq  
+#>            -2.444e-04              1.017e-01              4.584e-05  
+#>                  sex1                  N_bas                  L_bas  
+#>            -2.015e-01              1.906e-03              4.453e-02  
+#>                 P_bas  tx_init_bas1:followup  
+#>             5.117e-01             -7.608e-03  
 #> 
 #> $`1`[[18]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -3.70549908            0.41010698            0.04208706 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00043094           -0.01937940            0.00087804 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.13180142            0.00940757            0.06088783 
-#>                 P_bas tx_init_bas1:followup 
-#>           -0.12648565           -0.00869196 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -3.7054991              0.4101070              0.0420871  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0004309             -0.0193794              0.0008780  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.1318014              0.0094076              0.0608878  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -0.1264856             -0.0086920  
 #> 
 #> $`1`[[19]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -3.63857072            0.08367455            0.03129809 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00016821           -0.02134892            0.00116805 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.19346081            0.00214429            0.01152500 
-#>                 P_bas tx_init_bas1:followup 
-#>           -0.11657712            0.00271366 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -3.6385704              0.0836745              0.0312981  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0001682             -0.0213489              0.0011680  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.1934608              0.0021443              0.0115250  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -0.1165771              0.0027137  
 #> 
 #> $`1`[[20]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -4.95028803            0.41972678            0.03416014 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00027814            0.00948588            0.00081151 
-#>                  sex1                 N_bas                 L_bas 
-#>           -0.00093079            0.00497737           -0.18952225 
-#>                 P_bas tx_init_bas1:followup 
-#>            0.03571644           -0.01100419 
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -4.9502880              0.4197268              0.0341601  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0002781              0.0094859              0.0008115  
+#>                  sex1                  N_bas                  L_bas  
+#>            -0.0009308              0.0049774             -0.1895223  
+#>                 P_bas  tx_init_bas1:followup  
+#>             0.0357164             -0.0110042  
 #> 
 #> $`1`[[21]]
 #> 
-#> Call:
-#> fastglm.default(x = X, y = y, family = quasibinomial(), method = params@fastglm.method)
+#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#>     method = params@fastglm.method)
 #> 
 #> Coefficients:
-#>           (Intercept)          tx_init_bas1              followup 
-#>           -3.85162313            0.08993308            0.03265672 
-#>           followup_sq                 trial              trial_sq 
-#>           -0.00022807           -0.01443944            0.00087488 
-#>                  sex1                 N_bas                 L_bas 
-#>            0.47011613            0.00522408            0.12256776 
-#>                 P_bas tx_init_bas1:followup 
-#>           -0.11681741           -0.00110875
+#>           (Intercept)           tx_init_bas1               followup  
+#>            -3.8516231              0.0899331              0.0326567  
+#>           followup_sq                  trial               trial_sq  
+#>            -0.0002281             -0.0144394              0.0008749  
+#>                  sex1                  N_bas                  L_bas  
+#>             0.4701161              0.0052241              0.1225678  
+#>                 P_bas  tx_init_bas1:followup  
+#>            -0.1168174             -0.0011088
 km_curve(model)    # Prints the survival curve
 ```
 
@@ -402,16 +424,17 @@ km_curve(model)    # Prints the survival curve
 group.](SEQuential_files/figure-html/outcome-1.png)
 
 ``` r
+
 risk_data(model)
 #>    Method      A      Risk   95% LCI   95% UCI         SE
 #>    <char> <char>     <num>     <num>     <num>      <num>
 #> 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859
-#> 2:    ITT      1 0.8744359 0.8135711 0.9353007 0.03105406
+#> 2:    ITT      1 0.8744359 0.8135710 0.9353007 0.03105406
 risk_comparison(model)
 #>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
 #>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
 #> 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957
-#> 2: risk_1 risk_0  0.9574838  0.8979095   1.021011       -0.03717768 -0.09200493
+#> 2: risk_1 risk_0  0.9574838  0.8979094   1.021011       -0.03717768 -0.09200493
 #>    RD 95% UCI
 #>         <num>
 #> 1: 0.09200493

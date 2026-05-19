@@ -5,12 +5,14 @@ First we need to load the library before getting in to some sample use
 cases.
 
 ``` r
+
 library(SEQTaRget)
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
 ``` r
+
 options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to weight the outcome model
@@ -30,13 +32,31 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 15 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 15 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 # retrieve risk plot
@@ -47,6 +67,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
+
 # retrieve survival and risk data
 survival_data <- km_data(model)
 risk_data(model)
@@ -64,6 +85,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE, 
                    # tells SEQuential to build weights from the post-expanded data
@@ -80,13 +102,31 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 18 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 18 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -96,6 +136,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -111,6 +152,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = TRUE,
@@ -133,11 +175,27 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 18 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 18 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -147,6 +205,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -162,6 +221,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -180,11 +240,27 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 21 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 21 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -194,6 +270,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A      Risk
 #>       <char> <char>     <num>
@@ -209,6 +286,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
 
 ``` r
+
 options <- SEQopts(km.curves = TRUE,
                    weighted = TRUE,
                    weight.preexpansion = FALSE,
@@ -229,13 +307,31 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 54,687 observations, 13 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 29,624 observations, 12 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 1,609,859 observations
+#> 
+#> Expanded dataset: 1,119,229 observations, 22 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 810,880 observations, 22 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -245,6 +341,7 @@ km_curve(model, plot.type = "risk")
 group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 risk_data(model)
 #>       Method      A       Risk
 #>       <char> <char>      <num>
@@ -260,6 +357,7 @@ risk_comparison(model)
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
 
 ``` r
+
 options <- SEQopts(# tell SEQuential to run hazard ratios
                    hazard = TRUE,
                    weighted = TRUE,
@@ -279,9 +377,23 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 21 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 21 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> Completed
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
