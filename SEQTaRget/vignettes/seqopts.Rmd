@@ -38,6 +38,7 @@ data.table::setDTthreads(2)
 | `followup.max` | Maximum value of followup per trial | Numeric | `60` |
 | `followup.min` | Minimum value of followup per trial | Numeric | `0` |
 | `followup.spline` | Whether to format followup values to a spline | Logical | `FALSE` |
+| `followup.spline.df` | Degrees of freedom passed to `splines::ns()` when `followup.spline = TRUE` | Integer | `4L` |
 | `hazard` | Whether to estimate the hazard ratio | Logical | `FALSE` |
 | `km.curves` | Whether to estimate Kaplan-Meier survival curves and data | Logical | `TRUE` |
 | `multinomial` | Whether to expect more than 2 treatment types | Logical | `FALSE` |
@@ -107,5 +108,7 @@ These are internal options that change output name of covariates or the decompos
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
 | `fastglm.method` | Method for decomposition by fastglm | Integer | `3L` |
+| `glm.package` | Package to use for fitting GLMs | Character | either `"fastglm"` (default) or `"parglm"` |
 | `indicator.baseline` | Identifier for baseline variables | Character | `"_bas"` |
 | `indicator.squared` | Identifier for squared variables | Character | `"_sq"` |
+| `parglm.control` | A control object from `parglm::parglm.control()` to pass to `parglm::parglm.fit()` | List | `parglm::parglm.control(method = "LINPACK")` |
