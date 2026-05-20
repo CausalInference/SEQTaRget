@@ -44,15 +44,6 @@
 - Fix `selection.random` not being propagated from
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/reference/SEQopts.md)
   to internal parameters.
-- Cap `data.table` to 2 threads during tests and vignette builds, and
-  skip the multisession parallel test on CRAN, to comply with CRAN’s
-  2-core policy for checks.
-- Apply the `SEQopts(nthreads = ...)` setting to `data.table` during
-  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/reference/SEQuential.md).
-  Previously it was only used by the `parglm` backend and ignored in the
-  default serial `fastglm` path, so `data.table` ran at its global
-  default thread count. The previous global setting is restored when the
-  call finishes.
 
 ## SEQTaRget v1.4.1
 

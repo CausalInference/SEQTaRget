@@ -46,7 +46,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.2-pre/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -63,8 +63,6 @@
 <li>Add warm starts for bootstrap GLM fits.</li>
 <li>Add dataset size summary to verbose output.</li>
 <li>Fix <code>selection.random</code> not being propagated from <code><a href="../reference/SEQopts.html">SEQopts()</a></code> to internal parameters.</li>
-<li>Cap <code>data.table</code> to 2 threads during tests and vignette builds, and skip the multisession parallel test on CRAN, to comply with CRAN’s 2-core policy for checks.</li>
-<li>Apply the <code>SEQopts(nthreads = ...)</code> setting to <code>data.table</code> during <code><a href="../reference/SEQuential.html">SEQuential()</a></code>. Previously it was only used by the <code>parglm</code> backend and ignored in the default serial <code>fastglm</code> path, so <code>data.table</code> ran at its global default thread count. The previous global setting is restored when the call finishes.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.1" id="seqtarget-v141">SEQTaRget v1.4.1<a class="anchor" aria-label="anchor" href="#seqtarget-v141"></a></h2><p class="text-muted">CRAN release: 2026-03-31</p>
