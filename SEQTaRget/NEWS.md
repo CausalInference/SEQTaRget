@@ -14,6 +14,8 @@
 * Fix `selection.random` not being propagated from `SEQopts()` to internal parameters.
 * Cap `data.table` to 2 threads during tests and vignette builds, and skip the multisession parallel test on CRAN, to comply with CRAN's 2-core policy for checks.
 * Apply the `SEQopts(nthreads = ...)` setting to `data.table` during `SEQuential()`. Previously it was only used by the `parglm` backend and ignored in the default serial `fastglm` path, so `data.table` ran at its global default thread count. The previous global setting is restored when the call finishes.
+* Add `risk.times` option to `SEQopts()`. When `km.curves = TRUE`, risk difference and risk ratio (with CIs) are reported at each requested follow-up time, not just at the end of follow-up. Requested times are snapped to the latest available follow-up at or before them, and the final time is always included. The `risk.comparison` and `risk.data` tables gain a `Followup` column.
+* Fix `factorize()` to also coerce categorical (character) time-varying covariates - and their baseline (`_bas`) counterparts - to factors with levels fixed from the full data. Previously only fixed and treatment columns were factorized, so a character time-varying covariate could realise different level sets across bootstrap resamples and raise "newdata provided does not match fitted model" (most often in bootstrapped hazard analyses on larger samples or with a smaller `bootstrap.sample`). Numeric time-varying covariates are left unchanged.
 
 # SEQTaRget v1.4.1
 
