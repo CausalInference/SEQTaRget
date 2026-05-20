@@ -165,3 +165,24 @@ test_that("expand.only = TRUE returns expanded data.table and matches data.retur
   expect_equal(expanded$followup, ref$followup)
   expect_equal(expanded$outcome, ref$outcome)
 })
+
+test_that("character time-varying covariates get a stable factor encoding", {
+  # A character categorical among the time-varying covariates must be coerced to a
+  # factor (levels fixed from the full data) so bootstrap resamples cannot realise
+  # different level sets and trigger "newdata does not match fitted model".
+  set.seed(1)
+  data <- copy(SEQdata)
+  data[, grp := sample(c("a", "b", "c"), .N, replace = TRUE)]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P", "grp"), list("sex"),
+                                       method = "ITT",
+                                       options = SEQopts(data.return = TRUE, bootstrap = TRUE,
+                                                         bootstrap.nboot = 3),
+                                       verbose = FALSE))
+  expect_s4_class(model, "SEQoutput")
+  # The baseline counterpart used in the ITT model must be a factor in the expanded data
+  expect_true("grp_bas" %in% names(model@DT))
+  expect_s3_class(model@DT$grp_bas, "factor")
+  # Numeric time-varying covariates must remain numeric (not turned into factors)
+  expect_true(is.numeric(model@DT$N_bas))
+})

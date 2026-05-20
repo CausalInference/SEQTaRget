@@ -105,12 +105,26 @@ create.risk <- function(data, params, boot_risks = NULL) {
 }
 
 factorize <- function(data, params) {
+  # Fixed covariates and treatment columns are always treated as categorical.
   encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline),
                       params@treatment))
   coercion <- encodes[encodes %in% names(data)]
-  
-  out <- data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
-  return(out)
+  if (length(coercion) > 0) data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
+
+  # Categorical (character) time-varying covariates - and their baseline (_bas)
+  # counterparts - must also get a stable factor encoding, with levels fixed from
+  # the full data, so that bootstrap resamples cannot realise different level sets
+  # and produce model matrices that differ in their columns between fit and
+  # prediction (which raises "newdata provided does not match fitted model").
+  # Numeric time-varying covariates are left untouched so continuous covariates
+  # are not turned into factors.
+  tv <- unlist(params@time_varying)
+  tv <- unique(c(tv, paste0(tv, params@indicator.baseline)))
+  tv <- tv[tv %in% names(data)]
+  tv_cat <- tv[vapply(tv, function(col) is.character(data[[col]]), logical(1))]
+  if (length(tv_cat) > 0) data[, (tv_cat) := lapply(.SD, as.factor), .SDcols = tv_cat]
+
+  return(data)
 }
 
 #' Nicely cleans time for readability
