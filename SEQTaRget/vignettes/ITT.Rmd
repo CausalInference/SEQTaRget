@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = identical(Sys.getenv("IN_PKGDOWN"), "true") && identical(Sys.getenv("GITHUB_ACTIONS"), "true")
 )
+data.table::setDTthreads(2)
 ```
 
 Here, we'll go over some examples of using ITT. First we need to load the library before getting in to some sample use cases.

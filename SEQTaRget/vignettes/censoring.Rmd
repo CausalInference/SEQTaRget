@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+data.table::setDTthreads(2)
 ```
 
 Here, we'll go over some examples of using per-protocol, censoring. First we need to load the library before getting in to some sample use cases.
