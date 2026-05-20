@@ -32,6 +32,7 @@ parameter.setter <- function(data, DT,
     followup.min = opts@followup.min,
     followup.max = opts@followup.max,
     survival.max = opts@survival.max,
+    risk.times = opts@risk.times,
     weighted = opts@weighted,
     weight.preexpansion = opts@weight.preexpansion,
     excused = opts@excused,
@@ -101,6 +102,14 @@ parameter.simplifier <- function(params) {
   }
   if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
   if (is.infinite(params@survival.max)) params@survival.max <- params@followup.max
+
+  # Fail fast on out-of-range risk.times before any expensive computation. The
+  # survival grid runs to survival.max + 1, so that is the largest reportable time.
+  if (!all(is.na(params@risk.times))) {
+    bad <- params@risk.times[!is.na(params@risk.times) & params@risk.times > params@survival.max + 1]
+    if (length(bad) > 0) stop("'risk.times' value(s) exceed the maximum follow-up (", params@survival.max + 1, "): ",
+                              paste(bad, collapse = ", "))
+  }
 
   if (allNA(params@excused.cols) && params@excused && params@method == "censoring") {
     warning("No excused variables provided for excused censoring, automatically changed to excused = FALSE")

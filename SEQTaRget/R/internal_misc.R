@@ -1,75 +1,106 @@
+#' Resolve the follow-up times at which to report risk difference / ratio
+#'
+#' Each requested time in \code{risk.times} is snapped to the latest available
+#' follow-up value at or before it (cumulative incidence is a right-continuous
+#' step function). The maximum follow-up time is always included. A \code{NA}
+#' \code{risk.times} reports only the maximum follow-up time.
+#'
+#' @param grid numeric vector of available follow-up values
+#' @param risk.times numeric vector of requested follow-up times, or \code{NA}
+#' @returns sorted unique numeric vector of grid follow-up values to report at
+#' @keywords internal
+resolve_risk_times <- function(grid, risk.times) {
+  grid <- sort(unique(grid))
+  final <- max(grid)
+  if (length(risk.times) == 0L || all(is.na(risk.times))) return(final)
+  req <- as.numeric(risk.times)
+  req <- req[!is.na(req)]
+  if (any(req > final)) stop("'risk.times' value(s) exceed the maximum follow-up (", final, "): ",
+                             paste(req[req > final], collapse = ", "))
+  if (any(req < min(grid))) stop("'risk.times' value(s) below the minimum follow-up (", min(grid), "): ",
+                                 paste(req[req < min(grid)], collapse = ", "))
+  snapped <- vapply(req, function(t) max(grid[grid <= t]), numeric(1))
+  sort(unique(c(snapped, final)))
+}
+
 #' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
 #'
 #' @keywords internal
 create.risk <- function(data, params, boot_risks = NULL) {
-  variable <- followup <- V1 <- V2 <- NULL
-  i.value <- i.LCI <- i.UCI <- i.SE <- NULL
-  UCI <- LCI <- SE <- NULL
-  rd_lb <- rd_ub <- rr_lb <- rr_ub <- NULL
-  rd <- rd_se <- rr <- rr_se <- NULL
-  boot_idx <- boot_wide <- NULL
-  
+  variable <- followup <- V1 <- V2 <- value <- NULL
+  i.value <- NULL
+  rr <- rd <- NULL
+  boot_idx <- NULL
+
   var <- if (any(grepl("^inc_", data[["variable"]]))) "inc" else "risk"
-  table <- data[, .SD[.N], by = "variable"
-                ][variable %like% var, 
-                  ][, followup := NULL]
-  
-  out <- CJ(table$variable, table$variable)[table, on = c("V2" = "variable")
-                                            ][table, on = c("V1" = "variable")][V1 != V2, ]
-  
-  out[, `:=` (rr = value / i.value, rd = value - i.value)]
-  
-  table[, `:=` (A = sub(".*_", "", variable), 
-                Method = params@method,
-                variable = NULL)]
-  
-  if (all(c("LCI", "UCI") %in% names(out))) {
-    z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
-    alpha <- (1 - params@bootstrap.CI) / 2
+  report_times <- resolve_risk_times(data[["followup"]], params@risk.times)
 
-    # Paired bootstrap: pair both arms by boot_idx and compute per-iteration
-    # RD and RR so that the shared bootstrap samples are accounted for
-    boot_wide <- dcast(boot_risks, boot_idx ~ variable, value.var = "value")
+  table <- data[variable %like% var & followup %in% report_times, ]
+  has_ci <- all(c("LCI", "UCI") %in% names(data)) && !is.null(boot_risks)
 
-    rd_lci_vec <- rd_uci_vec <- rr_lci_vec <- rr_uci_vec <- numeric(nrow(out))
-    for (k in seq_len(nrow(out))) {
-      v1 <- as.character(out$V1[k]); v2 <- as.character(out$V2[k])
-      rd_i  <- boot_wide[[v2]] - boot_wide[[v1]]
-      rr_i  <- boot_wide[[v2]] / boot_wide[[v1]]
-      valid_rr <- rr_i[rr_i > 0 & is.finite(rr_i)]
-      if (params@bootstrap.CI_method == "se") {
-        rd_lci_vec[k] <- out$rd[k] - z * sd(rd_i, na.rm = TRUE)
-        rd_uci_vec[k] <- out$rd[k] + z * sd(rd_i, na.rm = TRUE)
-        rr_log_se      <- sd(log(valid_rr), na.rm = TRUE)
-        rr_lci_vec[k] <- exp(log(out$rr[k]) - z * rr_log_se)
-        rr_uci_vec[k] <- exp(log(out$rr[k]) + z * rr_log_se)
-      } else {
-        rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
-        rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
-        rr_lci_vec[k] <- quantile(valid_rr,  alpha,     na.rm = TRUE)
-        rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
+  z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
+  alpha <- (1 - params@bootstrap.CI) / 2
+
+  # Build the arm-pair comparison at a single follow-up time
+  compare_at <- function(t) {
+    tt <- table[followup == t, list(variable, value)]
+    out <- CJ(tt$variable, tt$variable)[tt, on = c("V2" = "variable")
+                                        ][tt, on = c("V1" = "variable")][V1 != V2, ]
+    out[, `:=`(rr = value / i.value, rd = value - i.value, followup = t)]
+
+    if (has_ci) {
+      # Paired bootstrap: pair both arms by boot_idx at this follow-up time
+      boot_wide <- dcast(boot_risks[followup == t], boot_idx ~ variable, value.var = "value")
+      rd_lci_vec <- rd_uci_vec <- rr_lci_vec <- rr_uci_vec <- numeric(nrow(out))
+      for (k in seq_len(nrow(out))) {
+        v1 <- as.character(out$V1[k]); v2 <- as.character(out$V2[k])
+        rd_i  <- boot_wide[[v2]] - boot_wide[[v1]]
+        rr_i  <- boot_wide[[v2]] / boot_wide[[v1]]
+        valid_rr <- rr_i[rr_i > 0 & is.finite(rr_i)]
+        if (params@bootstrap.CI_method == "se") {
+          rd_lci_vec[k] <- out$rd[k] - z * sd(rd_i, na.rm = TRUE)
+          rd_uci_vec[k] <- out$rd[k] + z * sd(rd_i, na.rm = TRUE)
+          rr_log_se      <- sd(log(valid_rr), na.rm = TRUE)
+          rr_lci_vec[k] <- exp(log(out$rr[k]) - z * rr_log_se)
+          rr_uci_vec[k] <- exp(log(out$rr[k]) + z * rr_log_se)
+        } else {
+          rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
+          rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
+          rr_lci_vec[k] <- quantile(valid_rr,  alpha,     na.rm = TRUE)
+          rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
+        }
       }
+      out[, `:=`(rd_lci = rd_lci_vec, rd_uci = rd_uci_vec,
+                 rr_lci = rr_lci_vec, rr_uci = rr_uci_vec)]
     }
-    rm(boot_wide)
-    out[, `:=` (rd_lci = rd_lci_vec, rd_uci = rd_uci_vec,
-                rr_lci = rr_lci_vec, rr_uci = rr_uci_vec)
-        ][, `:=` (value = NULL, i.value = NULL, LCI = NULL, UCI = NULL,
-                  i.LCI = NULL, i.UCI = NULL, SE = NULL, i.SE = NULL)]
-    setnames(out, names(out), c("A_x", "A_y", 
-                                "Risk Ratio", "Risk Differerence",
-                                "RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI"))
-    setcolorder(out, c("A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
-                                     "Risk Differerence", "RD 95% LCI", "RD 95% UCI"))
-    
-    setnames(table, c("value", "LCI", "UCI"), c("Risk", "95% LCI", "95% UCI"))
-    setcolorder(table, c("Method", "A", "Risk", "95% LCI", "95% UCI"))
-  } else {
-    out[, `:=` (value = NULL, i.value = NULL)]
-    setnames(out, names(out), c("A_x", "A_y", "Risk Ratio", "Risk Difference"))
-    setnames(table, "value", "Risk")
-    setcolorder(table, c("Method", "A", "Risk"))
-    
+    out
   }
+
+  out <- rbindlist(lapply(report_times, compare_at))
+
+  if (has_ci) {
+    out[, `:=`(value = NULL, i.value = NULL)]
+    setcolorder(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"))
+    setnames(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"),
+                  c("Followup", "A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
+                    "Risk Differerence", "RD 95% LCI", "RD 95% UCI"))
+  } else {
+    out[, `:=`(value = NULL, i.value = NULL)]
+    setcolorder(out, c("followup", "V1", "V2", "rr", "rd"))
+    setnames(out, c("followup", "V1", "V2", "rr", "rd"),
+                  c("Followup", "A_x", "A_y", "Risk Ratio", "Risk Difference"))
+  }
+
+  # Per-arm risk table
+  table[, `:=`(A = sub(".*_", "", variable), Method = params@method, variable = NULL)]
+  if (has_ci) {
+    setnames(table, c("followup", "value", "LCI", "UCI"), c("Followup", "Risk", "95% LCI", "95% UCI"))
+    setcolorder(table, c("Method", "Followup", "A", "Risk", "95% LCI", "95% UCI"))
+  } else {
+    setnames(table, c("followup", "value"), c("Followup", "Risk"))
+    setcolorder(table, c("Method", "Followup", "A", "Risk"))
+  }
+
   return(list(risk.comparison = out, risk.data = table))
 }
 
