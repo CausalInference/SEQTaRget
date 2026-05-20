@@ -12,6 +12,7 @@ test_that("Parallelism, Bootstrapping, Output Class Methods", {
 })
 
 test_that("Non-Parallel Bootstrapping", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
     method = "dose-response", options = SEQopts(

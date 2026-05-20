@@ -7,6 +7,7 @@ test_that("Survival Return", {
 })
 
 test_that("Bootstrapped Survival", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2))
@@ -15,6 +16,7 @@ test_that("Bootstrapped Survival", {
 })
 
 test_that("Bootstrapped Survival - Percentile", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2, bootstrap.CI_method = "percentile"))
@@ -39,6 +41,7 @@ test_that("Survival output followup labeling - followup=k represents survival af
 })
 
 test_that("Bootstrapped Survival - Competing Event CIs present", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   set.seed(42)
   data[, compevent := as.integer(runif(.N) < 0.02)]

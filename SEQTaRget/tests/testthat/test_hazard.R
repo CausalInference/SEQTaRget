@@ -6,6 +6,7 @@ test_that("Hazard and vcov", {
 })
 
 test_that("Hazard estimate is reproducible with same seed", {
+  skip_on_cran()
   args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                method = "ITT", options = SEQopts(hazard = TRUE, seed = 123L))
   
@@ -16,6 +17,7 @@ test_that("Hazard estimate is reproducible with same seed", {
 })
 
 test_that("Hazard bootstrap CIs are reproducible with same seed", {
+  skip_on_cran()
   args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                method = "ITT", options = SEQopts(hazard = TRUE, bootstrap = TRUE, bootstrap.nboot = 3, seed = 42L))
   
@@ -26,6 +28,7 @@ test_that("Hazard bootstrap CIs are reproducible with same seed", {
 })
 
 test_that("Hazard bootstrap percentile CIs are reproducible with same seed", {
+  skip_on_cran()
   args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                method = "ITT", options = SEQopts(hazard = TRUE, bootstrap = TRUE, bootstrap.nboot = 3,
                                                  bootstrap.CI_method = "percentile", seed = 42L))
