@@ -82,6 +82,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   )
   params <- parameter.simplifier(params)
 
+  # Honor the user-requested data.table thread count for the duration of this
+  # call. on.exit restores the previous global setting, covering normal returns,
+  # the expand.only early return, and errors.
+  old_dt_threads <- getDTthreads()
+  setDTthreads(params@nthreads)
+  on.exit(setDTthreads(old_dt_threads), add = TRUE)
+
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
   if (params@weighted && params@method != "ITT") {
     if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
