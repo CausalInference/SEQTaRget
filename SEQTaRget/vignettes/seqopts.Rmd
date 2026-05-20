@@ -31,7 +31,7 @@ data.table::setDTthreads(2)
 | `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
 | `bootstrap.sample` | Subsample of data to use when bootstrapping | Numeric double [0, 1] | `0.8` |
 | `compevent` | Column name for competing event variable | Character | `"LTFU"` |
-| `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2*X3+X4"` |
+| `covariates` | If provided, forces covariates for outcome models | Character | `"X1+X2*X3+X4"` |
 | `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
 | `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
 | `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |
@@ -107,5 +107,5 @@ These are internal options that change output name of covariates or the decompos
 | Option Name | Description | Input Type | Example |
 |------------|-------------------------------------|------------|------------|
 | `fastglm.method` | Method for decomposition by fastglm | Integer | `3L` |
-| `indicator.baseline` | Identifier for baseline variables | Char | `"_bas"` |
-| `indicator.squared` | Identifier for squared variables | Char | `"_sq"` |
+| `indicator.baseline` | Identifier for baseline variables | Character | `"_bas"` |
+| `indicator.squared` | Identifier for squared variables | Character | `"_sq"` |
