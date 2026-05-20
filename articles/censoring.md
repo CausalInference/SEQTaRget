@@ -45,7 +45,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 310,080 observations
 #> 
-#> Expanded dataset: 248,485 observations, 15 variables
+#> Expanded dataset (pre-censoring): 248,485 observations, 15 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 15 variables
 #> 
 #> Expansion Successful
 #> 
@@ -115,7 +117,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 310,080 observations
 #> 
-#> Expanded dataset: 248,485 observations, 18 variables
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 18 variables
 #> 
 #> Expansion Successful
 #> 
@@ -184,7 +188,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 310,080 observations
 #> 
-#> Expanded dataset: 248,485 observations, 18 variables
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 18 variables
 #> 
 #> Expansion Successful
 #> 
@@ -249,7 +255,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 310,080 observations
 #> 
-#> Expanded dataset: 248,485 observations, 21 variables
+#> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
 #> 
 #> Expansion Successful
 #> 
@@ -320,7 +328,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 1,609,859 observations
 #> 
-#> Expanded dataset: 1,119,229 observations, 22 variables
+#> Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables
+#> 
+#> Expanded dataset (post-censoring): 810,880 observations, 22 variables
 #> 
 #> Expansion Successful
 #> 
@@ -386,7 +396,9 @@ model <- SEQuential(data,
 #> 
 #> Pre-filter expansion: 310,080 observations
 #> 
-#> Expanded dataset: 248,485 observations, 21 variables
+#> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
 #> 
 #> Expansion Successful
 #> 

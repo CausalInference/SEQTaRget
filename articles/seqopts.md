@@ -19,14 +19,16 @@ here in greater detail:
 | `bootstrap.CI_method` | Selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`) | Character | `"se"` |
 | `bootstrap.nboot` | Number of bootstraps to run in addition to the full model | Integer | `100L` |
 | `bootstrap.sample` | Subsample of data to use when bootstrapping | Numeric double \[0, 1\] | `0.8` |
-| `compevent` | Column name for competing event variable | Character | `"LTFU"` |
-| `covariates` | If provided, forces covariates for outcome models | Char | `"X1+X2*X3+X4"` |
+| `compevent` | Column name for competing event variable | Character | `"death"` |
+| `covariates` | If provided, forces covariates for outcome models | Character | `"X1+X2*X3+X4"` |
 | `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
+| `expand.only` | Return the expanded dataset and skip analysis | Logical | `TRUE` |
 | `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
 | `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |
 | `followup.max` | Maximum value of followup per trial | Numeric | `60` |
 | `followup.min` | Minimum value of followup per trial | Numeric | `0` |
 | `followup.spline` | Whether to format followup values to a spline | Logical | `FALSE` |
+| `followup.spline.df` | Degrees of freedom passed to [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when `followup.spline = TRUE` | Integer | `4L` |
 | `hazard` | Whether to estimate the hazard ratio | Logical | `FALSE` |
 | `km.curves` | Whether to estimate Kaplan-Meier survival curves and data | Logical | `TRUE` |
 | `multinomial` | Whether to expect more than 2 treatment types | Logical | `FALSE` |
@@ -39,8 +41,8 @@ here in greater detail:
 | `selection.random` | Whether to randomly select IDs with replacement to run analysis | Logical | `FALSE` |
 | `subgroup` | Column name for subgroup analysis | Character | `"sex"` |
 | `survival.max` | Maximum value for Risk/Survival curves | Numeric double | `60` |
-| `treat.level` | Treatment levels to compare | List | `c(0, 1)` |
 | `trial.include` | Whether to include `trial` and `trial_squared` in outcome models | Logical | `TRUE` |
+| `treat.level` | Treatment levels to compare | List | `c(0, 1)` |
 | `visit` | Column name for visit indicator | Character | `"visit"` |
 | `visit.denominator` | Visit denominator covariates to the right hand side of a formula object | Character | `"X1+X2"` |
 | `visit.numerator` | Visit numerator covariates to the right hand side of a formula object | Character | `"X1+X2"` |
@@ -62,9 +64,9 @@ the case of a censoring variable like loss-to-followup.
 | `weight.eligible_cols` | List of column names for indicator columns defining which weights are eligible for weight models | Character list | `list("eligible1", "eligible2")` |
 | `weight.lag_condition` | Whether weights should be conditioned on treatment lag value | Logical | `TRUE` |
 | `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
-| `weight.p99` | Whether to truncate weights at the 99% percentile | Logical | `TRUE` |
+| `weight.p99` | Whether to truncate weights at the 1st and 99th percentiles | Logical | `TRUE` |
 | `weight.preexpansion` | Whether weighting should be done on pre-expanded data | Logical | `TRUE` |
-| `weight.upper` | Upper truncation for weight values | Numeric double | `1.0` |
+| `weight.upper` | Upper truncation for weight values | Numeric double | `10.0` |
 | `weighted` | Whether the analysis should be weighted | Logical | `TRUE` |
 
 #### Plot Options (`km.curves = TRUE`)
@@ -89,11 +91,6 @@ yourself through your preferred plotting software.
 
 | Option Name | Description | Input Type | Example |
 |----|----|----|----|
-| `deviation` | Create switch based on deviation from column | Logical | `TRUE` |
-| `deviation.col` | Column name for deviation | Character | `"deviation_var"` |
-| `deviation.conditions` | RHS evaluations of the same length as `treat.levels` | List | `list(">3", "==1")` |
-| `deviation.excused` | Whether deviations should be excused by `deviation.excused_cols` | Logical | `TRUE` |
-| `deviation.excused_cols` | Excused columns for deviation switches | List | `list("excuse1", "excuse2")` |
 | `excused` | When censoring, whether there is an excused condition | Logical | `TRUE` |
 | `excused.cols` | List of column names for treatment switch excuses | List | `list("excuse1", "excuse2")` |
 
@@ -105,5 +102,7 @@ decomposition method when estimating coefficients.
 | Option Name | Description | Input Type | Example |
 |----|----|----|----|
 | `fastglm.method` | Method for decomposition by fastglm | Integer | `3L` |
-| `indicator.baseline` | Identifier for baseline variables | Char | `"_bas"` |
-| `indicator.squared` | Identifier for squared variables | Char | `"_sq"` |
+| `glm.package` | Package to use for fitting GLMs | Character | either `"fastglm"` (default) or `"parglm"` |
+| `indicator.baseline` | Identifier for baseline variables | Character | `"_bas"` |
+| `indicator.squared` | Identifier for squared variables | Character | `"_sq"` |
+| `parglm.control` | A control object from [`parglm::parglm.control()`](https://remlapmot.github.io/parglm/reference/parglm.control.html) to pass to [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html) | List | `parglm::parglm.control(method = "LINPACK")` |

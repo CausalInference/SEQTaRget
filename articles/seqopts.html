@@ -147,12 +147,12 @@ within [0, 1])</td>
 <td><code>compevent</code></td>
 <td>Column name for competing event variable</td>
 <td>Character</td>
-<td><code>"LTFU"</code></td>
+<td><code>"death"</code></td>
 </tr>
 <tr class="odd">
 <td><code>covariates</code></td>
 <td>If provided, forces covariates for outcome models</td>
-<td>Char</td>
+<td>Character</td>
 <td><code>"X1+X2*X3+X4"</code></td>
 </tr>
 <tr class="even">
@@ -162,35 +162,49 @@ within [0, 1])</td>
 <td><code>TRUE</code></td>
 </tr>
 <tr class="odd">
+<td><code>expand.only</code></td>
+<td>Return the expanded dataset and skip analysis</td>
+<td>Logical</td>
+<td><code>TRUE</code></td>
+</tr>
+<tr class="even">
 <td><code>followup.class</code></td>
 <td>Whether to expand followup values to an indicator matrix</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>followup.include</code></td>
 <td>Whether to include <code>followup</code> and
 <code>followup_squared</code> in outcome models</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>followup.max</code></td>
 <td>Maximum value of followup per trial</td>
 <td>Numeric</td>
 <td><code>60</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>followup.min</code></td>
 <td>Minimum value of followup per trial</td>
 <td>Numeric</td>
 <td><code>0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>followup.spline</code></td>
 <td>Whether to format followup values to a spline</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
+</tr>
+<tr class="odd">
+<td><code>followup.spline.df</code></td>
+<td>Degrees of freedom passed to <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> when
+<code>followup.spline = TRUE</code>
+</td>
+<td>Integer</td>
+<td><code>4L</code></td>
 </tr>
 <tr class="even">
 <td><code>hazard</code></td>
@@ -266,17 +280,17 @@ manipulations</td>
 <td><code>60</code></td>
 </tr>
 <tr class="even">
-<td><code>treat.level</code></td>
-<td>Treatment levels to compare</td>
-<td>List</td>
-<td><code>c(0, 1)</code></td>
-</tr>
-<tr class="odd">
 <td><code>trial.include</code></td>
 <td>Whether to include <code>trial</code> and <code>trial_squared</code>
 in outcome models</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
+</tr>
+<tr class="odd">
+<td><code>treat.level</code></td>
+<td>Treatment levels to compare</td>
+<td>List</td>
+<td><code>c(0, 1)</code></td>
 </tr>
 <tr class="even">
 <td><code>visit</code></td>
@@ -379,7 +393,7 @@ are eligible for weight models</td>
 </tr>
 <tr class="even">
 <td><code>weight.p99</code></td>
-<td>Whether to truncate weights at the 99% percentile</td>
+<td>Whether to truncate weights at the 1st and 99th percentiles</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
@@ -393,7 +407,7 @@ are eligible for weight models</td>
 <td><code>weight.upper</code></td>
 <td>Upper truncation for weight values</td>
 <td>Numeric double</td>
-<td><code>1.0</code></td>
+<td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td><code>weighted</code></td>
@@ -478,45 +492,12 @@ your preferred plotting software.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>deviation</code></td>
-<td>Create switch based on deviation from column</td>
-<td>Logical</td>
-<td><code>TRUE</code></td>
-</tr>
-<tr class="even">
-<td><code>deviation.col</code></td>
-<td>Column name for deviation</td>
-<td>Character</td>
-<td><code>"deviation_var"</code></td>
-</tr>
-<tr class="odd">
-<td><code>deviation.conditions</code></td>
-<td>RHS evaluations of the same length as <code>treat.levels</code>
-</td>
-<td>List</td>
-<td><code>list("&gt;3", "==1")</code></td>
-</tr>
-<tr class="even">
-<td><code>deviation.excused</code></td>
-<td>Whether deviations should be excused by
-<code>deviation.excused_cols</code>
-</td>
-<td>Logical</td>
-<td><code>TRUE</code></td>
-</tr>
-<tr class="odd">
-<td><code>deviation.excused_cols</code></td>
-<td>Excused columns for deviation switches</td>
-<td>List</td>
-<td><code>list("excuse1", "excuse2")</code></td>
-</tr>
-<tr class="even">
 <td><code>excused</code></td>
 <td>When censoring, whether there is an excused condition</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>excused.cols</code></td>
 <td>List of column names for treatment switch excuses</td>
 <td>List</td>
@@ -551,16 +532,32 @@ the decomposition method when estimating coefficients.</p>
 <td><code>3L</code></td>
 </tr>
 <tr class="even">
-<td><code>indicator.baseline</code></td>
-<td>Identifier for baseline variables</td>
-<td>Char</td>
-<td><code>"_bas"</code></td>
+<td><code>glm.package</code></td>
+<td>Package to use for fitting GLMs</td>
+<td>Character</td>
+<td>either <code>"fastglm"</code> (default) or
+<code>"parglm"</code>
+</td>
 </tr>
 <tr class="odd">
+<td><code>indicator.baseline</code></td>
+<td>Identifier for baseline variables</td>
+<td>Character</td>
+<td><code>"_bas"</code></td>
+</tr>
+<tr class="even">
 <td><code>indicator.squared</code></td>
 <td>Identifier for squared variables</td>
-<td>Char</td>
+<td>Character</td>
 <td><code>"_sq"</code></td>
+</tr>
+<tr class="odd">
+<td><code>parglm.control</code></td>
+<td>A control object from <code><a href="https://remlapmot.github.io/parglm/reference/parglm.control.html" class="external-link">parglm::parglm.control()</a></code> to pass
+to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>
+</td>
+<td>List</td>
+<td><code>parglm::parglm.control(method = "LINPACK")</code></td>
 </tr>
 </tbody>
 </table>
