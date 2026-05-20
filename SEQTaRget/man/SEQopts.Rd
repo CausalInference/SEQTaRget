@@ -49,6 +49,7 @@ SEQopts(
   plot.subtitle = NA,
   plot.title = NA,
   plot.type = "survival",
+  risk.times = NA,
   seed = NULL,
   selection.first_trial = FALSE,
   selection.prob = 0.8,
@@ -157,6 +158,8 @@ SEQopts(
 \item{plot.title}{Character: Title for output plot if \code{km.curves = TRUE}}
 
 \item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are \code{'survival'} (the default), \code{'risk'}, and \code{'inc'} (in the case of censoring)}
+
+\item{risk.times}{Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default \code{NA} reports only the final follow-up time.}
 
 \item{seed}{Integer: starting seed}
 
