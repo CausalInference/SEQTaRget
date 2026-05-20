@@ -46,6 +46,7 @@ data.table::setDTthreads(2)
 | `ncores` | Number of cores to use in parallel multisession | Integer | `8L` |
 | `nthreads` | Number of threads to use for **data.table** manipulations | Integer | `16L` |
 | `parallel` | Whether the SEQuential process should be run in parallel | Logical | `TRUE` |
+| `risk.times` | Follow-up times (in follow-up units) at which to report risk difference and risk ratio when `km.curves = TRUE`; each is snapped to the latest follow-up at or before it and the final time is always included (`NA` reports only the final time) | Numeric vector | `c(36, 120)` |
 | `seed` | Starting seed for random number generators | Integer | `1636` |
 | `selection.first_trial` | Selects only the first eligible trial in the expanded dataset | Logical | `TRUE` |
 | `selection.prob` | Subsample of total IDs to select | Numeric double [0, 1] | `0.8` |
