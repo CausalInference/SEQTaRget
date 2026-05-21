@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = identical(Sys.getenv("IN_PKGDOWN"), "true") && identical(Sys.getenv("GITHUB_ACTIONS"), "true")
 )
 data.table::setDTthreads(2)
 ```

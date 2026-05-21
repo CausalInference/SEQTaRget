@@ -154,6 +154,7 @@ test_that("Pre-Expansion ITT (Cense 1 - LTFU)", {
 })
 
 test_that("Post-Expansion ITT (Cense 1 - LTFU)", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata.LTFU)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT",

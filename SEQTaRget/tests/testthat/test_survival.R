@@ -7,6 +7,7 @@ test_that("Survival Return", {
 })
 
 test_that("Bootstrapped Survival", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2))
@@ -15,6 +16,7 @@ test_that("Bootstrapped Survival", {
 })
 
 test_that("Bootstrapped Survival - Percentile", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
                       method = "ITT", options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 2, bootstrap.CI_method = "percentile"))
@@ -39,6 +41,7 @@ test_that("Survival output followup labeling - followup=k represents survival af
 })
 
 test_that("Bootstrapped Survival - Competing Event CIs present", {
+  skip_on_cran()
   data <- data.table::copy(SEQdata)
   set.seed(42)
   data[, compevent := as.integer(runif(.N) < 0.02)]
@@ -49,4 +52,44 @@ test_that("Bootstrapped Survival - Competing Event CIs present", {
   ci_cols <- c("RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI")
   expect_true(all(ci_cols %in% names(model@risk.comparison[[1]])))
   expect_true(all(!is.na(model@risk.comparison[[1]][, ci_cols, with = FALSE])))
+})
+
+test_that("risk.times reports RD/RR at requested follow-up times plus the final time", {
+  data <- data.table::copy(SEQdata)
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(km.curves = TRUE, risk.times = c(2, 5),
+                                        bootstrap = TRUE, bootstrap.nboot = 5),
+                      verbose = FALSE))
+  rc <- risk_comparison(model)
+  expect_true("Followup" %in% names(rc))
+  final <- max(model@survival.data[[1]]$followup)
+  # Requested times (2, 5) are snapped onto the grid and the final time is always included
+  expect_setequal(unique(rc$Followup), c(2, 5, final))
+  # CIs present at every reported time
+  ci_cols <- c("RD 95% LCI", "RD 95% UCI", "RR 95% LCI", "RR 95% UCI")
+  expect_true(all(ci_cols %in% names(rc)))
+  expect_true(all(!is.na(rc[, ci_cols, with = FALSE])))
+})
+
+test_that("risk.times default reports only the final follow-up time", {
+  data <- data.table::copy(SEQdata)
+  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT", options = SEQopts(km.curves = TRUE), verbose = FALSE)
+  rc <- risk_comparison(model)
+  final <- max(model@survival.data[[1]]$followup)
+  expect_equal(unique(rc$Followup), final)
+})
+
+test_that("risk.times errors when a requested time exceeds maximum follow-up", {
+  data <- data.table::copy(SEQdata)
+  expect_error(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+               list("N", "L", "P"), list("sex"),
+               method = "ITT", options = SEQopts(km.curves = TRUE, risk.times = 1e6),
+               verbose = FALSE),
+    "maximum follow-up"
+  )
 })

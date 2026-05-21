@@ -153,12 +153,14 @@ internal.survival <- function(params, outcome) {
       rm(data)
       DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
 
-      # Per-iteration final risks for paired RD/RR CI computation in create.risk()
+      # Per-iteration risks at the requested follow-up times for paired RD/RR CI
+      # computation in create.risk(). Snap requested times to the follow-up grid.
       var_type <- if (any(grepl("^inc_", data_all[["variable"]]))) "^inc_" else "^risk_"
+      report_times <- resolve_risk_times(full$data[["followup"]], params@risk.times)
       boot_risks <- data_all[variable %like% var_type
                              ][, variable := as.character(variable)
-                               ][, .SD[.N], by = c("variable", "boot_idx")
-                                 ][, .(variable, boot_idx, value)]
+                               ][followup %in% report_times
+                                 ][, .(variable, boot_idx, followup, value)]
 
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)

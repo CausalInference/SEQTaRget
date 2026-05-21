@@ -123,6 +123,7 @@ test_that("show with km.curves", {
 })
 
 test_that("show with LTFU weights", {
+  skip_on_cran()
   model <- SEQuential(copy(SEQdata.LTFU), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
                       method = "ITT",
@@ -290,6 +291,7 @@ test_that("Hazard with competing event", {
 })
 
 test_that("Hazard bootstrap with competing event", {
+  skip_on_cran()
   data <- copy(SEQdata)
   set.seed(42)
   data[, compevent := as.integer(runif(.N) < 0.02)]
@@ -306,6 +308,7 @@ test_that("Hazard bootstrap with competing event", {
 # ── SEQestimate.R: additional branches ──────────────────────────────────────
 
 test_that("SEQestimate with bootstrap and LTFU", {
+  skip_on_cran()
   time <- SEQestimate(copy(SEQdata.LTFU), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
                       method = "ITT",

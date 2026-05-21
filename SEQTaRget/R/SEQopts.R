@@ -44,6 +44,7 @@
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'` (the default), `'risk'`, and `'inc'` (in the case of censoring)
+#' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default `NA` reports only the final follow-up time.
 #' @param seed Integer: starting seed
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
@@ -76,6 +77,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
                     numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
+                    risk.times = NA,
                     seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE,
                     visit = NA, visit.denominator = NA, visit.numerator = NA,
@@ -152,6 +154,10 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   if (followup.spline && followup.spline.df < 3L)
     warning("'followup.spline.df' < 3 will not give a meaningfully non-linear basis; consider df >= 3")
 
+  risk.times <- as.numeric(risk.times)
+  if (!all(is.na(risk.times)) && any(risk.times < 0, na.rm = TRUE))
+    stop("'risk.times' must be non-negative")
+
   if (bootstrap.sample <= 0 || bootstrap.sample > 1) stop("'bootstrap.sample' must be in (0, 1]")
   if (bootstrap.CI <= 0 || bootstrap.CI >= 1) stop("'bootstrap.CI' must be in (0, 1)")
   if (bootstrap.nboot < 1L) stop("'bootstrap.nboot' must be a positive integer")
@@ -198,6 +204,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       followup.min = followup.min,
       followup.max = followup.max,
       survival.max = survival.max,
+      risk.times = risk.times,
       trial.include = trial.include,
       followup.include = followup.include,
       weighted = weighted,
