@@ -79,7 +79,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Defining your SEQopts()</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.2-pre/vignettes/seqopts.Rmd" class="external-link"><code>vignettes/seqopts.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/vignettes/seqopts.Rmd" class="external-link"><code>vignettes/seqopts.Rmd</code></a></small>
       <div class="d-none name"><code>seqopts.Rmd</code></div>
     </div>
 
@@ -147,12 +147,12 @@ within [0, 1])</td>
 <td><code>compevent</code></td>
 <td>Column name for competing event variable</td>
 <td>Character</td>
-<td><code>"LTFU"</code></td>
+<td><code>"death"</code></td>
 </tr>
 <tr class="odd">
 <td><code>covariates</code></td>
 <td>If provided, forces covariates for outcome models</td>
-<td>Char</td>
+<td>Character</td>
 <td><code>"X1+X2*X3+X4"</code></td>
 </tr>
 <tr class="even">
@@ -162,35 +162,49 @@ within [0, 1])</td>
 <td><code>TRUE</code></td>
 </tr>
 <tr class="odd">
+<td><code>expand.only</code></td>
+<td>Return the expanded dataset and skip analysis</td>
+<td>Logical</td>
+<td><code>TRUE</code></td>
+</tr>
+<tr class="even">
 <td><code>followup.class</code></td>
 <td>Whether to expand followup values to an indicator matrix</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>followup.include</code></td>
 <td>Whether to include <code>followup</code> and
 <code>followup_squared</code> in outcome models</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>followup.max</code></td>
 <td>Maximum value of followup per trial</td>
 <td>Numeric</td>
 <td><code>60</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>followup.min</code></td>
 <td>Minimum value of followup per trial</td>
 <td>Numeric</td>
 <td><code>0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>followup.spline</code></td>
 <td>Whether to format followup values to a spline</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
+</tr>
+<tr class="odd">
+<td><code>followup.spline.df</code></td>
+<td>Degrees of freedom passed to <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> when
+<code>followup.spline = TRUE</code>
+</td>
+<td>Integer</td>
+<td><code>4L</code></td>
 </tr>
 <tr class="even">
 <td><code>hazard</code></td>
@@ -230,46 +244,49 @@ manipulations</td>
 <td><code>TRUE</code></td>
 </tr>
 <tr class="even">
+<td><code>risk.times</code></td>
+<td>Follow-up times (in follow-up units) at which to report risk
+difference and risk ratio when <code>km.curves = TRUE</code>; each is
+snapped to the latest follow-up at or before it and the final time is
+always included (<code>NA</code> reports only the final time)</td>
+<td>Numeric vector</td>
+<td><code>c(36, 120)</code></td>
+</tr>
+<tr class="odd">
 <td><code>seed</code></td>
 <td>Starting seed for random number generators</td>
 <td>Integer</td>
 <td><code>1636</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>selection.first_trial</code></td>
 <td>Selects only the first eligible trial in the expanded dataset</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>selection.prob</code></td>
 <td>Subsample of total IDs to select</td>
 <td>Numeric double [0, 1]</td>
 <td><code>0.8</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>selection.random</code></td>
 <td>Whether to randomly select IDs with replacement to run analysis</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>subgroup</code></td>
 <td>Column name for subgroup analysis</td>
 <td>Character</td>
 <td><code>"sex"</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>survival.max</code></td>
 <td>Maximum value for Risk/Survival curves</td>
 <td>Numeric double</td>
 <td><code>60</code></td>
-</tr>
-<tr class="even">
-<td><code>treat.level</code></td>
-<td>Treatment levels to compare</td>
-<td>List</td>
-<td><code>c(0, 1)</code></td>
 </tr>
 <tr class="odd">
 <td><code>trial.include</code></td>
@@ -279,19 +296,25 @@ in outcome models</td>
 <td><code>TRUE</code></td>
 </tr>
 <tr class="even">
+<td><code>treat.level</code></td>
+<td>Treatment levels to compare</td>
+<td>List</td>
+<td><code>c(0, 1)</code></td>
+</tr>
+<tr class="odd">
 <td><code>visit</code></td>
 <td>Column name for visit indicator</td>
 <td>Character</td>
 <td><code>"visit"</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>visit.denominator</code></td>
 <td>Visit denominator covariates to the right hand side of a formula
 object</td>
 <td>Character</td>
 <td><code>"X1+X2"</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>visit.numerator</code></td>
 <td>Visit numerator covariates to the right hand side of a formula
 object</td>
@@ -379,7 +402,7 @@ are eligible for weight models</td>
 </tr>
 <tr class="even">
 <td><code>weight.p99</code></td>
-<td>Whether to truncate weights at the 99% percentile</td>
+<td>Whether to truncate weights at the 1st and 99th percentiles</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
@@ -393,7 +416,7 @@ are eligible for weight models</td>
 <td><code>weight.upper</code></td>
 <td>Upper truncation for weight values</td>
 <td>Numeric double</td>
-<td><code>1.0</code></td>
+<td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td><code>weighted</code></td>
@@ -478,45 +501,12 @@ your preferred plotting software.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>deviation</code></td>
-<td>Create switch based on deviation from column</td>
-<td>Logical</td>
-<td><code>TRUE</code></td>
-</tr>
-<tr class="even">
-<td><code>deviation.col</code></td>
-<td>Column name for deviation</td>
-<td>Character</td>
-<td><code>"deviation_var"</code></td>
-</tr>
-<tr class="odd">
-<td><code>deviation.conditions</code></td>
-<td>RHS evaluations of the same length as <code>treat.levels</code>
-</td>
-<td>List</td>
-<td><code>list("&gt;3", "==1")</code></td>
-</tr>
-<tr class="even">
-<td><code>deviation.excused</code></td>
-<td>Whether deviations should be excused by
-<code>deviation.excused_cols</code>
-</td>
-<td>Logical</td>
-<td><code>TRUE</code></td>
-</tr>
-<tr class="odd">
-<td><code>deviation.excused_cols</code></td>
-<td>Excused columns for deviation switches</td>
-<td>List</td>
-<td><code>list("excuse1", "excuse2")</code></td>
-</tr>
-<tr class="even">
 <td><code>excused</code></td>
 <td>When censoring, whether there is an excused condition</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>excused.cols</code></td>
 <td>List of column names for treatment switch excuses</td>
 <td>List</td>
@@ -551,16 +541,32 @@ the decomposition method when estimating coefficients.</p>
 <td><code>3L</code></td>
 </tr>
 <tr class="even">
-<td><code>indicator.baseline</code></td>
-<td>Identifier for baseline variables</td>
-<td>Char</td>
-<td><code>"_bas"</code></td>
+<td><code>glm.package</code></td>
+<td>Package to use for fitting GLMs</td>
+<td>Character</td>
+<td>either <code>"fastglm"</code> (default) or
+<code>"parglm"</code>
+</td>
 </tr>
 <tr class="odd">
+<td><code>indicator.baseline</code></td>
+<td>Identifier for baseline variables</td>
+<td>Character</td>
+<td><code>"_bas"</code></td>
+</tr>
+<tr class="even">
 <td><code>indicator.squared</code></td>
 <td>Identifier for squared variables</td>
-<td>Char</td>
+<td>Character</td>
 <td><code>"_sq"</code></td>
+</tr>
+<tr class="odd">
+<td><code>parglm.control</code></td>
+<td>A control object from <code><a href="https://remlapmot.github.io/parglm/reference/parglm.control.html" class="external-link">parglm::parglm.control()</a></code> to pass
+to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>
+</td>
+<td>List</td>
+<td><code>parglm::parglm.control(method = "LINPACK")</code></td>
 </tr>
 </tbody>
 </table>

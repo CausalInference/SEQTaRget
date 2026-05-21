@@ -79,7 +79,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Introduction to SEQuential</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.2-pre/vignettes/SEQuential.Rmd" class="external-link"><code>vignettes/SEQuential.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/vignettes/SEQuential.Rmd" class="external-link"><code>vignettes/SEQuential.Rmd</code></a></small>
       <div class="d-none name"><code>SEQuential.Rmd</code></div>
     </div>
 
@@ -501,19 +501,20 @@ provide a few different methods to handle obtaining your results.</p>
 <p><img src="SEQuential_files/figure-html/outcome-1.png" class="r-plt" alt="Survival curve by treatment group." width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Method      A      Risk   95% LCI   95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8135710 0.9353007 0.03105406</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7738757 0.9006407 0.03233859</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8135710 0.9353007 0.03105406</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8979094   1.021011       -0.03717768 -0.09200493</span></span>
-<span><span class="co">#&gt;    RD 95% UCI</span></span>
-<span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.09200493</span></span>
-<span><span class="co">#&gt; 2: 0.01764957</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8979094   1.021011       -0.03717768</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.01764957 0.09200493</span></span>
+<span><span class="co">#&gt; 2: -0.09200493 0.01764957</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

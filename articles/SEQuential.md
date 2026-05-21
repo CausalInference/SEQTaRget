@@ -426,17 +426,18 @@ group.](SEQuential_files/figure-html/outcome-1.png)
 ``` r
 
 risk_data(model)
-#>    Method      A      Risk   95% LCI   95% UCI         SE
-#>    <char> <char>     <num>     <num>     <num>      <num>
-#> 1:    ITT      0 0.8372582 0.7738757 0.9006407 0.03233859
-#> 2:    ITT      1 0.8744359 0.8135710 0.9353007 0.03105406
+#> Index: <Followup>
+#>    Method Followup      A      Risk   95% LCI   95% UCI         SE
+#>    <char>    <num> <char>     <num>     <num>     <num>      <num>
+#> 1:    ITT       60      0 0.8372582 0.7738757 0.9006407 0.03233859
+#> 2:    ITT       60      1 0.8744359 0.8135710 0.9353007 0.03105406
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI
-#>    <fctr> <fctr>      <num>      <num>      <num>             <num>       <num>
-#> 1: risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768 -0.01764957
-#> 2: risk_1 risk_0  0.9574838  0.8979094   1.021011       -0.03717768 -0.09200493
-#>    RD 95% UCI
-#>         <num>
-#> 1: 0.09200493
-#> 2: 0.01764957
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>             <num>
+#> 1:       60 risk_0 risk_1  1.0444041  0.9794216   1.113698        0.03717768
+#> 2:       60 risk_1 risk_0  0.9574838  0.8979094   1.021011       -0.03717768
+#>     RD 95% LCI RD 95% UCI
+#>          <num>      <num>
+#> 1: -0.01764957 0.09200493
+#> 2: -0.09200493 0.01764957
 ```

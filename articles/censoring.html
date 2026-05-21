@@ -79,7 +79,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Per-Protocol: Censoring Analysis</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.2-pre/vignettes/censoring.Rmd" class="external-link"><code>vignettes/censoring.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/vignettes/censoring.Rmd" class="external-link"><code>vignettes/censoring.Rmd</code></a></small>
       <div class="d-none name"><code>censoring.Rmd</code></div>
     </div>
 
@@ -127,7 +127,9 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 15 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 15 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 15 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -148,15 +150,16 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <code class="sourceCode R"><span><span class="co"># retrieve survival and risk data</span></span>
 <span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6596589</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9243520</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6596589</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9243520</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.4012576       0.2646931</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.7136447      -0.2646931</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.4012576       0.2646931</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.7136447      -0.2646931</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-no-excused-conditions-i-e--static-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -192,7 +195,9 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 18 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -210,15 +215,16 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <p><img src="censoring_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6533049</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9281893</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6533049</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9281893</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.4207598       0.2748844</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.7038488      -0.2748844</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.4207598       0.2748844</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.7038488      -0.2748844</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-pre-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in pre-expanded data and no
@@ -257,7 +263,9 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 18 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -275,15 +283,16 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.9647942</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9627635</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.9647942</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9627635</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  0.9978953    -0.002030621</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  1.0021092     0.002030621</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  0.9978953    -0.002030621</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  1.0021092     0.002030621</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -318,7 +327,9 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 21 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -336,15 +347,16 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6371076</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9909442</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6371076</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9909442</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.5553797       0.3538366</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.6429298      -0.3538366</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.5553797       0.3538366</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.6429298      -0.3538366</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-a-competing-event">Per-protocol, censoring, weights in post-expanded data and no
@@ -385,7 +397,9 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 1,119,229 observations, 22 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 810,880 observations, 22 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -403,15 +417,16 @@ truncation, excused conditions for initiators and non-initiators
 <p><img src="censoring_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A       Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.02542994</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.01646542</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A       Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.02542994</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.01646542</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  inc_0  inc_1  0.6474815    -0.008964524</span></span>
-<span><span class="co">#&gt; 2:  inc_1  inc_0  1.5444456     0.008964524</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.6474815    -0.008964524</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.5444456     0.008964524</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio">Per-protocol, censoring, weights in post-expanded data and no
@@ -447,7 +462,9 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 21 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
 <span><span class="co">#&gt; </span></span>

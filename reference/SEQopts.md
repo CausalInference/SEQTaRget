@@ -50,6 +50,7 @@ SEQopts(
   plot.subtitle = NA,
   plot.title = NA,
   plot.type = "survival",
+  risk.times = NA,
   seed = NULL,
   selection.first_trial = FALSE,
   selection.prob = 0.8,
@@ -312,6 +313,14 @@ SEQopts(
   Character: Type of plot to create if `km.curves = TRUE`, available
   options are `'survival'` (the default), `'risk'`, and `'inc'` (in the
   case of censoring)
+
+- risk.times:
+
+  Numeric vector: follow-up times (in the data's follow-up units) at
+  which to report risk difference and risk ratio when
+  `km.curves = TRUE`. Each requested time is snapped to the latest
+  available follow-up at or before it. The final follow-up time is
+  always included. Default `NA` reports only the final follow-up time.
 
 - seed:
 
