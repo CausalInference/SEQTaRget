@@ -1,3 +1,7 @@
+# SEQTaRget (development version)
+
+* Fix "Risk Differerence" typo in `risk.times` output
+
 # SEQTaRget v1.4.2
 
 * Remove mention of units from time in docs.
