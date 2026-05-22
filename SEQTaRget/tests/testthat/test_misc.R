@@ -166,6 +166,49 @@ test_that("expand.only = TRUE returns expanded data.table and matches data.retur
   expect_equal(expanded$outcome, ref$outcome)
 })
 
+test_that("info follow-up tables count intervals and unique subjects per treatment arm", {
+  data <- copy(SEQdata)
+  model <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"),
+                                       method = "censoring",
+                                       options = SEQopts(weighted = FALSE, data.return = TRUE),
+                                       verbose = FALSE))
+  fnn <- model@info$followup.nonunique
+  fu <- model@info$followup.unique
+  expect_type(fnn, "list")
+  expect_length(fnn, 1L)
+  nn <- fnn[[1]]; un <- fu[[1]]
+  expect_true(all(c("tx_init_bas", "n") %in% names(nn)))
+  expect_true(all(c("tx_init_bas", "n") %in% names(un)))
+  expect_setequal(as.character(nn$tx_init_bas), c("0", "1"))
+
+  # Non-unique: per-arm interval count == non-NA outcome rows in the analysis DT
+  expected_nn <- model@DT[!is.na(outcome), .N, by = tx_init_bas]
+  setkey(expected_nn, tx_init_bas); setkeyv(nn, "tx_init_bas")
+  expect_equal(nn$n, expected_nn$N)
+  expect_equal(sum(nn$n), model@DT[!is.na(outcome), .N])
+
+  # Unique: per-arm distinct subject count
+  expected_un <- model@DT[!is.na(outcome), uniqueN(ID), by = tx_init_bas]
+  setkey(expected_un, tx_init_bas); setkeyv(un, "tx_init_bas")
+  expect_equal(un$n, expected_un$V1)
+
+  # Unique counts cannot exceed interval counts within an arm
+  expect_true(all(un$n <= nn$n))
+})
+
+test_that("info follow-up tables are reported per subgroup", {
+  data <- copy(SEQdata)
+  model <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"),
+                                       method = "ITT",
+                                       options = SEQopts(subgroup = "sex"),
+                                       verbose = FALSE))
+  expect_named(model@info$followup.unique, c("sex_0", "sex_1"))
+  expect_named(model@info$followup.nonunique, c("sex_0", "sex_1"))
+  for (tbl in model@info$followup.nonunique) expect_true(all(c("tx_init_bas", "n") %in% names(tbl)))
+})
+
 test_that("character time-varying covariates get a stable factor encoding", {
   # A character categorical among the time-varying covariates must be coerced to a
   # factor (levels fixed from the full data) so bootstrap resamples cannot realise

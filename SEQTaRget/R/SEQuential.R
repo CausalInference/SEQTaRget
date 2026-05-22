@@ -253,17 +253,23 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   rm(analytic)
 
   outcome.unique  <- outcome.nonunique <- vector("list", n_subgroups)
-  if (n_subgroups > 0) names(outcome.unique) <- names(outcome.nonunique) <- subgroups
+  followup.unique <- followup.nonunique <- vector("list", n_subgroups)
+  if (n_subgroups > 0) names(outcome.unique) <- names(outcome.nonunique) <-
+    names(followup.unique) <- names(followup.nonunique) <- subgroups
   filter <- sort(unique(data[[params@subgroup]]))
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
     outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
     outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
+    followup.unique[[label]] <- followup.table(params, type = "unique", filter = filter[[i]])
+    followup.nonunique[[label]] <- followup.table(params, type = "nonunique", filter = filter[[i]])
   }
-  
+
   # Output ======================================================
   info <- list(outcome.unique = outcome.unique,
                outcome.nonunique = outcome.nonunique,
+               followup.unique = followup.unique,
+               followup.nonunique = followup.nonunique,
                switch.unique = switch.unique,
                switch.nonunique = switch.nonunique,
                compevent.unique = if (!is.na(params@compevent)) table(data[[params@compevent]]) else NA,
