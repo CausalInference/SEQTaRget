@@ -83,7 +83,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
     setcolorder(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"))
     setnames(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"),
                   c("Followup", "A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
-                    "Risk Differerence", "RD 95% LCI", "RD 95% UCI"))
+                    "Risk Difference", "RD 95% LCI", "RD 95% UCI"))
   } else {
     out[, `:=`(value = NULL, i.value = NULL)]
     setcolorder(out, c("followup", "V1", "V2", "rr", "rd"))
