@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.4.2
 
+CRAN release: 2026-05-21
+
 - Remove mention of units from time in docs.
 - Improve memory usage in the bootstrapping.
 - Fix off-by-one labeling in survival output so that `followup = k`
