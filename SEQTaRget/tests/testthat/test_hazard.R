@@ -69,3 +69,36 @@ test_that("direct coxph.fit matches coxph() formula for the univariate hazard mo
 
   expect_equal(b_fit, b_formula, tolerance = 1e-8)
 })
+
+test_that("direct agreg.fit matches coxph() formula for the competing-event Fine-Gray model", {
+  # The competing-event hazard fit now calls survival::agreg.fit on the
+  # finegray() counting-process data instead of coxph(formula, data), to skip the
+  # model.frame rebuild on every bootstrap iteration. Lock in that the two give
+  # the same coefficient, using competing-risks data with the heavy ties that
+  # integer follow-up produces.
+  set.seed(1)
+  n <- 4000
+  d <- data.frame(
+    followup    = sample(1:60, n, replace = TRUE),
+    event       = factor(sample(c(0, 1, 2), n, replace = TRUE,
+                                prob = c(0.85, 0.10, 0.05)), levels = c(0, 1, 2)),
+    tx_init_bas = rbinom(n, 1, 0.5)
+  )
+  fg <- survival::finegray(survival::Surv(followup, event) ~ ., d, etype = 1)
+
+  b_formula <- unname(coef(survival::coxph(
+    survival::Surv(fgstart, fgstop, fgstatus) ~ get("tx_init_bas"), data = fg
+  )))
+
+  x <- matrix(as.double(fg[["tx_init_bas"]]), ncol = 1L,
+              dimnames = list(NULL, "tx_init_bas"))
+  y <- survival::Surv(as.double(fg[["fgstart"]]), as.double(fg[["fgstop"]]),
+                      fg[["fgstatus"]])
+  b_fit <- unname(survival::agreg.fit(
+    x, y, strata = NULL, offset = NULL, init = 0,
+    control = survival::coxph.control(), weights = NULL,
+    method = "efron", rownames = NULL
+  )$coefficients)
+
+  expect_equal(b_fit, b_formula, tolerance = 1e-8)
+})
