@@ -2,6 +2,7 @@
 
 * Fix "Risk Differerence" typo in `risk.times` output
 * Report follow-up per treatment arm in the `@info` slot as `info$followup.unique` and `info$followup.nonunique` (per subgroup, mirroring `info$outcome.unique` / `info$outcome.nonunique`). Both are grouped by baseline treatment over expanded-data rows with an observed (non-`NA`) outcome - the person-time the outcome model is fit on. The non-unique table counts follow-up intervals (so the non-unique outcome counts divided by these give per-arm event rates); the unique table counts the distinct subjects contributing follow-up to each arm. Also shown in the printed diagnostic tables.
+* Speed up the hazard ratio calculation by fitting the (non-competing-event) univariate Cox model with `survival::coxph.fit()` on a prebuilt design matrix instead of `coxph(formula, data)`, avoiding the `model.frame`/`model.matrix` rebuild on every bootstrap iteration. The hazard ratio and CIs are unchanged.
 
 # SEQTaRget v1.4.2
 
