@@ -3,6 +3,7 @@
 * Fix "Risk Differerence" typo in `risk.times` output
 * Report follow-up per treatment arm in the `@info` slot as `info$followup.unique` and `info$followup.nonunique` (per subgroup, mirroring `info$outcome.unique` / `info$outcome.nonunique`). Both are grouped by baseline treatment over expanded-data rows with an observed (non-`NA`) outcome - the person-time the outcome model is fit on. The non-unique table counts follow-up intervals (so the non-unique outcome counts divided by these give per-arm event rates); the unique table counts the distinct subjects contributing follow-up to each arm. Also shown in the printed diagnostic tables.
 * Speed up the hazard ratio calculation by fitting the Cox model with the survival C fitters directly on a prebuilt design matrix instead of `coxph(formula, data)`, avoiding the `model.frame`/`model.matrix` rebuild on every bootstrap iteration: `survival::coxph.fit()` for the non-competing-event model and `survival::agreg.fit()` for the competing-event Fine-Gray (counting-process) model. The hazard ratio and CIs are unchanged.
+* Fix the competing-event Fine-Gray hazard fit to use the `finegray()` case weights (`fgwt`), which are required for a valid subdistribution-hazard estimate and were previously omitted. This is a no-op for the current hazard simulation (which has only administrative censoring, so all `fgwt` are 1) but corrects the estimate should the simulated data ever carry random censoring.
 
 # SEQTaRget v1.4.2
 

@@ -63,7 +63,7 @@ internal.hazard <- function(model, params, cache) {
       y <- Surv(as.double(hr.data[["fgstart"]]), as.double(hr.data[["fgstop"]]),
                 hr.data[["fgstatus"]])
       hr.res <- agreg.fit(x, y, strata = NULL, offset = NULL, init = 0,
-                          control = coxph.control(), weights = NULL,
+                          control = coxph.control(), weights = hr.data[["fgwt"]],
                           method = "efron", rownames = NULL)
     } else {
       # Univariate Cox: build the one-column design matrix and call the C fitter

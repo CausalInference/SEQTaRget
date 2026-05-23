@@ -86,8 +86,12 @@ test_that("direct agreg.fit matches coxph() formula for the competing-event Fine
   )
   fg <- survival::finegray(survival::Surv(followup, event) ~ ., d, etype = 1)
 
+  # Weighted Fine-Gray: the case weights (fgwt) are required for a valid
+  # subdistribution-hazard estimate. This data has random censoring, so fgwt
+  # departs from 1 and the weighting is genuinely exercised.
   b_formula <- unname(coef(survival::coxph(
-    survival::Surv(fgstart, fgstop, fgstatus) ~ get("tx_init_bas"), data = fg
+    survival::Surv(fgstart, fgstop, fgstatus) ~ get("tx_init_bas"),
+    data = fg, weights = fgwt
   )))
 
   x <- matrix(as.double(fg[["tx_init_bas"]]), ncol = 1L,
@@ -96,7 +100,7 @@ test_that("direct agreg.fit matches coxph() formula for the competing-event Fine
                       fg[["fgstatus"]])
   b_fit <- unname(survival::agreg.fit(
     x, y, strata = NULL, offset = NULL, init = 0,
-    control = survival::coxph.control(), weights = NULL,
+    control = survival::coxph.control(), weights = fg[["fgwt"]],
     method = "efron", rownames = NULL
   )$coefficients)
 
