@@ -254,8 +254,13 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   outcome.unique  <- outcome.nonunique <- vector("list", n_subgroups)
   followup.unique <- followup.nonunique <- vector("list", n_subgroups)
-  if (n_subgroups > 0) names(outcome.unique) <- names(outcome.nonunique) <-
-    names(followup.unique) <- names(followup.nonunique) <- subgroups
+  compevent.unique <- compevent.nonunique <- if (!is.na(params@compevent)) vector("list", n_subgroups) else NA
+  if (n_subgroups > 0) {
+    names(outcome.unique) <- names(outcome.nonunique) <-
+      names(followup.unique) <- names(followup.nonunique) <- subgroups
+    if (!is.na(params@compevent))
+      names(compevent.unique) <- names(compevent.nonunique) <- subgroups
+  }
   filter <- sort(unique(data[[params@subgroup]]))
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
@@ -263,6 +268,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
     followup.unique[[label]] <- followup.table(params, type = "unique", filter = filter[[i]])
     followup.nonunique[[label]] <- followup.table(params, type = "nonunique", filter = filter[[i]])
+    if (!is.na(params@compevent)) {
+      compevent.unique[[label]] <- compevent.table(params, type = "unique", filter = filter[[i]])
+      compevent.nonunique[[label]] <- compevent.table(params, type = "nonunique", filter = filter[[i]])
+    }
   }
 
   # Output ======================================================
@@ -272,9 +281,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                followup.nonunique = followup.nonunique,
                switch.unique = switch.unique,
                switch.nonunique = switch.nonunique,
-               compevent.unique = if (!is.na(params@compevent)) table(data[[params@compevent]]) else NA,
-               compevent.nonunique = if(!is.na(params@compevent)) table(params@DT[!is.na(get(params@outcome)), 
-                                                                                  ][[params@compevent]]) else NA)
+               compevent.unique = compevent.unique,
+               compevent.nonunique = compevent.nonunique)
   
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)

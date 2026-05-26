@@ -273,3 +273,28 @@ outcome.table <- function(params, type, filter = NA) {
   }
   return(out)
 }
+
+compevent.table <- function(params, type, filter = NA) {
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+
+  if (is.na(params@subgroup)) {
+    out <- if (type == "unique") {
+      params@DT[get(params@compevent) == 1, .SD[1],
+                by = c(params@id, tx_bas, params@compevent)
+                ][, list(n = .N), by = c(tx_bas, params@compevent)]
+    } else {
+      params@DT[get(params@compevent) == 1, list(n = .N),
+                by = c(tx_bas, params@compevent)]
+    }
+  } else {
+    out <- if (type == "unique") {
+      params@DT[get(params@compevent) == 1 & get(params@subgroup) == filter,
+                .SD[1], by = c(params@id, tx_bas, params@compevent)
+                ][, list(n = .N), by = c(tx_bas, params@compevent)]
+    } else {
+      params@DT[get(params@compevent) == 1 & get(params@subgroup) == filter,
+                list(n = .N), by = c(tx_bas, params@compevent)]
+    }
+  }
+  return(out)
+}
