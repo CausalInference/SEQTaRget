@@ -209,6 +209,45 @@ test_that("info follow-up tables are reported per subgroup", {
   for (tbl in model@info$followup.nonunique) expect_true(all(c("tx_init_bas", "n") %in% names(tbl)))
 })
 
+test_that("info compevent tables count intervals and unique subjects per treatment arm", {
+  set.seed(42)
+  data <- copy(SEQdata)
+  data[, compevent := as.integer(runif(.N) < 0.05)]
+  model <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"),
+                                       method = "ITT",
+                                       options = SEQopts(compevent = "compevent", data.return = TRUE),
+                                       verbose = FALSE))
+  cnn <- model@info$compevent.nonunique
+  cun <- model@info$compevent.unique
+  expect_type(cnn, "list")
+  expect_length(cnn, 1L)
+  nn <- cnn[[1]]; un <- cun[[1]]
+  expect_true(all(c("tx_init_bas", "compevent", "n") %in% names(nn)))
+  expect_true(all(c("tx_init_bas", "compevent", "n") %in% names(un)))
+  expect_setequal(as.character(nn$tx_init_bas), c("0", "1"))
+
+  # Non-unique: per-arm interval count == compevent == 1 rows in the analysis DT
+  expected_nn <- model@DT[compevent == 1L, .N, by = tx_init_bas]
+  setkey(expected_nn, tx_init_bas); setkeyv(nn, "tx_init_bas")
+  expect_equal(nn$n, expected_nn$N)
+
+  # Unique: per-arm distinct subject count with compevent == 1
+  expected_un <- model@DT[compevent == 1L, uniqueN(ID), by = tx_init_bas]
+  setkey(expected_un, tx_init_bas); setkeyv(un, "tx_init_bas")
+  expect_equal(un$n, expected_un$V1)
+
+  # Unique counts cannot exceed interval counts within an arm
+  expect_true(all(un$n <= nn$n))
+
+  # compevent tables are NA when compevent not specified
+  model_no_ce <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                             list("N", "L", "P"), list("sex"),
+                                             method = "ITT", options = SEQopts(), verbose = FALSE))
+  expect_true(is.na(model_no_ce@info$compevent.unique))
+  expect_true(is.na(model_no_ce@info$compevent.nonunique))
+})
+
 test_that("character time-varying covariates get a stable factor encoding", {
   # A character categorical among the time-varying covariates must be coerced to a
   # factor (levels fixed from the full data) so bootstrap resamples cannot realise
