@@ -83,7 +83,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
     setcolorder(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"))
     setnames(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"),
                   c("Followup", "A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
-                    "Risk Differerence", "RD 95% LCI", "RD 95% UCI"))
+                    "Risk Difference", "RD 95% LCI", "RD 95% UCI"))
   } else {
     out[, `:=`(value = NULL, i.value = NULL)]
     setcolorder(out, c("followup", "V1", "V2", "rr", "rd"))
@@ -217,9 +217,41 @@ equalizer <- function(list, levels) {
   return(list)
 }
 
+#' Count follow-up per treatment arm
+#'
+#' Summarises follow-up in each treatment arm, grouped by the baseline treatment
+#' value, restricted to expanded-data rows with an observed (non-`NA`) outcome -
+#' the person-time the outcome/survival model is fit on. Rows censored under
+#' \code{method = "censoring"} (which carry \code{outcome = NA}) are excluded,
+#' matching the analysis.
+#'
+#' \code{type = "nonunique"} counts follow-up intervals (rows), i.e. total
+#' person-time; dividing the non-unique outcome counts by these gives the per-arm
+#' event rate. \code{type = "unique"} counts the distinct subjects contributing
+#' follow-up to the arm (a subject contributing several trials to the same arm is
+#' counted once; a subject who appears in both arms is counted in each).
+#'
+#' @param params SEQparams object (uses the expanded \code{params@DT})
+#' @param type either \code{"unique"} (distinct subjects) or \code{"nonunique"} (intervals)
+#' @param filter subgroup value to restrict to, or \code{NA} for no subgroup
+#' @returns data.table with the baseline-treatment column and \code{n} (count)
+#' @keywords internal
+followup.table <- function(params, type, filter = NA) {
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  dt <- params@DT[!is.na(get(params@outcome)), ]
+  if (!is.na(params@subgroup)) dt <- dt[get(params@subgroup) == filter, ]
+  out <- if (type == "unique") {
+    dt[, list(n = uniqueN(get(params@id))), by = c(tx_bas)]
+  } else {
+    dt[, list(n = .N), by = c(tx_bas)]
+  }
+  setorderv(out, tx_bas)
+  return(out)
+}
+
 outcome.table <- function(params, type, filter = NA) {
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  
+
   if (is.na(params@subgroup)) {
     out <- if (type == "unique") {
       params@DT[get(params@outcome) == 1, .SD[1],
