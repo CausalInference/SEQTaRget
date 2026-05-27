@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Intention-To-Treat Analysis">
 <meta name="robots" content="noindex">
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,33 +112,53 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 9 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset: 248,485 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 248,485 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bootstrapping with 80% of 300 subjects (240 subjects, ~198,788 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span>        <span class="co"># retrieve risk plot</span></span></code></pre></div>
 <p><img src="ITT_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Method      A      Risk   95% LCI   95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.8372582 0.7646336 0.9098829 0.03705407</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.8744359 0.8299662 0.9189056 0.02268902</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7646336 0.9098829 0.03705407</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8299662 0.9189056 0.02268902</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.0444041  0.9685600   1.126187        0.03717768 -0.02814011</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.9574838  0.8879519   1.032461       -0.03717768 -0.10249547</span></span>
-<span><span class="co">#&gt;    RD 95% UCI</span></span>
-<span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.10249547</span></span>
-<span><span class="co">#&gt; 2: 0.02814011</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9685600   1.126187      0.03717768</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8879519   1.032461     -0.03717768</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.02814011 0.10249547</span></span>
+<span><span class="co">#&gt; 2: -0.10249547 0.02814011</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -164,33 +184,53 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 54,687 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 10 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset: 1,119,229 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ITT_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Method      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.02374360       0 0.05930116 0.01814195</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.02614576       0 0.05307095 0.01373759</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.05930117 0.01814195</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.05307095 0.01373759</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.1011710  0.5047356   2.402402       0.002402164</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.9081242  0.4162501   1.981235      -0.002402164</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.5047355   2.402402     0.002402164</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.4162501   1.981236    -0.002402164</span></span>
 <span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
 <span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.009778817 0.014583145</span></span>
-<span><span class="co">#&gt; 2: -0.014583145 0.009778817</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: -0.009778824 0.014583152</span></span>
+<span><span class="co">#&gt; 2: -0.014583152 0.009778824</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
@@ -212,33 +252,53 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 54,687 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 10 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ITT_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Method      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.02185652       0 0.05286838 0.01582267</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.02381601       0 0.04835280 0.01251900</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.02185652       0 0.05286839 0.01582267</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.02381601       0 0.04835280 0.01251900</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  inc_0  inc_1  1.0896524  0.5100805   2.327755       0.001959489</span></span>
-<span><span class="co">#&gt; 2:  inc_1  inc_0  0.9177239  0.4295985   1.960475      -0.001959489</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.5100804   2.327755     0.001959489</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.4295985   1.960475    -0.001959489</span></span>
 <span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
 <span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.007920832 0.011839810</span></span>
-<span><span class="co">#&gt; 2: -0.011839810 0.007920832</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: -0.007920837 0.011839816</span></span>
+<span><span class="co">#&gt; 2: -0.011839816 0.007920837</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
@@ -263,12 +323,29 @@ the library before getting in to some sample use cases.</p>
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 54,687 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 10 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="co"># retrieve hazard ratios</span></span>
@@ -298,15 +375,35 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span>
 <span>                          options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 54,687 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 14 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with ITT analysis</span></span>
-<span><span class="co">#&gt; Bootstrapping with 80 % of data 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival Curves for sex_0 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival Curves for sex_1 </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span>
@@ -318,36 +415,38 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
-<span><span class="co">#&gt;    Method      A       Risk 95% LCI   95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.04213833       0 0.1185452 0.03898383</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.04911213       0 0.1322803 0.04243352</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.04213833       0 0.1185452 0.03898383</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.04911213       0 0.1322803 0.04243352</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
-<span><span class="co">#&gt;    Method      A       Risk     95% LCI    95% UCI          SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT      0 0.01577026 0.000000000 0.03706622 0.010865485</span></span>
-<span><span class="co">#&gt; 2:    ITT      1 0.01484521 0.003496358 0.02619406 0.005790336</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk     95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.01577026 0.000000000 0.03706622 0.010865485</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.01484521 0.003496357 0.02619406 0.005790336</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Differerence</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;        &lt;num&gt;      &lt;num&gt;             &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  inc_0  inc_1  1.1654977 1.876650e-08   72383489       0.006973797</span></span>
-<span><span class="co">#&gt; 2:  inc_1  inc_0  0.8580026 1.381531e-08   53286436      -0.006973797</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;        &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1654977 2.006387e-08   67703041     0.006973797</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8580026 1.477039e-08   49840838    -0.006973797</span></span>
 <span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
 <span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: -0.02096462 0.03491222</span></span>
 <span><span class="co">#&gt; 2: -0.03491222 0.02096462</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence  RD 95% LCI</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;             &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  inc_0  inc_1  0.9413422  0.4013911   2.207635     -0.0009250492 -0.01668972</span></span>
-<span><span class="co">#&gt; 2:  inc_1  inc_0  1.0623130  0.4529734   2.491336      0.0009250492 -0.01483962</span></span>
-<span><span class="co">#&gt;    RD 95% UCI</span></span>
-<span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.01483962</span></span>
-<span><span class="co">#&gt; 2: 0.01668972</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9413422  0.4013910   2.207635   -0.0009250492</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0623130  0.4529734   2.491336    0.0009250492</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.01668972 0.01483962</span></span>
+<span><span class="co">#&gt; 2: -0.01483962 0.01668972</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

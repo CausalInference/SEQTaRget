@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Per-Protocol: Censoring Analysis">
 <meta name="robots" content="noindex">
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.1.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,13 +115,33 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 9 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 15 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 15 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 102,749 observations, 15 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="co"># retrieve risk plot</span></span>
@@ -131,15 +151,16 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <code class="sourceCode R"><span><span class="co"># retrieve survival and risk data</span></span>
 <span><span class="va">survival_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/km_data.html">km_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6596589</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9243520</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6596589</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9243520</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.4012576       0.2646931</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.7136447      -0.2646931</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.4012576       0.2646931</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.7136447      -0.2646931</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-no-excused-conditions-i-e--static-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -162,28 +183,49 @@ truncation, no excused conditions (i.e. static interventions)<a class="anchor" 
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 9 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6533049</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9281893</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6533049</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9281893</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.4207598       0.2748844</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.7038488      -0.2748844</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.4207598       0.2748844</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.7038488      -0.2748844</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-pre-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in pre-expanded data and no
@@ -213,26 +255,45 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 185,423 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.9647942</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9627635</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.9647942</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9627635</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  0.9978953    -0.002030621</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  1.0021092     0.002030621</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  0.9978953    -0.002030621</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  1.0021092     0.002030621</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in post-expanded data and no
@@ -258,26 +319,45 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 185,423 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A      Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.6371076</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.9909442</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.6371076</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.9909442</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: risk_0 risk_1  1.5553797       0.3538366</span></span>
-<span><span class="co">#&gt; 2: risk_1 risk_0  0.6429298      -0.3538366</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.5553797       0.3538366</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.6429298      -0.3538366</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-a-competing-event">Per-protocol, censoring, weights in post-expanded data and no
@@ -305,28 +385,49 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 54,687 observations, 13 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 12 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 1,609,859 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 810,880 observations, 22 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 810,880 observations, 22 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="censoring_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Method      A       Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt; &lt;char&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring      0 0.02542994</span></span>
-<span><span class="co">#&gt; 2: censoring      1 0.01646542</span></span>
+<span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
+<span><span class="co">#&gt;       Method Followup      A       Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0 0.02542994</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1 0.01646542</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       A_x    A_y Risk Ratio Risk Difference</span></span>
-<span><span class="co">#&gt;    &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  inc_0  inc_1  0.6474815    -0.008964524</span></span>
-<span><span class="co">#&gt; 2:  inc_1  inc_0  1.5444456     0.008964524</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.6474815    -0.008964524</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.5444456     0.008964524</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio">Per-protocol, censoring, weights in post-expanded data and no
@@ -353,9 +454,25 @@ truncation, excused conditions for initiators and non-initiators
 <span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
 <span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
 <span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 185,423 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 185,423 observations, 21 variables</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>

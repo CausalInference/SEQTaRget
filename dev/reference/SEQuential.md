@@ -26,7 +26,7 @@ SEQuential(
 
 - data:
 
-  data.frame or data.table, will preform expansion according to
+  data.frame or data.table, will perform expansion according to
   arguments passed through the `options` argument
 
 - id.col:
@@ -59,7 +59,7 @@ SEQuential(
 
 - method:
 
-  String: method of analysis to preform; should be one of `"ITT"`,
+  String: method of analysis to perform; should be one of `"ITT"`,
   `"dose-response"`, or `"censoring"`
 
 - options:
@@ -101,12 +101,29 @@ model <- SEQuential(data, id.col = "ID",
                           fixed.cols = "sex",
                           method = "ITT", 
                           options = SEQopts())
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 13 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 248,485 observations, 13 variables
+#> 
 #> Moving forward with ITT analysis
+#> 
 #> ITT model created successfully
+#> 
 #> Completed
 # }
 ```

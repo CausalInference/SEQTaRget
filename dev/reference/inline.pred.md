@@ -9,7 +9,7 @@ inline.pred(
   model,
   newdata,
   params,
-  type,
+  type = NULL,
   case = "default",
   multi = FALSE,
   target = NULL,

@@ -32,13 +32,33 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 15 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 15 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 15 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 # retrieve risk plot
@@ -53,15 +73,16 @@ group.](censoring_files/figure-html/unnamed-chunk-2-1.png)
 # retrieve survival and risk data
 survival_data <- km_data(model)
 risk_data(model)
-#>       Method      A      Risk
-#>       <char> <char>     <num>
-#> 1: censoring      0 0.6596589
-#> 2: censoring      1 0.9243520
+#> Index: <Followup>
+#>       Method Followup      A      Risk
+#>       <char>    <num> <char>     <num>
+#> 1: censoring       60      0 0.6596589
+#> 2: censoring       60      1 0.9243520
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio Risk Difference
-#>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  1.4012576       0.2646931
-#> 2: risk_1 risk_0  0.7136447      -0.2646931
+#>    Followup    A_x    A_y Risk Ratio Risk Difference
+#>       <num> <fctr> <fctr>      <num>           <num>
+#> 1:       60 risk_0 risk_1  1.4012576       0.2646931
+#> 2:       60 risk_1 risk_0  0.7136447      -0.2646931
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
@@ -84,13 +105,33 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 18 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 18 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -102,15 +143,16 @@ group.](censoring_files/figure-html/unnamed-chunk-3-1.png)
 ``` r
 
 risk_data(model)
-#>       Method      A      Risk
-#>       <char> <char>     <num>
-#> 1: censoring      0 0.6533049
-#> 2: censoring      1 0.9281893
+#> Index: <Followup>
+#>       Method Followup      A      Risk
+#>       <char>    <num> <char>     <num>
+#> 1: censoring       60      0 0.6533049
+#> 2: censoring       60      1 0.9281893
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio Risk Difference
-#>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  1.4207598       0.2748844
-#> 2: risk_1 risk_0  0.7038488      -0.2748844
+#>    Followup    A_x    A_y Risk Ratio Risk Difference
+#>       <num> <fctr> <fctr>      <num>           <num>
+#> 1:       60 risk_0 risk_1  1.4207598       0.2748844
+#> 2:       60 risk_1 risk_0  0.7038488      -0.2748844
 ```
 
 ## Per-protocol, censoring, weights in pre-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -139,11 +181,29 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 18 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 18 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -155,15 +215,16 @@ group.](censoring_files/figure-html/unnamed-chunk-4-1.png)
 ``` r
 
 risk_data(model)
-#>       Method      A      Risk
-#>       <char> <char>     <num>
-#> 1: censoring      0 0.9647942
-#> 2: censoring      1 0.9627635
+#> Index: <Followup>
+#>       Method Followup      A      Risk
+#>       <char>    <num> <char>     <num>
+#> 1: censoring       60      0 0.9647942
+#> 2: censoring       60      1 0.9627635
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio Risk Difference
-#>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  0.9978953    -0.002030621
-#> 2: risk_1 risk_0  1.0021092     0.002030621
+#>    Followup    A_x    A_y Risk Ratio Risk Difference
+#>       <num> <fctr> <fctr>      <num>           <num>
+#> 1:       60 risk_0 risk_1  0.9978953    -0.002030621
+#> 2:       60 risk_1 risk_0  1.0021092     0.002030621
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
@@ -188,11 +249,29 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 21 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -204,15 +283,16 @@ group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
 ``` r
 
 risk_data(model)
-#>       Method      A      Risk
-#>       <char> <char>     <num>
-#> 1: censoring      0 0.6371076
-#> 2: censoring      1 0.9909442
+#> Index: <Followup>
+#>       Method Followup      A      Risk
+#>       <char>    <num> <char>     <num>
+#> 1: censoring       60      0 0.6371076
+#> 2: censoring       60      1 0.9909442
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio Risk Difference
-#>    <fctr> <fctr>      <num>           <num>
-#> 1: risk_0 risk_1  1.5553797       0.3538366
-#> 2: risk_1 risk_0  0.6429298      -0.3538366
+#>    Followup    A_x    A_y Risk Ratio Risk Difference
+#>       <num> <fctr> <fctr>      <num>           <num>
+#> 1:       60 risk_0 risk_1  1.5553797       0.3538366
+#> 2:       60 risk_1 risk_0  0.6429298      -0.3538366
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
@@ -239,13 +319,33 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 54,687 observations, 13 variables
+#> 
 #> Non-required columns provided, pruning for efficiency
+#> 
 #> Pruned
+#> 
+#> Original dataset (eligible subjects): 29,624 observations, 12 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 1,609,859 observations
+#> 
+#> Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables
+#> 
+#> Expanded dataset (post-censoring): 810,880 observations, 22 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 810,880 observations, 22 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> censoring model created successfully
+#> 
 #> Creating Survival curves
+#> 
 #> Completed
 
 km_curve(model, plot.type = "risk")
@@ -257,15 +357,16 @@ group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
 ``` r
 
 risk_data(model)
-#>       Method      A       Risk
-#>       <char> <char>      <num>
-#> 1: censoring      0 0.02542994
-#> 2: censoring      1 0.01646542
+#> Index: <Followup>
+#>       Method Followup      A       Risk
+#>       <char>    <num> <char>      <num>
+#> 1: censoring       60      0 0.02542994
+#> 2: censoring       60      1 0.01646542
 risk_comparison(model)
-#>       A_x    A_y Risk Ratio Risk Difference
-#>    <fctr> <fctr>      <num>           <num>
-#> 1:  inc_0  inc_1  0.6474815    -0.008964524
-#> 2:  inc_1  inc_0  1.5444456     0.008964524
+#>    Followup    A_x    A_y Risk Ratio Risk Difference
+#>       <num> <fctr> <fctr>      <num>           <num>
+#> 1:       60  inc_0  inc_1  0.6474815    -0.008964524
+#> 2:       60  inc_1  inc_0  1.5444456     0.008964524
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
@@ -291,9 +392,25 @@ model <- SEQuential(data,
                     fixed.cols = "sex",
                     method = "censoring",
                     options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 11 variables
+#> 
 #> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
+#> 
+#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
+#> 
 #> Expansion Successful
+#> 
+#> Final analysis dataset: 185,423 observations, 21 variables
+#> 
 #> Moving forward with censoring analysis
+#> 
 #> Completed
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 

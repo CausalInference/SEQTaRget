@@ -5,5 +5,5 @@ Helper function for nested logistic
 ## Usage
 
 ``` r
-multinomial(X, y, family = quasibinomial(), method)
+multinomial(X, y, family = quasibinomial(), params)
 ```

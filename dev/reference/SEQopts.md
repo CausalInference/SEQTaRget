@@ -28,6 +28,8 @@ SEQopts(
   excused.cols = c(NA, NA),
   expand.only = FALSE,
   fastglm.method = 2L,
+  glm.package = "fastglm",
+  parglm.control = NULL,
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
@@ -48,6 +50,7 @@ SEQopts(
   plot.subtitle = NA,
   plot.title = NA,
   plot.type = "survival",
+  risk.times = NA,
   seed = NULL,
   selection.first_trial = FALSE,
   selection.prob = 0.8,
@@ -177,8 +180,34 @@ SEQopts(
 
 - fastglm.method:
 
-  Integer: decomposition method for fastglm (1-QR, 2-Cholesky, 3-LDLT,
-  4-QR.FPIV), default is `2L`
+  Integer: decomposition method for fastglm (`0L`-column-pivoted QR,
+  `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is
+  `2L`
+
+- glm.package:
+
+  Character: package to use for fitting GLMs, either `"fastglm"`
+  (default) or `"parglm"`. When `"parglm"` is selected the `nthreads`
+  option controls the number of threads passed to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  For most realistic SEQTaRget workloads (expanded datasets up to
+  approximately a few million rows) `"fastglm"` is faster; `"parglm"`
+  may help only on substantially larger datasets where the parallel
+  chunking outweighs its setup overhead.
+
+- parglm.control:
+
+  A control object from
+  [`parglm::parglm.control()`](https://remlapmot.github.io/parglm/reference/parglm.control.html)
+  to pass to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  Only used when `glm.package = "parglm"`. Defaults to
+  `parglm::parglm.control(method = "FAST")`. If you encounter a
+  `chol(): decomposition failed` error (e.g. with near-singular model
+  matrices on large datasets), pass
+  `parglm.control = parglm::parglm.control(method = "LAPACK")` to use
+  the more numerically stable QR decomposition instead, or switch to
+  using the fastglm backend.
 
 - followup.class:
 
@@ -285,6 +314,14 @@ SEQopts(
   options are `'survival'` (the default), `'risk'`, and `'inc'` (in the
   case of censoring)
 
+- risk.times:
+
+  Numeric vector: follow-up times (in the data's follow-up units) at
+  which to report risk difference and risk ratio when
+  `km.curves = TRUE`. Each requested time is snapped to the latest
+  available follow-up at or before it. The final follow-up time is
+  always included. Default `NA` reports only the final follow-up time.
+
 - seed:
 
   Integer: starting seed
@@ -368,7 +405,7 @@ SEQopts(
 
 - weighted:
 
-  Logical: whether or not to preform weighted analysis, default is
+  Logical: whether or not to perform weighted analysis, default is
   `FALSE`
 
 ## Value

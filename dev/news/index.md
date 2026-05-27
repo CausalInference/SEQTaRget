@@ -2,6 +2,21 @@
 
 ## SEQTaRget (development version)
 
+- Fix “Risk Differerence” typo in `risk.times` output
+- Report follow-up per treatment arm in the `@info` slot as
+  `info$followup.unique` and `info$followup.nonunique` (per subgroup,
+  mirroring `info$outcome.unique` / `info$outcome.nonunique`). Both are
+  grouped by baseline treatment over expanded-data rows with an observed
+  (non-`NA`) outcome - the person-time the outcome model is fit on. The
+  non-unique table counts follow-up intervals (so the non-unique outcome
+  counts divided by these give per-arm event rates); the unique table
+  counts the distinct subjects contributing follow-up to each arm. Also
+  shown in the printed diagnostic tables.
+
+## SEQTaRget v1.4.2
+
+CRAN release: 2026-05-21
+
 - Remove mention of units from time in docs.
 - Improve memory usage in the bootstrapping.
 - Fix off-by-one labeling in survival output so that `followup = k`
@@ -38,6 +53,37 @@
   because it wasn’t an S3 method and hence was causing roxygen2 to write
   incorrect information in its helpfile.
 - Add package level helpfile and bump roxygen2 to 8.0.0.
+- Add parglm as an alternative GLM fitting backend.
+- Add warm starts for bootstrap GLM fits.
+- Add dataset size summary to verbose output.
+- Fix `selection.random` not being propagated from
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
+  to internal parameters.
+- Cap `data.table` to 2 threads during tests and vignette builds, and
+  skip the multisession parallel test on CRAN, to comply with CRAN’s
+  2-core policy for checks.
+- Apply the `SEQopts(nthreads = ...)` setting to `data.table` during
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md).
+  Previously it was only used by the `parglm` backend and ignored in the
+  default serial `fastglm` path, so `data.table` ran at its global
+  default thread count. The previous global setting is restored when the
+  call finishes.
+- Add `risk.times` option to
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md).
+  When `km.curves = TRUE`, risk difference and risk ratio (with CIs) are
+  reported at each requested follow-up time, not just at the end of
+  follow-up. Requested times are snapped to the latest available
+  follow-up at or before them, and the final time is always included.
+  The `risk.comparison` and `risk.data` tables gain a `Followup` column.
+- Fix `factorize()` to also coerce categorical (character) time-varying
+  covariates - and their baseline (`_bas`) counterparts - to factors
+  with levels fixed from the full data. Previously only fixed and
+  treatment columns were factorized, so a character time-varying
+  covariate could realise different level sets across bootstrap
+  resamples and raise “newdata provided does not match fitted model”
+  (most often in bootstrapped hazard analyses on larger samples or with
+  a smaller `bootstrap.sample`). Numeric time-varying covariates are
+  left unchanged.
 
 ## SEQTaRget v1.4.1
 
@@ -149,7 +195,7 @@ CRAN release: 2026-02-05
 
 - The
   [`hazard_ratio()`](https://causalinference.github.io/SEQTaRget/dev/reference/hazard_ratio.md)
-  function now correctly desscribes the estimate as “Hazard ratio”
+  function now correctly describes the estimate as “Hazard ratio”
 - The bootstrapping now collects the log hazard ratio instead of the
   hazard ratio because the log hazard ratio has better normality
   properties.
