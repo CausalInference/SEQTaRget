@@ -162,10 +162,15 @@ setMethod("show", "SEQoutput", function(object) {
   }
   
   if (!is.na(slot(params, "compevent"))) {
-    cat("\nUnique Competing Event Table: ")
-    print(slot(object, "info")$compevent.unique)
-    cat("\nNon-Unique Competing Event Table: ")
-    print(slot(object, "info")$compevent.nonunique)
+    compevent.unique <- slot(object, "info")$compevent.unique
+    compevent.nonunique <- slot(object, "info")$compevent.nonunique
+    for (i in seq_along(compevent.unique)) {
+      if (!is.na(params@subgroup)) cat("For subgroup: ", names(compevent.unique)[[i]], "\n")
+      cat("\nUnique Competing Event Table: ")
+      print(kable(compevent.unique[[i]]))
+      cat("\nNon-Unique Competing Event Table: ")
+      print(kable(compevent.nonunique[[i]]))
+    }
   }
 })
 
