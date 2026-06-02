@@ -7,6 +7,13 @@
 * Report competing events per treatment arm in the `@info` slot as `info$compevent.unique` and `info$compevent.nonunique`, mirroring the structure of `info$outcome.unique` / `info$outcome.nonunique`. Both are grouped by baseline treatment; the non-unique table counts all competing event occurrences in the expanded data and the unique table counts distinct subjects who experienced the competing event. Both are `NA` when no `compevent` is specified.
 * From a `SEQuential()` fit, populate `weight.statistics` and `outcome.model` when `hazard = TRUE`.
 * Warn when the `numerator` and `denominator` weight models are given identical covariates. In that case the stabilized weights all equal 1 (i.e., no weighting), which is usually a typo in the `denominator` argument.
+* Improve the `SEQuential()` helpfile by adding a per-protocol example.
+* Add behavioural tests that `selection.random = TRUE` retains all treated trial-starts, subsamples control trial-starts to the requested `selection.prob` fraction, and is reproducible under a fixed seed; rename the previous smoke test that did not actually exercise the feature.
+* Add behavioural tests for; `weight.lower`/`weight.upper` truncation, `weight.p99` truncation, `followup.include`/`trial.include`, `followup.class`, `weight.lag_condition`, `followup.min`/`followup.max`, and `weight.eligible_cols`.
+* Fix `numerator()` and `denominator()` returning `NULL` for every weighted model; they now return the fitted per-arm numerator/denominator weight models.
+* Document that weight truncation applies only to the outcome-model fit.
+* Pass the formula cache to `inline.pred()` in the weight models
+* Fix `SEQOpts()` argument ordering.
 
 # SEQTaRget v1.4.2
 
