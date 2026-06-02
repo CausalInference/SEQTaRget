@@ -5,6 +5,22 @@ test_that("Hazard and vcov", {
   expect_s4_class(model, "SEQoutput")
 })
 
+test_that("Weighted hazard models populate weight.statistics", {
+  # Regression test: weight.statistics was NULL/empty for hazard = TRUE models
+  # even when weighted = TRUE, because the weights slot was only populated in the
+  # non-hazard branch of SEQuential(). The models were still weighted correctly,
+  # so the statistics should be reported.
+  data <- data.table::copy(SEQdata)
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "censoring",
+                      options = SEQopts(hazard = TRUE, weighted = TRUE)))
+  expect_s4_class(model, "SEQoutput")
+  expect_true(length(model@weight.statistics) > 0)
+  expect_false(is.null(model@weight.statistics[[1]]))
+  expect_true(is.numeric(model@weight.statistics[[1]][[1]]$max))
+})
+
 test_that("Hazard estimate is reproducible with same seed", {
   skip_on_cran()
   args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),

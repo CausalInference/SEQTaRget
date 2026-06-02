@@ -248,6 +248,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       label <- subgroups[[i]]
       models <- lapply(analytic, function(x) x$model[[i]])
       hazard[[label]] <- internal.hazard(models, params, formula_cache)
+      weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }
   rm(analytic)
