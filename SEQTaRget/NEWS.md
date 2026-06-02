@@ -5,6 +5,8 @@
 * Speed up the hazard ratio calculation by fitting the Cox model with the survival C fitters directly on a prebuilt design matrix instead of `coxph(formula, data)`, avoiding the `model.frame`/`model.matrix` rebuild on every bootstrap iteration: `survival::coxph.fit()` for the non-competing-event model and `survival::agreg.fit()` for the competing-event Fine-Gray (counting-process) model. The hazard ratio and CIs are unchanged.
 * Fix the competing-event Fine-Gray hazard fit to use the `finegray()` case weights (`fgwt`), which are required for a valid subdistribution-hazard estimate and were previously omitted. This is a no-op for the current hazard simulation (which has only administrative censoring, so all `fgwt` are 1) but corrects the estimate should the simulated data ever carry random censoring.
 * Report competing events per treatment arm in the `@info` slot as `info$compevent.unique` and `info$compevent.nonunique`, mirroring the structure of `info$outcome.unique` / `info$outcome.nonunique`. Both are grouped by baseline treatment; the non-unique table counts all competing event occurrences in the expanded data and the unique table counts distinct subjects who experienced the competing event. Both are `NA` when no `compevent` is specified.
+* From a `SEQuential()` fit, populate `weight.statistics` and `outcome.model` when `hazard = TRUE`.
+* Warn when the `numerator` and `denominator` weight models are given identical covariates. In that case the stabilized weights all equal 1 (i.e., no weighting), which is usually a typo in the `denominator` argument.
 
 # SEQTaRget v1.4.2
 
