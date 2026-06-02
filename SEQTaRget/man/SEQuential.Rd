@@ -57,15 +57,37 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 \examples{
 \donttest{
 data <- SEQdata
-model <- SEQuential(data, id.col = "ID", 
-                          time.col = "time", 
-                          eligible.col = "eligible",
-                          treatment.col = "tx_init",
-                          outcome.col = "outcome",
-                          time_varying.cols = c("N", "L", "P"),
-                          fixed.cols = "sex",
-                          method = "ITT", 
-                          options = SEQopts())
+
+# Intention-to-treat (ITT) effect: subjects are assigned to the treatment
+# arm defined by their baseline treatment and followed regardless of any later
+# treatment changes, so no weighting is required.
+SEQuential(data, id.col = "ID",
+           time.col = "time",
+           eligible.col = "eligible",
+           treatment.col = "tx_init",
+           outcome.col = "outcome",
+           time_varying.cols = c("N", "L", "P"),
+           fixed.cols = "sex",
+           method = "ITT",
+           options = SEQopts())
+
+# Per-protocol effect via artificial censoring: subjects are censored when they
+# deviate from their assigned strategy, and inverse-probability-of-censoring
+# weights adjust for the resulting selection bias. The denominator models the
+# probability of remaining uncensored given the time-varying confounders, while
+# the numerator uses only the baseline covariates to stabilize the weights (so
+# the two formulas must differ - identical formulas give weights of 1).
+SEQuential(data, id.col = "ID",
+           time.col = "time",
+           eligible.col = "eligible",
+           treatment.col = "tx_init",
+           outcome.col = "outcome",
+           time_varying.cols = c("N", "L", "P"),
+           fixed.cols = "sex",
+           method = "censoring",
+           options = SEQopts(weighted = TRUE,
+                             numerator = "sex",
+                             denominator = "N + L + P + sex"))
 }
 
 }
