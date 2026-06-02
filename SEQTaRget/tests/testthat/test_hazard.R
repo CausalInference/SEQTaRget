@@ -21,6 +21,21 @@ test_that("Weighted hazard models populate weight.statistics", {
   expect_true(is.numeric(model@weight.statistics[[1]][[1]]$max))
 })
 
+test_that("Hazard models populate outcome.model", {
+  # Regression test: outcome.model was NULL for hazard = TRUE models even though
+  # the pooled-logistic outcome models are fit and consumed by internal.hazard().
+  # The cleaned outcome models should be returned, as they are for hazard = FALSE.
+  data <- data.table::copy(SEQdata)
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "censoring",
+                      options = SEQopts(hazard = TRUE, weighted = TRUE)))
+  expect_s4_class(model, "SEQoutput")
+  expect_true(length(model@outcome.model) > 0)
+  expect_false(is.null(model@outcome.model[[1]]))
+  expect_true(length(coef(model@outcome.model[[1]][[1]])) > 0)
+})
+
 test_that("Hazard estimate is reproducible with same seed", {
   skip_on_cran()
   args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
