@@ -221,12 +221,56 @@ test_that("selection.first_trial restricts to first trial per subject", {
 
 # ── SEQexpand.R: selection.random ───────────────────────────────────────────
 
-test_that("selection.random subsamples controls", {
+test_that("SEQuential runs with selection.prob set (smoke test)", {
+  # Smoke test only: selection.prob has no effect unless selection.random = TRUE,
+  # so this just confirms the option is accepted and the run completes. The actual
+  # subsampling behaviour is checked in the two tests below.
   model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(selection.prob = 0.9, data.return = TRUE)))
   expect_s4_class(model, "SEQoutput")
+})
+
+test_that("selection.random keeps all treated starts and subsamples control starts", {
+  skip_on_cran()
+  prob <- 0.5
+
+  # One row per trial-start (followup == 0), counted by baseline treatment arm.
+  arm_counts <- function(DT) {
+    s <- DT[followup == 0, .N, by = tx_init_bas]
+    stats::setNames(s$N, as.character(s$tx_init_bas))
+  }
+
+  base <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(data.return = TRUE, seed = 1L), verbose = FALSE))
+  sel <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(selection.random = TRUE, selection.prob = prob,
+                                        data.return = TRUE, seed = 1L), verbose = FALSE))
+
+  base_counts <- arm_counts(base@DT)
+  sel_counts  <- arm_counts(sel@DT)
+
+  # Treated trial-starts (baseline tx_init = 1) are all retained
+  expect_equal(sel_counts[["1"]], base_counts[["1"]])
+  # Control trial-starts (baseline tx_init = 0) are reduced to the requested fraction
+  expect_lt(sel_counts[["0"]], base_counts[["0"]])
+  expect_equal(sel_counts[["0"]], round(base_counts[["0"]] * prob))
+})
+
+test_that("selection.random is reproducible with a fixed seed", {
+  skip_on_cran()
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "ITT",
+               options = SEQopts(selection.random = TRUE, selection.prob = 0.5,
+                                 data.return = TRUE, seed = 7L))
+  run1 <- suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args)))
+  run2 <- suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args)))
+  expect_equal(run1@DT, run2@DT)
 })
 
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
