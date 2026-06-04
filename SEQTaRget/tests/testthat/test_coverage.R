@@ -349,6 +349,29 @@ test_that("followup.include / trial.include add or drop their outcome-model term
   expect_true(all(c("followup", "followup_sq") %in% no_trial))
 })
 
+# ── internal_models.R: followup.class ────────────────────────────────────────
+
+test_that("followup.class encodes follow-up as a factor (one term per level)", {
+  skip_on_cran()
+  # followup.class = TRUE treats follow-up as categorical (internal_models.R coerces
+  # it to a factor), so the outcome model gains one dummy per non-reference level
+  # instead of the linear followup / followup_sq pair. It is exclusive with
+  # followup.include, so that is switched off here.
+  m <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"), method = "ITT",
+                      options = SEQopts(followup.include = FALSE, followup.class = TRUE,
+                                        data.return = TRUE), verbose = FALSE))
+  cf <- names(coef(m@outcome.model[[1]][[1]]))
+  dummies <- grep("^followup[0-9]+$", cf, value = TRUE)
+
+  # Categorical, not continuous: no linear follow-up terms
+  expect_false("followup" %in% cf)
+  expect_false("followup_sq" %in% cf)
+  # One dummy per non-reference follow-up level
+  expect_gt(length(dummies), 2L)
+  expect_equal(length(dummies), length(unique(m@DT$followup)) - 1L)
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
