@@ -398,6 +398,27 @@ test_that("weight.lag_condition conditions each arm's weight model on its treatm
   expect_equal(on[[1]] + on[[2]], off[[1]])
 })
 
+# ── SEQexpand.R: followup.min / followup.max ─────────────────────────────────
+
+test_that("followup.min / followup.max restrict the expanded follow-up range", {
+  skip_on_cran()
+  # SEQexpand.R filters the expanded rows to followup in [followup.min, followup.max].
+  # expand.only returns that expanded data.table directly.
+  mk <- function(opts) suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible",
+                      "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT", options = opts, verbose = FALSE))
+
+  full <- mk(SEQopts(expand.only = TRUE))
+  lim  <- mk(SEQopts(expand.only = TRUE, followup.min = 3, followup.max = 10))
+
+  # The unrestricted expansion genuinely extends past the requested window
+  expect_lt(min(full$followup), 3)
+  expect_gt(max(full$followup), 10)
+  # The restricted expansion is clamped to exactly [3, 10] and has fewer rows
+  expect_equal(range(lim$followup), c(3, 10))
+  expect_lt(nrow(lim), nrow(full))
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
