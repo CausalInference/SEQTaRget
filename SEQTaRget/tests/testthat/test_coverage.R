@@ -273,6 +273,32 @@ test_that("selection.random is reproducible with a fixed seed", {
   expect_equal(run1@DT, run2@DT)
 })
 
+# ── internal_models.R: weight truncation ────────────────────────────────────
+
+test_that("weight.lower/weight.upper truncate the weights used in the outcome fit", {
+  skip_on_cran()
+  # Truncation is applied to the weight vector passed to the GLM fit (not the
+  # returned @DT or weight.statistics), so its effect is checked through the
+  # fitted coefficients. SEQdata weights span ~0.54-2.16, so a band entirely
+  # above that range clamps every weight to the same constant. A GLM is invariant
+  # to a uniform scaling of its weights, so two such all-constant clamps must give
+  # identical coefficients, while a genuinely varying-weight fit must differ.
+  cf <- function(m) coef(m@outcome.model[[1]][[1]])
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  varying  <- mk(SEQopts(weighted = TRUE, seed = 1L))
+  clamp3   <- mk(SEQopts(weighted = TRUE, weight.lower = 3,  weight.upper = 4,  seed = 1L))
+  clamp10  <- mk(SEQopts(weighted = TRUE, weight.lower = 10, weight.upper = 11, seed = 1L))
+
+  # Both bands clamp all weights to a constant -> scale-invariant, identical fit
+  expect_equal(cf(clamp3), cf(clamp10), tolerance = 1e-6)
+  # Clamping away the real weight variation changes the fit
+  expect_false(isTRUE(all.equal(cf(clamp3), cf(varying), tolerance = 1e-6)))
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
