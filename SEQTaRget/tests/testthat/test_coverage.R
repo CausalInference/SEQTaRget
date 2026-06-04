@@ -320,6 +320,35 @@ test_that("weight.p99 truncates at the 1st/99th percentile weights", {
   expect_false(isTRUE(all.equal(cf(p99), cf(none), tolerance = 1e-6)))
 })
 
+# ── internal_covariates.R: followup.include / trial.include ──────────────────
+
+test_that("followup.include / trial.include add or drop their outcome-model terms", {
+  skip_on_cran()
+  # These flags control whether the follow-up and trial terms (and their squares)
+  # enter the outcome model formula (internal_covariates.R), so the effect is
+  # visible in the fitted coefficient names.
+  nm <- function(m) names(coef(m@outcome.model[[1]][[1]]))
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "ITT")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  both     <- nm(mk(SEQopts()))                          # both included by default
+  no_fup   <- nm(mk(SEQopts(followup.include = FALSE)))
+  no_trial <- nm(mk(SEQopts(trial.include = FALSE)))
+
+  # Baseline: all four terms present
+  expect_true(all(c("followup", "followup_sq", "trial", "trial_sq") %in% both))
+
+  # followup.include = FALSE drops the follow-up terms but keeps the trial terms
+  expect_false(any(c("followup", "followup_sq") %in% no_fup))
+  expect_true(all(c("trial", "trial_sq") %in% no_fup))
+
+  # trial.include = FALSE drops the trial terms but keeps the follow-up terms
+  expect_false(any(c("trial", "trial_sq") %in% no_trial))
+  expect_true(all(c("followup", "followup_sq") %in% no_trial))
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
