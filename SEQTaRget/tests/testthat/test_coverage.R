@@ -419,6 +419,30 @@ test_that("followup.min / followup.max restrict the expanded follow-up range", {
   expect_lt(nrow(lim), nrow(full))
 })
 
+# ── internal_weights.R: weight.eligible_cols ─────────────────────────────────
+
+test_that("weight.eligible_cols restricts the weight models to eligible rows", {
+  skip_on_cran()
+  # Each arm's weight model is fit only on rows where its weight.eligible_cols
+  # indicator == 1 (internal_weights.R). With a roughly half-on indicator, the
+  # per-arm denominator model is fit on fewer observations than without it.
+  d <- copy(SEQdata)
+  d[, welig := as.integer(N > median(N))]   # balanced 0/1 eligibility indicator
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(d)), args,
+                                                              list(options = opts, verbose = FALSE))))
+  nobs <- function(m) vapply(m@weight.statistics[[1]][[1]]$coef.denominator,
+                             function(x) x$df.null + 1L, integer(1))
+
+  base <- nobs(mk(SEQopts(weighted = TRUE, seed = 1L)))
+  elig <- nobs(mk(SEQopts(weighted = TRUE,
+                          weight.eligible_cols = list("welig", "welig"), seed = 1L)))
+
+  # Both arms' models drop the ineligible (welig == 0) rows
+  expect_true(all(elig < base))
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
