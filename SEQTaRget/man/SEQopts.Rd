@@ -185,15 +185,15 @@ SEQopts(
 
 \item{weight.eligible_cols}{List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}}
 
-\item{weight.lower}{Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is \code{0}}
+\item{weight.lower}{Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is \code{0}. Truncation is applied only to the weights used to fit the outcome model; the weights reported in \code{weight.statistics} and in the returned data (when \code{data.return = TRUE}) are the untruncated values.}
 
 \item{weight.lag_condition}{Logical: whether weights should be conditioned on treatment lag value, default \code{TRUE}}
 
-\item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}}
+\item{weight.p99}{Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}. The percentiles are taken from the untruncated weight distribution (as reported in \code{weight.statistics}), and as with \code{weight.lower}/\code{weight.upper} the truncation affects only the weights used to fit the outcome model.}
 
 \item{weight.preexpansion}{Logical: whether weighting should be done on pre-expanded data, default \code{TRUE}}
 
-\item{weight.upper}{Numeric: weights truncated at upper end at this weight, default is \code{Inf}}
+\item{weight.upper}{Numeric: weights truncated at upper end at this weight, default is \code{Inf}. As with \code{weight.lower}, truncation affects only the weights used to fit the outcome model, not those reported in \code{weight.statistics} or the returned data.}
 
 \item{weighted}{Logical: whether or not to perform weighted analysis, default is \code{FALSE}}
 }
