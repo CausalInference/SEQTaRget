@@ -372,6 +372,32 @@ test_that("followup.class encodes follow-up as a factor (one term per level)", {
   expect_equal(length(dummies), length(unique(m@DT$followup)) - 1L)
 })
 
+# ── internal_glmHelpers.R: weight.lag_condition ──────────────────────────────
+
+test_that("weight.lag_condition conditions each arm's weight model on its treatment lag", {
+  skip_on_cran()
+  # weight.lag_condition = TRUE (default) fits each treatment arm's weight model
+  # only on the rows in that arm's treatment-lag stratum (prepare.data_cached
+  # subsets on tx_lag == model); = FALSE fits both arms on the full data. The
+  # number of observations behind each fitted denominator model makes this visible.
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+  # Observations behind each per-arm denominator model (fastglm df.null + 1)
+  nobs <- function(m) vapply(m@weight.statistics[[1]][[1]]$coef.denominator,
+                             function(x) x$df.null + 1L, integer(1))
+
+  on  <- nobs(mk(SEQopts(weighted = TRUE, weight.lag_condition = TRUE,  seed = 1L)))
+  off <- nobs(mk(SEQopts(weighted = TRUE, weight.lag_condition = FALSE, seed = 1L)))
+
+  # FALSE: both arms fit on the full data -> equal observation counts
+  expect_equal(off[[1]], off[[2]])
+  # TRUE: arms fit on disjoint treatment-lag strata that partition that full data
+  expect_false(on[[1]] == on[[2]])
+  expect_equal(on[[1]] + on[[2]], off[[1]])
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
