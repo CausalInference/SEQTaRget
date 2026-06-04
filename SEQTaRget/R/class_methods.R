@@ -184,8 +184,11 @@ setMethod("show", "SEQoutput", function(object) {
 numerator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@weighted) stop("SEQuential process was not weighted")
-  return(list(numerator0 = lapply(object@weight.statistics, function(x) x[[1]]$n0.coef),
-              numerator1 = lapply(object@weight.statistics, function(x) x[[1]]$n1.coef)))
+  arm <- function(i) lapply(object@weight.statistics, function(x) {
+    coefs <- x[[1]]$coef.numerator
+    if (length(coefs) >= i) coefs[[i]] else NULL
+  })
+  return(list(numerator0 = arm(1L), numerator1 = arm(2L)))
 }
 
 #' Retrieves Denominator Models from SEQuential object
@@ -198,8 +201,11 @@ numerator <- function(object) {
 denominator <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   if (!object@params@weighted) stop("SEQuential process was not weighted")
-  return(list(denominator0 = lapply(object@weight.statistics, function(x) x[[1]]$d0.coef),
-              denominator1 = lapply(object@weight.statistics, function(x) x[[1]]$d1.coef)))
+  arm <- function(i) lapply(object@weight.statistics, function(x) {
+    coefs <- x[[1]]$coef.denominator
+    if (length(coefs) >= i) coefs[[i]] else NULL
+  })
+  return(list(denominator0 = arm(1L), denominator1 = arm(2L)))
 }
 
 #' Retrieves Outcome Models from SEQuential object

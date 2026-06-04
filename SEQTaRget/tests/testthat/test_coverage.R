@@ -79,6 +79,34 @@ test_that("numerator/denominator error on unweighted model", {
   expect_error(denominator(model), "weighted")
 })
 
+test_that("numerator/denominator return the per-arm weight models", {
+  # Regression test: these accessors looked up non-existent fields (n0.coef etc.)
+  # and silently returned NULL. They should return the fitted per-arm numerator
+  # and denominator weight models held in weight.statistics$coef.numerator /
+  # $coef.denominator.
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "censoring", options = SEQopts(weighted = TRUE), verbose = FALSE))
+  num <- numerator(model)
+  den <- denominator(model)
+  expect_named(num, c("numerator0", "numerator1"))
+  expect_named(den, c("denominator0", "denominator1"))
+
+  # Non-NULL fitted models with extractable coefficients (one per treatment arm)
+  expect_false(is.null(num$numerator0[[1]]))
+  expect_false(is.null(num$numerator1[[1]]))
+  expect_true(length(coef(num$numerator0[[1]])) > 0)
+  expect_true(length(coef(den$denominator1[[1]])) > 0)
+
+  # They are exactly the models stored in weight.statistics
+  ws <- model@weight.statistics[[1]][[1]]
+  expect_identical(num$numerator0[[1]],   ws$coef.numerator[[1]])
+  expect_identical(num$numerator1[[1]],   ws$coef.numerator[[2]])
+  expect_identical(den$denominator0[[1]], ws$coef.denominator[[1]])
+  expect_identical(den$denominator1[[1]], ws$coef.denominator[[2]])
+})
+
 test_that("km_curve errors on invalid plot.type", {
   model <- SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
