@@ -299,6 +299,27 @@ test_that("weight.lower/weight.upper truncate the weights used in the outcome fi
   expect_false(isTRUE(all.equal(cf(clamp3), cf(varying), tolerance = 1e-6)))
 })
 
+test_that("weight.p99 truncates at the 1st/99th percentile weights", {
+  skip_on_cran()
+  # weight.p99 = TRUE sets weight.lower/upper to the p01/p99 of the (untruncated)
+  # weights, which are reported in weight.statistics. So it must be equivalent to
+  # explicitly passing those percentiles as the bounds, and must differ from an
+  # untruncated weighted fit.
+  cf <- function(m) coef(m@outcome.model[[1]][[1]])
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  p99  <- mk(SEQopts(weighted = TRUE, weight.p99 = TRUE, seed = 1L))
+  ws   <- p99@weight.statistics[[1]][[1]]
+  expl <- mk(SEQopts(weighted = TRUE, weight.lower = ws$p01, weight.upper = ws$p99, seed = 1L))
+  none <- mk(SEQopts(weighted = TRUE, seed = 1L))
+
+  expect_equal(cf(p99), cf(expl), tolerance = 1e-8)
+  expect_false(isTRUE(all.equal(cf(p99), cf(none), tolerance = 1e-6)))
+})
+
 # ── SEQuential.R: validation paths ──────────────────────────────────────────
 
 test_that("SEQuential errors on non-binary outcome", {
