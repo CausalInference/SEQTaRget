@@ -27,14 +27,13 @@ SEQopts(
   excused.cols = c(NA, NA),
   expand.only = FALSE,
   fastglm.method = 2L,
-  glm.package = "fastglm",
-  parglm.control = NULL,
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
   followup.min = 0,
   followup.spline = FALSE,
   followup.spline.df = 4L,
+  glm.package = "fastglm",
   hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -44,6 +43,7 @@ SEQopts(
   nthreads = getDTthreads(),
   numerator = NA,
   parallel = FALSE,
+  parglm.control = NULL,
   plot.colors = c("#F8766D", "#00BFC4", "#555555"),
   plot.labels = NA,
   plot.subtitle = NA,
@@ -115,10 +115,6 @@ SEQopts(
 
 \item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky), default is \code{2L}}
 
-\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.}
-
-\item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
-
 \item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 
 \item{followup.include}{Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is \code{TRUE}}
@@ -130,6 +126,8 @@ SEQopts(
 \item{followup.spline}{Logical: treat followup as a natural cubic spline (\code{splines::ns()}), default is \code{FALSE}}
 
 \item{followup.spline.df}{Integer: degrees of freedom passed to \code{splines::ns()} when \code{followup.spline = TRUE}. With \code{df = k}, \code{ns()} places \code{k - 1} interior knots at quantiles of \code{followup}. Must be \verb{>= 1}; \code{df = 1} is equivalent to a linear term and is generally not what you want. Default is \code{4} (3 interior knots).}
+
+\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation, default is \code{FALSE}}
 
@@ -148,6 +146,8 @@ SEQopts(
 \item{numerator}{String: numerator covariates to the right hand side of a formula object}
 
 \item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
+
+\item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
 
 \item{plot.colors}{Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults}
 
