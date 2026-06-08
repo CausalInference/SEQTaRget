@@ -22,14 +22,13 @@
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
 #' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is `2L`
-#' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) `"fastglm"` is faster; `"parglm"` may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.
-#' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`. If you encounter a `chol(): decomposition failed` error (e.g. with near-singular model matrices on large datasets), pass `parglm.control = parglm::parglm.control(method = "LAPACK")` to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
 #' @param followup.min Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is `0`
 #' @param followup.spline Logical: treat followup as a natural cubic spline (`splines::ns()`), default is `FALSE`
 #' @param followup.spline.df Integer: degrees of freedom passed to `splines::ns()` when `followup.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is equivalent to a linear term and is generally not what you want. Default is `4` (3 interior knots).
+#' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) `"fastglm"` is faster; `"parglm"` may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.
 #' @param hazard Logical: hazard error calculation instead of survival estimation, default is `FALSE`
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
@@ -39,6 +38,7 @@
 #' @param nthreads Integer: number of threads to use for data.table processing, default is [data.table::getDTthreads()]
 #' @param numerator String: numerator covariates to the right hand side of a formula object
 #' @param parallel Logical: define if the SEQuential process is run in parallel, default is `FALSE`
+#' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`. If you encounter a `chol(): decomposition failed` error (e.g. with near-singular model matrices on large datasets), pass `parglm.control = parglm::parglm.control(method = "LAPACK")` to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.
 #' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults
 #' @param plot.labels Character: Color labels for output plot if \code{km.curves = TRUE} in order e.g. \code{c("risk.0", "risk.1")}
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
@@ -57,11 +57,11 @@
 #' @param visit.denominator String: visit denominator covariates to the right hand side of a formula object
 #' @param visit.numerator String: visit numerator covariates to the right hand side of a formula object
 #' @param weight.eligible_cols List: list of column names for indicator columns defining which weights are eligible for weight models - in order of \code{treat.level}
-#' @param weight.lower Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is `0`
+#' @param weight.lower Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is `0`. Truncation is applied only to the weights used to fit the outcome model; the weights reported in \code{weight.statistics} and in the returned data (when \code{data.return = TRUE}) are the untruncated values.
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value, default `TRUE`
-#' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}
+#' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}. The percentiles are taken from the untruncated weight distribution (as reported in \code{weight.statistics}), and as with \code{weight.lower}/\code{weight.upper} the truncation affects only the weights used to fit the outcome model.
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
-#' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`
+#' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`. As with \code{weight.lower}, truncation affects only the weights used to fit the outcome model, not those reported in \code{weight.statistics} or the returned data.
 #' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
@@ -72,11 +72,12 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
-                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L, glm.package = "fastglm", parglm.control = NULL,
+                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE, followup.spline.df = 4L,
+                    glm.package = "fastglm",
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
                     km.curves = FALSE, multinomial = FALSE, ncores = availableCores(omit = 1L), nthreads = getDTthreads(),
-                    numerator = NA, parallel = FALSE, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
+                    numerator = NA, parallel = FALSE, parglm.control = NULL, plot.colors = c("#F8766D", "#00BFC4", "#555555"), plot.labels = NA, plot.subtitle = NA, plot.title = NA, plot.type = "survival",
                     risk.times = NA,
                     seed = NULL, selection.first_trial = FALSE, selection.prob = 0.8, selection.random = FALSE, subgroup = NA, survival.max = Inf,
                     treat.level = c(0, 1), trial.include = TRUE,

@@ -79,6 +79,34 @@ test_that("numerator/denominator error on unweighted model", {
   expect_error(denominator(model), "weighted")
 })
 
+test_that("numerator/denominator return the per-arm weight models", {
+  # Regression test: these accessors looked up non-existent fields (n0.coef etc.)
+  # and silently returned NULL. They should return the fitted per-arm numerator
+  # and denominator weight models held in weight.statistics$coef.numerator /
+  # $coef.denominator.
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "censoring", options = SEQopts(weighted = TRUE), verbose = FALSE))
+  num <- numerator(model)
+  den <- denominator(model)
+  expect_named(num, c("numerator0", "numerator1"))
+  expect_named(den, c("denominator0", "denominator1"))
+
+  # Non-NULL fitted models with extractable coefficients (one per treatment arm)
+  expect_false(is.null(num$numerator0[[1]]))
+  expect_false(is.null(num$numerator1[[1]]))
+  expect_true(length(coef(num$numerator0[[1]])) > 0)
+  expect_true(length(coef(den$denominator1[[1]])) > 0)
+
+  # They are exactly the models stored in weight.statistics
+  ws <- model@weight.statistics[[1]][[1]]
+  expect_identical(num$numerator0[[1]],   ws$coef.numerator[[1]])
+  expect_identical(num$numerator1[[1]],   ws$coef.numerator[[2]])
+  expect_identical(den$denominator0[[1]], ws$coef.denominator[[1]])
+  expect_identical(den$denominator1[[1]], ws$coef.denominator[[2]])
+})
+
 test_that("km_curve errors on invalid plot.type", {
   model <- SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
@@ -221,12 +249,226 @@ test_that("selection.first_trial restricts to first trial per subject", {
 
 # ── SEQexpand.R: selection.random ───────────────────────────────────────────
 
-test_that("selection.random subsamples controls", {
+test_that("SEQuential runs with selection.prob set (smoke test)", {
+  # Smoke test only: selection.prob has no effect unless selection.random = TRUE,
+  # so this just confirms the option is accepted and the run completes. The actual
+  # subsampling behaviour is checked in the two tests below.
   model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
                       method = "ITT",
                       options = SEQopts(selection.prob = 0.9, data.return = TRUE)))
   expect_s4_class(model, "SEQoutput")
+})
+
+test_that("selection.random keeps all treated starts and subsamples control starts", {
+  skip_on_cran()
+  prob <- 0.5
+
+  # One row per trial-start (followup == 0), counted by baseline treatment arm.
+  arm_counts <- function(DT) {
+    s <- DT[followup == 0, .N, by = tx_init_bas]
+    stats::setNames(s$N, as.character(s$tx_init_bas))
+  }
+
+  base <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(data.return = TRUE, seed = 1L), verbose = FALSE))
+  sel <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "ITT",
+                      options = SEQopts(selection.random = TRUE, selection.prob = prob,
+                                        data.return = TRUE, seed = 1L), verbose = FALSE))
+
+  base_counts <- arm_counts(base@DT)
+  sel_counts  <- arm_counts(sel@DT)
+
+  # Treated trial-starts (baseline tx_init = 1) are all retained
+  expect_equal(sel_counts[["1"]], base_counts[["1"]])
+  # Control trial-starts (baseline tx_init = 0) are reduced to the requested fraction
+  expect_lt(sel_counts[["0"]], base_counts[["0"]])
+  expect_equal(sel_counts[["0"]], round(base_counts[["0"]] * prob))
+})
+
+test_that("selection.random is reproducible with a fixed seed", {
+  skip_on_cran()
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "ITT",
+               options = SEQopts(selection.random = TRUE, selection.prob = 0.5,
+                                 data.return = TRUE, seed = 7L))
+  run1 <- suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args)))
+  run2 <- suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args)))
+  expect_equal(run1@DT, run2@DT)
+})
+
+# ── internal_models.R: weight truncation ────────────────────────────────────
+
+test_that("weight.lower/weight.upper truncate the weights used in the outcome fit", {
+  skip_on_cran()
+  # Truncation is applied to the weight vector passed to the GLM fit (not the
+  # returned @DT or weight.statistics), so its effect is checked through the
+  # fitted coefficients. SEQdata weights span ~0.54-2.16, so a band entirely
+  # above that range clamps every weight to the same constant. A GLM is invariant
+  # to a uniform scaling of its weights, so two such all-constant clamps must give
+  # identical coefficients, while a genuinely varying-weight fit must differ.
+  cf <- function(m) coef(m@outcome.model[[1]][[1]])
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  varying  <- mk(SEQopts(weighted = TRUE, seed = 1L))
+  clamp3   <- mk(SEQopts(weighted = TRUE, weight.lower = 3,  weight.upper = 4,  seed = 1L))
+  clamp10  <- mk(SEQopts(weighted = TRUE, weight.lower = 10, weight.upper = 11, seed = 1L))
+
+  # Both bands clamp all weights to a constant -> scale-invariant, identical fit
+  expect_equal(cf(clamp3), cf(clamp10), tolerance = 1e-6)
+  # Clamping away the real weight variation changes the fit
+  expect_false(isTRUE(all.equal(cf(clamp3), cf(varying), tolerance = 1e-6)))
+})
+
+test_that("weight.p99 truncates at the 1st/99th percentile weights", {
+  skip_on_cran()
+  # weight.p99 = TRUE sets weight.lower/upper to the p01/p99 of the (untruncated)
+  # weights, which are reported in weight.statistics. So it must be equivalent to
+  # explicitly passing those percentiles as the bounds, and must differ from an
+  # untruncated weighted fit.
+  cf <- function(m) coef(m@outcome.model[[1]][[1]])
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  p99  <- mk(SEQopts(weighted = TRUE, weight.p99 = TRUE, seed = 1L))
+  ws   <- p99@weight.statistics[[1]][[1]]
+  expl <- mk(SEQopts(weighted = TRUE, weight.lower = ws$p01, weight.upper = ws$p99, seed = 1L))
+  none <- mk(SEQopts(weighted = TRUE, seed = 1L))
+
+  expect_equal(cf(p99), cf(expl), tolerance = 1e-8)
+  expect_false(isTRUE(all.equal(cf(p99), cf(none), tolerance = 1e-6)))
+})
+
+# ── internal_covariates.R: followup.include / trial.include ──────────────────
+
+test_that("followup.include / trial.include add or drop their outcome-model terms", {
+  skip_on_cran()
+  # These flags control whether the follow-up and trial terms (and their squares)
+  # enter the outcome model formula (internal_covariates.R), so the effect is
+  # visible in the fitted coefficient names.
+  nm <- function(m) names(coef(m@outcome.model[[1]][[1]]))
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "ITT")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+
+  both     <- nm(mk(SEQopts()))                          # both included by default
+  no_fup   <- nm(mk(SEQopts(followup.include = FALSE)))
+  no_trial <- nm(mk(SEQopts(trial.include = FALSE)))
+
+  # Baseline: all four terms present
+  expect_true(all(c("followup", "followup_sq", "trial", "trial_sq") %in% both))
+
+  # followup.include = FALSE drops the follow-up terms but keeps the trial terms
+  expect_false(any(c("followup", "followup_sq") %in% no_fup))
+  expect_true(all(c("trial", "trial_sq") %in% no_fup))
+
+  # trial.include = FALSE drops the trial terms but keeps the follow-up terms
+  expect_false(any(c("trial", "trial_sq") %in% no_trial))
+  expect_true(all(c("followup", "followup_sq") %in% no_trial))
+})
+
+# ── internal_models.R: followup.class ────────────────────────────────────────
+
+test_that("followup.class encodes follow-up as a factor (one term per level)", {
+  skip_on_cran()
+  # followup.class = TRUE treats follow-up as categorical (internal_models.R coerces
+  # it to a factor), so the outcome model gains one dummy per non-reference level
+  # instead of the linear followup / followup_sq pair. It is exclusive with
+  # followup.include, so that is switched off here.
+  m <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"), method = "ITT",
+                      options = SEQopts(followup.include = FALSE, followup.class = TRUE,
+                                        data.return = TRUE), verbose = FALSE))
+  cf <- names(coef(m@outcome.model[[1]][[1]]))
+  dummies <- grep("^followup[0-9]+$", cf, value = TRUE)
+
+  # Categorical, not continuous: no linear follow-up terms
+  expect_false("followup" %in% cf)
+  expect_false("followup_sq" %in% cf)
+  # One dummy per non-reference follow-up level
+  expect_gt(length(dummies), 2L)
+  expect_equal(length(dummies), length(unique(m@DT$followup)) - 1L)
+})
+
+# ── internal_glmHelpers.R: weight.lag_condition ──────────────────────────────
+
+test_that("weight.lag_condition conditions each arm's weight model on its treatment lag", {
+  skip_on_cran()
+  # weight.lag_condition = TRUE (default) fits each treatment arm's weight model
+  # only on the rows in that arm's treatment-lag stratum (prepare.data_cached
+  # subsets on tx_lag == model); = FALSE fits both arms on the full data. The
+  # number of observations behind each fitted denominator model makes this visible.
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(SEQdata)), args,
+                                                              list(options = opts, verbose = FALSE))))
+  # Observations behind each per-arm denominator model (fastglm df.null + 1)
+  nobs <- function(m) vapply(m@weight.statistics[[1]][[1]]$coef.denominator,
+                             function(x) x$df.null + 1L, integer(1))
+
+  on  <- nobs(mk(SEQopts(weighted = TRUE, weight.lag_condition = TRUE,  seed = 1L)))
+  off <- nobs(mk(SEQopts(weighted = TRUE, weight.lag_condition = FALSE, seed = 1L)))
+
+  # FALSE: both arms fit on the full data -> equal observation counts
+  expect_equal(off[[1]], off[[2]])
+  # TRUE: arms fit on disjoint treatment-lag strata that partition that full data
+  expect_false(on[[1]] == on[[2]])
+  expect_equal(on[[1]] + on[[2]], off[[1]])
+})
+
+# ── SEQexpand.R: followup.min / followup.max ─────────────────────────────────
+
+test_that("followup.min / followup.max restrict the expanded follow-up range", {
+  skip_on_cran()
+  # SEQexpand.R filters the expanded rows to followup in [followup.min, followup.max].
+  # expand.only returns that expanded data.table directly.
+  mk <- function(opts) suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible",
+                      "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                      method = "ITT", options = opts, verbose = FALSE))
+
+  full <- mk(SEQopts(expand.only = TRUE))
+  lim  <- mk(SEQopts(expand.only = TRUE, followup.min = 3, followup.max = 10))
+
+  # The unrestricted expansion genuinely extends past the requested window
+  expect_lt(min(full$followup), 3)
+  expect_gt(max(full$followup), 10)
+  # The restricted expansion is clamped to exactly [3, 10] and has fewer rows
+  expect_equal(range(lim$followup), c(3, 10))
+  expect_lt(nrow(lim), nrow(full))
+})
+
+# ── internal_weights.R: weight.eligible_cols ─────────────────────────────────
+
+test_that("weight.eligible_cols restricts the weight models to eligible rows", {
+  skip_on_cran()
+  # Each arm's weight model is fit only on rows where its weight.eligible_cols
+  # indicator == 1 (internal_weights.R). With a roughly half-on indicator, the
+  # per-arm denominator model is fit on fewer observations than without it.
+  d <- copy(SEQdata)
+  d[, welig := as.integer(N > median(N))]   # balanced 0/1 eligibility indicator
+  args <- list("ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+               method = "censoring")
+  mk <- function(opts) suppressWarnings(do.call(SEQuential, c(list(data = copy(d)), args,
+                                                              list(options = opts, verbose = FALSE))))
+  nobs <- function(m) vapply(m@weight.statistics[[1]][[1]]$coef.denominator,
+                             function(x) x$df.null + 1L, integer(1))
+
+  base <- nobs(mk(SEQopts(weighted = TRUE, seed = 1L)))
+  elig <- nobs(mk(SEQopts(weighted = TRUE,
+                          weight.eligible_cols = list("welig", "welig"), seed = 1L)))
+
+  # Both arms' models drop the ineligible (welig == 0) rows
+  expect_true(all(elig < base))
 })
 
 # ── SEQuential.R: validation paths ──────────────────────────────────────────

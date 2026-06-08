@@ -137,6 +137,14 @@ parameter.simplifier <- function(params) {
     warning("Without LTFU or Visit, weighted ITT model is not supported, automatically changed to weighted = FALSE")
     params@weighted <- FALSE
   }
+
+  if (params@weighted && params@method != "ITT" &&
+      !is.na(params@numerator) && !is.na(params@denominator) &&
+      identical(params@numerator, params@denominator)) {
+    warning("Numerator and denominator weight models use identical covariates ('", params@numerator,
+            "'); the stabilized weights will all equal 1 (i.e., no weighting). The denominator should ",
+            "typically include the time-varying confounders that the numerator omits - check for a typo in either or both of 'numerator' and 'denominator'.")
+  }
   if (params@followup.class && params@followup.spline) stop("Followup cannot be both a class and a spline, please select one.")
   if (!params@plot.type %in% c("survival", "risk", "inc")) stop("Supported plot types are 'survival', 'risk', and 'inc' (in the case of censoring), please select one.")
   

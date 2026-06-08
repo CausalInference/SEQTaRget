@@ -36,3 +36,25 @@ test_that("Unexcused Excused Censoring", {
     options = SEQopts(weighted = TRUE, excused = TRUE)
   ))
 })
+
+test_that("Identical numerator and denominator weight models warn about unit weights", {
+  # A common typo (denominator pointed at the numerator covariates) makes the two
+  # weight models identical, so every stabilized weight is exactly 1 (no weighting).
+  data <- data.table::copy(SEQdata)
+  expect_warning(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+      method = "censoring",
+      options = SEQopts(weighted = TRUE, numerator = "N+L+P", denominator = "N+L+P")),
+    regexp = "identical covariates"
+  )
+})
+
+test_that("Differing numerator and denominator weight models do not warn about unit weights", {
+  data <- data.table::copy(SEQdata)
+  ws <- testthat::capture_warnings(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+      method = "censoring",
+      options = SEQopts(weighted = TRUE, numerator = "sex", denominator = "N+L+P"))
+  )
+  expect_false(any(grepl("identical covariates", ws)))
+})

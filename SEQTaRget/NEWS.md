@@ -5,13 +5,22 @@
 * Speed up the hazard ratio calculation by fitting the Cox model with the survival C fitters directly on a prebuilt design matrix instead of `coxph(formula, data)`, avoiding the `model.frame`/`model.matrix` rebuild on every bootstrap iteration: `survival::coxph.fit()` for the non-competing-event model and `survival::agreg.fit()` for the competing-event Fine-Gray (counting-process) model. The hazard ratio and CIs are unchanged.
 * Fix the competing-event Fine-Gray hazard fit to use the `finegray()` case weights (`fgwt`), which are required for a valid subdistribution-hazard estimate and were previously omitted. This is a no-op for the current hazard simulation (which has only administrative censoring, so all `fgwt` are 1) but corrects the estimate should the simulated data ever carry random censoring.
 * Report competing events per treatment arm in the `@info` slot as `info$compevent.unique` and `info$compevent.nonunique`, mirroring the structure of `info$outcome.unique` / `info$outcome.nonunique`. Both are grouped by baseline treatment; the non-unique table counts all competing event occurrences in the expanded data and the unique table counts distinct subjects who experienced the competing event. Both are `NA` when no `compevent` is specified.
+* From a `SEQuential()` fit, populate `weight.statistics` and `outcome.model` when `hazard = TRUE`.
+* Warn when the `numerator` and `denominator` weight models are given identical covariates. In that case the stabilized weights all equal 1 (i.e., no weighting), which is usually a typo in the `denominator` argument.
+* Improve the `SEQuential()` helpfile by adding a per-protocol example.
+* Add behavioural tests that `selection.random = TRUE` retains all treated trial-starts, subsamples control trial-starts to the requested `selection.prob` fraction, and is reproducible under a fixed seed; rename the previous smoke test that did not actually exercise the feature.
+* Add behavioural tests for; `weight.lower`/`weight.upper` truncation, `weight.p99` truncation, `followup.include`/`trial.include`, `followup.class`, `weight.lag_condition`, `followup.min`/`followup.max`, and `weight.eligible_cols`.
+* Fix `numerator()` and `denominator()` returning `NULL` for every weighted model; they now return the fitted per-arm numerator/denominator weight models.
+* Document that weight truncation applies only to the outcome-model fit.
+* Pass the formula cache to `inline.pred()` in the weight models
+* Fix `SEQOpts()` argument ordering.
 
 # SEQTaRget v1.4.2
 
 * Remove mention of units from time in docs.
 * Improve memory usage in the bootstrapping.
 * Fix off-by-one labeling in survival output so that `followup = k` correctly represents survival after `k` intervals, adding a row at `followup = survival.max + 1` for the final interval's estimate.
-* Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with `outcome=0` rows from subsequent periods by truncating each trial at the first event row
+* Fix expansion bug where subjects experiencing the outcome early were incorrectly carried forward with `outcome=0` rows from subsequent periods by truncating each trial at the first event row (thanks, @francescazaccagnino)
 * Add `expand.only` option to `SEQopts()`. When `TRUE`, `SEQuential()` returns the expanded `data.table` directly and skips the analysis steps, for users who want to inspect or store the expanded dataset on its own.
 * Fix `followup.spline = TRUE` so the basis is genuinely non-linear. Splines are now built into the model formula via `splines::ns()` instead of being applied as a single-column transform of `followup`, and the new `followup.spline.df` option (default `4`) controls the number of basis functions. The treatment-by-followup interaction now uses the same spline basis. Knots are baked from the full expanded `followup` once at fit time so the basis is identical at fit and prediction time across bootstraps and survival grids. Internally, formula column extraction now uses `all.vars()`, so user-supplied covariates may include `ns()`, `bs()`, `I()`, `factor()`, `poly()` etc. without breaking expansion.
 * Rename `format.time()` to `format_time()` because it wasn't an S3 method and hence was causing roxygen2 to write incorrect information in its helpfile.
