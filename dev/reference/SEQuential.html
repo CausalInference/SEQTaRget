@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,15 +136,19 @@ and per-protocol effects, and can adjust for potential selection bias induced by
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">SEQuential</span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>, </span></span>
-<span class="r-in"><span>                          time.col <span class="op">=</span> <span class="st">"time"</span>, </span></span>
-<span class="r-in"><span>                          eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span></span>
-<span class="r-in"><span>                          treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span></span>
-<span class="r-in"><span>                          outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span></span>
-<span class="r-in"><span>                          time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                          fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span></span>
-<span class="r-in"><span>                          method <span class="op">=</span> <span class="st">"ITT"</span>, </span></span>
-<span class="r-in"><span>                          options <span class="op">=</span> <span class="fu"><a href="SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Intention-to-treat (ITT) effect: subjects are assigned to the treatment</span></span></span>
+<span class="r-in"><span><span class="co"># arm defined by their baseline treatment and followed regardless of any later</span></span></span>
+<span class="r-in"><span><span class="co"># treatment changes, so no weighting is required.</span></span></span>
+<span class="r-in"><span><span class="fu">SEQuential</span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>,</span></span>
+<span class="r-in"><span>           time.col <span class="op">=</span> <span class="st">"time"</span>,</span></span>
+<span class="r-in"><span>           eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span></span>
+<span class="r-in"><span>           treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span></span>
+<span class="r-in"><span>           outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span></span>
+<span class="r-in"><span>           time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span></span>
+<span class="r-in"><span>           method <span class="op">=</span> <span class="st">"ITT"</span>,</span></span>
+<span class="r-in"><span>           options <span class="op">=</span> <span class="fu"><a href="SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Full dataset: 12,180 observations, 11 variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -169,6 +173,197 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> ITT model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.25 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Denominator covariates: NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full Model Information ========================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Outcome Model ==================================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients and Weighting:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  Estimate   Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  -6.828506036 5.668367e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tx_init_bas1  0.189350031 3.005120e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup      0.033715157 3.276751e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup_sq  -0.000146912 6.466141e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial         0.044566166 1.124702e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial_sq      0.000578777 1.001866e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1          0.127172410 2.595630e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N_bas         0.003290667 2.589182e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> L_bas        -0.013392420 1.428081e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P_bas         0.200724099 5.956440e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostic Tables ================================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|   n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|---:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1| 203|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 185|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|    n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|----:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1| 1928|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 4432|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |   n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|---:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           | 300|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 273|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |      n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|------:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           |  93151|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 155334|</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Per-protocol effect via artificial censoring: subjects are censored when they</span></span></span>
+<span class="r-in"><span><span class="co"># deviate from their assigned strategy, and inverse-probability-of-censoring</span></span></span>
+<span class="r-in"><span><span class="co"># weights adjust for the resulting selection bias. The denominator models the</span></span></span>
+<span class="r-in"><span><span class="co"># probability of remaining uncensored given the time-varying confounders, while</span></span></span>
+<span class="r-in"><span><span class="co"># the numerator uses only the baseline covariates to stabilize the weights (so</span></span></span>
+<span class="r-in"><span><span class="co"># the two formulas must differ - identical formulas give weights of 1).</span></span></span>
+<span class="r-in"><span><span class="fu">SEQuential</span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>,</span></span>
+<span class="r-in"><span>           time.col <span class="op">=</span> <span class="st">"time"</span>,</span></span>
+<span class="r-in"><span>           eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span></span>
+<span class="r-in"><span>           treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span></span>
+<span class="r-in"><span>           outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span></span>
+<span class="r-in"><span>           time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span></span>
+<span class="r-in"><span>           method <span class="op">=</span> <span class="st">"censoring"</span>,</span></span>
+<span class="r-in"><span>           options <span class="op">=</span> <span class="fu"><a href="SEQopts.html">SEQopts</a></span><span class="op">(</span>weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                             numerator <span class="op">=</span> <span class="st">"sex"</span>,</span></span>
+<span class="r-in"><span>                             denominator <span class="op">=</span> <span class="st">"N + L + P + sex"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full dataset: 12,180 observations, 11 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-required columns provided, pruning for efficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Pruned</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Original dataset (eligible subjects): 9,203 observations, 9 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expanding Data...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Pre-filter expansion: 310,080 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expanded dataset (pre-censoring): 248,485 observations, 15 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expanded dataset (post-censoring): 102,749 observations, 15 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expansion Successful</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Final analysis dataset: 102,749 observations, 15 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Moving forward with censoring analysis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> censoring model created successfully</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.04 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: tx_init~sex </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Denominator covariates: tx_init~N+L+P+sex </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full Model Information ========================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Outcome Model ==================================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients and Weighting:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate   Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  -4.9134317258 0.0925102561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tx_init_bas1  0.5051368699 0.0741355065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup      0.0281212245 0.0058811408</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup_sq   0.0001084173 0.0001476455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial        -0.0132858466 0.0057384370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial_sq      0.0011377569 0.0001049305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1          0.0660151461 0.0422912172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Weight Information ============================================= </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Treatment Lag = 0 Treatment = 0 Model ====================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numerator ========================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.63699131 0.06159802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1         0.03738753 0.08644011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Denominator ========================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate  Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.332290880 0.247265065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N            0.009930812 0.008667517</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> L           -0.011516315 0.038851934</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P           -0.056782905 0.026287074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1         0.033299544 0.087312037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Treatment Lag = 1 Treatment = 1 Model ====================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Numerator ========================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  3.0276301 0.07259087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1        -0.1467371 0.10125464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Denominator ========================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  2.654431030 0.29534161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N            0.001573135 0.01033761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> L            0.050900387 0.03934269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P            0.046316350 0.03824053</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex1        -0.136773596 0.10169194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Weights:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Min:  0.7359596 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Max:  1.823553 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> StDev:  0.06287385 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P01:  0.8731989 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P25:  0.984536 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P50:  0.9995707 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P75:  1.021913 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P99:  1.257297 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostic Tables ================================================== </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|   n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|---:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 153|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1|  50|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|    n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|----:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 2157|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1|  222|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |   n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|---:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           | 300|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 273|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |     n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-----:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |0           | 16260|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 79991|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Switch Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |switch |    n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:------|----:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |FALSE  | 8399|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |TRUE   |  804|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Switch Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |switch |     n|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |:------|-----:|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |FALSE  | 96251|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |TRUE   |  6498|</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,14 +79,13 @@
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  expand.only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fastglm.method <span class="op">=</span> <span class="fl">2L</span>,</span>
-<span>  glm.package <span class="op">=</span> <span class="st">"fastglm"</span>,</span>
-<span>  parglm.control <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  followup.class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  followup.include <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  followup.max <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  followup.min <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  followup.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  followup.spline.df <span class="op">=</span> <span class="fl">4L</span>,</span>
+<span>  glm.package <span class="op">=</span> <span class="st">"fastglm"</span>,</span>
 <span>  hazard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  indicator.baseline <span class="op">=</span> <span class="st">"_bas"</span>,</span>
 <span>  indicator.squared <span class="op">=</span> <span class="st">"_sq"</span>,</span>
@@ -96,6 +95,7 @@
 <span>  nthreads <span class="op">=</span> <span class="fu">getDTthreads</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  numerator <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  parglm.control <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot.colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#F8766D"</span>, <span class="st">"#00BFC4"</span>, <span class="st">"#555555"</span><span class="op">)</span>,</span>
 <span>  plot.labels <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  plot.subtitle <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -215,14 +215,6 @@
 <dd><p>Integer: decomposition method for fastglm (<code>0L</code>-column-pivoted QR, <code>1L</code>-unpivoted QR, <code>2L</code>-LLT Cholesky, <code>3L</code>-LDLT Cholesky), default is <code>2L</code></p></dd>
 
 
-<dt id="arg-glm-package">glm.package<a class="anchor" aria-label="anchor" href="#arg-glm-package"></a></dt>
-<dd><p>Character: package to use for fitting GLMs, either <code>"fastglm"</code> (default) or <code>"parglm"</code>. When <code>"parglm"</code> is selected the <code>nthreads</code> option controls the number of threads passed to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) <code>"fastglm"</code> is faster; <code>"parglm"</code> may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.</p></dd>
-
-
-<dt id="arg-parglm-control">parglm.control<a class="anchor" aria-label="anchor" href="#arg-parglm-control"></a></dt>
-<dd><p>A control object from <code><a href="https://remlapmot.github.io/parglm/reference/parglm.control.html" class="external-link">parglm::parglm.control()</a></code> to pass to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. Only used when <code>glm.package = "parglm"</code>. Defaults to <code>parglm::parglm.control(method = "FAST")</code>. If you encounter a <code>chol(): decomposition failed</code> error (e.g. with near-singular model matrices on large datasets), pass <code>parglm.control = parglm::parglm.control(method = "LAPACK")</code> to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.</p></dd>
-
-
 <dt id="arg-followup-class">followup.class<a class="anchor" aria-label="anchor" href="#arg-followup-class"></a></dt>
 <dd><p>Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is <code>FALSE</code></p></dd>
 
@@ -245,6 +237,10 @@
 
 <dt id="arg-followup-spline-df">followup.spline.df<a class="anchor" aria-label="anchor" href="#arg-followup-spline-df"></a></dt>
 <dd><p>Integer: degrees of freedom passed to <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> when <code>followup.spline = TRUE</code>. With <code>df = k</code>, <code>ns()</code> places <code>k - 1</code> interior knots at quantiles of <code>followup</code>. Must be <code>&gt;= 1</code>; <code>df = 1</code> is equivalent to a linear term and is generally not what you want. Default is <code>4</code> (3 interior knots).</p></dd>
+
+
+<dt id="arg-glm-package">glm.package<a class="anchor" aria-label="anchor" href="#arg-glm-package"></a></dt>
+<dd><p>Character: package to use for fitting GLMs, either <code>"fastglm"</code> (default) or <code>"parglm"</code>. When <code>"parglm"</code> is selected the <code>nthreads</code> option controls the number of threads passed to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) <code>"fastglm"</code> is faster; <code>"parglm"</code> may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.</p></dd>
 
 
 <dt id="arg-hazard">hazard<a class="anchor" aria-label="anchor" href="#arg-hazard"></a></dt>
@@ -281,6 +277,10 @@
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
 <dd><p>Logical: define if the SEQuential process is run in parallel, default is <code>FALSE</code></p></dd>
+
+
+<dt id="arg-parglm-control">parglm.control<a class="anchor" aria-label="anchor" href="#arg-parglm-control"></a></dt>
+<dd><p>A control object from <code><a href="https://remlapmot.github.io/parglm/reference/parglm.control.html" class="external-link">parglm::parglm.control()</a></code> to pass to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. Only used when <code>glm.package = "parglm"</code>. Defaults to <code>parglm::parglm.control(method = "FAST")</code>. If you encounter a <code>chol(): decomposition failed</code> error (e.g. with near-singular model matrices on large datasets), pass <code>parglm.control = parglm::parglm.control(method = "LAPACK")</code> to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.</p></dd>
 
 
 <dt id="arg-plot-colors">plot.colors<a class="anchor" aria-label="anchor" href="#arg-plot-colors"></a></dt>
@@ -356,7 +356,7 @@
 
 
 <dt id="arg-weight-lower">weight.lower<a class="anchor" aria-label="anchor" href="#arg-weight-lower"></a></dt>
-<dd><p>Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is <code>0</code></p></dd>
+<dd><p>Numeric: IPCW weights truncated at this lower bound, must be non-negative, default is <code>0</code>. Truncation is applied only to the weights used to fit the outcome model; the weights reported in <code>weight.statistics</code> and in the returned data (when <code>data.return = TRUE</code>) are the untruncated values.</p></dd>
 
 
 <dt id="arg-weight-lag-condition">weight.lag_condition<a class="anchor" aria-label="anchor" href="#arg-weight-lag-condition"></a></dt>
@@ -364,7 +364,7 @@
 
 
 <dt id="arg-weight-p-">weight.p99<a class="anchor" aria-label="anchor" href="#arg-weight-p-"></a></dt>
-<dd><p>Logical: forces weight truncation at 1st and 99th percentile weights, will override provided <code>weight.upper</code> and <code>weight.lower</code></p></dd>
+<dd><p>Logical: forces weight truncation at 1st and 99th percentile weights, will override provided <code>weight.upper</code> and <code>weight.lower</code>. The percentiles are taken from the untruncated weight distribution (as reported in <code>weight.statistics</code>), and as with <code>weight.lower</code>/<code>weight.upper</code> the truncation affects only the weights used to fit the outcome model.</p></dd>
 
 
 <dt id="arg-weight-preexpansion">weight.preexpansion<a class="anchor" aria-label="anchor" href="#arg-weight-preexpansion"></a></dt>
@@ -372,7 +372,7 @@
 
 
 <dt id="arg-weight-upper">weight.upper<a class="anchor" aria-label="anchor" href="#arg-weight-upper"></a></dt>
-<dd><p>Numeric: weights truncated at upper end at this weight, default is <code>Inf</code></p></dd>
+<dd><p>Numeric: weights truncated at upper end at this weight, default is <code>Inf</code>. As with <code>weight.lower</code>, truncation affects only the weights used to fit the outcome model, not those reported in <code>weight.statistics</code> or the returned data.</p></dd>
 
 
 <dt id="arg-weighted">weighted<a class="anchor" aria-label="anchor" href="#arg-weighted"></a></dt>

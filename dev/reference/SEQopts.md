@@ -28,14 +28,13 @@ SEQopts(
   excused.cols = c(NA, NA),
   expand.only = FALSE,
   fastglm.method = 2L,
-  glm.package = "fastglm",
-  parglm.control = NULL,
   followup.class = FALSE,
   followup.include = TRUE,
   followup.max = Inf,
   followup.min = 0,
   followup.spline = FALSE,
   followup.spline.df = 4L,
+  glm.package = "fastglm",
   hazard = FALSE,
   indicator.baseline = "_bas",
   indicator.squared = "_sq",
@@ -45,6 +44,7 @@ SEQopts(
   nthreads = getDTthreads(),
   numerator = NA,
   parallel = FALSE,
+  parglm.control = NULL,
   plot.colors = c("#F8766D", "#00BFC4", "#555555"),
   plot.labels = NA,
   plot.subtitle = NA,
@@ -184,31 +184,6 @@ SEQopts(
   `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is
   `2L`
 
-- glm.package:
-
-  Character: package to use for fitting GLMs, either `"fastglm"`
-  (default) or `"parglm"`. When `"parglm"` is selected the `nthreads`
-  option controls the number of threads passed to
-  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
-  For most realistic SEQTaRget workloads (expanded datasets up to
-  approximately a few million rows) `"fastglm"` is faster; `"parglm"`
-  may help only on substantially larger datasets where the parallel
-  chunking outweighs its setup overhead.
-
-- parglm.control:
-
-  A control object from
-  [`parglm::parglm.control()`](https://remlapmot.github.io/parglm/reference/parglm.control.html)
-  to pass to
-  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
-  Only used when `glm.package = "parglm"`. Defaults to
-  `parglm::parglm.control(method = "FAST")`. If you encounter a
-  `chol(): decomposition failed` error (e.g. with near-singular model
-  matrices on large datasets), pass
-  `parglm.control = parglm::parglm.control(method = "LAPACK")` to use
-  the more numerically stable QR decomposition instead, or switch to
-  using the fastglm backend.
-
 - followup.class:
 
   Logical: treat followup as a class, e.g. expands every time to it's
@@ -242,6 +217,17 @@ SEQopts(
   interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is
   equivalent to a linear term and is generally not what you want.
   Default is `4` (3 interior knots).
+
+- glm.package:
+
+  Character: package to use for fitting GLMs, either `"fastglm"`
+  (default) or `"parglm"`. When `"parglm"` is selected the `nthreads`
+  option controls the number of threads passed to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  For most realistic SEQTaRget workloads (expanded datasets up to
+  approximately a few million rows) `"fastglm"` is faster; `"parglm"`
+  may help only on substantially larger datasets where the parallel
+  chunking outweighs its setup overhead.
 
 - hazard:
 
@@ -289,6 +275,20 @@ SEQopts(
 
   Logical: define if the SEQuential process is run in parallel, default
   is `FALSE`
+
+- parglm.control:
+
+  A control object from
+  [`parglm::parglm.control()`](https://remlapmot.github.io/parglm/reference/parglm.control.html)
+  to pass to
+  [`parglm::parglm.fit()`](https://remlapmot.github.io/parglm/reference/parglm.html).
+  Only used when `glm.package = "parglm"`. Defaults to
+  `parglm::parglm.control(method = "FAST")`. If you encounter a
+  `chol(): decomposition failed` error (e.g. with near-singular model
+  matrices on large datasets), pass
+  `parglm.control = parglm::parglm.control(method = "LAPACK")` to use
+  the more numerically stable QR decomposition instead, or switch to
+  using the fastglm backend.
 
 - plot.colors:
 
@@ -381,7 +381,10 @@ SEQopts(
 - weight.lower:
 
   Numeric: IPCW weights truncated at this lower bound, must be
-  non-negative, default is `0`
+  non-negative, default is `0`. Truncation is applied only to the
+  weights used to fit the outcome model; the weights reported in
+  `weight.statistics` and in the returned data (when
+  `data.return = TRUE`) are the untruncated values.
 
 - weight.lag_condition:
 
@@ -391,7 +394,11 @@ SEQopts(
 - weight.p99:
 
   Logical: forces weight truncation at 1st and 99th percentile weights,
-  will override provided `weight.upper` and `weight.lower`
+  will override provided `weight.upper` and `weight.lower`. The
+  percentiles are taken from the untruncated weight distribution (as
+  reported in `weight.statistics`), and as with
+  `weight.lower`/`weight.upper` the truncation affects only the weights
+  used to fit the outcome model.
 
 - weight.preexpansion:
 
@@ -401,7 +408,9 @@ SEQopts(
 - weight.upper:
 
   Numeric: weights truncated at upper end at this weight, default is
-  `Inf`
+  `Inf`. As with `weight.lower`, truncation affects only the weights
+  used to fit the outcome model, not those reported in
+  `weight.statistics` or the returned data.
 
 - weighted:
 

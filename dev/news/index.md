@@ -34,6 +34,37 @@
   competing event occurrences in the expanded data and the unique table
   counts distinct subjects who experienced the competing event. Both are
   `NA` when no `compevent` is specified.
+- From a
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  fit, populate `weight.statistics` and `outcome.model` when
+  `hazard = TRUE`.
+- Warn when the `numerator` and `denominator` weight models are given
+  identical covariates. In that case the stabilized weights all equal 1
+  (i.e., no weighting), which is usually a typo in the `denominator`
+  argument.
+- Improve the
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  helpfile by adding a per-protocol example.
+- Add behavioural tests that `selection.random = TRUE` retains all
+  treated trial-starts, subsamples control trial-starts to the requested
+  `selection.prob` fraction, and is reproducible under a fixed seed;
+  rename the previous smoke test that did not actually exercise the
+  feature.
+- Add behavioural tests for; `weight.lower`/`weight.upper` truncation,
+  `weight.p99` truncation, `followup.include`/`trial.include`,
+  `followup.class`, `weight.lag_condition`,
+  `followup.min`/`followup.max`, and `weight.eligible_cols`.
+- Fix
+  [`numerator()`](https://causalinference.github.io/SEQTaRget/dev/reference/numerator.md)
+  and
+  [`denominator()`](https://causalinference.github.io/SEQTaRget/dev/reference/denominator.md)
+  returning `NULL` for every weighted model; they now return the fitted
+  per-arm numerator/denominator weight models.
+- Document that weight truncation applies only to the outcome-model fit.
+- Pass the formula cache to
+  [`inline.pred()`](https://causalinference.github.io/SEQTaRget/dev/reference/inline.pred.md)
+  in the weight models
+- Fix `SEQOpts()` argument ordering.
 
 ## SEQTaRget v1.4.2
 
@@ -46,7 +77,8 @@ CRAN release: 2026-05-21
   `followup = survival.max + 1` for the final interval’s estimate.
 - Fix expansion bug where subjects experiencing the outcome early were
   incorrectly carried forward with `outcome=0` rows from subsequent
-  periods by truncating each trial at the first event row
+  periods by truncating each trial at the first event row (thanks,
+  [@francescazaccagnino](https://github.com/francescazaccagnino))
 - Add `expand.only` option to
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md).
   When `TRUE`,
