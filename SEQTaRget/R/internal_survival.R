@@ -134,7 +134,10 @@ internal.survival <- function(params, outcome) {
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
-          set.seed(params@seed + x)
+          # outcome[[x]] was fit (in internal.analysis) on the resample drawn under
+          # seed + (x - 1); reuse that seed so the standardization population here
+          # is the same resample the model was trained on.
+          set.seed(params@seed + x - 1L)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
           rm(RMDT)
