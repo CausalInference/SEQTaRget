@@ -113,7 +113,7 @@ SEQopts(
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
-\item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky), default is \code{2L}}
+\item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky, \code{4L}-full-pivoted QR, \code{5L}-Bidiagonal Divide and Conquer SVD), default is \code{2L}}
 
 \item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 

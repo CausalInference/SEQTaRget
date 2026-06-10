@@ -606,7 +606,10 @@ test_that("SEQopts errors on invalid parameters", {
   expect_error(SEQopts(ncores = 0), "ncores")
   expect_error(SEQopts(nthreads = -1), "nthreads")
   expect_error(SEQopts(selection.prob = 2), "selection.prob")
-  expect_error(SEQopts(fastglm.method = 5), "fastglm.method")
+  # fastglm (>= 0.1.1) supports decomposition methods 0-5 (0 is fastglm's own default)
+  expect_error(SEQopts(fastglm.method = 6), "fastglm.method")
+  expect_error(SEQopts(fastglm.method = -1), "fastglm.method")
+  for (m in 0:5) expect_s4_class(SEQopts(fastglm.method = m), "SEQopts")
 })
 
 test_that("SEQopts errors when followup.min >= followup.max", {

@@ -21,7 +21,7 @@
 #' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
-#' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is `2L`
+#' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky, `4L`-full-pivoted QR, `5L`-Bidiagonal Divide and Conquer SVD), default is `2L`
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
@@ -140,7 +140,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   indicator.squared <- as.character(indicator.squared)
 
   fastglm.method <- as.integer(fastglm.method)
-  if (!fastglm.method %in% 1L:4L) stop("'fastglm.method' must be one of 1 (QR), 2 (Cholesky), 3 (LDLT), or 4 (QR.FPIV)")
+  if (!fastglm.method %in% 0L:5L) stop("'fastglm.method' must be one of 0 (column-pivoted QR), 1 (unpivoted QR), 2 (LLT Cholesky), 3 (LDLT Cholesky), 4 (full-pivoted QR), or 5 (Bidiagonal Divide and Conquer SVD)")
 
   glm.package <- as.character(glm.package)
   if (!glm.package %in% c("fastglm", "parglm"))
