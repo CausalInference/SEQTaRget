@@ -248,6 +248,34 @@ test_that("info compevent tables count intervals and unique subjects per treatme
   expect_true(is.na(model_no_ce@info$compevent.nonunique))
 })
 
+test_that("bootstrap ID relabeling is injective for large numeric IDs", {
+  # Small non-negative integer IDs keep the fast arithmetic relabeling
+  small <- 1:50
+  f <- SEQTaRget:::bootstrap_id_relabeler(small, 40L)
+  ids <- f(rep(small, each = 2), seq_len(100))
+  expect_true(is.numeric(ids))
+  expect_equal(anyDuplicated(ids), 0L)
+
+  # 10-digit IDs overflow the 2^53 exact-integer range under the arithmetic
+  # scheme: consecutive copy indices round to the same double, silently merging
+  # distinct bootstrap copies of a subject. These must fall back to strings.
+  big <- 9e9 + 1:50
+  g <- SEQTaRget:::bootstrap_id_relabeler(big, 40L)
+  ids_big <- g(rep(big[1], 100), seq_len(100))
+  expect_equal(anyDuplicated(ids_big), 0L)
+
+  # The old arithmetic scheme demonstrably collides at this magnitude
+  id_mult <- max(big) + 1
+  old_ids <- as.numeric(big[1]) * id_mult + seq_len(100)
+  expect_gt(anyDuplicated(old_ids), 0L)
+
+  # Negative and non-integer numeric IDs also use the collision-proof path
+  h <- SEQTaRget:::bootstrap_id_relabeler(c(-5, 1, 10), 3L)
+  expect_true(is.character(h(c(-5, -5), 1:2)))
+  k <- SEQTaRget:::bootstrap_id_relabeler(c(0.5, 1.5), 2L)
+  expect_true(is.character(k(c(0.5, 0.5), 1:2)))
+})
+
 test_that("character time-varying covariates get a stable factor encoding", {
   # A character categorical among the time-varying covariates must be coerced to a
   # factor (levels fixed from the full data) so bootstrap resamples cannot realise

@@ -45,6 +45,30 @@ init_formula_cache <- function(params) {
   return(cache)
 }
 
+#' Build the function that gives each bootstrap copy of a subject a unique ID
+#'
+#' Numeric IDs are relabeled arithmetically (\code{orig_id * multiplier + copy
+#' index}), but only while every relabeled value stays within the 2^53
+#' exact-integer range of doubles and the IDs are non-negative integers:
+#' beyond 2^53 consecutive copy indices round to the same double, so distinct
+#' bootstrap copies of a subject silently merge under by-ID grouping (e.g.
+#' 10-digit IDs). All other cases relabel by string concatenation
+#' (\code{orig_id_b<copy index>}).
+#'
+#' @param UIDs vector of unique subject IDs
+#' @param n_sample number of subjects drawn per bootstrap resample
+#' @returns a function(id_col, idx) returning unique relabeled IDs
+#' @keywords internal
+bootstrap_id_relabeler <- function(UIDs, n_sample) {
+  if (is.numeric(UIDs)) {
+    id_mult <- as.numeric(max(UIDs)) + 1
+    arithmetic_safe <- min(UIDs) >= 0 && all(UIDs == trunc(UIDs)) &&
+      as.numeric(max(UIDs)) * id_mult + n_sample < 2^53
+    if (arithmetic_safe) return(function(id_col, idx) as.numeric(id_col) * id_mult + idx)
+  }
+  function(id_col, idx) paste0(id_col, "_b", idx)
+}
+
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
@@ -175,25 +199,18 @@ internal.analysis <- function(params) {
     if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
     if (!identical(key(params@data), params@id)) setkeyv(params@data, params@id)
     
+    # Unique-ID maker for bootstrap copies, decided once for all iterations
+    make_id <- bootstrap_id_relabeler(UIDs, round(params@bootstrap.sample * lnID))
+
     # Helper function for efficient bootstrap resampling
     bootstrap_sample <- function(DT, data, params, UIDs, lnID) {
       n_sample <- round(params@bootstrap.sample * lnID)
-    
+
       # Create lookup table with sampled IDs and unique suffixes
       id_lookup <- data.table(
         orig_id = sample(UIDs, n_sample, replace = TRUE),
         boot_idx = seq_len(n_sample)
       )
-    
-      # Create unique IDs for each bootstrap copy of a subject.
-      # Numeric IDs: use arithmetic (orig_id * multiplier + boot_idx).
-      # Character IDs: use string concatenation (orig_id_b<boot_idx>).
-      if (is.numeric(UIDs)) {
-        id_mult <- as.numeric(max(UIDs)) + 1
-        make_id <- function(id_col, idx) as.numeric(id_col) * id_mult + idx
-      } else {
-        make_id <- function(id_col, idx) paste0(id_col, "_b", idx)
-      }
 
       RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
                  ][, (params@id) := make_id(get(params@id), boot_idx)
@@ -202,7 +219,7 @@ internal.analysis <- function(params) {
       RMdata <- data[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
                      ][, (params@id) := make_id(get(params@id), boot_idx)
                        ][, boot_idx := NULL]
-      
+
       return(list(RMDT = RMDT, RMdata = RMdata))
     }
     
