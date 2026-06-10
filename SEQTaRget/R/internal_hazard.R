@@ -102,19 +102,22 @@ internal.hazard <- function(model, params, cache) {
       return(RMDT)
     }
 
+    # model[[1]] is the full-data fit; bootstrap fits live at model[[2]] onwards,
+    # where model[[x + 1]] was fit (in internal.analysis) on the resample drawn
+    # under seed + x, matching the resample drawn here.
     if (params@parallel) {
       old_threads <- getDTthreads()
       setDTthreads(1)
       on.exit(setDTthreads(old_threads), add = TRUE)
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, cache)
       }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         set.seed(params@seed + x)
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, cache)
       })
     }
   }
