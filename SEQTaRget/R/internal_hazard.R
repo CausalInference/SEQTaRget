@@ -42,7 +42,8 @@ internal.hazard <- function(model, params, cache) {
     rm(trials)
     out <- rbindlist(out_list)
     rm(out_list)
-    data <- out[out[, .I[seq_len(firstEvent[1])], by = c(params@id, "trial", tx_bas)]$V1
+    keep_rows <- out[, .I[seq_len(firstEvent[1])], by = c(params@id, "trial", tx_bas)]$V1
+    data <- out[keep_rows
                ][, .SD[.N], by = c(params@id, "trial", tx_bas)
                  ][, firstEvent := NULL
                    ][, event := 0

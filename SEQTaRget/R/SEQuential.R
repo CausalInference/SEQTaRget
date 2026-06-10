@@ -217,7 +217,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # eligible row are deliberately kept in params@data because they contribute
   # follow-up periods to trials enrolled earlier, and trials cannot start from
   # them anyway (SEQexpand drops trials with an ineligible baseline).
-  data <- data[data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1]
+  keep_rows <- data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1
+  data <- data[keep_rows]
 
   # Expansion ==================================================
   if (params@verbose) cat("\nOriginal dataset (eligible subjects):", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")

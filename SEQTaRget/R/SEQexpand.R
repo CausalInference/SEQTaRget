@@ -93,9 +93,12 @@ SEQexpand <- function(params) {
 
     # Truncate each trial at (and including) the first outcome event row, so that
     # subjects who experience the outcome early are not carried forward with outcome=0
-    # from subsequent periods in the original data.
-    out <- out[out[, .I[seq_len(match(1L, get(params@outcome), nomatch = .N))],
-                   by = c(params@id, "trial")]$V1]
+    # from subsequent periods in the original data. The row indices are computed
+    # outside the i-expression: inside DT[i], columns shadow local variables, so a
+    # user column named "out" would otherwise shadow the table itself and error.
+    keep_rows <- out[, .I[seq_len(match(1L, .SD[[1L]], nomatch = .N))],
+                     by = c(params@id, "trial"), .SDcols = params@outcome]$V1
+    out <- out[keep_rows]
 
     # Row count after eligibility filtering and outcome truncation, before any
     # method-specific reduction (dose-response, PP censoring, first-trial selection).
@@ -159,7 +162,8 @@ SEQexpand <- function(params) {
         out[, lag := NULL]
       }
       out[, firstSwitch := { m <- match(TRUE, switch); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
-      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
+      keep_rows <- out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
+      out <- out[keep_rows
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
                    ][, `:=`(firstSwitch = NULL)
                      ][, "censored" := ifelse(switch, 1, 0)]
