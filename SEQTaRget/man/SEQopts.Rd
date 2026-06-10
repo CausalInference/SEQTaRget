@@ -161,7 +161,7 @@ SEQopts(
 
 \item{risk.times}{Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default \code{NA} reports only the final follow-up time.}
 
-\item{seed}{Integer: starting seed}
+\item{seed}{Integer: starting seed; the default \code{NULL} draws a single random integer when \code{SEQopts()} is called, so set this explicitly for reproducible bootstrap results}
 
 \item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset, default \code{FALSE}}
 

@@ -45,7 +45,7 @@
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'` (the default), `'risk'`, and `'inc'` (in the case of censoring)
 #' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default `NA` reports only the final follow-up time.
-#' @param seed Integer: starting seed
+#' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
@@ -65,7 +65,6 @@
 #' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
-#' @importFrom stats runif
 #' @importFrom parallelly availableCores
 #' @import data.table
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8, bootstrap.CI = 0.95, bootstrap.CI_method = "se",
@@ -90,8 +89,12 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   ncores <- as.integer(ncores)
   bootstrap <- as.logical(bootstrap)
   bootstrap.nboot <- as.integer(bootstrap.nboot)
-  runif(1)
-  seed <- if (is.null(seed)) .Random.seed else as.integer(seed)
+  # Default seed: a single random integer. Storing .Random.seed here (as
+  # previously) is not a random seed: set.seed() silently uses only its first
+  # element, the RNG kind code, which is constant - so every unseeded run drew
+  # identical bootstrap resamples. The bound leaves headroom for seed + nboot
+  # arithmetic in the serial bootstrap paths without integer overflow.
+  seed <- if (is.null(seed)) sample.int(1e8L, 1L) else as.integer(seed)
   followup.min <- as.numeric(followup.min)
   followup.max <- as.numeric(followup.max)
   survival.max <- as.numeric(survival.max)
