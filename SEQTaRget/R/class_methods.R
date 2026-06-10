@@ -110,9 +110,11 @@ setMethod("show", "SEQoutput", function(object) {
     }
     if (!is.na(params@compevent)) {
       cat("Competing Event Model ============================================ \n")
-      for (i in seq_along(slot(object, "ce.model"))) {
-        if (!is.na(params@subgroup)) cat("For subgroup: ", slot(object, "ce.model")[[i]], "\n")
-        print(.coef_table(slot(object, "ce.model")[[i]][[1]]))
+      ce.models <- slot(object, "ce.model")
+      for (i in seq_along(ce.models)) {
+        if (is.null(ce.models[[i]]) || length(ce.models[[i]]) == 0) next
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(ce.models)[[i]], "\n")
+        print(.coef_table(ce.models[[i]][[1]]))
       }
     }
     
