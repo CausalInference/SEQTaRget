@@ -248,6 +248,21 @@ test_that("info compevent tables count intervals and unique subjects per treatme
   expect_true(is.na(model_no_ce@info$compevent.nonunique))
 })
 
+test_that("custom indicator.squared works with pre-expansion weight models", {
+  # The pre-expansion weight data previously created the squared-time column with
+  # a hardcoded "_sq" suffix while the default weight formulas reference
+  # paste0(time, indicator.squared), so any custom indicator.squared errored
+  # with "column not found".
+  data <- copy(SEQdata)[time <= 5, ]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "censoring",
+                      options = SEQopts(weighted = TRUE, weight.preexpansion = TRUE,
+                                        indicator.squared = "_squared"),
+                      verbose = FALSE))
+  expect_s4_class(model, "SEQoutput")
+})
+
 test_that("bootstrap ID relabeling is injective for large numeric IDs", {
   # Small non-negative integer IDs keep the fast arithmetic relabeling
   small <- 1:50
