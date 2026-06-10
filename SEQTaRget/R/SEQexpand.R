@@ -180,8 +180,16 @@ SEQexpand <- function(params) {
     expanded_label <- if (length(quals) > 0)
       paste0("Expanded dataset (", paste(quals, collapse = ", "), ")") else "Expanded dataset"
     cat("\n", expanded_label, ": ", format(n_filtered, big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
-    if (censored)
+    if (censored) {
       cat("\nExpanded dataset (post-censoring): ", format(nrow(out), big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
+      # The outcome model is fit only on the un-censored rows (censored == 0);
+      # the artificially-censored rows are retained in the dataset. Report the
+      # split so the count lines up with implementations that print only the
+      # modelled rows (e.g. Stata seqtte).
+      n_censored <- sum(out[["censored"]] == 1)
+      cat("  entering outcome model (uncensored): ", format(nrow(out) - n_censored, big.mark = ","), "\n", sep = "")
+      cat("  artificially censored (treatment switch): ", format(n_censored, big.mark = ","), "\n", sep = "")
+    }
   }
 
   return(out)
