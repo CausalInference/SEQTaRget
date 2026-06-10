@@ -85,10 +85,16 @@ internal.hazard <- function(model, params, cache) {
   bootstrap <- if (params@bootstrap) {
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
-    
+
     # Key the data for efficient bootstrap resampling
     if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
-    
+
+    # Unique-ID maker for bootstrap copies: without relabeling, the handler's
+    # by-(id, trial) grouping collapses the identical copies of any subject
+    # drawn more than once, silently dropping resampling multiplicity from the
+    # bootstrap and understating the CI width.
+    make_id <- bootstrap_id_relabeler(UIDs, round(params@bootstrap.sample * lnID))
+
     # Helper for efficient keyed bootstrap sampling
     bootstrap_hazard_sample <- function(DT, params, UIDs, lnID) {
       n_sample <- round(params@bootstrap.sample * lnID)
@@ -96,10 +102,11 @@ internal.hazard <- function(model, params, cache) {
         orig_id = sample(UIDs, n_sample, replace = TRUE),
         boot_idx = seq_len(n_sample)
       )
-      
+
       # Single keyed join instead of N separate filters
       RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                 ][, boot_idx := NULL]
+                 ][, (params@id) := make_id(get(params@id), boot_idx)
+                   ][, boot_idx := NULL]
       return(RMDT)
     }
 
