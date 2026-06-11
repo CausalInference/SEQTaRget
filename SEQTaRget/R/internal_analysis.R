@@ -225,6 +225,11 @@ internal.analysis <- function(params) {
     
     bootstrap <- if (params@bootstrap) {
       params_boot <- params
+      # Bootstrap refits always use fastglm regardless of glm.package: warm-started
+      # from the main fit's coefficients (boot_start) they converge in a few cheap
+      # IWLS iterations, which benchmarks faster than paying parglm's per-fit thread
+      # setup on every resample. The main fit above honors the user's choice.
+      # Documented in the glm.package entry of ?SEQopts.
       params_boot@glm.package <- "fastglm"
       boot_start <- lapply(full$model, function(sg) coef(sg$model))
       if (params@parallel) {

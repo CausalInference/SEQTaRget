@@ -127,7 +127,7 @@ SEQopts(
 
 \item{followup.spline.df}{Integer: degrees of freedom passed to \code{splines::ns()} when \code{followup.spline = TRUE}. With \code{df = k}, \code{ns()} places \code{k - 1} interior knots at quantiles of \code{followup}. Must be \verb{>= 1}; \code{df = 1} is equivalent to a linear term and is generally not what you want. Default is \code{4} (3 interior knots).}
 
-\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.}
+\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead. Note that when \code{bootstrap = TRUE} only the main fit uses \code{"parglm"}: the bootstrap refits always use \code{"fastglm"}, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup.}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation, default is \code{FALSE}}
 
