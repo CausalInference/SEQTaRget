@@ -8,7 +8,7 @@ internal.survival <- function(params, outcome) {
   SE <- NULL
   # Variable pre-definition ===================================
     . <- variable <- NULL
-    ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
+    ce <- followup <- followup_sq <- se <- trial <- NULL
     row_id <- surv_accum <- ce_accum <- inc_accum <- p_surv <- p_ce <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
@@ -95,7 +95,6 @@ internal.survival <- function(params, outcome) {
     }
 
     baseDT_main <- params@DT[get("followup") == 0, ]
-    baseDT_main[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))]
     full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
     rm(baseDT_main)
     
@@ -115,10 +114,12 @@ internal.survival <- function(params, outcome) {
           boot_idx = seq_len(n_sample)
         )
         
-        # Single keyed join instead of N separate filters
+        # Single keyed join instead of N separate filters. No copy relabeling is
+        # needed here (unlike the hazard bootstrap): handler() standardizes
+        # row-wise with no by-ID grouping, so duplicated subjects keep their
+        # multiplicity as duplicated rows.
         RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                       ][, "trialID" := paste0(get(params@id), "_", boot_idx, "_", get("trial"))
-                         ][, boot_idx := NULL]
+                       ][, boot_idx := NULL]
         return(RMDT)
       }
       
