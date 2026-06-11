@@ -66,7 +66,11 @@ SEQexpand <- function(params) {
 
     data_list <- list()
     if (length(c(vars.time, vars.sq)) > 0) {
-      data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time
+      # nomatch = NULL: original-data rows with no expansion-grid match (possible
+      # under followup.min > 0 or selection.random) would otherwise be carried as
+      # NA-trial rows through the squared-column computation only to be dropped by
+      # the inner join with the baseline table below.
+      data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), nomatch = NULL
                         ][, (paste0(vars.sq, params@indicator.squared)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
       vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
