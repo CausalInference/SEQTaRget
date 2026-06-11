@@ -263,6 +263,36 @@ test_that("custom indicator.squared works with pre-expansion weight models", {
   expect_s4_class(model, "SEQoutput")
 })
 
+test_that("custom indicator.squared works with dose-response", {
+  # Dose-response previously mixed conventions: SEQexpand created dose_sq/trial_sq
+  # hardcoded (and excluded only the literal "dose_sq" from expansion variables)
+  # while the default covariates referenced paste0("dose", indicator.squared), so
+  # any custom indicator.squared errored in SEQexpand with
+  # "Some items of .SDcols are not column names: [dose]".
+  data <- copy(SEQdata)[time <= 5, ]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "dose-response",
+                      options = SEQopts(weighted = TRUE, indicator.squared = "_squared",
+                                        data.return = TRUE),
+                      verbose = FALSE))
+  expect_s4_class(model, "SEQoutput")
+  # Generated squared columns follow the indicator, with no stray hardcoded ones
+  expect_true(all(c("dose", "dose_squared", "trial_squared") %in% names(model@DT)))
+  expect_false(any(c("dose_sq", "trial_sq") %in% names(model@DT)))
+
+  # km.curves additionally exercises the dose interaction terms and the
+  # dose columns rebuilt on the survival prediction grid
+  model_km <- suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
+                      list("N", "L", "P"), list("sex"),
+                      method = "dose-response",
+                      options = SEQopts(weighted = TRUE, indicator.squared = "_squared",
+                                        km.curves = TRUE),
+                      verbose = FALSE))
+  expect_s4_class(model_km, "SEQoutput")
+  expect_true(nrow(model_km@survival.data[[1]]) > 0)
+})
+
 test_that("bootstrap ID relabeling is injective for large numeric IDs", {
   # Small non-negative integer IDs keep the fast arithmetic relabeling
   small <- 1:50

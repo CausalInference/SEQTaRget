@@ -28,8 +28,9 @@ internal.survival <- function(params, outcome) {
       
       # Only keep columns needed for prediction to minimize memory during replication
       fup_sq_col <- paste0("followup", params@indicator.squared)
+      dose_sq_col <- paste0("dose", params@indicator.squared)
       pred_cols <- unique(c(cache$covariates$cols, tx_bas))
-      pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", "dose_sq")]
+      pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", dose_sq_col)]
       base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
 
@@ -50,9 +51,9 @@ internal.survival <- function(params, outcome) {
         pred_all[, (tx_bas) := as.character(params@treat.level[[i]])]
 
         if (params@method == "dose-response" && i == 1) {
-          pred_all[, `:=`(dose = FALSE, dose_sq = FALSE)]
+          pred_all[, c("dose", dose_sq_col) := list(FALSE, FALSE)]
         } else if (params@method == "dose-response" && i != 1) {
-          pred_all[, `:=`(dose = as.numeric(followup), dose_sq = as.numeric(followup^2))]
+          pred_all[, c("dose", dose_sq_col) := list(as.numeric(followup), as.numeric(followup^2))]
         }
 
         pred_all[, p_surv := inline.pred(model, newdata = pred_all, params, case = "surv", cache = cache)]

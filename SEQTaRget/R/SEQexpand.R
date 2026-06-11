@@ -31,7 +31,8 @@ SEQexpand <- function(params) {
     vars <- unique(c(formula_vars(vars.intake),
                      params@treatment, params@cense, params@cense.eligible, params@visit,
                      params@compevent, unlist(params@weight.eligible_cols), params@subgroup))
-    vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
+    vars.nin <- c("dose", paste0("dose", params@indicator.squared),
+                  params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
     vars <- vars[!vars %in% vars.nin]
     vars.base <- vars[grep(params@indicator.baseline, vars)]
@@ -106,10 +107,8 @@ SEQexpand <- function(params) {
     n_filtered <- nrow(out)
 
     if (params@method == "dose-response") {
-      out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
-        dose_sq = dose^2,
-        trial_sq = trial^2
-      )]
+      out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")
+                 ][, paste0(c("dose", "trial"), params@indicator.squared) := list(dose^2, trial^2)]
     }
 
     if (params@method == "censoring" && !params@expand.only) {
@@ -155,9 +154,9 @@ SEQexpand <- function(params) {
                 ][, excused_tmp := NULL]
         } else {
           # Non-excused treatment lag switches
-          out[, `:=`(
-            trial_sq = trial^2,
-            switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(params@id, "trial")]
+          out[, paste0("trial", params@indicator.squared) := trial^2
+              ][, switch := get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1]),
+                by = c(params@id, "trial")]
         }
         out[, lag := NULL]
       }
