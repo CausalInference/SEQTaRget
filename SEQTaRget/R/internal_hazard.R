@@ -21,7 +21,7 @@ internal.hazard <- function(model, params, cache) {
     trials <- data[, kept, with = FALSE
                    ][, .SD[1], by = c(params@id, "trial")
                      ][rep(seq_len(.N), each = params@followup.max + 1)
-                       ][, "followup" := seq.int(1:.N) - 1, by = c(params@id, "trial")
+                       ][, "followup" := seq_len(.N) - 1L, by = c(params@id, "trial")
                          ][, paste0("followup", params@indicator.squared) := get("followup")^2]
 
     # Pre-allocate output list instead of concatenating with c()
