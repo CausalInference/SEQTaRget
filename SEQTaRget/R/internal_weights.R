@@ -15,7 +15,26 @@ internal.weights <- function(DT, data, params, cache) {
     followup <- NULL
     isExcused <- NULL
     visit <- visit.numerator <- visit.denominator <- NULL
-    
+
+    # Columns the weight machinery actually reads: ids/structure, the treatment
+    # (and its baseline copy, used to filter excused numerator models), every
+    # column referenced by a weight-model formula, the censoring/visit and
+    # eligibility indicators, and the excused flags. The source tables can be
+    # large and are copied on every bootstrap iteration, so the copy below is
+    # narrowed to this set instead of taking every column. Generated columns
+    # (tx_lag, the squared time term) are created after the copy; names not
+    # present in a given source are dropped at subset time.
+    needed <- unique(c(params@id, "trial", "period", params@time, "followup",
+                       params@treatment, paste0(params@treatment, params@indicator.baseline),
+                       cache$numerator$cols, cache$denominator$cols,
+                       cache$cense_numerator$cols, cache$cense_denominator$cols,
+                       cache$visit_numerator$cols, cache$visit_denominator$cols,
+                       params@cense, params@cense.eligible, params@visit,
+                       unlist(params@weight.eligible_cols),
+                       unlist(params@excused.cols), unlist(params@deviation.excused_cols),
+                       "censored", "isExcused"))
+    needed <- needed[!is.na(needed)]
+
     # Setting up weight data ====================================
     if (!params@weight.preexpansion) {
       subtable.kept <- c(params@treatment, params@id, params@time)
@@ -31,7 +50,7 @@ internal.weights <- function(DT, data, params, cache) {
                                ][, eval(params@treatment) := NULL]
 
       setnames(baseline.lag, 2, params@time)
-      weight <- copy(DT)
+      weight <- DT[, needed[needed %in% names(DT)], with = FALSE]
       weight[, tx_lag := shift(get(params@treatment)), by = c(eval(params@id), "trial")]
       weight[baseline.lag, on = c(params@id, params@time),
              tx_lag := fifelse(followup == 0L, i.tx_lag, tx_lag)]
@@ -41,9 +60,10 @@ internal.weights <- function(DT, data, params, cache) {
       if (params@excused || params@deviation.excused) weight[, isExcused := cumsum(ifelse(is.na(isExcused), 0, isExcused)), by = c(eval(params@id), "trial")]
 
     } else {
-      weight <- copy(data)[, tx_lag := shift(get(params@treatment)), by = eval(params@id)
-                     ][get(params@time) == 0, tx_lag := as.character(params@treat.level[[1]])
-                       ][, paste0(params@time, params@indicator.squared) := get(params@time)^2]
+      weight <- data[, needed[needed %in% names(data)], with = FALSE
+                     ][, tx_lag := shift(get(params@treatment)), by = eval(params@id)
+                       ][get(params@time) == 0, tx_lag := as.character(params@treat.level[[1]])
+                         ][, paste0(params@time, params@indicator.squared) := get(params@time)^2]
     }
 
     # Modeling ======================================================
