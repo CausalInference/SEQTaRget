@@ -171,7 +171,7 @@ internal.survival <- function(params, outcome) {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
         rm(data_all)
         surv <- full$data[DT.se, on = c("followup", "variable")
-                          ][, `:=` (LCI = max(0, value - z*SE), UCI = min(1, value + z*SE)), by = .I]
+                          ][, `:=` (LCI = pmax(0, value - z*SE), UCI = pmin(1, value + z*SE))]
       } else {
         DT.q <- data_all[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
                                 UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),
