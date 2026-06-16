@@ -142,16 +142,16 @@ setMethod("show", "SEQoutput", function(object) {
   followup.nonunique <- slot(object, "info")$followup.nonunique
   for (i in seq_along(outcome.unique)) {
     if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome.unique)[[i]], "\n")
-    cat("Unique Outcome Table: ")
+    cat("Unique Outcome Table (distinct subjects who had the outcome): ")
     print(kable(outcome.unique[[i]]))
-    cat("\nNon-Unique Outcome Table: ")
+    cat("\nNon-Unique Outcome Table (total outcome events): ")
     print(kable(outcome.nonunique[[i]]))
     if (!is.null(followup.unique)) {
-      cat("\nUnique Follow-up Table: ")
+      cat("\nUnique Follow-up Table (distinct subjects contributing follow-up): ")
       print(kable(followup.unique[[i]]))
     }
     if (!is.null(followup.nonunique)) {
-      cat("\nNon-Unique Follow-up Table: ")
+      cat("\nNon-Unique Follow-up Table (person-time intervals): ")
       print(kable(followup.nonunique[[i]]))
     }
   }
@@ -346,7 +346,18 @@ hazard_ratio <- function(object) {
 #' @param object SEQoutput object
 #'
 #' @importFrom methods is slot
-#' @returns List of diagnostic tables
+#' @returns A named list of diagnostic tables, each broken down by baseline treatment arm.
+#'   The "unique" and "non-unique" variants count different things:
+#'   \itemize{
+#'     \item \code{outcome.unique} / \code{outcome.nonunique}: distinct subjects who had the
+#'       outcome vs. the total number of outcome events. These coincide for a one-time
+#'       (terminal) outcome, since each subject contributes at most one event row.
+#'     \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
+#'       follow-up vs. the total number of person-time intervals (expanded rows). The
+#'       non-unique count is much larger because each subject contributes one row per
+#'       follow-up period; it is the denominator that, with \code{outcome.nonunique}, gives
+#'       the per-arm event rate.
+#'   }
 #' @export
 diagnostics <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")

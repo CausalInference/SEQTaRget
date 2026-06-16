@@ -217,7 +217,7 @@ setClass("SEQweights",
 #' @slot risk.ratio risk ratio calculated from survival data
 #' @slot time time used for the SEQuential process
 #' @slot weight.statistics information from the weighting process, containing weight coefficients and weight statistics
-#' @slot info list of outcome and switch information (if applicable)
+#' @slot info list of diagnostic tables (outcome, follow-up, switch, and competing-event counts where applicable), each split by baseline treatment arm. The "unique" tables count distinct subjects; the "non-unique" tables count rows: total outcome events for the outcome tables, and total person-time intervals for the follow-up tables. See [diagnostics()].
 #' @slot ce.model list of competing event models if \code{compevent} is specified, NA otherwise
 #'
 setClass("SEQoutput",
