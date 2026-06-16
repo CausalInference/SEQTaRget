@@ -34,6 +34,7 @@
 * Drop unmatched rows at the time-varying covariate join in `SEQexpand()` with `nomatch = NULL` (and remove a no-op `.SDcols` there). Original-data rows with no expansion-grid match - possible under `followup.min > 0` or `selection.random` - were carried as NA-trial rows through the squared-column computation only to be discarded by the subsequent inner join with the baseline table. Results are unchanged.
 * Replace `seq.int(1:.N)` with `seq_len(.N)` in the hazard simulation's per-trial follow-up construction, avoiding a double allocation per (id, trial) group; the column is now integer, matching the expansion's convention. Results are unchanged.
 * Document that with `glm.package = "parglm"` and `bootstrap = TRUE` only the main fit uses parglm: the bootstrap refits always use fastglm, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup. This was previously a silent switch.
+* Clarify unique vs non-unique in diagnostic table labels and docs
 
 # SEQTaRget v1.4.2
 
