@@ -48,6 +48,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 248,485 observations, 15 variables
 #> 
 #> Expanded dataset (post-censoring): 102,749 observations, 15 variables
+#>   entering outcome model (uncensored): 96,251
+#>   artificially censored (treatment switch): 6,498
 #> 
 #> Expansion Successful
 #> 
@@ -121,6 +123,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
 #> 
 #> Expanded dataset (post-censoring): 102,749 observations, 18 variables
+#>   entering outcome model (uncensored): 96,251
+#>   artificially censored (treatment switch): 6,498
 #> 
 #> Expansion Successful
 #> 
@@ -193,6 +197,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
 #> 
 #> Expanded dataset (post-censoring): 185,423 observations, 18 variables
+#>   entering outcome model (uncensored): 183,315
+#>   artificially censored (treatment switch): 2,108
 #> 
 #> Expansion Successful
 #> 
@@ -261,6 +267,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
 #> 
 #> Expanded dataset (post-censoring): 185,423 observations, 21 variables
+#>   entering outcome model (uncensored): 183,315
+#>   artificially censored (treatment switch): 2,108
 #> 
 #> Expansion Successful
 #> 
@@ -335,6 +343,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables
 #> 
 #> Expanded dataset (post-censoring): 810,880 observations, 22 variables
+#>   entering outcome model (uncensored): 803,021
+#>   artificially censored (treatment switch): 7,859
 #> 
 #> Expansion Successful
 #> 
@@ -404,6 +414,8 @@ model <- SEQuential(data,
 #> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
 #> 
 #> Expanded dataset (post-censoring): 185,423 observations, 21 variables
+#>   entering outcome model (uncensored): 183,315
+#>   artificially censored (treatment switch): 2,108
 #> 
 #> Expansion Successful
 #> 
@@ -414,5 +426,5 @@ model <- SEQuential(data,
 #> Completed
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
-#>     3.005085           NA           NA
+#>     3.004905           NA           NA
 ```

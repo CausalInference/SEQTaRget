@@ -181,8 +181,9 @@ SEQopts(
 - fastglm.method:
 
   Integer: decomposition method for fastglm (`0L`-column-pivoted QR,
-  `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is
-  `2L`
+  `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky,
+  `4L`-full-pivoted QR, `5L`-Bidiagonal Divide and Conquer SVD), default
+  is `2L`
 
 - followup.class:
 
@@ -227,7 +228,11 @@ SEQopts(
   For most realistic SEQTaRget workloads (expanded datasets up to
   approximately a few million rows) `"fastglm"` is faster; `"parglm"`
   may help only on substantially larger datasets where the parallel
-  chunking outweighs its setup overhead.
+  chunking outweighs its setup overhead. Note that when
+  `bootstrap = TRUE` only the main fit uses `"parglm"`: the bootstrap
+  refits always use `"fastglm"`, warm-started from the main fit's
+  coefficients, which is faster per resample than parglm's per-fit
+  thread setup.
 
 - hazard:
 
@@ -324,7 +329,9 @@ SEQopts(
 
 - seed:
 
-  Integer: starting seed
+  Integer: starting seed; the default `NULL` draws a single random
+  integer when `SEQopts()` is called, so set this explicitly for
+  reproducible bootstrap results
 
 - selection.first_trial:
 

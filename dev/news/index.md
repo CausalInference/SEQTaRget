@@ -65,6 +65,110 @@
   [`inline.pred()`](https://causalinference.github.io/SEQTaRget/dev/reference/inline.pred.md)
   in the weight models
 - Fix `SEQOpts()` argument ordering.
+- Bump codecov/codecov-action to v7
+- Report the censored/uncensored split in verbose expansion output
+- Fix `params@data` divergence so expansion uses the checked and
+  repaired data
+- Fix off-by-one bootstrap model pairing in
+  [`internal.hazard()`](https://causalinference.github.io/SEQTaRget/dev/reference/internal.hazard.md)
+- Fix the serial bootstrap seed in
+  [`internal.survival()`](https://causalinference.github.io/SEQTaRget/dev/reference/internal.survival.md)
+  so each replicate standardizes over the same resample its outcome
+  model was fit on
+- Fix “incorrect number of dimensions” error when a user column shares a
+  name with an internal data.table variable (e.g. an outcome column
+  named `out`), by hoisting row-index computations out of `DT[i]`
+  expressions where columns shadow local variables
+- Fix `fastglm.method` validation to accept fastglm’s full range 0-5 (0,
+  column-pivoted QR, is fastglm’s own default and was previously
+  rejected; 4 is the full-pivoted QR and 5 the Bidiagonal Divide and
+  Conquer SVD; all six have been supported since fastglm 0.0.1) and
+  update the documentation accordingly
+- Fix the default `seed` so unseeded runs are genuinely random.
+  Previously the full `.Random.seed` vector was stored and
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) silently used only
+  its first element - the RNG kind code, a constant - so every unseeded
+  run drew identical bootstrap resamples. The default is now a single
+  random integer drawn when
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
+  is called.
+- Fix a spurious “Maximum followup for survival curves” warning when
+  `followup.max` is set while `survival.max` is left at its `Inf`
+  default. The check now runs after the `Inf` defaults are resolved,
+  which also catches the previously missed case of a finite
+  `survival.max` exceeding the data-derived `followup.max`.
+- Fix `show()` erroring on a `SEQoutput` object when both `subgroup` and
+  `compevent` are specified (the competing event section passed the
+  model list rather than the subgroup name to
+  [`cat()`](https://rdrr.io/r/base/cat.html)); empty competing event
+  model entries are now also skipped instead of printing `NULL`.
+- Fix silent merging of bootstrap copies for large numeric subject IDs.
+  The arithmetic relabeling (`orig_id * multiplier + copy index`)
+  exceeds the 2^53 exact-integer range of doubles for roughly 8+ digit
+  IDs, where consecutive copy indices round to the same value and
+  distinct copies of a subject collapse together under by-ID grouping
+  (corrupting cumulative-product weights). Relabeling now falls back to
+  string concatenation whenever the arithmetic could overflow, or when
+  IDs are negative or non-integer.
+- Fix the hazard bootstrap dropping resampling multiplicity. The hazard
+  bootstrap sampler did not relabel bootstrap copies, so the identical
+  copies of any subject drawn more than once collapsed under the
+  simulation’s by-(id, trial) grouping, making each replicate behave
+  like a subsample rather than a bootstrap and understating the hazard
+  ratio CI width. Copies are now relabeled uniquely; point estimates are
+  unchanged.
+- Fix a hardcoded `"_sq"` suffix in the pre-expansion weight data so a
+  custom `indicator.squared` no longer fails with “column not found” in
+  the weight models.
+- Fix `method = "dose-response"` erroring with a custom
+  `indicator.squared`. The expansion created `dose_sq`/`trial_sq` with
+  hardcoded names (and excluded only the literal `dose_sq` from
+  expansion variables) while the default covariates referenced
+  `paste0("dose", indicator.squared)`, so any non-default indicator
+  failed in
+  [`SEQexpand()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQexpand.md).
+  All internally generated squared columns (`dose`, `trial`, on both the
+  expanded data and the survival prediction grid) now follow
+  `indicator.squared`, matching the existing convention for `followup`,
+  `trial` and time.
+- Remove dead `trialID` construction from the survival-curve
+  standardization. The per-row
+  [`paste0()`](https://rdrr.io/r/base/paste.html) label was built on the
+  full standardization population (and again on every bootstrap
+  resample) but never read: predictions there are row-wise with no by-ID
+  grouping, so bootstrap multiplicity is carried by the duplicated rows
+  themselves. Results are unchanged.
+- Vectorise the survival-curve CI clamping with
+  [`pmax()`](https://rdrr.io/r/base/Extremes.html)/[`pmin()`](https://rdrr.io/r/base/Extremes.html)
+  instead of evaluating scalar
+  [`max()`](https://rdrr.io/r/base/Extremes.html)/[`min()`](https://rdrr.io/r/base/Extremes.html)
+  once per row via `by = .I`. Results are unchanged.
+- Narrow the per-iteration copy in
+  [`internal.weights()`](https://causalinference.github.io/SEQTaRget/dev/reference/internal.weights.md)
+  to the columns the weight models actually use (ids, structure,
+  treatment and its baseline copy, formula covariates,
+  censoring/visit/eligibility indicators, excused flags) instead of
+  copying every column of the expanded (post-expansion weighting) or
+  input (pre-expansion weighting) table on every bootstrap iteration.
+  Results are unchanged.
+- Drop unmatched rows at the time-varying covariate join in
+  [`SEQexpand()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQexpand.md)
+  with `nomatch = NULL` (and remove a no-op `.SDcols` there).
+  Original-data rows with no expansion-grid match - possible under
+  `followup.min > 0` or `selection.random` - were carried as NA-trial
+  rows through the squared-column computation only to be discarded by
+  the subsequent inner join with the baseline table. Results are
+  unchanged.
+- Replace `seq.int(1:.N)` with `seq_len(.N)` in the hazard simulation’s
+  per-trial follow-up construction, avoiding a double allocation per
+  (id, trial) group; the column is now integer, matching the expansion’s
+  convention. Results are unchanged.
+- Document that with `glm.package = "parglm"` and `bootstrap = TRUE`
+  only the main fit uses parglm: the bootstrap refits always use
+  fastglm, warm-started from the main fit’s coefficients, which is
+  faster per resample than parglm’s per-fit thread setup. This was
+  previously a silent switch.
+- Clarify unique vs non-unique in diagnostic table labels and docs
 
 ## SEQTaRget v1.4.2
 

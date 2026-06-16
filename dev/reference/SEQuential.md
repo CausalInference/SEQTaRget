@@ -129,7 +129,7 @@ SEQuential(data, id.col = "ID",
 #> ITT model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.25 seconds :
+#> SEQuential process completed in 1.37 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas 
 #> Numerator covariates: NA 
@@ -152,28 +152,28 @@ SEQuential(data, id.col = "ID",
 #> P_bas         0.200724099 5.956440e-02
 #> 
 #> Diagnostic Tables ================================================== 
-#> Unique Outcome Table: 
+#> Unique Outcome Table (distinct subjects who had the outcome): 
 #> 
 #> |tx_init_bas | outcome|   n|
 #> |:-----------|-------:|---:|
 #> |0           |       1| 203|
 #> |1           |       1| 185|
 #> 
-#> Non-Unique Outcome Table: 
+#> Non-Unique Outcome Table (total outcome events): 
 #> 
 #> |tx_init_bas | outcome|    n|
 #> |:-----------|-------:|----:|
 #> |0           |       1| 1928|
 #> |1           |       1| 4432|
 #> 
-#> Unique Follow-up Table: 
+#> Unique Follow-up Table (distinct subjects contributing follow-up): 
 #> 
 #> |tx_init_bas |   n|
 #> |:-----------|---:|
 #> |0           | 300|
 #> |1           | 273|
 #> 
-#> Non-Unique Follow-up Table: 
+#> Non-Unique Follow-up Table (person-time intervals): 
 #> 
 #> |tx_init_bas |      n|
 #> |:-----------|------:|
@@ -213,6 +213,8 @@ SEQuential(data, id.col = "ID",
 #> Expanded dataset (pre-censoring): 248,485 observations, 15 variables
 #> 
 #> Expanded dataset (post-censoring): 102,749 observations, 15 variables
+#>   entering outcome model (uncensored): 96,251
+#>   artificially censored (treatment switch): 6,498
 #> 
 #> Expansion Successful
 #> 
@@ -223,7 +225,7 @@ SEQuential(data, id.col = "ID",
 #> censoring model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.04 seconds :
+#> SEQuential process completed in 0.97 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex 
 #> Numerator covariates: tx_init~sex 
@@ -279,28 +281,28 @@ SEQuential(data, id.col = "ID",
 #> 
 #> 
 #> Diagnostic Tables ================================================== 
-#> Unique Outcome Table: 
+#> Unique Outcome Table (distinct subjects who had the outcome): 
 #> 
 #> |tx_init_bas | outcome|   n|
 #> |:-----------|-------:|---:|
 #> |1           |       1| 153|
 #> |0           |       1|  50|
 #> 
-#> Non-Unique Outcome Table: 
+#> Non-Unique Outcome Table (total outcome events): 
 #> 
 #> |tx_init_bas | outcome|    n|
 #> |:-----------|-------:|----:|
 #> |1           |       1| 2157|
 #> |0           |       1|  222|
 #> 
-#> Unique Follow-up Table: 
+#> Unique Follow-up Table (distinct subjects contributing follow-up): 
 #> 
 #> |tx_init_bas |   n|
 #> |:-----------|---:|
 #> |0           | 300|
 #> |1           | 273|
 #> 
-#> Non-Unique Follow-up Table: 
+#> Non-Unique Follow-up Table (person-time intervals): 
 #> 
 #> |tx_init_bas |     n|
 #> |:-----------|-----:|

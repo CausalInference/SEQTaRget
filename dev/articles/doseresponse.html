@@ -151,17 +151,17 @@ to errors.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;           Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.5282782 0.1234888 0.9330676 0.20652898</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.8949096 0.8385038 0.9513155 0.02877903</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.5282782 0.2410166 0.8155398 0.14656473</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.8949096 0.8063496 0.9834697 0.04518453</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.6940120  0.7764763   3.695769       0.3666314</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.5903146  0.2705797   1.287869      -0.3666314</span></span>
-<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
-<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.07309383 0.80635663</span></span>
-<span><span class="co">#&gt; 2: -0.80635663 0.07309383</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.6940120  0.8652189   3.316706       0.3666314</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.5903146  0.3015040   1.155777      -0.3666314</span></span>
+<span><span class="co">#&gt;     RD 95% LCI  RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  0.06783115  0.66543165</span></span>
+<span><span class="co">#&gt; 2: -0.66543165 -0.06783115</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-losses-to-followup">Dose-response with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -194,7 +194,7 @@ to errors.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 10 variables</span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 11 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -221,19 +221,19 @@ to errors.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A        Risk     95% LCI    95% UCI          SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.007847443 0.000000000 0.02684988 0.009695299</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.018827788 0.001997953 0.03565762 0.008586808</span></span>
+<span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI         SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.007847443       0 0.02529929 0.00890417</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.018827788       0 0.04862160 0.01520121</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  2.3992259 0.44856849  12.832566      0.01098034</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.4168011 0.07792674   2.229314     -0.01098034</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI Risk Difference</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  2.3992259 0.042419739  135.69826      0.01098034</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.4168011 0.007369291   23.57393     -0.01098034</span></span>
 <span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
 <span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.01349983 0.03546052</span></span>
-<span><span class="co">#&gt; 2: -0.03546052 0.01349983</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: -0.01230360 0.03426429</span></span>
+<span><span class="co">#&gt; 2: -0.03426429 0.01230360</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-competing-events">Dose-response with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-competing-events"></a>
@@ -289,19 +289,19 @@ to errors.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.007586789       0 0.25972299 0.12864328</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.003641046       0 0.02703035 0.01193354</span></span>
+<span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.007586789       0 0.03490503 0.013938132</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.003641046       0 0.01433665 0.005457039</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.4799192 0.02752717   8.367096    -0.003945743</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  2.0836841 0.11951578  36.327751     0.003945743</span></span>
-<span><span class="co">#&gt;    RD 95% LCI RD 95% UCI</span></span>
-<span><span class="co">#&gt;         &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.2462717  0.2383802</span></span>
-<span><span class="co">#&gt; 2: -0.2383802  0.2462717</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.4799192 0.05640515   4.083358    -0.003945743</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  2.0836841 0.24489645  17.728878     0.003945743</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.03178104 0.02388956</span></span>
+<span><span class="co">#&gt; 2: -0.02388956 0.03178104</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-hazard-ratio-with-5-bootstrap-samples-and-competing-events">Dose-response hazard ratio with 5 bootstrap samples and competing
@@ -355,7 +355,7 @@ events<a class="anchor" aria-label="anchor" href="#dose-response-hazard-ratio-wi
 <span><span class="co"># retrieve hazard ratios</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
-<span><span class="co">#&gt;    0.9582143    0.7107252    1.2918841</span></span></code></pre></div>
+<span><span class="co">#&gt;    1.0475025    0.9029331    1.2152191</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">Dose-response with 5 bootstrap samples and competing events in
@@ -386,7 +386,7 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Pruned</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 11 variables</span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 29,624 observations, 10 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Expanding Data...</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -420,37 +420,37 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.01125753       0 0.04037235 0.01485477</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.01869016       0 0.06423635 0.02323828</span></span>
+<span><span class="co">#&gt;           Method Followup      A       Risk     95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.01125753 0.000000000 0.06740746 0.028648449</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.01869016 0.007998263 0.02938205 0.005455149</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.00659838       0 0.47302574 0.23797751</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.01221464       0 0.04936991 0.01895712</span></span>
+<span><span class="co">#&gt;           Method Followup      A       Risk 95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.00659838       0 0.02173867 0.007724777</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.01221464       0 0.02765749 0.007879153</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Difference</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;        &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.6602358 2.459467e-05  112072.36     0.007432626</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.6023241 8.922806e-06   40659.22    -0.007432626</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.6602358 0.0021614680  1275.2365     0.007432626</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.6023241 0.0007841683   462.6485    -0.007432626</span></span>
 <span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
 <span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.04559720 0.06046245</span></span>
-<span><span class="co">#&gt; 2: -0.06046245 0.04559720</span></span>
+<span><span class="co">#&gt; 1: -0.05399801 0.06886327</span></span>
+<span><span class="co">#&gt; 2: -0.06886327 0.05399801</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.8511568 0.09376874   36.54503     0.005616256</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.5402028 0.02736350   10.66454    -0.005616256</span></span>
-<span><span class="co">#&gt;    RD 95% LCI RD 95% UCI</span></span>
-<span><span class="co">#&gt;         &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.4278731  0.4391056</span></span>
-<span><span class="co">#&gt; 2: -0.4391056  0.4278731</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.8511568 0.13746624  24.928167     0.005616256</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.5402028 0.04011526   7.274513    -0.005616256</span></span>
+<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
+<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: -0.02152428 0.03275679</span></span>
+<span><span class="co">#&gt; 2: -0.03275679 0.02152428</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

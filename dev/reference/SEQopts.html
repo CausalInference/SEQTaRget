@@ -212,7 +212,7 @@
 
 
 <dt id="arg-fastglm-method">fastglm.method<a class="anchor" aria-label="anchor" href="#arg-fastglm-method"></a></dt>
-<dd><p>Integer: decomposition method for fastglm (<code>0L</code>-column-pivoted QR, <code>1L</code>-unpivoted QR, <code>2L</code>-LLT Cholesky, <code>3L</code>-LDLT Cholesky), default is <code>2L</code></p></dd>
+<dd><p>Integer: decomposition method for fastglm (<code>0L</code>-column-pivoted QR, <code>1L</code>-unpivoted QR, <code>2L</code>-LLT Cholesky, <code>3L</code>-LDLT Cholesky, <code>4L</code>-full-pivoted QR, <code>5L</code>-Bidiagonal Divide and Conquer SVD), default is <code>2L</code></p></dd>
 
 
 <dt id="arg-followup-class">followup.class<a class="anchor" aria-label="anchor" href="#arg-followup-class"></a></dt>
@@ -240,7 +240,7 @@
 
 
 <dt id="arg-glm-package">glm.package<a class="anchor" aria-label="anchor" href="#arg-glm-package"></a></dt>
-<dd><p>Character: package to use for fitting GLMs, either <code>"fastglm"</code> (default) or <code>"parglm"</code>. When <code>"parglm"</code> is selected the <code>nthreads</code> option controls the number of threads passed to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) <code>"fastglm"</code> is faster; <code>"parglm"</code> may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.</p></dd>
+<dd><p>Character: package to use for fitting GLMs, either <code>"fastglm"</code> (default) or <code>"parglm"</code>. When <code>"parglm"</code> is selected the <code>nthreads</code> option controls the number of threads passed to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" class="external-link">parglm::parglm.fit()</a></code>. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) <code>"fastglm"</code> is faster; <code>"parglm"</code> may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead. Note that when <code>bootstrap = TRUE</code> only the main fit uses <code>"parglm"</code>: the bootstrap refits always use <code>"fastglm"</code>, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup.</p></dd>
 
 
 <dt id="arg-hazard">hazard<a class="anchor" aria-label="anchor" href="#arg-hazard"></a></dt>
@@ -308,7 +308,7 @@
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Integer: starting seed</p></dd>
+<dd><p>Integer: starting seed; the default <code>NULL</code> draws a single random integer when <code>SEQopts()</code> is called, so set this explicitly for reproducible bootstrap results</p></dd>
 
 
 <dt id="arg-selection-first-trial">selection.first_trial<a class="anchor" aria-label="anchor" href="#arg-selection-first-trial"></a></dt>

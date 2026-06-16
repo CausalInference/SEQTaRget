@@ -173,7 +173,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> ITT model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.25 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.37 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: NA </span>
@@ -196,28 +196,28 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> P_bas         0.200724099 5.956440e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostic Tables ================================================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table (distinct subjects who had the outcome): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|   n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|---:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1| 203|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 185|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table (total outcome events): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|    n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|----:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1| 1928|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 4432|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table (distinct subjects contributing follow-up): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |   n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|---:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           | 300|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 273|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table (person-time intervals): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |      n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|------:|</span>
@@ -257,6 +257,8 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> Expanded dataset (pre-censoring): 248,485 observations, 15 variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Expanded dataset (post-censoring): 102,749 observations, 15 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   entering outcome model (uncensored): 96,251</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   artificially censored (treatment switch): 6,498</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Expansion Successful</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -267,7 +269,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> censoring model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.04 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 0.97 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: tx_init~sex </span>
@@ -323,28 +325,28 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostic Tables ================================================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Outcome Table (distinct subjects who had the outcome): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|   n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|---:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 153|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1|  50|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Outcome Table (total outcome events): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas | outcome|    n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-------:|----:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           |       1| 2157|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           |       1|  222|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unique Follow-up Table (distinct subjects contributing follow-up): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |   n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|---:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |0           | 300|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |1           | 273|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-Unique Follow-up Table (person-time intervals): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |tx_init_bas |     n|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:-----------|-----:|</span>
