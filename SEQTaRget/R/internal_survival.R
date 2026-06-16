@@ -8,7 +8,7 @@ internal.survival <- function(params, outcome) {
   SE <- NULL
   # Variable pre-definition ===================================
     . <- variable <- NULL
-    ce <- followup <- followup_sq <- se <- trial <- trialID <- NULL
+    ce <- followup <- followup_sq <- se <- trial <- NULL
     row_id <- surv_accum <- ce_accum <- inc_accum <- p_surv <- p_ce <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
@@ -28,8 +28,9 @@ internal.survival <- function(params, outcome) {
       
       # Only keep columns needed for prediction to minimize memory during replication
       fup_sq_col <- paste0("followup", params@indicator.squared)
+      dose_sq_col <- paste0("dose", params@indicator.squared)
       pred_cols <- unique(c(cache$covariates$cols, tx_bas))
-      pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", "dose_sq")]
+      pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", dose_sq_col)]
       base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
 
@@ -50,9 +51,9 @@ internal.survival <- function(params, outcome) {
         pred_all[, (tx_bas) := as.character(params@treat.level[[i]])]
 
         if (params@method == "dose-response" && i == 1) {
-          pred_all[, `:=`(dose = FALSE, dose_sq = FALSE)]
+          pred_all[, c("dose", dose_sq_col) := list(FALSE, FALSE)]
         } else if (params@method == "dose-response" && i != 1) {
-          pred_all[, `:=`(dose = as.numeric(followup), dose_sq = as.numeric(followup^2))]
+          pred_all[, c("dose", dose_sq_col) := list(as.numeric(followup), as.numeric(followup^2))]
         }
 
         pred_all[, p_surv := inline.pred(model, newdata = pred_all, params, case = "surv", cache = cache)]
@@ -94,7 +95,6 @@ internal.survival <- function(params, outcome) {
     }
 
     baseDT_main <- params@DT[get("followup") == 0, ]
-    baseDT_main[, "trialID" := paste0(get(params@id), "_", 0, get("trial"))]
     full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
     rm(baseDT_main)
     
@@ -114,10 +114,12 @@ internal.survival <- function(params, outcome) {
           boot_idx = seq_len(n_sample)
         )
         
-        # Single keyed join instead of N separate filters
+        # Single keyed join instead of N separate filters. No copy relabeling is
+        # needed here (unlike the hazard bootstrap): handler() standardizes
+        # row-wise with no by-ID grouping, so duplicated subjects keep their
+        # multiplicity as duplicated rows.
         RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                       ][, "trialID" := paste0(get(params@id), "_", boot_idx, "_", get("trial"))
-                         ][, boot_idx := NULL]
+                       ][, boot_idx := NULL]
         return(RMDT)
       }
       
@@ -134,7 +136,10 @@ internal.survival <- function(params, outcome) {
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         result <- lapply(2:(params@bootstrap.nboot + 1), function(x) {
-          set.seed(params@seed + x)
+          # outcome[[x]] was fit (in internal.analysis) on the resample drawn under
+          # seed + (x - 1); reuse that seed so the standardization population here
+          # is the same resample the model was trained on.
+          set.seed(params@seed + x - 1L)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
           rm(RMDT)
@@ -166,7 +171,7 @@ internal.survival <- function(params, outcome) {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
         rm(data_all)
         surv <- full$data[DT.se, on = c("followup", "variable")
-                          ][, `:=` (LCI = max(0, value - z*SE), UCI = min(1, value + z*SE)), by = .I]
+                          ][, `:=` (LCI = pmax(0, value - z*SE), UCI = pmin(1, value + z*SE))]
       } else {
         DT.q <- data_all[, list(LCI = quantile(value, (1 - params@bootstrap.CI)/2),
                                 UCI = quantile(value, 1 - (1 - params@bootstrap.CI)/2)),

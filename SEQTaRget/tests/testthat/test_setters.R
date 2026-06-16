@@ -10,6 +10,28 @@ test_that("Setter Tests", {
   ), "SEQparams")
 })
 
+test_that("survival.max/followup.max warning only fires when survival.max is actually exceeded", {
+  simplify <- function(opts, data = data.table(ID = 1L, time = 0:9)) {
+    parameter.simplifier(parameter.setter(
+      data = data, DT = data.table(),
+      id.col = "ID", time.col = "time",
+      eligible.col = "eligible", outcome.col = "outcome",
+      treatment.col = "tx", time_varying.cols = list(),
+      fixed.cols = list(), method = "ITT",
+      opts = opts, verbose = FALSE
+    ))
+  }
+  # Leaving survival.max at its Inf default must not warn when followup.max is set
+  expect_no_warning(p <- simplify(SEQopts(followup.max = 12)))
+  expect_equal(p@survival.max, 12)
+  # A finite survival.max above a finite followup.max warns and is capped
+  expect_warning(p <- simplify(SEQopts(followup.max = 5, survival.max = 12)), "survival")
+  expect_equal(p@survival.max, 5)
+  # A finite survival.max above the data-derived followup.max also warns
+  expect_warning(p <- simplify(SEQopts(survival.max = 50)), "survival")
+  expect_equal(p@survival.max, 9)
+})
+
 test_that("parameter.setter propagates every user-facing SEQopts slot to SEQparams", {
   # Regression guard: a silently-dropped opts@<slot> in parameter.setter means
   # users' SEQopts() choices for that slot are ignored and the SEQparams

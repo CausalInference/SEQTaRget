@@ -21,14 +21,14 @@
 #' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
-#' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky), default is `2L`
+#' @param fastglm.method Integer: decomposition method for fastglm (`0L`-column-pivoted QR, `1L`-unpivoted QR, `2L`-LLT Cholesky, `3L`-LDLT Cholesky, `4L`-full-pivoted QR, `5L`-Bidiagonal Divide and Conquer SVD), default is `2L`
 #' @param followup.class Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is `FALSE`
 #' @param followup.include Logical: whether or not to include 'followup' and 'followup_squared' in the outcome model, default is `TRUE`
 #' @param followup.max Numeric: maximum time to expand about, default is `Inf` (no maximum)
 #' @param followup.min Numeric: minimum follow-up time since trial enrollment to include, must be non-negative, default is `0`
 #' @param followup.spline Logical: treat followup as a natural cubic spline (`splines::ns()`), default is `FALSE`
 #' @param followup.spline.df Integer: degrees of freedom passed to `splines::ns()` when `followup.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior knots at quantiles of `followup`. Must be `>= 1`; `df = 1` is equivalent to a linear term and is generally not what you want. Default is `4` (3 interior knots).
-#' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) `"fastglm"` is faster; `"parglm"` may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.
+#' @param glm.package Character: package to use for fitting GLMs, either `"fastglm"` (default) or `"parglm"`. When `"parglm"` is selected the `nthreads` option controls the number of threads passed to `parglm::parglm.fit()`. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) `"fastglm"` is faster; `"parglm"` may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead. Note that when `bootstrap = TRUE` only the main fit uses `"parglm"`: the bootstrap refits always use `"fastglm"`, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup.
 #' @param hazard Logical: hazard error calculation instead of survival estimation, default is `FALSE`
 #' @param indicator.baseline String: identifier for baseline variables in \code{covariates, numerator, denominator} - intended as an override
 #' @param indicator.squared String: identifier for squared variables in \code{covariates, numerator, denominator} - intended as an override
@@ -45,7 +45,7 @@
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'` (the default), `'risk'`, and `'inc'` (in the case of censoring)
 #' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default `NA` reports only the final follow-up time.
-#' @param seed Integer: starting seed
+#' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
 #' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
@@ -65,7 +65,6 @@
 #' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
 #' @export
-#' @importFrom stats runif
 #' @importFrom parallelly availableCores
 #' @import data.table
 SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample = 0.8, bootstrap.CI = 0.95, bootstrap.CI_method = "se",
@@ -90,8 +89,12 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   ncores <- as.integer(ncores)
   bootstrap <- as.logical(bootstrap)
   bootstrap.nboot <- as.integer(bootstrap.nboot)
-  runif(1)
-  seed <- if (is.null(seed)) .Random.seed else as.integer(seed)
+  # Default seed: a single random integer. Storing .Random.seed here (as
+  # previously) is not a random seed: set.seed() silently uses only its first
+  # element, the RNG kind code, which is constant - so every unseeded run drew
+  # identical bootstrap resamples. The bound leaves headroom for seed + nboot
+  # arithmetic in the serial bootstrap paths without integer overflow.
+  seed <- if (is.null(seed)) sample.int(1e8L, 1L) else as.integer(seed)
   followup.min <- as.numeric(followup.min)
   followup.max <- as.numeric(followup.max)
   survival.max <- as.numeric(survival.max)
@@ -140,7 +143,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   indicator.squared <- as.character(indicator.squared)
 
   fastglm.method <- as.integer(fastglm.method)
-  if (!fastglm.method %in% 1L:4L) stop("'fastglm.method' must be one of 1 (QR), 2 (Cholesky), 3 (LDLT), or 4 (QR.FPIV)")
+  if (!fastglm.method %in% 0L:5L) stop("'fastglm.method' must be one of 0 (column-pivoted QR), 1 (unpivoted QR), 2 (LLT Cholesky), 3 (LDLT Cholesky), 4 (full-pivoted QR), or 5 (Bidiagonal Divide and Conquer SVD)")
 
   glm.package <- as.character(glm.package)
   if (!glm.package %in% c("fastglm", "parglm"))

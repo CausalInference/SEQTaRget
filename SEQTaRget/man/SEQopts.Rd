@@ -113,7 +113,7 @@ SEQopts(
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
-\item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky), default is \code{2L}}
+\item{fastglm.method}{Integer: decomposition method for fastglm (\code{0L}-column-pivoted QR, \code{1L}-unpivoted QR, \code{2L}-LLT Cholesky, \code{3L}-LDLT Cholesky, \code{4L}-full-pivoted QR, \code{5L}-Bidiagonal Divide and Conquer SVD), default is \code{2L}}
 
 \item{followup.class}{Logical: treat followup as a class, e.g. expands every time to it's own indicator column, default is \code{FALSE}}
 
@@ -127,7 +127,7 @@ SEQopts(
 
 \item{followup.spline.df}{Integer: degrees of freedom passed to \code{splines::ns()} when \code{followup.spline = TRUE}. With \code{df = k}, \code{ns()} places \code{k - 1} interior knots at quantiles of \code{followup}. Must be \verb{>= 1}; \code{df = 1} is equivalent to a linear term and is generally not what you want. Default is \code{4} (3 interior knots).}
 
-\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead.}
+\item{glm.package}{Character: package to use for fitting GLMs, either \code{"fastglm"} (default) or \code{"parglm"}. When \code{"parglm"} is selected the \code{nthreads} option controls the number of threads passed to \code{parglm::parglm.fit()}. For most realistic SEQTaRget workloads (expanded datasets up to approximately a few million rows) \code{"fastglm"} is faster; \code{"parglm"} may help only on substantially larger datasets where the parallel chunking outweighs its setup overhead. Note that when \code{bootstrap = TRUE} only the main fit uses \code{"parglm"}: the bootstrap refits always use \code{"fastglm"}, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup.}
 
 \item{hazard}{Logical: hazard error calculation instead of survival estimation, default is \code{FALSE}}
 
@@ -161,7 +161,7 @@ SEQopts(
 
 \item{risk.times}{Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default \code{NA} reports only the final follow-up time.}
 
-\item{seed}{Integer: starting seed}
+\item{seed}{Integer: starting seed; the default \code{NULL} draws a single random integer when \code{SEQopts()} is called, so set this explicitly for reproducible bootstrap results}
 
 \item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset, default \code{FALSE}}
 

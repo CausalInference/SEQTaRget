@@ -7,12 +7,13 @@ create.default.covariates <- function(params) {
   fixed <- NULL
   trial <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  dose <- paste0("dose", c("", params@indicator.squared), collapse = "+")
+  dose_terms <- paste0("dose", c("", params@indicator.squared))
+  dose <- paste0(dose_terms, collapse = "+")
   followup_term <- if (params@followup.spline) {
     sprintf("ns(followup, df = %d)", params@followup.spline.df)
   } else "followup"
   interaction <- paste0(tx_bas, "*", followup_term)
-  interaction.dose <- paste0(followup_term, "*", c("dose", "dose_sq"), collapse = "+")
+  interaction.dose <- paste0(followup_term, "*", dose_terms, collapse = "+")
   if (params@hazard) interaction <- interaction.dose <- NULL
   if (!params@km.curves) interaction <- interaction.dose <- NULL
 

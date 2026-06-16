@@ -96,11 +96,14 @@ parameter.simplifier <- function(params) {
   
   if (!is.na(params@subgroup) && !params@subgroup %in% params@fixed) stop("subgroup not found in provided fixed cols")
   
-  if (params@survival.max > params@followup.max) {
+  # Resolve the Inf defaults before comparing, so that leaving survival.max at
+  # its Inf default while setting followup.max does not trigger the warning, and
+  # a finite survival.max is checked against the data-derived followup.max.
+  if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
+  if (!is.infinite(params@survival.max) && params@survival.max > params@followup.max) {
     warning("Maximum followup for survival curves cannot be greater than the maximum for followup")
     params@survival.max <- params@followup.max
   }
-  if (is.infinite(params@followup.max)) params@followup.max <- max(params@data[[params@time]])
   if (is.infinite(params@survival.max)) params@survival.max <- params@followup.max
 
   # Fail fast on out-of-range risk.times before any expensive computation. The

@@ -21,7 +21,7 @@ internal.hazard <- function(model, params, cache) {
     trials <- data[, kept, with = FALSE
                    ][, .SD[1], by = c(params@id, "trial")
                      ][rep(seq_len(.N), each = params@followup.max + 1)
-                       ][, "followup" := seq.int(1:.N) - 1, by = c(params@id, "trial")
+                       ][, "followup" := seq_len(.N) - 1L, by = c(params@id, "trial")
                          ][, paste0("followup", params@indicator.squared) := get("followup")^2]
 
     # Pre-allocate output list instead of concatenating with c()
@@ -42,7 +42,8 @@ internal.hazard <- function(model, params, cache) {
     rm(trials)
     out <- rbindlist(out_list)
     rm(out_list)
-    data <- out[out[, .I[seq_len(firstEvent[1])], by = c(params@id, "trial", tx_bas)]$V1
+    keep_rows <- out[, .I[seq_len(firstEvent[1])], by = c(params@id, "trial", tx_bas)]$V1
+    data <- out[keep_rows
                ][, .SD[.N], by = c(params@id, "trial", tx_bas)
                  ][, firstEvent := NULL
                    ][, event := 0
@@ -84,10 +85,16 @@ internal.hazard <- function(model, params, cache) {
   bootstrap <- if (params@bootstrap) {
     UIDs <- unique(params@DT[[params@id]])
     lnID <- length(UIDs)
-    
+
     # Key the data for efficient bootstrap resampling
     if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
-    
+
+    # Unique-ID maker for bootstrap copies: without relabeling, the handler's
+    # by-(id, trial) grouping collapses the identical copies of any subject
+    # drawn more than once, silently dropping resampling multiplicity from the
+    # bootstrap and understating the CI width.
+    make_id <- bootstrap_id_relabeler(UIDs, round(params@bootstrap.sample * lnID))
+
     # Helper for efficient keyed bootstrap sampling
     bootstrap_hazard_sample <- function(DT, params, UIDs, lnID) {
       n_sample <- round(params@bootstrap.sample * lnID)
@@ -95,26 +102,30 @@ internal.hazard <- function(model, params, cache) {
         orig_id = sample(UIDs, n_sample, replace = TRUE),
         boot_idx = seq_len(n_sample)
       )
-      
+
       # Single keyed join instead of N separate filters
       RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
-                 ][, boot_idx := NULL]
+                 ][, (params@id) := make_id(get(params@id), boot_idx)
+                   ][, boot_idx := NULL]
       return(RMDT)
     }
 
+    # model[[1]] is the full-data fit; bootstrap fits live at model[[2]] onwards,
+    # where model[[x + 1]] was fit (in internal.analysis) on the resample drawn
+    # under seed + x, matching the resample drawn here.
     if (params@parallel) {
       old_threads <- getDTthreads()
       setDTthreads(1)
       on.exit(setDTthreads(old_threads), add = TRUE)
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, cache)
       }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         set.seed(params@seed + x)
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, cache)
       })
     }
   }

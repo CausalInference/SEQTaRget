@@ -31,7 +31,8 @@ SEQexpand <- function(params) {
     vars <- unique(c(formula_vars(vars.intake),
                      params@treatment, params@cense, params@cense.eligible, params@visit,
                      params@compevent, unlist(params@weight.eligible_cols), params@subgroup))
-    vars.nin <- c("dose", "dose_sq", params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
+    vars.nin <- c("dose", paste0("dose", params@indicator.squared),
+                  params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
     vars <- vars[!vars %in% vars.nin]
     vars.base <- vars[grep(params@indicator.baseline, vars)]
@@ -65,7 +66,11 @@ SEQexpand <- function(params) {
 
     data_list <- list()
     if (length(c(vars.time, vars.sq)) > 0) {
-      data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), .SDcols = vars.time
+      # nomatch = NULL: original-data rows with no expansion-grid match (possible
+      # under followup.min > 0 or selection.random) would otherwise be carried as
+      # NA-trial rows through the squared-column computation only to be dropped by
+      # the inner join with the baseline table below.
+      data.time <- data[DT, on = c(eval(params@id), "period" = eval(params@time)), nomatch = NULL
                         ][, (paste0(vars.sq, params@indicator.squared)) := lapply(.SD, function(x) x^2), .SDcols = vars.sq]
 
       vars.found <- unique(c(vars.time, vars.sq, "period", "trial", params@id, params@outcome))
@@ -93,9 +98,12 @@ SEQexpand <- function(params) {
 
     # Truncate each trial at (and including) the first outcome event row, so that
     # subjects who experience the outcome early are not carried forward with outcome=0
-    # from subsequent periods in the original data.
-    out <- out[out[, .I[seq_len(match(1L, get(params@outcome), nomatch = .N))],
-                   by = c(params@id, "trial")]$V1]
+    # from subsequent periods in the original data. The row indices are computed
+    # outside the i-expression: inside DT[i], columns shadow local variables, so a
+    # user column named "out" would otherwise shadow the table itself and error.
+    keep_rows <- out[, .I[seq_len(match(1L, .SD[[1L]], nomatch = .N))],
+                     by = c(params@id, "trial"), .SDcols = params@outcome]$V1
+    out <- out[keep_rows]
 
     # Row count after eligibility filtering and outcome truncation, before any
     # method-specific reduction (dose-response, PP censoring, first-trial selection).
@@ -103,10 +111,8 @@ SEQexpand <- function(params) {
     n_filtered <- nrow(out)
 
     if (params@method == "dose-response") {
-      out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")][, `:=`(
-        dose_sq = dose^2,
-        trial_sq = trial^2
-      )]
+      out <- out[, dose := cumsum(get(params@treatment)), by = c(eval(params@id), "trial")
+                 ][, paste0(c("dose", "trial"), params@indicator.squared) := list(dose^2, trial^2)]
     }
 
     if (params@method == "censoring" && !params@expand.only) {
@@ -152,14 +158,15 @@ SEQexpand <- function(params) {
                 ][, excused_tmp := NULL]
         } else {
           # Non-excused treatment lag switches
-          out[, `:=`(
-            trial_sq = trial^2,
-            switch = get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1])), by = c(params@id, "trial")]
+          out[, paste0("trial", params@indicator.squared) := trial^2
+              ][, switch := get(params@treatment) != shift(get(params@treatment), fill = get(params@treatment)[1]),
+                by = c(params@id, "trial")]
         }
         out[, lag := NULL]
       }
       out[, firstSwitch := { m <- match(TRUE, switch); if (is.na(m)) .N else m }, by = c(params@id, "trial")]
-      out <- out[out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
+      keep_rows <- out[, .I[seq_len(firstSwitch[1])], by = c(params@id, "trial")]$V1
+      out <- out[keep_rows
                  ][, paste0(params@outcome) := ifelse(switch, NA, get(params@outcome))
                    ][, `:=`(firstSwitch = NULL)
                      ][, "censored" := ifelse(switch, 1, 0)]
@@ -180,8 +187,16 @@ SEQexpand <- function(params) {
     expanded_label <- if (length(quals) > 0)
       paste0("Expanded dataset (", paste(quals, collapse = ", "), ")") else "Expanded dataset"
     cat("\n", expanded_label, ": ", format(n_filtered, big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
-    if (censored)
+    if (censored) {
       cat("\nExpanded dataset (post-censoring): ", format(nrow(out), big.mark = ","), " observations, ", n_cols, " variables\n", sep = "")
+      # The outcome model is fit only on the un-censored rows (censored == 0);
+      # the artificially-censored rows are retained in the dataset. Report the
+      # split so the count lines up with implementations that print only the
+      # modelled rows (e.g. Stata seqtte).
+      n_censored <- sum(out[["censored"]] == 1)
+      cat("  entering outcome model (uncensored): ", format(nrow(out) - n_censored, big.mark = ","), "\n", sep = "")
+      cat("  artificially censored (treatment switch): ", format(n_censored, big.mark = ","), "\n", sep = "")
+    }
   }
 
   return(out)

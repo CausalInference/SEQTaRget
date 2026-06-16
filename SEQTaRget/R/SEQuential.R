@@ -88,7 +88,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   setDT(data)
-  setorderv(data, c(id.col, time.col))
   if (verbose) cat("\nFull dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   time.start <- Sys.time()
 
@@ -134,18 +133,35 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   
   # Data Checking ====================================
-  needed <- c(params@id, params@time, params@eligible, params@treatment, params@outcome, 
-              unlist(params@time_varying), unlist(params@fixed), 
-              params@cense, params@compevent, params@deviation.col, 
-              unlist(params@excused.cols), params@subgroup)
-  needed <- needed[!is.na(needed)]
-  
-  if (length(colnames(data)) > length(needed)) {
-    if (verbose) cat("\nNon-required columns provided, pruning for efficiency\n")
-    data <- data[, needed, with = FALSE]
-    if (verbose) cat("\nPruned\n") else warning("\nNon-required columns provided and pruned for efficiency\n")
+  needed <- c(params@id, params@time, params@eligible, params@treatment, params@outcome,
+              unlist(params@time_varying), unlist(params@fixed),
+              params@cense, params@cense.eligible, params@compevent, params@visit,
+              params@deviation.col, unlist(params@excused.cols), unlist(params@deviation.excused_cols),
+              unlist(params@weight.eligible_cols), params@subgroup)
+  needed <- unique(needed[!is.na(needed)])
+  missing.needed <- needed[!needed %in% names(data)]
+  if (length(missing.needed) > 0) stop("Column(s) referenced through options but missing from supplied data: ",
+                                       paste(missing.needed, collapse = ", "))
+  # Also retain columns referenced in user-supplied or default model formulas that
+  # already exist pre-expansion (formulas may also reference expansion-derived
+  # columns like followup, trial, or _bas counterparts, hence the intersect).
+  formula.cols <- formula_vars(c(params@covariates, params@numerator, params@denominator,
+                                 params@cense.numerator, params@cense.denominator,
+                                 params@visit.numerator, params@visit.denominator))
+  needed <- unique(c(needed, intersect(formula.cols, names(data))))
+
+  pruned <- setdiff(names(data), needed)
+  if (length(pruned) > 0) {
+    if (verbose) cat("\nNon-required columns provided, pruning for efficiency\n") else
+      warning("\nNon-required columns provided and pruned for efficiency\n")
   }
-  
+  # Subsetting always copies, so every in-place edit below (ordering, time repair,
+  # factor conversion, diagnostic columns) applies to SEQuential's own copy and
+  # never modifies the caller's data.table.
+  data <- data[, needed, with = FALSE]
+  setorderv(data, c(id.col, time.col))
+  if (length(pruned) > 0 && verbose) cat("\nPruned\n")
+
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
   if (!params@hazard) {
     outcome_vals <- unique(data[[params@outcome]])
@@ -190,10 +206,20 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     data[, (params@time) := seq(0L, .N - 1L), by = eval(params@id)]
     if (verbose) cat("\nRepaired\n") else warning("\nNon zero-indexed time identified, Repair attempted and succeeded\n")
   }
-  
-  # If max elig has been reached, remove future rows
-  data <- data[data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1]
-  
+
+  # Use the pruned/checked/repaired data for everything downstream (expansion and
+  # weight models). params@data captured the caller's original object at
+  # construction time, before any of the checks above were applied.
+  params@data <- data
+
+  # If max elig has been reached, remove future rows. This trim feeds the
+  # diagnostics below only (switch tables, verbose counts): rows after the last
+  # eligible row are deliberately kept in params@data because they contribute
+  # follow-up periods to trials enrolled earlier, and trials cannot start from
+  # them anyway (SEQexpand drops trials with an ineligible baseline).
+  keep_rows <- data[, .I[seq_len(max(which(get(eligible.col) == 1L), 0L))], by = c(id.col)]$V1
+  data <- data[keep_rows]
+
   # Expansion ==================================================
   if (params@verbose) cat("\nOriginal dataset (eligible subjects):", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   if (params@verbose) cat("\nExpanding Data...\n")
