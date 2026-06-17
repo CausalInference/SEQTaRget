@@ -35,6 +35,7 @@
 * Replace `seq.int(1:.N)` with `seq_len(.N)` in the hazard simulation's per-trial follow-up construction, avoiding a double allocation per (id, trial) group; the column is now integer, matching the expansion's convention. Results are unchanged.
 * Document that with `glm.package = "parglm"` and `bootstrap = TRUE` only the main fit uses parglm: the bootstrap refits always use fastglm, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup. This was previously a silent switch.
 * Clarify unique vs non-unique in diagnostic table labels and docs
+* Soft deprecate `SEQestimate()` since it is only accurate to an order of magnitude.
 
 # SEQTaRget v1.4.2
 
