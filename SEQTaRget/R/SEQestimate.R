@@ -21,7 +21,14 @@
 #'              \item \code{expansionTime} estimated time used when expanding data
 #'              \item \code{totalTime} sum of model and expansion time
 #'          }
-#' @export
+#'
+#' @details This is a rough heuristic only. Empirically its predictions land
+#'   within roughly a factor of two of observed run time, and the direction of
+#'   the error depends on the configuration (e.g. it can over- or under-estimate
+#'   as \code{followup.max} changes), so the result should be treated as an
+#'   order-of-magnitude guide rather than a reliable timing.
+#'
+#' @keywords internal
 
 SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, outcome.col, time_varying.cols = list(), fixed.cols = list(), method, options, verbose = TRUE) {
   # Immediate error checking =================================
