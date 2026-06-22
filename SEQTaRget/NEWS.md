@@ -36,6 +36,7 @@
 * Document that with `glm.package = "parglm"` and `bootstrap = TRUE` only the main fit uses parglm: the bootstrap refits always use fastglm, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup. This was previously a silent switch.
 * Clarify unique vs non-unique in diagnostic table labels and docs
 * Soft deprecate `SEQestimate()` since it is only accurate to an order of magnitude.
+* Add bootstrap standard errors to the `risk.comparison` output: `RD SE` (standard error of the risk difference, natural scale) and `log(RR) SE` (standard error of the log risk ratio). Both are reported whenever `bootstrap = TRUE`, regardless of `bootstrap.CI_method` (the SEs were already computed internally to form the `"se"` confidence intervals but were not retained, and not computed at all under `"percentile"`).
 
 # SEQTaRget v1.4.2
 
