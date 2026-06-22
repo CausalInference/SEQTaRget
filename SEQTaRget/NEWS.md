@@ -37,6 +37,7 @@
 * Clarify unique vs non-unique in diagnostic table labels and docs
 * Soft deprecate `SEQestimate()` since it is only accurate to an order of magnitude.
 * Add bootstrap standard errors to the `risk.comparison` output: `RD SE` (standard error of the risk difference, natural scale) and `log(RR) SE` (standard error of the log risk ratio). Both are reported whenever `bootstrap = TRUE`, regardless of `bootstrap.CI_method` (the SEs were already computed internally to form the `"se"` confidence intervals but were not retained, and not computed at all under `"percentile"`).
+* Fix the confidence-interval column labels in `risk.comparison` and `risk.data`, which were hardcoded as `95%` regardless of `bootstrap.CI`. They now reflect the requested level (e.g. `RD 90% LCI`, `90% UCI` when `bootstrap.CI = 0.9`).
 
 # SEQTaRget v1.4.2
 
