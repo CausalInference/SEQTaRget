@@ -82,6 +82,21 @@ test_that("risk.comparison reports bootstrap SEs for RD and log(RR) under both C
   expect_equal(rc_pct[, se_cols, with = FALSE], rc_se[, se_cols, with = FALSE])
 })
 
+test_that("CI column labels track bootstrap.CI rather than hardcoding 95%", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                   list("N", "L", "P"), list("sex"), method = "ITT",
+                   options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 10,
+                                     seed = 7L, bootstrap.CI = 0.9), verbose = FALSE))
+  rc <- risk_comparison(model)
+  rd <- risk_data(model)
+  expect_true(all(c("RR 90% LCI", "RR 90% UCI", "RD 90% LCI", "RD 90% UCI") %in% names(rc)))
+  expect_true(all(c("90% LCI", "90% UCI") %in% names(rd)))
+  # The old hardcoded 95% labels must not appear when a 90% CI was requested
+  expect_false(any(grepl("95%", names(rc))))
+  expect_false(any(grepl("95%", names(rd))))
+})
+
 test_that("risk.times reports RD/RR at requested follow-up times plus the final time", {
   data <- data.table::copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",

@@ -40,6 +40,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
 
   z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
   alpha <- (1 - params@bootstrap.CI) / 2
+  ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")  # e.g. "95%", "90%"
 
   # Build the arm-pair comparison at a single follow-up time
   compare_at <- function(t) {
@@ -96,8 +97,8 @@ create.risk <- function(data, params, boot_risks = NULL) {
                     "rr", "rr_lci", "rr_uci", "rr_logse",
                     "rd", "rd_lci", "rd_uci", "rd_se"),
                   c("Followup", "A_x", "A_y",
-                    "Risk Ratio", "RR 95% LCI", "RR 95% UCI", "log(RR) SE",
-                    "Risk Difference", "RD 95% LCI", "RD 95% UCI", "RD SE"))
+                    "Risk Ratio", paste0("RR ", ci_lab, " LCI"), paste0("RR ", ci_lab, " UCI"), "log(RR) SE",
+                    "Risk Difference", paste0("RD ", ci_lab, " LCI"), paste0("RD ", ci_lab, " UCI"), "RD SE"))
   } else {
     out[, `:=`(value = NULL, i.value = NULL)]
     setcolorder(out, c("followup", "V1", "V2", "rr", "rd"))
@@ -108,8 +109,8 @@ create.risk <- function(data, params, boot_risks = NULL) {
   # Per-arm risk table
   table[, `:=`(A = sub(".*_", "", variable), Method = params@method, variable = NULL)]
   if (has_ci) {
-    setnames(table, c("followup", "value", "LCI", "UCI"), c("Followup", "Risk", "95% LCI", "95% UCI"))
-    setcolorder(table, c("Method", "Followup", "A", "Risk", "95% LCI", "95% UCI"))
+    setnames(table, c("followup", "value", "LCI", "UCI"), c("Followup", "Risk", paste0(ci_lab, " LCI"), paste0(ci_lab, " UCI")))
+    setcolorder(table, c("Method", "Followup", "A", "Risk", paste0(ci_lab, " LCI"), paste0(ci_lab, " UCI")))
   } else {
     setnames(table, c("followup", "value"), c("Followup", "Risk"))
     setcolorder(table, c("Method", "Followup", "A", "Risk"))
