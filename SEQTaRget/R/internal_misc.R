@@ -69,10 +69,11 @@ create.risk <- function(data, params, boot_risks = NULL) {
         rr_logse_vec[k] <- sd(log(valid_rr), na.rm = TRUE)
 
         if (params@bootstrap.CI_method == "se") {
+          log_rr <- log(out$rr[k])
           rd_lci_vec[k] <- out$rd[k] - z * rd_se_vec[k]
           rd_uci_vec[k] <- out$rd[k] + z * rd_se_vec[k]
-          rr_lci_vec[k] <- exp(log(out$rr[k]) - z * rr_logse_vec[k])
-          rr_uci_vec[k] <- exp(log(out$rr[k]) + z * rr_logse_vec[k])
+          rr_lci_vec[k] <- exp(log_rr - z * rr_logse_vec[k])
+          rr_uci_vec[k] <- exp(log_rr + z * rr_logse_vec[k])
         } else {
           rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
           rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
