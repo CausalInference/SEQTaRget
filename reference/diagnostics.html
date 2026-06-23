@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,16 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>List of diagnostic tables</p>
-    </div>
+    <p>A named list of diagnostic tables, each broken down by baseline treatment arm.
+The "unique" and "non-unique" variants count different things:</p><ul><li><p><code>outcome.unique</code> / <code>outcome.nonunique</code>: distinct subjects who had the
+outcome vs. the total number of outcome events. These coincide for a one-time
+(terminal) outcome, since each subject contributes at most one event row.</p></li>
+<li><p><code>followup.unique</code> / <code>followup.nonunique</code>: distinct subjects contributing
+follow-up vs. the total number of person-time intervals (expanded rows). The
+non-unique count is much larger because each subject contributes one row per
+follow-up period; it is the denominator that, with <code>outcome.nonunique</code>, gives
+the per-arm event rate.</p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

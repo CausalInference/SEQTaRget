@@ -55,7 +55,12 @@ An S4 class used to hold the outputs for the SEQuential process
 
 - `info`:
 
-  list of outcome and switch information (if applicable)
+  list of diagnostic tables (outcome, follow-up, switch, and
+  competing-event counts where applicable), each split by baseline
+  treatment arm. The "unique" tables count distinct subjects; the
+  "non-unique" tables count rows: total outcome events for the outcome
+  tables, and total person-time intervals for the follow-up tables. See
+  [`diagnostics()`](https://causalinference.github.io/SEQTaRget/reference/diagnostics.md).
 
 - `ce.model`:
 

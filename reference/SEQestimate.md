@@ -81,3 +81,11 @@ containing:
 - `expansionTime` estimated time used when expanding data
 
 - `totalTime` sum of model and expansion time
+
+## Details
+
+This is a rough heuristic only. Empirically its predictions land within
+roughly a factor of two of observed run time, and the direction of the
+error depends on the configuration (e.g. it can over- or under-estimate
+as `followup.max` changes), so the result should be treated as an
+order-of-magnitude guide rather than a reliable timing.

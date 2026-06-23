@@ -70,17 +70,17 @@ risk_data(model)
 #> Index: <Followup>
 #>    Method Followup      A      Risk   95% LCI   95% UCI         SE
 #>    <char>    <num> <char>     <num>     <num>     <num>      <num>
-#> 1:    ITT       60      0 0.8372582 0.7646336 0.9098829 0.03705407
-#> 2:    ITT       60      1 0.8744359 0.8299662 0.9189056 0.02268902
+#> 1:    ITT       60      0 0.8372582 0.8023135 0.8722029 0.01782926
+#> 2:    ITT       60      1 0.8744359 0.8536001 0.8952717 0.01063070
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>             <num>
-#> 1:       60 risk_0 risk_1  1.0444041  0.9685600   1.126187        0.03717768
-#> 2:       60 risk_1 risk_0  0.9574838  0.8879519   1.032461       -0.03717768
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.02814011 0.10249547
-#> 2: -0.10249547 0.02814011
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  1.0444041  1.0231392  1.0661110 0.01049558
+#> 2:       60 risk_1 risk_0  0.9574838  0.9379887  0.9773842 0.01049558
+#>    Risk Difference  RD 95% LCI  RD 95% UCI       RD SE
+#>              <num>       <num>       <num>       <num>
+#> 1:      0.03717768  0.02106730  0.05328806 0.008219733
+#> 2:     -0.03717768 -0.05328806 -0.02106730 0.008219733
 ```
 
 ## ITT with 5 bootstrap samples and losses-to-followup
@@ -114,7 +114,7 @@ model <- SEQuential(data, id.col = "ID",
 #> 
 #> Pruned
 #> 
-#> Original dataset (eligible subjects): 29,624 observations, 10 variables
+#> Original dataset (eligible subjects): 29,624 observations, 11 variables
 #> 
 #> Expanding Data...
 #> 
@@ -147,17 +147,17 @@ risk_data(model)
 #> Index: <Followup>
 #>    Method Followup      A       Risk 95% LCI    95% UCI         SE
 #>    <char>    <num> <char>      <num>   <num>      <num>      <num>
-#> 1:    ITT       60      0 0.02374360       0 0.05930117 0.01814195
-#> 2:    ITT       60      1 0.02614576       0 0.05307095 0.01373759
+#> 1:    ITT       60      0 0.02374360       0 0.06709029 0.02211606
+#> 2:    ITT       60      1 0.02614576       0 0.07751561 0.02620959
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>             <num>
-#> 1:       60 risk_0 risk_1  1.1011710  0.5047355   2.402402       0.002402164
-#> 2:       60 risk_1 risk_0  0.9081242  0.4162501   1.981236      -0.002402164
-#>      RD 95% LCI  RD 95% UCI
-#>           <num>       <num>
-#> 1: -0.009778824 0.014583152
-#> 2: -0.014583152 0.009778824
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  1.1011710  0.6624555   1.830429  0.2592782
+#> 2:       60 risk_1 risk_0  0.9081242  0.5463201   1.509535  0.2592782
+#>    Risk Difference  RD 95% LCI RD 95% UCI     RD SE
+#>              <num>       <num>      <num>     <num>
+#> 1:     0.002402164 -0.02220968 0.02701401 0.0125573
+#> 2:    -0.002402164 -0.02701401 0.02220968 0.0125573
 ```
 
 ## ITT with 5 bootstrap samples and competing events
@@ -220,17 +220,17 @@ risk_data(model)
 #> Index: <Followup>
 #>    Method Followup      A       Risk 95% LCI    95% UCI         SE
 #>    <char>    <num> <char>      <num>   <num>      <num>      <num>
-#> 1:    ITT       60      0 0.02185652       0 0.05286839 0.01582267
-#> 2:    ITT       60      1 0.02381601       0 0.04835280 0.01251900
+#> 1:    ITT       60      0 0.02185652       0 0.05236571 0.01556620
+#> 2:    ITT       60      1 0.02381601       0 0.05145809 0.01410336
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>             <num>
-#> 1:       60  inc_0  inc_1  1.0896524  0.5100804   2.327755       0.001959489
-#> 2:       60  inc_1  inc_0  0.9177239  0.4295985   1.960475      -0.001959489
-#>      RD 95% LCI  RD 95% UCI
-#>           <num>       <num>
-#> 1: -0.007920837 0.011839816
-#> 2: -0.011839816 0.007920837
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  1.0896524  0.7371605   1.610697  0.1993957
+#> 2:       60  inc_1  inc_0  0.9177239  0.6208492   1.356557  0.1993957
+#>    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE
+#>              <num>        <num>       <num>       <num>
+#> 1:     0.001959489 -0.002191523 0.006110502 0.002117902
+#> 2:    -0.001959489 -0.006110502 0.002191523 0.002117902
 ```
 
 ## ITT hazard ratio with 5 bootstrap samples and competing events
@@ -284,7 +284,7 @@ model <- SEQuential(data, id.col = "ID",
 # retrieve hazard ratios
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
-#>    1.0033697    0.5993046    1.6798651
+#>    1.0854161    0.7877539    1.4955534
 ```
 
 ## ITT with 5 bootstrap samples and competing events in subgroups defined by sex
@@ -315,7 +315,7 @@ model <- SEQuential(data, id.col = "ID",
 #> 
 #> Pruned
 #> 
-#> Original dataset (eligible subjects): 29,624 observations, 11 variables
+#> Original dataset (eligible subjects): 29,624 observations, 10 variables
 #> 
 #> Expanding Data...
 #> 
@@ -355,35 +355,35 @@ km_curve(model, plot.type = "risk")
 risk_data(model)
 #> $sex_0
 #> Index: <Followup>
-#>    Method Followup      A       Risk 95% LCI   95% UCI         SE
-#>    <char>    <num> <char>      <num>   <num>     <num>      <num>
-#> 1:    ITT       60      0 0.04213833       0 0.1185452 0.03898383
-#> 2:    ITT       60      1 0.04911213       0 0.1322803 0.04243352
+#>    Method Followup      A       Risk     95% LCI    95% UCI         SE
+#>    <char>    <num> <char>      <num>       <num>      <num>      <num>
+#> 1:    ITT       60      0 0.04213833 0.002647929 0.08162873 0.02014853
+#> 2:    ITT       60      1 0.04911213 0.000000000 0.09902072 0.02546404
 #> 
 #> $sex_1
 #> Index: <Followup>
-#>    Method Followup      A       Risk     95% LCI    95% UCI          SE
-#>    <char>    <num> <char>      <num>       <num>      <num>       <num>
-#> 1:    ITT       60      0 0.01577026 0.000000000 0.03706622 0.010865485
-#> 2:    ITT       60      1 0.01484521 0.003496357 0.02619406 0.005790336
+#>    Method Followup      A       Risk    95% LCI    95% UCI          SE
+#>    <char>    <num> <char>      <num>      <num>      <num>       <num>
+#> 1:    ITT       60      0 0.01577026 0.00000000 0.03349881 0.009045348
+#> 2:    ITT       60      1 0.01484521 0.00228603 0.02740439 0.006407862
 risk_comparison(model)
 #> $sex_0
-#>    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Differerence
-#>       <num> <fctr> <fctr>      <num>        <num>      <num>             <num>
-#> 1:       60  inc_0  inc_1  1.1654977 2.006387e-08   67703041       0.006973797
-#> 2:       60  inc_1  inc_0  0.8580026 1.477039e-08   49840838      -0.006973797
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.02096462 0.03491222
-#> 2: -0.03491222 0.02096462
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  1.1654977  0.4132708   3.286912  0.5289895
+#> 2:       60  inc_1  inc_0  0.8580026  0.3042369   2.419721  0.5289895
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:     0.006973797 -0.02002146 0.03396905 0.01377334
+#> 2:    -0.006973797 -0.03396905 0.02002146 0.01377334
 #> 
 #> $sex_1
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Differerence
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>             <num>
-#> 1:       60  inc_0  inc_1  0.9413422  0.4013910   2.207635     -0.0009250492
-#> 2:       60  inc_1  inc_0  1.0623130  0.4529734   2.491336      0.0009250492
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.01668972 0.01483962
-#> 2: -0.01483962 0.01668972
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  0.9413422  0.5369341   1.650342  0.2864498
+#> 2:       60  inc_1  inc_0  1.0623130  0.6059349   1.862426  0.2864498
+#>    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE
+#>              <num>        <num>       <num>       <num>
+#> 1:   -0.0009250492 -0.008530867 0.006680769 0.003880591
+#> 2:    0.0009250492 -0.006680769 0.008530867 0.003880591
 ```
