@@ -52,3 +52,11 @@ A list of (very rough) estimates for the time required for SEQuential containing
 \description{
 Estimate the (very rough) time to run SEQuential analysis on current machine
 }
+\details{
+This is a rough heuristic only. Empirically its predictions land
+within roughly a factor of two of observed run time, and the direction of
+the error depends on the configuration (e.g. it can over- or under-estimate
+as \code{followup.max} changes), so the result should be treated as an
+order-of-magnitude guide rather than a reliable timing.
+}
+\keyword{internal}

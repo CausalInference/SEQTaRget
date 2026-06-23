@@ -40,6 +40,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
 
   z <- qnorm(1 - (1 - params@bootstrap.CI)/2)
   alpha <- (1 - params@bootstrap.CI) / 2
+  ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")  # e.g. "95%", "90%"
 
   # Build the arm-pair comparison at a single follow-up time
   compare_at <- function(t) {
@@ -51,18 +52,28 @@ create.risk <- function(data, params, boot_risks = NULL) {
     if (has_ci) {
       # Paired bootstrap: pair both arms by boot_idx at this follow-up time
       boot_wide <- dcast(boot_risks[followup == t], boot_idx ~ variable, value.var = "value")
+      rd_se_vec <- rr_logse_vec <- numeric(nrow(out))
       rd_lci_vec <- rd_uci_vec <- rr_lci_vec <- rr_uci_vec <- numeric(nrow(out))
       for (k in seq_len(nrow(out))) {
         v1 <- as.character(out$V1[k]); v2 <- as.character(out$V2[k])
         rd_i  <- boot_wide[[v2]] - boot_wide[[v1]]
         rr_i  <- boot_wide[[v2]] / boot_wide[[v1]]
         valid_rr <- rr_i[rr_i > 0 & is.finite(rr_i)]
+
+        # Bootstrap standard errors, retained regardless of CI method: the risk
+        # difference SE is on the natural scale, the risk ratio SE on the log
+        # scale (the scale on which ratio measures are pooled in an
+        # inverse-variance-weighted meta-analysis: combine log(`Risk Ratio`)
+        # with `log(RR) SE`, then exponentiate).
+        rd_se_vec[k]    <- sd(rd_i, na.rm = TRUE)
+        rr_logse_vec[k] <- sd(log(valid_rr), na.rm = TRUE)
+
         if (params@bootstrap.CI_method == "se") {
-          rd_lci_vec[k] <- out$rd[k] - z * sd(rd_i, na.rm = TRUE)
-          rd_uci_vec[k] <- out$rd[k] + z * sd(rd_i, na.rm = TRUE)
-          rr_log_se      <- sd(log(valid_rr), na.rm = TRUE)
-          rr_lci_vec[k] <- exp(log(out$rr[k]) - z * rr_log_se)
-          rr_uci_vec[k] <- exp(log(out$rr[k]) + z * rr_log_se)
+          log_rr <- log(out$rr[k])
+          rd_lci_vec[k] <- out$rd[k] - z * rd_se_vec[k]
+          rd_uci_vec[k] <- out$rd[k] + z * rd_se_vec[k]
+          rr_lci_vec[k] <- exp(log_rr - z * rr_logse_vec[k])
+          rr_uci_vec[k] <- exp(log_rr + z * rr_logse_vec[k])
         } else {
           rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
           rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
@@ -70,8 +81,8 @@ create.risk <- function(data, params, boot_risks = NULL) {
           rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
         }
       }
-      out[, `:=`(rd_lci = rd_lci_vec, rd_uci = rd_uci_vec,
-                 rr_lci = rr_lci_vec, rr_uci = rr_uci_vec)]
+      out[, `:=`(rd_lci = rd_lci_vec, rd_uci = rd_uci_vec, rd_se = rd_se_vec,
+                 rr_lci = rr_lci_vec, rr_uci = rr_uci_vec, rr_logse = rr_logse_vec)]
     }
     out
   }
@@ -80,10 +91,15 @@ create.risk <- function(data, params, boot_risks = NULL) {
 
   if (has_ci) {
     out[, `:=`(value = NULL, i.value = NULL)]
-    setcolorder(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"))
-    setnames(out, c("followup", "V1", "V2", "rr", "rr_lci", "rr_uci", "rd", "rd_lci", "rd_uci"),
-                  c("Followup", "A_x", "A_y", "Risk Ratio", "RR 95% LCI", "RR 95% UCI",
-                    "Risk Difference", "RD 95% LCI", "RD 95% UCI"))
+    setcolorder(out, c("followup", "V1", "V2",
+                       "rr", "rr_lci", "rr_uci", "rr_logse",
+                       "rd", "rd_lci", "rd_uci", "rd_se"))
+    setnames(out, c("followup", "V1", "V2",
+                    "rr", "rr_lci", "rr_uci", "rr_logse",
+                    "rd", "rd_lci", "rd_uci", "rd_se"),
+                  c("Followup", "A_x", "A_y",
+                    "Risk Ratio", paste0("RR ", ci_lab, " LCI"), paste0("RR ", ci_lab, " UCI"), "log(RR) SE",
+                    "Risk Difference", paste0("RD ", ci_lab, " LCI"), paste0("RD ", ci_lab, " UCI"), "RD SE"))
   } else {
     out[, `:=`(value = NULL, i.value = NULL)]
     setcolorder(out, c("followup", "V1", "V2", "rr", "rd"))
@@ -94,8 +110,8 @@ create.risk <- function(data, params, boot_risks = NULL) {
   # Per-arm risk table
   table[, `:=`(A = sub(".*_", "", variable), Method = params@method, variable = NULL)]
   if (has_ci) {
-    setnames(table, c("followup", "value", "LCI", "UCI"), c("Followup", "Risk", "95% LCI", "95% UCI"))
-    setcolorder(table, c("Method", "Followup", "A", "Risk", "95% LCI", "95% UCI"))
+    setnames(table, c("followup", "value", "LCI", "UCI"), c("Followup", "Risk", paste0(ci_lab, " LCI"), paste0(ci_lab, " UCI")))
+    setcolorder(table, c("Method", "Followup", "A", "Risk", paste0(ci_lab, " LCI"), paste0(ci_lab, " UCI")))
   } else {
     setnames(table, c("followup", "value"), c("Followup", "Risk"))
     setcolorder(table, c("Method", "Followup", "A", "Risk"))

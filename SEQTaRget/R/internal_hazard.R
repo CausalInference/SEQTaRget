@@ -28,6 +28,11 @@ internal.hazard <- function(model, params, cache) {
     out_list <- vector("list", length(params@treat.level))
 
     for (i in seq_along(params@treat.level)) {
+      # fcoalesce(outcomeProb, 0.5): rbinom() errors on an NA success
+      # probability, so guard the draw against any NA predicted outcome
+      # probability. An NA is not expected from a converged outcome model;
+      # 0.5 is an arbitrary neutral fallback so a stray NA cannot abort the
+      # whole hazard simulation.
       out_list[[i]] <- copy(trials)[, eval(tx_bas) := params@treat.level[[i]]
                                     ][, "outcomeProb" := inline.pred(model, newdata = .SD, params, type = "outcome", cache = cache)
                                       ][, "outcome" := rbinom(.N, 1, fcoalesce(outcomeProb, 0.5))]

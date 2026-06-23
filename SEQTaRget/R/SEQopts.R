@@ -44,7 +44,7 @@
 #' @param plot.subtitle Character: Subtitle for output plot if \code{km.curves = TRUE}
 #' @param plot.title Character: Title for output plot if \code{km.curves = TRUE}
 #' @param plot.type Character: Type of plot to create if \code{km.curves = TRUE}, available options are `'survival'` (the default), `'risk'`, and `'inc'` (in the case of censoring)
-#' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default `NA` reports only the final follow-up time.
+#' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included; because the follow-up grid is zero-indexed (\code{followup} runs \code{0:survival.max}), this final time is \code{survival.max + 1}, so e.g. \code{survival.max = 120} reports a row at 121. Default `NA` reports only the final follow-up time.
 #' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`

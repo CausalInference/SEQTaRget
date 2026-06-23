@@ -1,4 +1,4 @@
-# SEQTaRget (development version)
+# SEQTaRget v1.4.3
 
 * Fix "Risk Differerence" typo in `risk.times` output
 * Report follow-up per treatment arm in the `@info` slot as `info$followup.unique` and `info$followup.nonunique` (per subgroup, mirroring `info$outcome.unique` / `info$outcome.nonunique`). Both are grouped by baseline treatment over expanded-data rows with an observed (non-`NA`) outcome - the person-time the outcome model is fit on. The non-unique table counts follow-up intervals (so the non-unique outcome counts divided by these give per-arm event rates); the unique table counts the distinct subjects contributing follow-up to each arm. Also shown in the printed diagnostic tables.
@@ -35,6 +35,9 @@
 * Replace `seq.int(1:.N)` with `seq_len(.N)` in the hazard simulation's per-trial follow-up construction, avoiding a double allocation per (id, trial) group; the column is now integer, matching the expansion's convention. Results are unchanged.
 * Document that with `glm.package = "parglm"` and `bootstrap = TRUE` only the main fit uses parglm: the bootstrap refits always use fastglm, warm-started from the main fit's coefficients, which is faster per resample than parglm's per-fit thread setup. This was previously a silent switch.
 * Clarify unique vs non-unique in diagnostic table labels and docs
+* Soft deprecate `SEQestimate()` since it is only accurate to an order of magnitude.
+* Add bootstrap standard errors to the `risk.comparison` output: `RD SE` (standard error of the risk difference, natural scale) and `log(RR) SE` (standard error of the log risk ratio). Both are reported whenever `bootstrap = TRUE`, regardless of `bootstrap.CI_method` (the SEs were already computed internally to form the `"se"` confidence intervals but were not retained, and not computed at all under `"percentile"`).
+* Fix the confidence-interval column labels in `risk.comparison` and `risk.data`, which were hardcoded as `95%` regardless of `bootstrap.CI`. They now reflect the requested level (e.g. `RD 90% LCI`, `90% UCI` when `bootstrap.CI = 0.9`).
 
 # SEQTaRget v1.4.2
 

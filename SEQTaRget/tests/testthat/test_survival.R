@@ -54,6 +54,49 @@ test_that("Bootstrapped Survival - Competing Event CIs present", {
   expect_true(all(!is.na(model@risk.comparison[[1]][, ci_cols, with = FALSE])))
 })
 
+test_that("risk.comparison reports bootstrap SEs for RD and log(RR) under both CI methods", {
+  skip_on_cran()
+  se_cols <- c("RD SE", "log(RR) SE")
+  fit <- function(method) {
+    suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                     list("N", "L", "P"), list("sex"), method = "ITT",
+                     options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 25,
+                                       seed = 7L, bootstrap.CI_method = method), verbose = FALSE))
+  }
+
+  rc_se <- risk_comparison(fit("se"))
+  expect_true(all(se_cols %in% names(rc_se)))
+  expect_true(all(!is.na(rc_se[, se_cols, with = FALSE])))
+  # SEs are non-negative
+  expect_true(all(rc_se[["RD SE"]] >= 0) && all(rc_se[["log(RR) SE"]] >= 0))
+  # Under the "se" CI method the stored RD SE exactly reconstructs the symmetric RD CI
+  z <- qnorm(0.975)
+  expect_equal(rc_se[["RD 95% LCI"]], rc_se[["Risk Difference"]] - z * rc_se[["RD SE"]])
+  expect_equal(rc_se[["RR 95% LCI"]], exp(log(rc_se[["Risk Ratio"]]) - z * rc_se[["log(RR) SE"]]))
+
+  # The SEs are a property of the bootstrap distribution, so they are reported
+  # (and identical) even when percentile CIs are requested.
+  rc_pct <- risk_comparison(fit("percentile"))
+  expect_true(all(se_cols %in% names(rc_pct)))
+  expect_true(all(!is.na(rc_pct[, se_cols, with = FALSE])))
+  expect_equal(rc_pct[, se_cols, with = FALSE], rc_se[, se_cols, with = FALSE])
+})
+
+test_that("CI column labels track bootstrap.CI rather than hardcoding 95%", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                   list("N", "L", "P"), list("sex"), method = "ITT",
+                   options = SEQopts(km.curves = TRUE, bootstrap = TRUE, bootstrap.nboot = 10,
+                                     seed = 7L, bootstrap.CI = 0.9), verbose = FALSE))
+  rc <- risk_comparison(model)
+  rd <- risk_data(model)
+  expect_true(all(c("RR 90% LCI", "RR 90% UCI", "RD 90% LCI", "RD 90% UCI") %in% names(rc)))
+  expect_true(all(c("90% LCI", "90% UCI") %in% names(rd)))
+  # The old hardcoded 95% labels must not appear when a 90% CI was requested
+  expect_false(any(grepl("95%", names(rc))))
+  expect_false(any(grepl("95%", names(rd))))
+})
+
 test_that("risk.times reports RD/RR at requested follow-up times plus the final time", {
   data <- data.table::copy(SEQdata)
   model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",

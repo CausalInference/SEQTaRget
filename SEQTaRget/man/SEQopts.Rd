@@ -159,7 +159,7 @@ SEQopts(
 
 \item{plot.type}{Character: Type of plot to create if \code{km.curves = TRUE}, available options are \code{'survival'} (the default), \code{'risk'}, and \code{'inc'} (in the case of censoring)}
 
-\item{risk.times}{Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default \code{NA} reports only the final follow-up time.}
+\item{risk.times}{Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included; because the follow-up grid is zero-indexed (\code{followup} runs \code{0:survival.max}), this final time is \code{survival.max + 1}, so e.g. \code{survival.max = 120} reports a row at 121. Default \code{NA} reports only the final follow-up time.}
 
 \item{seed}{Integer: starting seed; the default \code{NULL} draws a single random integer when \code{SEQopts()} is called, so set this explicitly for reproducible bootstrap results}
 

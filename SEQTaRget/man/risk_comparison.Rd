@@ -10,7 +10,14 @@ risk_comparison(object)
 \item{object}{SEQoutput object}
 }
 \value{
-A data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)
+A data frame of risk comparison information at the reported follow-up time(s):
+risk ratios and risk differences, and when bootstrapped their confidence
+intervals and standard errors. The bootstrap standard errors are reported
+regardless of \code{bootstrap.CI_method}: \verb{RD SE} is the standard error of the
+risk difference (natural scale) and \verb{log(RR) SE} is the standard error of
+the log risk ratio. For an inverse-variance-weighted meta-analysis across
+samples, pool \verb{Risk Difference} with \verb{RD SE}, and \verb{log(}Risk Ratio\verb{)} with
+\verb{log(RR) SE} (then exponentiate the pooled ratio).
 }
 \description{
 Function to return risk information from a SEQuential object
