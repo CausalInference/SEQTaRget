@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.4.3
 
+CRAN release: 2026-06-23
+
 - Fix “Risk Differerence” typo in `risk.times` output
 - Report follow-up per treatment arm in the `@info` slot as
   `info$followup.unique` and `info$followup.nonunique` (per subgroup,

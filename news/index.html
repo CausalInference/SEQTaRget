@@ -46,11 +46,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.3/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.4.3" id="seqtarget-v143">SEQTaRget v1.4.3<a class="anchor" aria-label="anchor" href="#seqtarget-v143"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.4.3" id="seqtarget-v143">SEQTaRget v1.4.3<a class="anchor" aria-label="anchor" href="#seqtarget-v143"></a></h2><p class="text-muted">CRAN release: 2026-06-23</p>
 <ul><li>Fix “Risk Differerence” typo in <code>risk.times</code> output</li>
 <li>Report follow-up per treatment arm in the <code>@info</code> slot as <code>info$followup.unique</code> and <code>info$followup.nonunique</code> (per subgroup, mirroring <code>info$outcome.unique</code> / <code>info$outcome.nonunique</code>). Both are grouped by baseline treatment over expanded-data rows with an observed (non-<code>NA</code>) outcome - the person-time the outcome model is fit on. The non-unique table counts follow-up intervals (so the non-unique outcome counts divided by these give per-arm event rates); the unique table counts the distinct subjects contributing follow-up to each arm. Also shown in the printed diagnostic tables.</li>
 <li>Speed up the hazard ratio calculation by fitting the Cox model with the survival C fitters directly on a prebuilt design matrix instead of <code>coxph(formula, data)</code>, avoiding the <code>model.frame</code>/<code>model.matrix</code> rebuild on every bootstrap iteration: <code><a href="https://rdrr.io/pkg/survival/man/agreg.fit.html" class="external-link">survival::coxph.fit()</a></code> for the non-competing-event model and <code><a href="https://rdrr.io/pkg/survival/man/agreg.fit.html" class="external-link">survival::agreg.fit()</a></code> for the competing-event Fine-Gray (counting-process) model. The hazard ratio and CIs are unchanged.</li>
