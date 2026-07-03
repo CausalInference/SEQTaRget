@@ -26,7 +26,7 @@ internal.weights <- function(DT, data, params, cache) {
     # present in a given source are dropped at subset time.
     needed <- unique(c(params@id, "trial", "period", params@time, "followup",
                        params@treatment, paste0(params@treatment, params@indicator.baseline),
-                       cache$numerator$cols, cache$denominator$cols,
+                       cached_cols(cache$numerator), cached_cols(cache$denominator),
                        cache$cense_numerator$cols, cache$cense_denominator$cols,
                        cache$visit_numerator$cols, cache$visit_denominator$cols,
                        params@cense, params@cense.eligible, params@visit,

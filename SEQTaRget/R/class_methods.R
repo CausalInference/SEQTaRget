@@ -40,8 +40,8 @@ setMethod("show", "SEQoutput", function(object) {
   cat("SEQuential process completed in", elapsed_time, ":\n")
   cat("Initialized with:\n")
   cat("Outcome covariates:", outcome, "\n")
-  cat("Numerator covariates:", numerator, "\n")
-  cat("Denominator covariates:", denominator, "\n\n")
+  cat("Numerator covariates:", paste(numerator, collapse = " | "), "\n")
+  cat("Denominator covariates:", paste(denominator, collapse = " | "), "\n\n")
 
   if (bootstrap) {
     cat("Bootstrapped", bootstrap.nboot, "times\n")
@@ -231,7 +231,7 @@ outcome <- function(object) {
 covariates <- function(object) {
   if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
   format_formula <- function(x) {
-    if (is.na(x)) return(NA_character_)
+    if (all(is.na(x))) return(NA_character_)
     gsub("~", " ~ ", gsub("\\+", " + ", x))
   }
   return(list(Outcome = format_formula(object@outcome),

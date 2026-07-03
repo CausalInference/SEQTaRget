@@ -23,9 +23,17 @@ init_formula_cache <- function(params) {
     )
   }
   
-  # Default case - numerator/denominator
-  cache$numerator <- parse_covs(params@numerator)
-  cache$denominator <- parse_covs(params@denominator)
+  # Default case - numerator/denominator. These may be per-treatment-level
+  # (a character vector with one formula per treat.level, post-expansion
+  # weights only): parse each element into an unnamed list, which
+  # select_cached_level() dispatches on downstream. A shared (length-1)
+  # formula keeps the flat structure with a $formula element.
+  parse_covs_by_level <- function(covs) {
+    if (length(covs) <= 1L) return(parse_covs(covs))
+    lapply(covs, parse_covs)
+  }
+  cache$numerator <- parse_covs_by_level(params@numerator)
+  cache$denominator <- parse_covs_by_level(params@denominator)
   
   # LTFU case
   cache$cense_numerator <- parse_covs(params@cense.numerator)
@@ -43,6 +51,29 @@ init_formula_cache <- function(params) {
   cache$tx_bas <- paste0(params@treatment, params@indicator.baseline)
   
   return(cache)
+}
+
+#' Select the cached weight-model formula for a treatment level
+#'
+#' A cache entry made by \code{init_formula_cache()} is either a single parsed
+#' formula (a list with a \code{$formula} element, shared across treatment
+#' levels) or an unnamed list of parsed formulas, one per
+#' \code{params@treat.level}. Returns the entry for \code{level}, or the
+#' shared entry (or \code{NULL}) unchanged.
+#'
+#' @keywords internal
+select_cached_level <- function(cached, level, params) {
+  if (is.null(cached) || !is.null(cached$formula)) return(cached)
+  cached[[match(level, unlist(params@treat.level))]]
+}
+
+#' Columns referenced by a (possibly per-treatment-level) cache entry
+#'
+#' @keywords internal
+cached_cols <- function(cached) {
+  if (is.null(cached)) return(NULL)
+  if (!is.null(cached$formula)) return(cached$cols)
+  unique(unlist(lapply(cached, `[[`, "cols")))
 }
 
 #' Build the function that gives each bootstrap copy of a subject a unique ID
