@@ -134,8 +134,12 @@ SEQopts(
 
 - denominator:
 
-  String: denominator covariates to the right hand side of a formula
-  object
+  String or character vector: denominator covariates to the right hand
+  side of a formula object. A single string fits the same model in every
+  treatment arm. A vector with one formula per `treat.level` (in
+  `treat.level` order) fits a separate denominator model, with its own
+  covariates, in each arm; this is only supported for post-expansion
+  weights (`weight.preexpansion = FALSE`)
 
 - deviation:
 
@@ -273,8 +277,12 @@ SEQopts(
 
 - numerator:
 
-  String: numerator covariates to the right hand side of a formula
-  object
+  String or character vector: numerator covariates to the right hand
+  side of a formula object. A single string fits the same model in every
+  treatment arm. A vector with one formula per `treat.level` (in
+  `treat.level` order) fits a separate numerator model, with its own
+  covariates, in each arm; this is only supported for post-expansion
+  weights (`weight.preexpansion = FALSE`)
 
 - parallel:
 
@@ -325,7 +333,10 @@ SEQopts(
   which to report risk difference and risk ratio when
   `km.curves = TRUE`. Each requested time is snapped to the latest
   available follow-up at or before it. The final follow-up time is
-  always included. Default `NA` reports only the final follow-up time.
+  always included; because the follow-up grid is zero-indexed
+  (`followup` runs `0:survival.max`), this final time is
+  `survival.max + 1`, so e.g. `survival.max = 120` reports a row at 121.
+  Default `NA` reports only the final follow-up time.
 
 - seed:
 

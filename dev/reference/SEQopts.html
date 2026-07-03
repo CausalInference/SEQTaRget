@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,7 +176,7 @@
 
 
 <dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
-<dd><p>String: denominator covariates to the right hand side of a formula object</p></dd>
+<dd><p>String or character vector: denominator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order) fits a separate denominator model, with its own covariates, in each arm; this is only supported for post-expansion weights (<code>weight.preexpansion = FALSE</code>)</p></dd>
 
 
 <dt id="arg-deviation">deviation<a class="anchor" aria-label="anchor" href="#arg-deviation"></a></dt>
@@ -272,7 +272,7 @@
 
 
 <dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
-<dd><p>String: numerator covariates to the right hand side of a formula object</p></dd>
+<dd><p>String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (<code>weight.preexpansion = FALSE</code>)</p></dd>
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
@@ -304,7 +304,7 @@
 
 
 <dt id="arg-risk-times">risk.times<a class="anchor" aria-label="anchor" href="#arg-risk-times"></a></dt>
-<dd><p>Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when <code>km.curves = TRUE</code>. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included. Default <code>NA</code> reports only the final follow-up time.</p></dd>
+<dd><p>Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when <code>km.curves = TRUE</code>. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included; because the follow-up grid is zero-indexed (<code>followup</code> runs <code>0:survival.max</code>), this final time is <code>survival.max + 1</code>, so e.g. <code>survival.max = 120</code> reports a row at 121. Default <code>NA</code> reports only the final follow-up time.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>

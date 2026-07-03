@@ -77,14 +77,14 @@ risk_data(model)
 #> 1: dose-response       60      0 0.5282782 0.2410166 0.8155398 0.14656473
 #> 2: dose-response       60      1 0.8949096 0.8063496 0.9834697 0.04518453
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>           <num>
-#> 1:       60 risk_0 risk_1  1.6940120  0.8652189   3.316706       0.3666314
-#> 2:       60 risk_1 risk_0  0.5903146  0.3015040   1.155777      -0.3666314
-#>     RD 95% LCI  RD 95% UCI
-#>          <num>       <num>
-#> 1:  0.06783115  0.66543165
-#> 2: -0.66543165 -0.06783115
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  1.6940120  0.8652189   3.316706  0.3427983
+#> 2:       60 risk_1 risk_0  0.5903146  0.3015040   1.155777  0.3427983
+#>    Risk Difference  RD 95% LCI  RD 95% UCI     RD SE
+#>              <num>       <num>       <num>     <num>
+#> 1:       0.3666314  0.06783115  0.66543165 0.1524519
+#> 2:      -0.3666314 -0.66543165 -0.06783115 0.1524519
 ```
 
 ## Dose-response with 5 bootstrap samples and losses-to-followup
@@ -154,14 +154,14 @@ risk_data(model)
 #> 1: dose-response       60      0 0.007847443       0 0.02529929 0.00890417
 #> 2: dose-response       60      1 0.018827788       0 0.04862160 0.01520121
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>       <num>      <num>           <num>
-#> 1:       60 risk_0 risk_1  2.3992259 0.042419739  135.69826      0.01098034
-#> 2:       60 risk_1 risk_0  0.4168011 0.007369291   23.57393     -0.01098034
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.01230360 0.03426429
-#> 2: -0.03426429 0.01230360
+#>    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>       <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  2.3992259 0.042419739  135.69826   2.058858
+#> 2:       60 risk_1 risk_0  0.4168011 0.007369291   23.57393   2.058858
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:      0.01098034 -0.01230360 0.03426429 0.01187978
+#> 2:     -0.01098034 -0.03426429 0.01230360 0.01187978
 ```
 
 ## Dose-response with 5 bootstrap samples and competing events
@@ -227,14 +227,14 @@ risk_data(model)
 #> 1: dose-response       60      0 0.007586789       0 0.03490503 0.013938132
 #> 2: dose-response       60      1 0.003641046       0 0.01433665 0.005457039
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>           <num>
-#> 1:       60  inc_0  inc_1  0.4799192 0.05640515   4.083358    -0.003945743
-#> 2:       60  inc_1  inc_0  2.0836841 0.24489645  17.728878     0.003945743
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.03178104 0.02388956
-#> 2: -0.02388956 0.03178104
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  0.4799192 0.05640515   4.083358   1.092396
+#> 2:       60  inc_1  inc_0  2.0836841 0.24489645  17.728878   1.092396
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:    -0.003945743 -0.03178104 0.02388956 0.01420194
+#> 2:     0.003945743 -0.02388956 0.03178104 0.01420194
 ```
 
 ## Dose-response hazard ratio with 5 bootstrap samples and competing events
@@ -372,22 +372,22 @@ risk_data(model)
 #> 2: dose-response       60      1 0.01221464       0 0.02765749 0.007879153
 risk_comparison(model)
 #> $sex_0
-#>    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>        <num>      <num>           <num>
-#> 1:       60  inc_0  inc_1  1.6602358 0.0021614680  1275.2365     0.007432626
-#> 2:       60  inc_1  inc_0  0.6023241 0.0007841683   462.6485    -0.007432626
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.05399801 0.06886327
-#> 2: -0.06886327 0.05399801
+#>    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>        <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  1.6602358 0.0021614680  1275.2365   3.389821
+#> 2:       60  inc_1  inc_0  0.6023241 0.0007841683   462.6485   3.389821
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:     0.007432626 -0.05399801 0.06886327 0.03134274
+#> 2:    -0.007432626 -0.06886327 0.05399801 0.03134274
 #> 
 #> $sex_1
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>           <num>
-#> 1:       60  inc_0  inc_1  1.8511568 0.13746624  24.928167     0.005616256
-#> 2:       60  inc_1  inc_0  0.5402028 0.04011526   7.274513    -0.005616256
-#>     RD 95% LCI RD 95% UCI
-#>          <num>      <num>
-#> 1: -0.02152428 0.03275679
-#> 2: -0.03275679 0.02152428
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  1.8511568 0.13746624  24.928167   1.326651
+#> 2:       60  inc_1  inc_0  0.5402028 0.04011526   7.274513   1.326651
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:     0.005616256 -0.02152428 0.03275679 0.01384746
+#> 2:    -0.005616256 -0.03275679 0.02152428 0.01384746
 ```

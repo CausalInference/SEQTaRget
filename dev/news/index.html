@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="seqtarget-development-version">SEQTaRget (development version)<a class="anchor" aria-label="anchor" href="#seqtarget-development-version"></a></h2>
+<ul><li>Allow arm-specific treatment-weight models: <code>numerator</code> and <code>denominator</code> in <code><a href="../reference/SEQopts.html">SEQopts()</a></code> now also accept a character vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order), fitting a separate numerator/denominator model - with its own covariates - in each treatment arm. Only the estimates from the respective arm’s model are used to construct that arm’s weights. A single string keeps the previous behaviour (the same formula in every arm). Arm-specific formulas are only supported for weights estimated on the post-expansion data (<code>weight.preexpansion = FALSE</code>); the LTFU, visit, and outcome models are unaffected.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.4.3" id="seqtarget-v143">SEQTaRget v1.4.3<a class="anchor" aria-label="anchor" href="#seqtarget-v143"></a></h2><p class="text-muted">CRAN release: 2026-06-23</p>
 <ul><li>Fix “Risk Differerence” typo in <code>risk.times</code> output</li>
 <li>Report follow-up per treatment arm in the <code>@info</code> slot as <code>info$followup.unique</code> and <code>info$followup.nonunique</code> (per subgroup, mirroring <code>info$outcome.unique</code> / <code>info$outcome.nonunique</code>). Both are grouped by baseline treatment over expanded-data rows with an observed (non-<code>NA</code>) outcome - the person-time the outcome model is fit on. The non-unique table counts follow-up intervals (so the non-unique outcome counts divided by these give per-arm event rates); the unique table counts the distinct subjects contributing follow-up to each arm. Also shown in the printed diagnostic tables.</li>
 <li>Speed up the hazard ratio calculation by fitting the Cox model with the survival C fitters directly on a prebuilt design matrix instead of <code>coxph(formula, data)</code>, avoiding the <code>model.frame</code>/<code>model.matrix</code> rebuild on every bootstrap iteration: <code><a href="https://rdrr.io/pkg/survival/man/agreg.fit.html" class="external-link">survival::coxph.fit()</a></code> for the non-competing-event model and <code><a href="https://rdrr.io/pkg/survival/man/agreg.fit.html" class="external-link">survival::agreg.fit()</a></code> for the competing-event Fine-Gray (counting-process) model. The hazard ratio and CIs are unchanged.</li>
@@ -87,6 +91,9 @@
 <li>Replace <code>seq.int(1:.N)</code> with <code>seq_len(.N)</code> in the hazard simulation’s per-trial follow-up construction, avoiding a double allocation per (id, trial) group; the column is now integer, matching the expansion’s convention. Results are unchanged.</li>
 <li>Document that with <code>glm.package = "parglm"</code> and <code>bootstrap = TRUE</code> only the main fit uses parglm: the bootstrap refits always use fastglm, warm-started from the main fit’s coefficients, which is faster per resample than parglm’s per-fit thread setup. This was previously a silent switch.</li>
 <li>Clarify unique vs non-unique in diagnostic table labels and docs</li>
+<li>Soft deprecate <code><a href="../reference/SEQestimate.html">SEQestimate()</a></code> since it is only accurate to an order of magnitude.</li>
+<li>Add bootstrap standard errors to the <code>risk.comparison</code> output: <code>RD SE</code> (standard error of the risk difference, natural scale) and <code>log(RR) SE</code> (standard error of the log risk ratio). Both are reported whenever <code>bootstrap = TRUE</code>, regardless of <code>bootstrap.CI_method</code> (the SEs were already computed internally to form the <code>"se"</code> confidence intervals but were not retained, and not computed at all under <code>"percentile"</code>).</li>
+<li>Fix the confidence-interval column labels in <code>risk.comparison</code> and <code>risk.data</code>, which were hardcoded as <code>95%</code> regardless of <code>bootstrap.CI</code>. They now reflect the requested level (e.g. <code>RD 90% LCI</code>, <code>90% UCI</code> when <code>bootstrap.CI = 0.9</code>).</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.2" id="seqtarget-v142">SEQTaRget v1.4.2<a class="anchor" aria-label="anchor" href="#seqtarget-v142"></a></h2><p class="text-muted">CRAN release: 2026-05-21</p>

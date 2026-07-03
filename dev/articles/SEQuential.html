@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -508,14 +508,14 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7723191 0.9021973 0.03313281</span></span>
 <span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8137729 0.9350989 0.03095109</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0030635  1.0874485      0.03717768</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9195838  0.9969459     -0.03717768</span></span>
-<span><span class="co">#&gt;      RD 95% LCI   RD 95% UCI</span></span>
-<span><span class="co">#&gt;           &lt;num&gt;        &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  0.002812309  0.071543050</span></span>
-<span><span class="co">#&gt; 2: -0.071543050 -0.002812309</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0030635  1.0874485 0.02060634</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9195838  0.9969459 0.02060634</span></span>
+<span><span class="co">#&gt;    Risk Difference   RD 95% LCI   RD 95% UCI      RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;        &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      0.03717768  0.002812309  0.071543050 0.01753367</span></span>
+<span><span class="co">#&gt; 2:     -0.03717768 -0.071543050 -0.002812309 0.01753367</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

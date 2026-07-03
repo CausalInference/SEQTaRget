@@ -432,12 +432,12 @@ risk_data(model)
 #> 1:    ITT       60      0 0.8372582 0.7723191 0.9021973 0.03313281
 #> 2:    ITT       60      1 0.8744359 0.8137729 0.9350989 0.03095109
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference
-#>       <num> <fctr> <fctr>      <num>      <num>      <num>           <num>
-#> 1:       60 risk_0 risk_1  1.0444041  1.0030635  1.0874485      0.03717768
-#> 2:       60 risk_1 risk_0  0.9574838  0.9195838  0.9969459     -0.03717768
-#>      RD 95% LCI   RD 95% UCI
-#>           <num>        <num>
-#> 1:  0.002812309  0.071543050
-#> 2: -0.071543050 -0.002812309
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  1.0444041  1.0030635  1.0874485 0.02060634
+#> 2:       60 risk_1 risk_0  0.9574838  0.9195838  0.9969459 0.02060634
+#>    Risk Difference   RD 95% LCI   RD 95% UCI      RD SE
+#>              <num>        <num>        <num>      <num>
+#> 1:      0.03717768  0.002812309  0.071543050 0.01753367
+#> 2:     -0.03717768 -0.071543050 -0.002812309 0.01753367
 ```

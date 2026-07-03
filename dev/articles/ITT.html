@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -151,14 +151,14 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.8023135 0.8722029 0.01782926</span></span>
 <span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8536001 0.8952717 0.01063070</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0231392  1.0661110      0.03717768</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9379887  0.9773842     -0.03717768</span></span>
-<span><span class="co">#&gt;     RD 95% LCI  RD 95% UCI</span></span>
-<span><span class="co">#&gt;          &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:  0.02106730  0.05328806</span></span>
-<span><span class="co">#&gt; 2: -0.05328806 -0.02106730</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0231392  1.0661110 0.01049558</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9379887  0.9773842 0.01049558</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI  RD 95% UCI       RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      0.03717768  0.02106730  0.05328806 0.008219733</span></span>
+<span><span class="co">#&gt; 2:     -0.03717768 -0.05328806 -0.02106730 0.008219733</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -223,14 +223,14 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.06709029 0.02211606</span></span>
 <span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.07751561 0.02620959</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.6624555   1.830429     0.002402164</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.5463201   1.509535    -0.002402164</span></span>
-<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
-<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.02220968 0.02701401</span></span>
-<span><span class="co">#&gt; 2: -0.02701401 0.02220968</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.6624555   1.830429  0.2592782</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.5463201   1.509535  0.2592782</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI     RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;     &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0.002402164 -0.02220968 0.02701401 0.0125573</span></span>
+<span><span class="co">#&gt; 2:    -0.002402164 -0.02701401 0.02220968 0.0125573</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
@@ -291,14 +291,14 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; 1:    ITT       60      0 0.02185652       0 0.05236571 0.01556620</span></span>
 <span><span class="co">#&gt; 2:    ITT       60      1 0.02381601       0 0.05145809 0.01410336</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.7371605   1.610697     0.001959489</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.6208492   1.356557    -0.001959489</span></span>
-<span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
-<span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.002191523 0.006110502</span></span>
-<span><span class="co">#&gt; 2: -0.006110502 0.002191523</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.7371605   1.610697  0.1993957</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.6208492   1.356557  0.1993957</span></span>
+<span><span class="co">#&gt;    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0.001959489 -0.002191523 0.006110502 0.002117902</span></span>
+<span><span class="co">#&gt; 2:    -0.001959489 -0.006110502 0.002191523 0.002117902</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
@@ -429,24 +429,24 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <span><span class="co">#&gt; 2:    ITT       60      1 0.01484521 0.00228603 0.02740439 0.006407862</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1654977  0.4132708   3.286912     0.006973797</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8580026  0.3042369   2.419721    -0.006973797</span></span>
-<span><span class="co">#&gt;     RD 95% LCI RD 95% UCI</span></span>
-<span><span class="co">#&gt;          &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.02002146 0.03396905</span></span>
-<span><span class="co">#&gt; 2: -0.03396905 0.02002146</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1654977  0.4132708   3.286912  0.5289895</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8580026  0.3042369   2.419721  0.5289895</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0.006973797 -0.02002146 0.03396905 0.01377334</span></span>
+<span><span class="co">#&gt; 2:    -0.006973797 -0.03396905 0.02002146 0.01377334</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI Risk Difference</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9413422  0.5369341   1.650342   -0.0009250492</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0623130  0.6059349   1.862426    0.0009250492</span></span>
-<span><span class="co">#&gt;      RD 95% LCI  RD 95% UCI</span></span>
-<span><span class="co">#&gt;           &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: -0.008530867 0.006680769</span></span>
-<span><span class="co">#&gt; 2: -0.006680769 0.008530867</span></span></code></pre></div>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9413422  0.5369341   1.650342  0.2864498</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0623130  0.6059349   1.862426  0.2864498</span></span>
+<span><span class="co">#&gt;    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:   -0.0009250492 -0.008530867 0.006680769 0.003880591</span></span>
+<span><span class="co">#&gt; 2:    0.0009250492 -0.006680769 0.008530867 0.003880591</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

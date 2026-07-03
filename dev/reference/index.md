@@ -21,10 +21,6 @@
   [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
   multinomial models
 
-- [`SEQestimate()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQestimate.md)
-  : Estimate the (very rough) time to run SEQuential analysis on current
-  machine
-
 - [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
   : Parameter Builder for SEQuential Model and Estimates
 

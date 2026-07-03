@@ -2,6 +2,23 @@
 
 ## SEQTaRget (development version)
 
+- Allow arm-specific treatment-weight models: `numerator` and
+  `denominator` in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
+  now also accept a character vector with one formula per `treat.level`
+  (in `treat.level` order), fitting a separate numerator/denominator
+  model - with its own covariates - in each treatment arm. Only the
+  estimates from the respective arm’s model are used to construct that
+  arm’s weights. A single string keeps the previous behaviour (the same
+  formula in every arm). Arm-specific formulas are only supported for
+  weights estimated on the post-expansion data
+  (`weight.preexpansion = FALSE`); the LTFU, visit, and outcome models
+  are unaffected.
+
+## SEQTaRget v1.4.3
+
+CRAN release: 2026-06-23
+
 - Fix “Risk Differerence” typo in `risk.times` output
 - Report follow-up per treatment arm in the `@info` slot as
   `info$followup.unique` and `info$followup.nonunique` (per subgroup,
@@ -169,6 +186,20 @@
   faster per resample than parglm’s per-fit thread setup. This was
   previously a silent switch.
 - Clarify unique vs non-unique in diagnostic table labels and docs
+- Soft deprecate
+  [`SEQestimate()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQestimate.md)
+  since it is only accurate to an order of magnitude.
+- Add bootstrap standard errors to the `risk.comparison` output: `RD SE`
+  (standard error of the risk difference, natural scale) and
+  `log(RR) SE` (standard error of the log risk ratio). Both are reported
+  whenever `bootstrap = TRUE`, regardless of `bootstrap.CI_method` (the
+  SEs were already computed internally to form the `"se"` confidence
+  intervals but were not retained, and not computed at all under
+  `"percentile"`).
+- Fix the confidence-interval column labels in `risk.comparison` and
+  `risk.data`, which were hardcoded as `95%` regardless of
+  `bootstrap.CI`. They now reflect the requested level
+  (e.g. `RD 90% LCI`, `90% UCI` when `bootstrap.CI = 0.9`).
 
 ## SEQTaRget v1.4.2
 

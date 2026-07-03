@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.2.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,14 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame of risk information at end of followup (risk ratios, risk differences and confidence intervals, if bootstrapped)</p>
+    <p>A data frame of risk comparison information at the reported follow-up time(s):
+risk ratios and risk differences, and when bootstrapped their confidence
+intervals and standard errors. The bootstrap standard errors are reported
+regardless of <code>bootstrap.CI_method</code>: <code>RD SE</code> is the standard error of the
+risk difference (natural scale) and <code>log(RR) SE</code> is the standard error of
+the log risk ratio. For an inverse-variance-weighted meta-analysis across
+samples, pool <code>Risk Difference</code> with <code>RD SE</code>, and <code>log(</code>Risk Ratio<code>)</code> with
+<code>log(RR) SE</code> (then exponentiate the pooled ratio).</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
