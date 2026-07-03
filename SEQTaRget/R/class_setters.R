@@ -141,10 +141,26 @@ parameter.simplifier <- function(params) {
     params@weighted <- FALSE
   }
 
+  # Per-treatment-level weight models: 'numerator'/'denominator' may be a
+  # character vector with one formula per treat.level (in treat.level order),
+  # fitting a separate model per level. Only supported for weights estimated
+  # on the post-expansion data.
+  for (nm in c("numerator", "denominator")) {
+    covs <- slot(params, nm)
+    if (length(covs) > 1L) {
+      if (anyNA(covs)) stop("Per-treatment-level '", nm, "' formulas contain NA; supply one formula per treatment level")
+      if (!params@weighted || params@method == "ITT") stop("Per-treatment-level '", nm, "' models require a weighted, non-ITT analysis")
+      if (params@weight.preexpansion) stop("Per-treatment-level '", nm, "' models are only supported for post-expansion weights (weight.preexpansion = FALSE)")
+      if (length(covs) != length(params@treat.level)) stop("'", nm, "' must be a single formula or one per treatment level (", length(params@treat.level), " expected, in 'treat.level' order) but ", length(covs), " were supplied")
+    }
+  }
+
   if (params@weighted && params@method != "ITT" &&
-      !is.na(params@numerator) && !is.na(params@denominator) &&
-      identical(params@numerator, params@denominator)) {
-    warning("Numerator and denominator weight models use identical covariates ('", params@numerator,
+      length(params@numerator) == length(params@denominator) &&
+      all(!is.na(params@numerator)) && all(!is.na(params@denominator)) &&
+      any(params@numerator == params@denominator)) {
+    same <- unique(params@numerator[params@numerator == params@denominator])
+    warning("Numerator and denominator weight models use identical covariates ('", paste(same, collapse = "', '"),
             "'); the stabilized weights will all equal 1 (i.e., no weighting). The denominator should ",
             "typically include the time-varying confounders that the numerator omits - check for a typo in either or both of 'numerator' and 'denominator'.")
   }

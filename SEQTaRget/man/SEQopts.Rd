@@ -95,7 +95,7 @@ SEQopts(
 
 \item{data.return}{Logical: whether to return the expanded dataframe with weighting information, default is \code{FALSE}}
 
-\item{denominator}{String: denominator covariates to the right hand side of a formula object}
+\item{denominator}{String or character vector: denominator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate denominator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})}
 
 \item{deviation}{Logical: create switch based on deviation from column \code{deviation.col}, default is \code{FALSE}}
 
@@ -143,7 +143,7 @@ SEQopts(
 
 \item{nthreads}{Integer: number of threads to use for data.table processing, default is \code{\link[data.table:getDTthreads]{data.table::getDTthreads()}}}
 
-\item{numerator}{String: numerator covariates to the right hand side of a formula object}
+\item{numerator}{String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})}
 
 \item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
 

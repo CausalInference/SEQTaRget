@@ -1,3 +1,7 @@
+# SEQTaRget (development version)
+
+* Allow arm-specific treatment-weight models: `numerator` and `denominator` in `SEQopts()` now also accept a character vector with one formula per `treat.level` (in `treat.level` order), fitting a separate numerator/denominator model - with its own covariates - in each treatment arm. Only the estimates from the respective arm's model are used to construct that arm's weights. A single string keeps the previous behaviour (the same formula in every arm). Arm-specific formulas are only supported for weights estimated on the post-expansion data (`weight.preexpansion = FALSE`); the LTFU, visit, and outcome models are unaffected.
+
 # SEQTaRget v1.4.3
 
 * Fix "Risk Differerence" typo in `risk.times` output

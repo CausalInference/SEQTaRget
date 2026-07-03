@@ -112,8 +112,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
   if (params@weighted && params@method != "ITT") {
-    if (is.na(params@numerator)) params@numerator <- create.default.weight.covariates(params, "numerator")
-    if (is.na(params@denominator)) params@denominator <- create.default.weight.covariates(params, "denominator")
+    if (all(is.na(params@numerator))) params@numerator <- create.default.weight.covariates(params, "numerator")
+    if (all(is.na(params@denominator))) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
   if (params@LTFU) {
     if (is.na(params@cense.numerator)) params@cense.numerator <- create.default.LTFU.covariates(params, "numerator")

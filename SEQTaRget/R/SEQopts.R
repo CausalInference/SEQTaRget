@@ -12,7 +12,7 @@
 #' @param compevent String: column name for competing event indicator
 #' @param covariates String: covariates to the right hand side of a formula object
 #' @param data.return Logical: whether to return the expanded dataframe with weighting information, default is `FALSE`
-#' @param denominator String: denominator covariates to the right hand side of a formula object
+#' @param denominator String or character vector: denominator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate denominator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})
 #' @param deviation Logical: create switch based on deviation from column \code{deviation.col}, default is `FALSE`
 #' @param deviation.col Character: column name for deviation
 #' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
@@ -36,7 +36,7 @@
 #' @param multinomial Logical: whether to expect multilevel treatment values, default is `FALSE`
 #' @param ncores Integer: number of cores to use in parallel processing, default is one less than system max, see [parallelly::availableCores()]
 #' @param nthreads Integer: number of threads to use for data.table processing, default is [data.table::getDTthreads()]
-#' @param numerator String: numerator covariates to the right hand side of a formula object
+#' @param numerator String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})
 #' @param parallel Logical: define if the SEQuential process is run in parallel, default is `FALSE`
 #' @param parglm.control A control object from [parglm::parglm.control()] to pass to `parglm::parglm.fit()`. Only used when `glm.package = "parglm"`. Defaults to `parglm::parglm.control(method = "FAST")`. If you encounter a `chol(): decomposition failed` error (e.g. with near-singular model matrices on large datasets), pass `parglm.control = parglm::parglm.control(method = "LAPACK")` to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.
 #' @param plot.colors Character: Colors for output plot if \code{km.curves = TRUE}, defaulted to ggplot2 defaults

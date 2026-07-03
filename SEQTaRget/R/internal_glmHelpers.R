@@ -64,8 +64,10 @@ inline.pred <- function(model, newdata, params, type = NULL, case = "default", m
       case,
       "default" = switch(
         type,
-        "numerator" = cache$numerator,
-        "denominator" = cache$denominator,
+        # Weight-model formulas may be per-treatment-level; `target` carries
+        # the level being predicted (passed at every weight-prediction site).
+        "numerator" = select_cached_level(cache$numerator, target, params),
+        "denominator" = select_cached_level(cache$denominator, target, params),
         "outcome" = cache$covariates
       ),
       "LTFU" = switch(
@@ -91,12 +93,15 @@ inline.pred <- function(model, newdata, params, type = NULL, case = "default", m
   }
 
   # Fallback to original parsing (for backwards compatibility)
+  select_level <- function(covs) {
+    if (length(covs) <= 1L) covs else covs[[match(target, unlist(params@treat.level))]]
+  }
   covs <- switch(
     case,
     "default" = switch(
       type,
-      "numerator" = params@numerator,
-      "denominator" = params@denominator,
+      "numerator" = select_level(params@numerator),
+      "denominator" = select_level(params@denominator),
       "outcome" = params@covariates
     ),
     "LTFU" = switch(
@@ -135,10 +140,12 @@ inline.pred <- function(model, newdata, params, type = NULL, case = "default", m
 # Refactored prepare.data - uses pre-computed cache
 prepare.data_cached <- function(weight, params, type, model, case, cache) {
   
-  # Get the right cached formula/cols based on case and type
+  # Get the right cached formula/cols based on case and type. For the default
+  # (treatment weight) case the formula may be per-treatment-level; `model`
+  # carries the level being fit.
   cached <- switch(
     case,
-    "default" = if (type == "numerator") cache$numerator else cache$denominator,
+    "default" = select_cached_level(if (type == "numerator") cache$numerator else cache$denominator, model, params),
     "LTFU" = if (type == "numerator") cache$cense_numerator else cache$cense_denominator,
     "visit" = if (type == "numerator") cache$visit_numerator else cache$visit_denominator,
     "surv" = cache$covariates
