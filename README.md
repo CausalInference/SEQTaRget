@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SEQTaRget - Sequentially Nested Target Trial Emulation <a href="https://causalinference.github.io/SEQTaRget/"><img src="SEQTaRget/man/figures/logo.png" align="right" height="138" alt="SEQTaRget logo with link to website." /></a>
+# SEQTaRget - Sequential Target Trial Emulation <a href="https://causalinference.github.io/SEQTaRget/"><img src="SEQTaRget/man/figures/logo.png" align="right" height="138" alt="SEQTaRget logo with link to website." /></a>
 
 <!-- badges: start -->
 
