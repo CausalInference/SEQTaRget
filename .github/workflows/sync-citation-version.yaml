@@ -1,0 +1,38 @@
+on:
+  push:
+    branches: [main]
+    paths: ['SEQTaRget/DESCRIPTION']
+name: sync-citation-version.yaml
+permissions: read-all
+jobs:
+  sync-citation-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Sync version into CITATION.cff
+        run: |
+          VERSION=$(grep -m1 '^Version:' SEQTaRget/DESCRIPTION | sed 's/^Version:[[:space:]]*//')
+
+          if [ -z "$VERSION" ]; then
+            echo "Could not read Version from SEQTaRget/DESCRIPTION"
+            exit 1
+          fi
+
+          echo "DESCRIPTION version: $VERSION"
+
+          sed -i -E "s/^version:.*/version: $VERSION/" CITATION.cff
+
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add CITATION.cff
+
+          if git diff --staged --quiet; then
+            echo "CITATION.cff already up to date"
+          else
+            git commit -m "Sync CITATION.cff version to $VERSION"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
