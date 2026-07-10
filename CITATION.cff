@@ -7,7 +7,7 @@ authors:
     orcid: https://orcid.org/0009-0000-0103-9546
   - family-name: Palmer
     given-name: Tom
-    affiliation: MRC Integrative Epidemiology Unit, University of Bristol
+    affiliation: "MRC Integrative Epidemiology Unit and Population Health Sciences, University of Bristol"
     orcid: https://orcid.org/0000-0003-4655-4511
   - family-name: Madley-Dowd
     given-name: Paul
@@ -15,14 +15,14 @@ authors:
     orcid: https://orcid.org/0000-0003-2932-9486
   - family-name: Szmulewicz
     given-name: Alejandro
-    affiliation: CAUSALab, Department of Epidemiology, Harvard T.H. Chan School of Public Health
-    affiliation: McLean Hospital
-    affiliation: Department of Psychiatry, Harvard Medical School
+    affiliation: "CAUSALab, Department of Epidemiology, Harvard T.H. Chan School of Public Health; McLean Hospital; Department of Psychiatry, Harvard Medical School"
     orcid: https://orcid.org/0000-0002-2664-802X
   - family-name: Hernán
     given-name: Miguel A.
-    affiliation: CAUSALab, Department of Epidemiology, Harvard T.H. Chan School of Public Health
-    affiliation: Department of Biostatistics, Harvard T.H. Chan School of Public Health
+    affiliation: "CAUSALab, Department of Epidemiology, Harvard T.H. Chan School of Public Health; Department of Biostatistics, Harvard T.H. Chan School of Public Health"
     orcid: https://orcid.org/0000-0003-1619-8456
-title: "SEQTaRget: Sequential Target Trial Emulation"
+title: "pySEQTarget: Sequential Target Trial Emulation"
 version: 1.4.3.9000
+url: https://causalinference.github.io/SEQTaRget/
+repository-code: https://cran.r-project.org/web/packages/SEQTaRget/
+repository-artifact: https://pypi.org/project/pySEQTarget/
