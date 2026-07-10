@@ -1,4 +1,4 @@
-# SEQTaRget - Sequentially Nested Target Trial Emulation
+# SEQTaRget - Sequential Target Trial Emulation
 
 Implementation of sequential trial emulation for the analysis of
 observational databases. The ‘SEQTaRget’ software accommodates
