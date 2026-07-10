@@ -1,20 +1,17 @@
 on:
   push:
+    branches: [main]
     paths: ['SEQTaRget/DESCRIPTION']
 name: sync-citation-version.yaml
 permissions: read-all
 jobs:
   sync-citation-version:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Sync version into CITATION.cff
         run: |
@@ -37,5 +34,5 @@ jobs:
             echo "CITATION.cff already up to date"
           else
             git commit -m "Sync CITATION.cff version to $VERSION"
-            git push origin
+            git push origin HEAD:${{ github.ref_name }}
           fi
