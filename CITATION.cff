@@ -21,7 +21,7 @@ authors:
     given-name: Miguel A.
     affiliation: "CAUSALab, Department of Epidemiology, Harvard T.H. Chan School of Public Health; Department of Biostatistics, Harvard T.H. Chan School of Public Health"
     orcid: https://orcid.org/0000-0003-1619-8456
-title: "pySEQTarget: Sequential Target Trial Emulation"
+title: "SEQTaRget: Sequential Target Trial Emulation"
 version: 1.4.3.9000
 url: https://causalinference.github.io/SEQTaRget/
 repository-code: https://cran.r-project.org/web/packages/SEQTaRget/
