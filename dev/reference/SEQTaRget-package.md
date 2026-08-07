@@ -27,9 +27,6 @@ Authors:
 - Ryan O'Dea <ryan.odea@psi.ch>
   ([ORCID](https://orcid.org/0009-0000-0103-9546))
 
-- Alejandro Szmulewicz <aszmulewicz@hsph.harvard.edu>
-  ([ORCID](https://orcid.org/0000-0002-2664-802X))
-
 - Tom Palmer <remlapmot@hotmail.com>
   ([ORCID](https://orcid.org/0000-0003-4655-4511))
   ([ROR](https://ror.org/0524sp257))
@@ -37,7 +34,10 @@ Authors:
 - Paul Madley-Dowd <p.madley-dowd@bristol.ac.uk>
   ([ORCID](https://orcid.org/0000-0003-2932-9486))
 
-- Miguel Hernán <mhernan@hsph.harvard.edu>
+- Alejandro Szmulewicz <aszmulewicz@hsph.harvard.edu>
+  ([ORCID](https://orcid.org/0000-0002-2664-802X))
+
+- Miguel A. Hernán <mhernan@hsph.harvard.edu>
   ([ORCID](https://orcid.org/0000-0003-1619-8456))
 
 Other contributors:
