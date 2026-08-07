@@ -24,10 +24,10 @@ Useful links:
 Authors:
 \itemize{
   \item Ryan O'Dea \email{ryan.odea@psi.ch} (\href{https://orcid.org/0009-0000-0103-9546}{ORCID})
-  \item Alejandro Szmulewicz \email{aszmulewicz@hsph.harvard.edu} (\href{https://orcid.org/0000-0002-2664-802X}{ORCID})
   \item Tom Palmer \email{remlapmot@hotmail.com} (\href{https://orcid.org/0000-0003-4655-4511}{ORCID}) (\href{https://ror.org/0524sp257}{ROR})
   \item Paul Madley-Dowd \email{p.madley-dowd@bristol.ac.uk} (\href{https://orcid.org/0000-0003-2932-9486}{ORCID})
-  \item Miguel Hernán \email{mhernan@hsph.harvard.edu} (\href{https://orcid.org/0000-0003-1619-8456}{ORCID})
+  \item Alejandro Szmulewicz \email{aszmulewicz@hsph.harvard.edu} (\href{https://orcid.org/0000-0002-2664-802X}{ORCID})
+  \item Miguel A. Hernán \email{mhernan@hsph.harvard.edu} (\href{https://orcid.org/0000-0003-1619-8456}{ORCID})
 }
 
 Other contributors:
