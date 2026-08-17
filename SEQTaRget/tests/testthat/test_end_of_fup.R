@@ -169,6 +169,49 @@ test_that("The requested time must lie within the expanded follow-up", {
                "below the minimum follow-up")
 })
 
+test_that("Outcome count tables are suppressed for a continuous outcome only", {
+  skip_on_cran()
+  set.seed(42)
+  d <- copy(SEQdata)
+  d[, cont := 10 + 2 * as.numeric(as.character(tx_init)) + N + rnorm(.N)]
+
+  # Counting outcome == 1 rows is meaningless for a continuous outcome (it would
+  # count values that happen to equal exactly 1), so the tables are NA
+  cont <- eof_run(data = d, outcome = "cont", end_of_fup = TRUE, end_of_fup.time = 12,
+                  end_of_fup.type = "continuous")
+  expect_true(all(is.na(diagnostics(cont)$outcome.unique)))
+  expect_true(all(is.na(diagnostics(cont)$outcome.nonunique)))
+
+  # Person-time is still meaningful and must survive
+  expect_s3_class(diagnostics(cont)$followup.unique[[1]], "data.table")
+  expect_true(sum(diagnostics(cont)$followup.nonunique[[1]]$n) > 0)
+
+  printed <- capture.output(show(cont))
+  expect_length(grep("Outcome Table", printed), 0)
+  expect_true(any(grepl("Follow-up Table", printed)))
+
+  # A binary end-of-follow-up outcome keeps its outcome tables
+  bin <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12)
+  expect_s3_class(diagnostics(bin)$outcome.unique[[1]], "data.table")
+  expect_true(any(grepl("Outcome Table", capture.output(show(bin)))))
+})
+
+test_that("Continuous outcome tables are suppressed without losing subgroup follow-up tables", {
+  skip_on_cran()
+  set.seed(42)
+  d <- copy(SEQdata)
+  d[, cont := 10 + 2 * as.numeric(as.character(tx_init)) + N + rnorm(.N)]
+  model <- eof_run(data = d, outcome = "cont", end_of_fup = TRUE, end_of_fup.time = 12,
+                   end_of_fup.type = "continuous", subgroup = "sex")
+
+  expect_named(diagnostics(model)$followup.unique, c("sex_0", "sex_1"))
+  # Both subgroups still print their follow-up tables despite the outcome tables
+  # (which normally drive that loop) being absent
+  printed <- capture.output(show(model))
+  expect_length(grep("distinct subjects contributing follow-up", printed), 2)
+  expect_length(grep("person-time intervals", printed), 2)
+})
+
 test_that("End-of-follow-up expansion is not truncated at the first event", {
   skip_on_cran()
   # The survival path cuts each trial at its first outcome row. An end-of-follow-up
