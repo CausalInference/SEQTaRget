@@ -117,7 +117,10 @@ internal.analysis <- function(params) {
 
     handler <- function(DT, data, params, start = NULL) {
       if (!params@weighted) {
-        model <- internal.model(DT, params, start = start)
+        # An end-of-follow-up outcome is a weighted average, not a fitted model;
+        # fitting the quasibinomial outcome model would be meaningless for it
+        # (and ill-defined for a continuous outcome), so it is skipped.
+        model <- if (params@end_of_fup) NA else internal.model(DT, params, start = start)
         WDT <- data.table()
       } else if (params@weighted) {
         WT <- internal.weights(DT, data, params, formula_cache)
@@ -199,12 +202,19 @@ internal.analysis <- function(params) {
           params@weight.lower <- stats$p01
           params@weight.upper <- stats$p99
         }
-        model <- internal.model(WDT, params, start = start)
+        model <- if (params@end_of_fup) NA else internal.model(WDT, params, start = start)
       }
+      # Computed here, while the weighted data still exists: WDT is dropped
+      # below unless data.return, and is discarded outright on bootstrap
+      # iterations, so the per-arm average cannot be recovered afterwards.
+      eof <- if (params@end_of_fup) {
+        endoffup.estimate(if (params@weighted) WDT else DT, params)
+      } else NA
       if (!params@data.return) WDT <- data.table()
       return(list(
         model = model,
         weighted_stats = if (params@weighted) stats else NA,
+        eof = eof,
         WDT = WDT
       ))
     }
@@ -262,7 +272,13 @@ internal.analysis <- function(params) {
       # setup on every resample. The main fit above honors the user's choice.
       # Documented in the glm.package entry of ?SEQopts.
       params_boot@glm.package <- "fastglm"
-      boot_start <- lapply(full$model, function(sg) coef(sg$model))
+      # No outcome model is fit in end_of_fup mode, so there are no coefficients
+      # to warm-start from and nothing to strip off the iteration's result.
+      boot_start <- if (params@end_of_fup) NULL else lapply(full$model, function(sg) coef(sg$model))
+      clean_models <- function(out) {
+        if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
+        out
+      }
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
@@ -271,8 +287,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
-          return(out)
+          return(clean_models(out))
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
@@ -280,8 +295,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
-          return(out)
+          return(clean_models(out))
         })
       }
     } else {

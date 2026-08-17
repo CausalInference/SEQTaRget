@@ -18,6 +18,10 @@
 #' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
 #' @param deviation.excused Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is `FALSE`
 #' @param deviation.excused_cols Character list: excused columns for deviation switches
+#' @param end_of_fup Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is `FALSE`. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}
+#' @param end_of_fup.time Numeric: the follow-up time `k` (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when \code{end_of_fup = TRUE}
+#' @param end_of_fup.type String: type of end-of-follow-up outcome, either `'binary'` (the default, giving the weighted proportion in each arm) or `'continuous'` (giving the weighted mean)
+#' @param end_of_fup.window Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly \code{end_of_fup.time}, default is `0` (no window). Those trial-periods fall back to the earliest available measurement in `[k - window, k + window]`; any with no measurement anywhere in the window are censored, i.e. excluded from the average
 #' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}
@@ -71,6 +75,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     cense = NA, cense.denominator = NA, cense.eligible = NA, cense.numerator = NA,
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
+                    end_of_fup = FALSE, end_of_fup.time = NA, end_of_fup.type = "binary", end_of_fup.window = 0,
                     excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE, followup.spline.df = 4L,
                     glm.package = "fastglm",
@@ -162,6 +167,20 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   if (!all(is.na(risk.times)) && any(risk.times < 0, na.rm = TRUE))
     stop("'risk.times' must be non-negative")
 
+  end_of_fup <- as.logical(end_of_fup)
+  end_of_fup.time <- as.numeric(end_of_fup.time)
+  end_of_fup.type <- as.character(end_of_fup.type)
+  end_of_fup.window <- as.numeric(end_of_fup.window)
+  if (end_of_fup) {
+    if (length(end_of_fup.time) != 1L || is.na(end_of_fup.time))
+      stop("'end_of_fup.time' must be a single non-missing follow-up time when 'end_of_fup = TRUE'")
+    if (end_of_fup.time < 0) stop("'end_of_fup.time' must be non-negative")
+    if (!end_of_fup.type %in% c("binary", "continuous"))
+      stop("'end_of_fup.type' must be one of \"binary\" or \"continuous\"")
+    if (length(end_of_fup.window) != 1L || is.na(end_of_fup.window) || end_of_fup.window < 0)
+      stop("'end_of_fup.window' must be a single non-negative number")
+  }
+
   if (bootstrap.sample <= 0 || bootstrap.sample > 1) stop("'bootstrap.sample' must be in (0, 1]")
   if (bootstrap.CI <= 0 || bootstrap.CI >= 1) stop("'bootstrap.CI' must be in (0, 1)")
   if (bootstrap.nboot < 1L) stop("'bootstrap.nboot' must be a positive integer")
@@ -209,6 +228,10 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       followup.max = followup.max,
       survival.max = survival.max,
       risk.times = risk.times,
+      end_of_fup = end_of_fup,
+      end_of_fup.time = end_of_fup.time,
+      end_of_fup.type = end_of_fup.type,
+      end_of_fup.window = end_of_fup.window,
       trial.include = trial.include,
       followup.include = followup.include,
       weighted = weighted,

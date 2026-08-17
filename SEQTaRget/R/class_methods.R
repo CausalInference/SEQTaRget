@@ -33,13 +33,18 @@ setMethod("show", "SEQoutput", function(object) {
   risk.data <- slot(object, "risk.data")
   risk.comparison <- slot(object, "risk.comparison")
   if (!params@hazard) {
-    outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
+    # No outcome model is fit for an end-of-follow-up outcome
+    if (!params@end_of_fup) outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
     weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
   }
 
   cat("SEQuential process completed in", elapsed_time, ":\n")
   cat("Initialized with:\n")
-  cat("Outcome covariates:", outcome, "\n")
+  if (params@end_of_fup) {
+    cat("End-of-follow-up outcome:", params@outcome,
+        paste0("(", params@end_of_fup.type, ")"), "at follow-up time", params@end_of_fup.time,
+        if (params@end_of_fup.window > 0) paste0("+/- ", params@end_of_fup.window) else "", "\n")
+  } else cat("Outcome covariates:", outcome, "\n")
   cat("Numerator covariates:", paste(numerator, collapse = " | "), "\n")
   cat("Denominator covariates:", paste(denominator, collapse = " | "), "\n\n")
 
@@ -48,13 +53,15 @@ setMethod("show", "SEQoutput", function(object) {
   } 
   if (!params@hazard) {
     cat("Full Model Information ========================================== \n")
-    cat("\nOutcome Model ==================================================== \n")
-    cat("Coefficients and Weighting:\n")
-    for (i in seq_along(outcome_model)) {
-      if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
-      print(.coef_table(outcome_model[[i]]))
+    if (!params@end_of_fup) {
+      cat("\nOutcome Model ==================================================== \n")
+      cat("Coefficients and Weighting:\n")
+      for (i in seq_along(outcome_model)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
+        print(.coef_table(outcome_model[[i]]))
+      }
     }
-    
+
     if (params@weighted) {
       cat("\nWeight Information ============================================= \n")
       if (params@method != "ITT") {
@@ -126,7 +133,18 @@ setMethod("show", "SEQoutput", function(object) {
         print(kable(risk.comparison[[i]]))
       }
     }
-  
+
+    if (params@end_of_fup) {
+      eof.data <- slot(object, "eof.data")
+      eof.comparison <- slot(object, "eof.comparison")
+      cat("End-of-Follow-up Outcome ==========================================\n")
+      for (i in seq_along(eof.data)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(eof.data)[[i]], "\n")
+        print(kable(eof.data[[i]]))
+        print(kable(eof.comparison[[i]]))
+      }
+    }
+
   } else {
     cat("Hazard ============================================================\n")
     for (i in seq_along(hazard)) {
@@ -237,6 +255,37 @@ covariates <- function(object) {
   return(list(Outcome = format_formula(object@outcome),
               Numerator = format_formula(object@numerator),
               Denominator = format_formula(object@denominator)))
+}
+
+#' Extract the end-of-follow-up outcome estimates
+#'
+#' Available when [SEQuential()] was run with \code{end_of_fup = TRUE}. The
+#' estimate in each arm is the weighted average of the outcome measured at
+#' \code{end_of_fup.time}, weighted by the period-trial-specific weight at the
+#' time the measurement was taken.
+#'
+#' @param object SEQoutput object
+#'
+#' @returns A named list, one element per subgroup, each a list of two
+#'   data.tables:
+#'   \itemize{
+#'     \item \code{estimates}: the weighted proportion (binary) or mean
+#'       (continuous) in each baseline treatment arm, with its bootstrap
+#'       confidence interval, and the number of contributing trial-periods and
+#'       distinct subjects.
+#'     \item \code{comparison}: pairwise between-arm differences and ratios,
+#'       with bootstrap confidence intervals paired by iteration.
+#'   }
+#' @importFrom methods is slot
+#' @export
+end_of_fup <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@end_of_fup) stop("End-of-follow-up estimates were not created as a result of 'end_of_fup = FALSE'")
+  data <- slot(object, "eof.data")
+  comparison <- slot(object, "eof.comparison")
+  out <- lapply(seq_along(data), function(i) list(estimates = data[[i]], comparison = comparison[[i]]))
+  names(out) <- names(data)
+  return(out)
 }
 
 #' Function to print Kaplan-Meier curves

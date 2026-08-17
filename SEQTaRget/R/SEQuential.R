@@ -163,7 +163,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (length(pruned) > 0 && verbose) cat("\nPruned\n")
 
   if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
-  if (!params@hazard) {
+  # A continuous end-of-follow-up outcome is averaged, not modelled as an event,
+  # so it is the one case where a non-binary outcome column is expected.
+  if (!params@hazard && !(params@end_of_fup && params@end_of_fup.type == "continuous")) {
     outcome_vals <- unique(data[[params@outcome]])
     if (!all(outcome_vals %in% c(0L, 1L))) stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ",
                                                  paste(setdiff(outcome_vals, c(0L, 1L)), collapse = ", "))
@@ -267,11 +269,26 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   analytic <- internal.analysis(params)
   WDT <- analytic[[1]]$WDT
 
-  subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
+  # In end_of_fup mode no outcome model is fit, so the subgroup labels come from
+  # the per-subgroup end-of-follow-up estimates instead.
+  subgroups <- if (is.na(params@subgroup)) 1L else
+    if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
-  if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
-  if (!params@hazard) {
+  eof.data <- eof.comparison <- vector("list", n_subgroups)
+  if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- names(eof.data) <- names(eof.comparison) <- subgroups
+  if (params@end_of_fup) {
+    if (params@verbose) cat("\nEstimating end-of-follow-up outcome at follow-up time", params@end_of_fup.time, "\n")
+    for (i in seq_along(subgroups)) {
+      label <- subgroups[[i]]
+      eof <- create.endoffup(full = analytic[[1]]$eof[[i]],
+                             boots = lapply(analytic[-1], function(x) x$eof[[i]]),
+                             params = params)
+      eof.data[[label]] <- eof$eof.data
+      eof.comparison[[label]] <- eof$eof.comparison
+      weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
+    }
+  } else if (!params@hazard) {
     if (params@verbose) cat("\n", method, " model created successfully\n", sep = "")
 
     # Survival Information =======================================
@@ -335,7 +352,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                compevent.nonunique = compevent.nonunique)
   
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
-  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info,
+                        eof.data, eof.comparison)
 
   if (params@verbose) cat("\nCompleted\n")
   plan("sequential")
