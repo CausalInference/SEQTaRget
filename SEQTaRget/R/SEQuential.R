@@ -319,20 +319,28 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   rm(analytic)
 
-  outcome.unique  <- outcome.nonunique <- vector("list", n_subgroups)
+  # The outcome tables count outcome == 1 rows, which is only meaningful for a
+  # binary outcome: for a continuous end-of-follow-up outcome they would count
+  # values that happen to equal exactly 1, so they are reported as NA instead.
+  # The follow-up tables count person-time and stay meaningful either way.
+  continuous.outcome <- params@end_of_fup && params@end_of_fup.type == "continuous"
+  outcome.unique  <- outcome.nonunique <- if (!continuous.outcome) vector("list", n_subgroups) else NA
   followup.unique <- followup.nonunique <- vector("list", n_subgroups)
   compevent.unique <- compevent.nonunique <- if (!is.na(params@compevent)) vector("list", n_subgroups) else NA
   if (n_subgroups > 0) {
-    names(outcome.unique) <- names(outcome.nonunique) <-
-      names(followup.unique) <- names(followup.nonunique) <- subgroups
+    names(followup.unique) <- names(followup.nonunique) <- subgroups
+    if (!continuous.outcome)
+      names(outcome.unique) <- names(outcome.nonunique) <- subgroups
     if (!is.na(params@compevent))
       names(compevent.unique) <- names(compevent.nonunique) <- subgroups
   }
   filter <- sort(unique(data[[params@subgroup]]))
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
-    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
-    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
+    if (!continuous.outcome) {
+      outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
+      outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
+    }
     followup.unique[[label]] <- followup.table(params, type = "unique", filter = filter[[i]])
     followup.nonunique[[label]] <- followup.table(params, type = "nonunique", filter = filter[[i]])
     if (!is.na(params@compevent)) {

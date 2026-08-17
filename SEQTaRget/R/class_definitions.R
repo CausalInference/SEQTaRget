@@ -227,7 +227,7 @@ setClass("SEQweights",
 #' @slot eof.data end-of-follow-up estimates per treatment arm when \code{end_of_fup = TRUE}, empty otherwise. See [end_of_fup()]
 #' @slot eof.comparison pairwise between-arm contrasts of the end-of-follow-up estimates when \code{end_of_fup = TRUE}, empty otherwise
 #' @slot weight.statistics information from the weighting process, containing weight coefficients and weight statistics
-#' @slot info list of diagnostic tables (outcome, follow-up, switch, and competing-event counts where applicable), each split by baseline treatment arm. The "unique" tables count distinct subjects; the "non-unique" tables count rows: total outcome events for the outcome tables, and total person-time intervals for the follow-up tables. See [diagnostics()].
+#' @slot info list of diagnostic tables (outcome, follow-up, switch, and competing-event counts where applicable), each split by baseline treatment arm. The "unique" tables count distinct subjects; the "non-unique" tables count rows: total outcome events for the outcome tables, and total person-time intervals for the follow-up tables. The outcome tables are \code{NA} for a continuous end-of-follow-up outcome, which has no events to count. See [diagnostics()].
 #' @slot ce.model list of competing event models if \code{compevent} is specified, NA otherwise
 #'
 setClass("SEQoutput",

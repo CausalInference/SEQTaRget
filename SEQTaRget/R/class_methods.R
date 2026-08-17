@@ -158,12 +158,19 @@ setMethod("show", "SEQoutput", function(object) {
   outcome.nonunique <- slot(object, "info")$outcome.nonunique
   followup.unique <- slot(object, "info")$followup.unique
   followup.nonunique <- slot(object, "info")$followup.nonunique
-  for (i in seq_along(outcome.unique)) {
-    if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome.unique)[[i]], "\n")
-    cat("Unique Outcome Table (distinct subjects who had the outcome): ")
-    print(kable(outcome.unique[[i]]))
-    cat("\nNon-Unique Outcome Table (total outcome events): ")
-    print(kable(outcome.nonunique[[i]]))
+  # A continuous end-of-follow-up outcome has no event counts, so the outcome
+  # tables are NA there; drive the loop off the follow-up tables, which are
+  # always present, so their subgroups still print.
+  has_outcome_tables <- is.list(outcome.unique)
+  labelled <- if (has_outcome_tables) outcome.unique else followup.unique
+  for (i in seq_along(labelled)) {
+    if (!is.na(params@subgroup)) cat("For subgroup: ", names(labelled)[[i]], "\n")
+    if (has_outcome_tables) {
+      cat("Unique Outcome Table (distinct subjects who had the outcome): ")
+      print(kable(outcome.unique[[i]]))
+      cat("\nNon-Unique Outcome Table (total outcome events): ")
+      print(kable(outcome.nonunique[[i]]))
+    }
     if (!is.null(followup.unique)) {
       cat("\nUnique Follow-up Table (distinct subjects contributing follow-up): ")
       print(kable(followup.unique[[i]]))
@@ -407,7 +414,8 @@ hazard_ratio <- function(object) {
 #'   \itemize{
 #'     \item \code{outcome.unique} / \code{outcome.nonunique}: distinct subjects who had the
 #'       outcome vs. the total number of outcome events. These coincide for a one-time
-#'       (terminal) outcome, since each subject contributes at most one event row.
+#'       (terminal) outcome, since each subject contributes at most one event row. Both are
+#'       \code{NA} for a continuous end-of-follow-up outcome, which has no events to count.
 #'     \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
 #'       follow-up vs. the total number of person-time intervals (expanded rows). The
 #'       non-unique count is much larger because each subject contributes one row per
