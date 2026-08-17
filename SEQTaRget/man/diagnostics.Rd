@@ -15,7 +15,8 @@ The "unique" and "non-unique" variants count different things:
 \itemize{
 \item \code{outcome.unique} / \code{outcome.nonunique}: distinct subjects who had the
 outcome vs. the total number of outcome events. These coincide for a one-time
-(terminal) outcome, since each subject contributes at most one event row.
+(terminal) outcome, since each subject contributes at most one event row. Both are
+\code{NA} for a continuous end-of-follow-up outcome, which has no events to count.
 \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
 follow-up vs. the total number of person-time intervals (expanded rows). The
 non-unique count is much larger because each subject contributes one row per
