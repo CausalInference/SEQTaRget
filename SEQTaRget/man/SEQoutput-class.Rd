@@ -32,6 +32,10 @@ An S4 class used to hold the outputs for the SEQuential process
 
 \item{\code{time}}{time used for the SEQuential process}
 
+\item{\code{eof.data}}{end-of-follow-up estimates per treatment arm when \code{end_of_fup = TRUE}, empty otherwise. See \code{\link[=end_of_fup]{end_of_fup()}}}
+
+\item{\code{eof.comparison}}{pairwise between-arm contrasts of the end-of-follow-up estimates when \code{end_of_fup = TRUE}, empty otherwise}
+
 \item{\code{weight.statistics}}{information from the weighting process, containing weight coefficients and weight statistics}
 
 \item{\code{info}}{list of diagnostic tables (outcome, follow-up, switch, and competing-event counts where applicable), each split by baseline treatment arm. The "unique" tables count distinct subjects; the "non-unique" tables count rows: total outcome events for the outcome tables, and total person-time intervals for the follow-up tables. See \code{\link[=diagnostics]{diagnostics()}}.}
