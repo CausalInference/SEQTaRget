@@ -56,7 +56,8 @@ Imports:
     methods,
     stringr,
     survival,
-    parallelly
+    parallelly,
+    utils
 Config/roxygen2/markdown: TRUE
 Config/roxygen2/version: 8.1.0
 Config/testthat/edition: 3

@@ -197,8 +197,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   if (!params@hazard && !(params@end_of_fup && params@end_of_fup.type == "continuous")) {
     outcome_vals <- unique(data[[params@outcome]])
     outcome_vals <- outcome_vals[!is.na(outcome_vals)]
-    if (!all(outcome_vals %in% c(0L, 1L))) stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ",
-                                                 paste(setdiff(outcome_vals, c(0L, 1L)), collapse = ", "))
+    if (!all(outcome_vals %in% c(0L, 1L))) {
+      offending <- setdiff(outcome_vals, c(0L, 1L))
+      # A continuous column can hold thousands of distinct values; listing them
+      # all buries the message it is meant to convey.
+      shown <- paste(utils::head(offending, 10L), collapse = ", ")
+      if (length(offending) > 10L) shown <- paste0(shown, ", ... (", length(offending), " distinct values)")
+      stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ", shown,
+           if (params@end_of_fup) "\n  For an outcome that is not 0/1, set 'end_of_fup.type = \"continuous\"' in SEQopts()" else "")
+    }
   }
   dup_check <- data[, .N, by = c(id.col, time.col)]
   dup_check <- dup_check[dup_check$N > 1L, ]

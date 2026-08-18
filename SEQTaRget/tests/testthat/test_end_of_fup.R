@@ -373,3 +373,23 @@ test_that("Missing outcome measurements are permitted only in end_of_fup mode", 
   expect_error(eof_run(data = d2, end_of_fup = TRUE, end_of_fup.time = 8),
                "outcome column only")
 })
+
+test_that("A non-binary outcome under the default type points at end_of_fup.type", {
+  skip_on_cran()
+  set.seed(1)
+  d <- copy(SEQdata)
+  d[, bio := rnorm(.N, 20)]
+
+  # end_of_fup.type defaults to "binary", so a continuous outcome must fail
+  # loudly rather than be averaged as if it were a proportion
+  err <- expect_error(eof_run(data = copy(d), outcome = "bio",
+                              end_of_fup = TRUE, end_of_fup.time = 12),
+                      "must be binary")
+  expect_match(conditionMessage(err), "end_of_fup.type", fixed = TRUE)
+  # The offending values are summarised rather than listed in full
+  expect_match(conditionMessage(err), "distinct values", fixed = TRUE)
+
+  # A survival analysis fails the same way but without the end_of_fup advice
+  survival_err <- expect_error(eof_run(data = copy(d), outcome = "bio"), "must be binary")
+  expect_false(grepl("end_of_fup.type", conditionMessage(survival_err), fixed = TRUE))
+})
