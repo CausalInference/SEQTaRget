@@ -22,20 +22,20 @@ library(SEQTaRget)
 
 ## What this is for
 
-The rest of `SEQTaRget` estimates **survival** outcomes: a binary event that may
+The rest of the `SEQTaRget` package estimates survival outcomes: a binary event that may
 occur at any point during follow-up, summarised through risks, survival curves or
 a hazard ratio.
 
-An **end-of-follow-up** outcome is different. It is measured once, at a single
-follow-up time chosen by you - a biomarker at 12 months, disease status at two
+An end-of-follow-up outcome is different. It is measured once, at a single
+follow-up time chosen by the user, e.g., a biomarker at 12 months, disease status at two
 years, a questionnaire score at the end of the trial. There is no time-to-event
 to model, and the quantity of interest is simply the average outcome in each
 treatment arm.
 
-`end_of_fup = TRUE` switches to that estimand. For each trial-period the outcome
+The `SEQopts()` option `end_of_fup = TRUE` switches to that estimand. For each trial-period the outcome
 is read at the requested follow-up time and averaged within each baseline
-treatment arm, **weighted by the period-trial-specific weight at the time the
-measurement was taken**. For a binary outcome this is the weighted proportion in
+treatment arm, weighted by the period-trial-specific weight at the time the
+measurement was taken. For a binary outcome this is the weighted proportion in
 each arm; for a continuous outcome, the weighted mean.
 
 Because there is no outcome model, `end_of_fup` cannot be combined with
@@ -109,12 +109,12 @@ end_of_fup(windowed)$`1`$estimates
 The selection rule, applied to each trial-period independently, is:
 
 1. If there is a measurement at exactly `k`, use it.
-2. Otherwise, use the measurement **nearest** to `k` within
+2. Otherwise, use the measurement *nearest* to `k` within
    `[k - window, k + window]`. Where two measurements are equally far either
-   side of `k`, the **later** one is taken, so that at least `k` of follow-up has
+   side of `k`, the *later* one is taken, so that at least `k` of follow-up has
    elapsed.
 3. If there is no measurement anywhere in the window, the trial-period is
-   **censored** - it contributes nothing to the average.
+   *censored* - it contributes nothing to the average.
 
 The weight used is always the weight at the time the chosen measurement was
 taken, not the weight at `k`.
@@ -139,11 +139,11 @@ diagnostics(windowed)$eof.nonunique
 The four categories are mutually exclusive, so the trial-period counts partition
 `Eligible`:
 
-- **At k** - contributed, using a measurement at exactly `k`.
-- **In window** - contributed, having fallen back to the window.
-- **Excluded (outside window)** - measured at some point, but not within the
+- *At k* - contributed, using a measurement at exactly `k`.
+- *In window* - contributed, having fallen back to the window.
+- *Excluded (outside window)* - measured at some point, but not within the
   window.
-- **Excluded (no measurement)** - never measured at any follow-up time. Under
+- *Excluded (no measurement)* - never measured at any follow-up time. Under
   `method = "censoring"` this also picks up trial-periods artificially censored
   before any measurement was taken.
 
@@ -159,8 +159,7 @@ suggest.
 ## Continuous outcomes
 
 Set `end_of_fup.type = "continuous"` for an outcome that is not 0/1. The estimate
-becomes a weighted mean, reported in a `Mean` column rather than `Proportion`,
-and its confidence interval is not clamped to `[0, 1]`.
+becomes a weighted mean, reported in a `Mean` column rather than `Proportion`.
 
 ```{r}
 data <- data.table::copy(SEQdata)
