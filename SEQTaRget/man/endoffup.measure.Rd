@@ -21,9 +21,11 @@ An end-of-follow-up outcome is measured once, at follow-up time
 \code{end_of_fup.time} (\code{k}), rather than as a time-to-event. For each
 (id, trial) this returns the single row the estimate is read from:
 the measurement at exactly \code{k} when one exists, otherwise - if
-\code{end_of_fup.window} is non-zero - the earliest available measurement in
-\code{[k - window, k + window]}. Trial-periods with no measurement anywhere in
-the window contribute no row, i.e. they are censored out of the estimate.
+\code{end_of_fup.window} is non-zero - the measurement nearest to \code{k}
+within \code{[k - window, k + window]}, with ties (measurements equally far
+either side of \code{k}) broken toward the earlier one. Trial-periods with no
+measurement anywhere in the window contribute no row, i.e. they are censored
+out of the estimate.
 }
 \details{
 Rows carrying a missing outcome are not measurements: under
