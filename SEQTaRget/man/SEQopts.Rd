@@ -117,7 +117,7 @@ SEQopts(
 
 \item{end_of_fup.type}{String: type of end-of-follow-up outcome, either \code{'binary'} (the default, giving the weighted proportion in each arm) or \code{'continuous'} (giving the weighted mean)}
 
-\item{end_of_fup.window}{Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly \code{end_of_fup.time}, default is \code{0} (no window). Those trial-periods fall back to the measurement nearest to \code{k} within \verb{[k - window, k + window]} (ties broken toward the earlier measurement); any with no measurement anywhere in the window are censored, i.e. excluded from the average}
+\item{end_of_fup.window}{Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly \code{end_of_fup.time}, default is \code{0} (no window). Those trial-periods fall back to the measurement nearest to \code{k} within \verb{[k - window, k + window]} (ties, i.e. measurements equally far either side of \code{k}, are broken toward the later measurement, so that at least \code{k} of follow-up has elapsed); any with no measurement anywhere in the window are censored, i.e. excluded from the average}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 

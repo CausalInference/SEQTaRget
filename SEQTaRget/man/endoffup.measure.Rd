@@ -23,7 +23,8 @@ An end-of-follow-up outcome is measured once, at follow-up time
 the measurement at exactly \code{k} when one exists, otherwise - if
 \code{end_of_fup.window} is non-zero - the measurement nearest to \code{k}
 within \code{[k - window, k + window]}, with ties (measurements equally far
-either side of \code{k}) broken toward the earlier one. Trial-periods with no
+either side of \code{k}) broken toward the later one, so that at least
+\code{k} of follow-up has elapsed. Trial-periods with no
 measurement anywhere in the window contribute no row, i.e. they are censored
 out of the estimate.
 }
