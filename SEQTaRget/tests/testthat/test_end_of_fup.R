@@ -16,13 +16,14 @@ test_that("Unweighted end-of-follow-up estimate is the mean of the selected meas
   expect_s4_class(model, "SEQoutput")
 
   # Independent re-implementation of the selection rule: the non-missing value
-  # nearest to k within [k - w, k + w], ties broken toward the earlier one.
-  # Rows are in ascending followup order, so which.min() returns the earlier of
-  # two equidistant measurements.
+  # nearest to k within [k - w, k + w], ties broken toward the later one. Rows
+  # are in ascending followup order, so taking the last of the equally-near
+  # measurements picks the later one.
   manual <- model@DT[!is.na(outcome) & followup >= k - w & followup <= k + w,
                      ][order(ID, trial, followup),
                        ][, {
-                           i <- which.min(abs(followup - k))
+                           d <- abs(followup - k)
+                           i <- max(which(d == min(d)))
                            list(val = outcome[i], arm = tx_init_bas[i])
                          }, by = c("ID", "trial")
                          ][, list(manual = mean(val), n = .N), by = "arm"][order(arm)]
@@ -84,9 +85,10 @@ test_that("The window takes the measurement nearest to k, not the earliest", {
   # ID 1: |1-k|=2 vs |4-k|=1, so the later measurement is nearer - the earliest
   #       rule would have taken followup 1
   # ID 2: measured at exactly k, which always wins
-  # ID 3: |2-k|=|4-k|=1, an equidistant tie broken toward the earlier
-  expect_equal(got$followup, c(4L, 3L, 2L))
-  expect_equal(got$eof.value, c(20, 40, 50))
+  # ID 3: |2-k|=|4-k|=1, an equidistant tie broken toward the later, so that at
+  #       least k of follow-up has elapsed
+  expect_equal(got$followup, c(4L, 3L, 4L))
+  expect_equal(got$eof.value, c(20, 40, 60))
 })
 
 test_that("Continuous end-of-follow-up outcomes are supported and reported as a mean", {

@@ -6,7 +6,8 @@
 #' the measurement at exactly \code{k} when one exists, otherwise - if
 #' \code{end_of_fup.window} is non-zero - the measurement nearest to \code{k}
 #' within \code{[k - window, k + window]}, with ties (measurements equally far
-#' either side of \code{k}) broken toward the earlier one. Trial-periods with no
+#' either side of \code{k}) broken toward the later one, so that at least
+#' \code{k} of follow-up has elapsed. Trial-periods with no
 #' measurement anywhere in the window contribute no row, i.e. they are censored
 #' out of the estimate.
 #'
@@ -36,11 +37,12 @@ endoffup.measure <- function(DT, params) {
   if (nrow(candidates) == 0L) return(candidates[, "eof.value" := numeric(0)])
 
   # Take the measurement nearest to k. The exact-k measurement has distance 0 so
-  # it always wins where one exists; ordering by (distance, followup) and taking
-  # the first row per trial-period breaks equidistant ties - one measurement the
-  # same number of periods either side of k - toward the earlier measurement.
+  # it always wins where one exists; ordering by (distance, descending followup)
+  # and taking the first row per trial-period breaks equidistant ties - one
+  # measurement the same number of periods either side of k - toward the later
+  # measurement, so the trial-period has at least k of follow-up elapsed.
   candidates[, .dist := abs(followup - k)]
-  setorderv(candidates, c(params@id, "trial", ".dist", "followup"))
+  setorderv(candidates, c(params@id, "trial", ".dist", "followup"), order = c(1L, 1L, 1L, -1L))
   out <- candidates[candidates[, .I[1L], by = c(params@id, "trial")]$V1
                     ][, .dist := NULL]
 
