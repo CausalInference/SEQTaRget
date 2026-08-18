@@ -70,8 +70,8 @@ end_of_fup(model)
 
 `end_of_fup()` returns, per subgroup, two tables: `estimates` gives the weighted
 proportion (or mean) in each arm with its bootstrap confidence interval, and
-`comparison` gives the pairwise between-arm contrast: the **difference in
-proportions** here, or the **difference in means** for a continuous outcome,
+`comparison` gives the pairwise between-arm contrast: the difference in
+proportions here, or the difference in means for a continuous outcome,
 with its standard error and confidence interval. For a binary outcome the ratio
 of proportions is reported alongside it, with an interval computed on the log
 scale and a `log(Ratio) SE` for inverse-variance pooling. Contrasts are paired by
