@@ -143,6 +143,44 @@ test_that("Bootstrap gives per-arm and paired between-arm confidence intervals",
   expect_equal(nrow(cmp), 2L)
   expect_equal(cmp$Difference[1], -cmp$Difference[2])
   expect_true(all(is.finite(cmp$`Difference SE`)))
+
+  # The difference carries its own interval, bracketing the point estimate
+  expect_true(all(cmp$`Difference 95% LCI` <= cmp$Difference))
+  expect_true(all(cmp$`Difference 95% UCI` >= cmp$Difference))
+})
+
+test_that("A binary outcome also reports the ratio of proportions with an interval", {
+  skip_on_cran()
+  cmp <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3,
+                 bootstrap = TRUE, bootstrap.nboot = 20)@eof.comparison[[1]]
+
+  expect_true(all(c("Ratio", "Ratio 95% LCI", "Ratio 95% UCI", "log(Ratio) SE") %in% names(cmp)))
+  expect_true(all(cmp$`Ratio 95% LCI` <= cmp$Ratio))
+  expect_true(all(cmp$`Ratio 95% UCI` >= cmp$Ratio))
+  # A ratio interval built on the log scale cannot cross zero
+  expect_true(all(cmp$`Ratio 95% LCI` > 0))
+  # Reversing the arms inverts the ratio, and the log-scale SE is direction-free
+  expect_equal(cmp$Ratio[1], 1 / cmp$Ratio[2])
+  expect_equal(cmp$`log(Ratio) SE`[1], cmp$`log(Ratio) SE`[2])
+})
+
+test_that("A continuous outcome reports a difference in means but no ratio", {
+  skip_on_cran()
+  set.seed(42)
+  d <- copy(SEQdata)
+  d[, cont := 10 + 2 * as.numeric(as.character(tx_init)) + N + rnorm(.N)]
+  cmp <- eof_run(data = d, outcome = "cont", end_of_fup = TRUE, end_of_fup.time = 12,
+                 end_of_fup.type = "continuous", end_of_fup.window = 3,
+                 bootstrap = TRUE, bootstrap.nboot = 20)@eof.comparison[[1]]
+
+  expect_true(all(c("Difference", "Difference SE") %in% names(cmp)))
+  expect_false(any(grepl("Ratio", names(cmp))))
+
+  # The difference in means is the gap between the two arm means
+  est <- eof_run(data = d, outcome = "cont", end_of_fup = TRUE, end_of_fup.time = 12,
+                 end_of_fup.type = "continuous", end_of_fup.window = 3)@eof.data[[1]][order(A)]
+  expect_equal(cmp[A_x == est$A[1] & A_y == est$A[2]]$Difference,
+               est$Mean[2] - est$Mean[1])
 })
 
 test_that("Subgroups produce one set of end-of-follow-up estimates each", {

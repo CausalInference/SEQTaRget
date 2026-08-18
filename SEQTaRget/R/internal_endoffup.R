@@ -104,7 +104,7 @@ endoffup.estimate <- function(DT, params) {
 #' @keywords internal
 create.endoffup <- function(full, boots, params) {
   estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- NULL
-  SE <- LCI <- UCI <- Time <- NULL
+  SE <- LCI <- UCI <- Time <- ratio_logse <- ratio_lci <- ratio_uci <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")
   z <- qnorm(1 - (1 - params@bootstrap.CI) / 2)
@@ -140,19 +140,31 @@ create.endoffup <- function(full, boots, params) {
                  ratio = est[as.character(V2)] / est[as.character(V1)])]
     if (has_ci) {
       wide <- dcast(boot_all, boot_idx ~ get(tx_bas), value.var = "estimate")
+      blank <- list(NA_real_, NA_real_, NA_real_, NA_real_, NA_real_, NA_real_)
       stat <- lapply(seq_len(nrow(pairs)), function(i) {
         v1 <- as.character(pairs$V1[i]); v2 <- as.character(pairs$V2[i])
-        if (!all(c(v1, v2) %in% names(wide))) return(list(NA_real_, NA_real_, NA_real_))
+        if (!all(c(v1, v2) %in% names(wide))) return(blank)
         d <- wide[[v2]] - wide[[v1]]
+        d_se <- sd(d, na.rm = TRUE)
+        # As in create.risk(), a ratio is summarised on the log scale - the scale
+        # on which ratio measures are pooled - and only where it is defined, so
+        # non-positive bootstrap estimates are dropped rather than yielding NaN.
+        r <- wide[[v2]] / wide[[v1]]
+        r_valid <- r[is.finite(r) & r > 0]
+        r_logse <- if (length(r_valid) > 1L) sd(log(r_valid), na.rm = TRUE) else NA_real_
         if (use_se) {
-          list(sd(d, na.rm = TRUE), pairs$diff_[i] - z * sd(d, na.rm = TRUE), pairs$diff_[i] + z * sd(d, na.rm = TRUE))
+          list(d_se, pairs$diff_[i] - z * d_se, pairs$diff_[i] + z * d_se,
+               r_logse, exp(log(pairs$ratio[i]) - z * r_logse), exp(log(pairs$ratio[i]) + z * r_logse))
         } else {
-          list(sd(d, na.rm = TRUE), quantile(d, alpha, na.rm = TRUE), quantile(d, 1 - alpha, na.rm = TRUE))
+          list(d_se, quantile(d, alpha, na.rm = TRUE), quantile(d, 1 - alpha, na.rm = TRUE),
+               r_logse,
+               if (length(r_valid) > 1L) quantile(r_valid, alpha, na.rm = TRUE) else NA_real_,
+               if (length(r_valid) > 1L) quantile(r_valid, 1 - alpha, na.rm = TRUE) else NA_real_)
         }
       })
-      pairs[, `:=`(SE = vapply(stat, function(x) as.numeric(x[[1]]), numeric(1)),
-                   LCI = vapply(stat, function(x) as.numeric(x[[2]]), numeric(1)),
-                   UCI = vapply(stat, function(x) as.numeric(x[[3]]), numeric(1)))]
+      pull <- function(j) vapply(stat, function(x) as.numeric(x[[j]]), numeric(1))
+      pairs[, `:=`(SE = pull(1), LCI = pull(2), UCI = pull(3),
+                   ratio_logse = pull(4), ratio_lci = pull(5), ratio_uci = pull(6))]
     }
     pairs
   }
@@ -165,11 +177,26 @@ create.endoffup <- function(full, boots, params) {
   setcolorder(data, c("Type", "Time", "A", label))
 
   if (nrow(comparison) > 0L) {
+    # A ratio of means is only interpretable when the outcome is bounded away
+    # from zero, which a continuous outcome need not be (it may even be
+    # negative, leaving log(ratio) undefined), so it is reported for proportions
+    # only. The difference is the contrast that always applies.
+    ratio_cols <- c("Ratio", paste0("Ratio ", ci_lab, c(" LCI", " UCI")), "log(Ratio) SE")
     setnames(comparison, c("V1", "V2", "diff_", "ratio"), c("A_x", "A_y", "Difference", "Ratio"))
-    if (has_ci) setnames(comparison, c("LCI", "UCI", "SE"),
-                         c(paste0(ci_lab, c(" LCI", " UCI")), "Difference SE"), skip_absent = TRUE)
+    if (has_ci) setnames(comparison,
+                         c("LCI", "UCI", "SE", "ratio_lci", "ratio_uci", "ratio_logse"),
+                         c(paste0("Difference ", ci_lab, c(" LCI", " UCI")), "Difference SE",
+                           ratio_cols[2], ratio_cols[3], ratio_cols[4]), skip_absent = TRUE)
     comparison[, Time := params@end_of_fup.time]
-    setcolorder(comparison, c("Time", "A_x", "A_y", "Difference"))
+    if (params@end_of_fup.type != "binary") {
+      drop <- intersect(ratio_cols, names(comparison))
+      if (length(drop) > 0L) comparison[, (drop) := NULL]
+    }
+    lead <- c("Time", "A_x", "A_y", "Difference",
+              intersect(paste0("Difference ", ci_lab, c(" LCI", " UCI")), names(comparison)),
+              intersect("Difference SE", names(comparison)),
+              intersect(ratio_cols, names(comparison)))
+    setcolorder(comparison, lead)
   }
 
   return(list(eof.data = data[], eof.comparison = comparison[]))

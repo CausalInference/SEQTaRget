@@ -70,9 +70,12 @@ end_of_fup(model)
 
 `end_of_fup()` returns, per subgroup, two tables: `estimates` gives the weighted
 proportion (or mean) in each arm with its bootstrap confidence interval, and
-`comparison` gives the pairwise between-arm difference and ratio. Contrasts are
-paired by bootstrap iteration, so their intervals account for the correlation
-between arms.
+`comparison` gives the pairwise between-arm contrast: the **difference in
+proportions** here, or the **difference in means** for a continuous outcome,
+with its standard error and confidence interval. For a binary outcome the ratio
+of proportions is reported alongside it, with an interval computed on the log
+scale and a `log(Ratio) SE` for inverse-variance pooling. Contrasts are paired by
+bootstrap iteration, so their intervals account for the correlation between arms.
 
 ## Missing measurements and the time window
 
@@ -104,7 +107,13 @@ windowed <- SEQuential(SEQdata, id.col = "ID",
                                 options = options)
 
 end_of_fup(windowed)$`1`$estimates
+end_of_fup(windowed)$`1`$comparison
 ```
+
+`comparison` is where the treatment effect lives: `Difference` is the difference
+in proportions between the two arms, and `Ratio` their ratio. Both directions of
+each arm pair are reported, so the row you want is the one whose `A_x` is your
+reference arm.
 
 The selection rule, applied to each trial-period independently, is:
 
@@ -159,7 +168,10 @@ suggest.
 ## Continuous outcomes
 
 Set `end_of_fup.type = "continuous"` for an outcome that is not 0/1. The estimate
-becomes a weighted mean, reported in a `Mean` column rather than `Proportion`.
+becomes a weighted mean, reported in a `Mean` column rather than `Proportion`, and
+its confidence interval is not clamped to `[0, 1]`. The between-arm contrast is
+the difference in means; no ratio is reported, since a continuous outcome need not
+be bounded away from zero.
 
 ```{r}
 data <- data.table::copy(SEQdata)
@@ -182,7 +194,10 @@ continuous <- SEQuential(data, id.col = "ID",
                                                  bootstrap.nboot = 20))
 
 end_of_fup(continuous)$`1`$estimates
+end_of_fup(continuous)$`1`$comparison
 ```
+
+Here `Difference` is the difference in means, and there is no `Ratio` column.
 
 Note that the usual outcome diagnostic tables count `outcome == 1` rows, which
 has no meaning for a continuous outcome, so they are reported as `NA`. The
@@ -212,6 +227,7 @@ perprotocol <- SEQuential(SEQdata, id.col = "ID",
                                                      bootstrap.nboot = 20))
 
 end_of_fup(perprotocol)$`1`$estimates
+end_of_fup(perprotocol)$`1`$comparison
 ```
 
 Subjects who deviate from their assigned strategy are artificially censored at
