@@ -181,6 +181,18 @@ setMethod("show", "SEQoutput", function(object) {
     }
   }
     
+  if (params@end_of_fup) {
+    eof.unique <- slot(object, "info")$eof.unique
+    eof.nonunique <- slot(object, "info")$eof.nonunique
+    for (i in seq_along(eof.nonunique)) {
+      if (!is.na(params@subgroup)) cat("For subgroup: ", names(eof.nonunique)[[i]], "\n")
+      cat("\nEnd-of-Follow-up Table (trial-periods; categories sum to Eligible): ")
+      print(kable(eof.nonunique[[i]]))
+      cat("\nEnd-of-Follow-up Table (distinct subjects; categories may overlap): ")
+      print(kable(eof.unique[[i]]))
+    }
+  }
+
   if (slot(params, "method") == "censoring") {
     cat("\nUnique Switch Table: ")
     print(kable(slot(object, "info")$switch.unique))
@@ -416,6 +428,16 @@ hazard_ratio <- function(object) {
 #'       outcome vs. the total number of outcome events. These coincide for a one-time
 #'       (terminal) outcome, since each subject contributes at most one event row. Both are
 #'       \code{NA} for a continuous end-of-follow-up outcome, which has no events to count.
+#'     \item \code{eof.unique} / \code{eof.nonunique}: present only when
+#'       \code{end_of_fup = TRUE}, accounting for every trial-period at the
+#'       end-of-follow-up time across four mutually exclusive categories -
+#'       measured \code{At k}, measured \code{In window}, \code{Excluded
+#'       (outside window)} and \code{Excluded (no measurement)} - against the
+#'       \code{Eligible} total. The non-unique (trial-period) counts partition
+#'       \code{Eligible}, and \code{At k} plus \code{In window} equals the
+#'       trial-periods contributing to the estimate. The unique (subject) counts
+#'       need not sum to \code{Eligible}, since one subject can fall into
+#'       different categories for different trials.
 #'     \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
 #'       follow-up vs. the total number of person-time intervals (expanded rows). The
 #'       non-unique count is much larger because each subject contributes one row per

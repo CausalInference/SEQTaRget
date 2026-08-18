@@ -115,7 +115,7 @@ internal.analysis <- function(params) {
     followup <- NULL
     isExcused <- NULL
 
-    handler <- function(DT, data, params, start = NULL) {
+    handler <- function(DT, data, params, start = NULL, counts = FALSE) {
       if (!params@weighted) {
         # An end-of-follow-up outcome is a weighted average, not a fitted model;
         # fitting the quasibinomial outcome model would be meaningless for it
@@ -207,21 +207,27 @@ internal.analysis <- function(params) {
       # Computed here, while the weighted data still exists: WDT is dropped
       # below unless data.return, and is discarded outright on bootstrap
       # iterations, so the per-arm average cannot be recovered afterwards.
-      eof <- if (params@end_of_fup) {
-        endoffup.estimate(if (params@weighted) WDT else DT, params)
+      eof.dt <- if (params@weighted) WDT else DT
+      eof <- if (params@end_of_fup) endoffup.estimate(eof.dt, params) else NA
+      # Counted from the same data as the estimate so the contributing
+      # categories always reconcile with it; only needed for the full fit.
+      eof.counts <- if (params@end_of_fup && counts) {
+        list(unique = endoffup.counts(eof.dt, params, "unique"),
+             nonunique = endoffup.counts(eof.dt, params, "nonunique"))
       } else NA
       if (!params@data.return) WDT <- data.table()
       return(list(
         model = model,
         weighted_stats = if (params@weighted) stats else NA,
         eof = eof,
+        eof.counts = eof.counts,
         WDT = WDT
       ))
     }
 
     original_nrow <- nrow(params@DT)
     original_names <- names(params@DT)
-    full <- handler(params@DT, params@data, params)
+    full <- handler(params@DT, params@data, params, counts = TRUE)
     stopifnot(identical(nrow(params@DT), original_nrow))
     stopifnot(identical(names(params@DT), original_names))
 

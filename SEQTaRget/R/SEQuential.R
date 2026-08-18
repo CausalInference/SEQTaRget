@@ -184,11 +184,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   setorderv(data, c(id.col, time.col))
   if (length(pruned) > 0 && verbose) cat("\nPruned\n")
 
-  if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
+  # An end-of-follow-up outcome is measured at particular times rather than
+  # continuously, so a missing outcome is meaningful there - it records that no
+  # measurement was taken at that time, which is what end_of_fup.window exists to
+  # accommodate. Every other column must still be complete.
+  na.check.cols <- setdiff(names(data), if (params@end_of_fup) params@outcome else character(0))
+  if (nrow(data[!complete.cases(data[, na.check.cols, with = FALSE])]) > 0)
+    stop("Data contains NA values, please fix before modeling",
+         if (params@end_of_fup) " ('end_of_fup' permits missing values in the outcome column only)" else "")
   # A continuous end-of-follow-up outcome is averaged, not modelled as an event,
   # so it is the one case where a non-binary outcome column is expected.
   if (!params@hazard && !(params@end_of_fup && params@end_of_fup.type == "continuous")) {
     outcome_vals <- unique(data[[params@outcome]])
+    outcome_vals <- outcome_vals[!is.na(outcome_vals)]
     if (!all(outcome_vals %in% c(0L, 1L))) stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ",
                                                  paste(setdiff(outcome_vals, c(0L, 1L)), collapse = ", "))
   }
@@ -339,6 +347,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }
+  eof.unique <- if (params@end_of_fup) analytic[[1]]$eof.counts$unique else NA
+  eof.nonunique <- if (params@end_of_fup) analytic[[1]]$eof.counts$nonunique else NA
   rm(analytic)
 
   # The outcome tables count outcome == 1 rows, which is only meaningful for a
@@ -379,7 +389,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                switch.unique = switch.unique,
                switch.nonunique = switch.nonunique,
                compevent.unique = compevent.unique,
-               compevent.nonunique = compevent.nonunique)
+               compevent.nonunique = compevent.nonunique,
+               eof.unique = eof.unique,
+               eof.nonunique = eof.nonunique)
   
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info,

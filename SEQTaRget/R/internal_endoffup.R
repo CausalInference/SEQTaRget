@@ -174,3 +174,85 @@ create.endoffup <- function(full, boots, params) {
 
   return(list(eof.data = data[], eof.comparison = comparison[]))
 }
+
+#' Account for every trial-period at the end-of-follow-up time
+#'
+#' Classifies each trial-period in the analysis data into exactly one of four
+#' mutually exclusive categories, so that the trial-periods contributing to the
+#' estimate can be reconciled against those excluded:
+#' \itemize{
+#'   \item measured at \code{k} - contributes, using the measurement at exactly
+#'     \code{end_of_fup.time};
+#'   \item measured in the window - contributes, having no measurement at
+#'     \code{k} but one within \code{[k - window, k + window]};
+#'   \item excluded, outside the window - has a measurement somewhere, but none
+#'     within the window;
+#'   \item excluded, no measurement - has no non-missing outcome at any
+#'     follow-up time. Under \code{method = "censoring"} this includes
+#'     trial-periods artificially censored before any measurement was taken.
+#' }
+#'
+#' Counted over the same data the estimate is computed from, so the first two
+#' categories always sum to the contributing trial-periods reported by
+#' [end_of_fup()].
+#'
+#' @param DT expanded data.table, weighted or not - as passed to [endoffup.estimate()]
+#' @param params SEQparams object
+#' @param type either \code{"nonunique"} (trial-periods) or \code{"unique"}
+#'   (distinct subjects). Trial-period counts are mutually exclusive and so sum
+#'   to \code{Eligible}; subject counts need not, since one subject can fall into
+#'   different categories for different trials
+#' @returns named list of data.tables, one element per subgroup, each with a row
+#'   per baseline treatment arm
+#' @import data.table
+#' @keywords internal
+endoffup.counts <- function(DT, params, type) {
+  followup <- .category <- N <- at.k <- in.window <- measured <- NULL
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  k <- params@end_of_fup.time
+  w <- params@end_of_fup.window
+  by_cols <- c(params@id, "trial", tx_bas,
+               if (!is.na(params@subgroup) && params@subgroup %in% names(DT)) params@subgroup)
+
+  # One row per trial-period, flagging what it has available
+  flags <- DT[, list(at.k = any(!is.na(get(params@outcome)) & followup == k),
+                     in.window = any(!is.na(get(params@outcome)) &
+                                       followup >= k - w & followup <= k + w),
+                     measured = any(!is.na(get(params@outcome)))),
+              by = by_cols]
+  flags[, .category := fifelse(at.k, "At k",
+                        fifelse(in.window, "In window",
+                         fifelse(measured, "Excluded (outside window)",
+                                           "Excluded (no measurement)")))]
+
+  levels <- c("At k", "In window", "Excluded (outside window)", "Excluded (no measurement)")
+  tabulate <- function(dt) {
+    if (nrow(dt) == 0L) return(data.table())
+    counted <- if (type == "unique") {
+      dt[, list(N = uniqueN(get(params@id))), by = c(tx_bas, ".category")]
+    } else {
+      dt[, list(N = .N), by = c(tx_bas, ".category")]
+    }
+    out <- dcast(counted, get(tx_bas) ~ .category, value.var = "N", fill = 0L)
+    setnames(out, "tx_bas", tx_bas, skip_absent = TRUE)
+    for (lv in levels) if (!lv %in% names(out)) out[, (lv) := 0L]
+    # Eligible is the total considered; for trial-periods the four categories
+    # partition it, for subjects they may overlap so it is counted directly.
+    total <- if (type == "unique") {
+      dt[, list(Eligible = uniqueN(get(params@id))), by = c(tx_bas)]
+    } else {
+      dt[, list(Eligible = .N), by = c(tx_bas)]
+    }
+    setnames(out, names(out)[1], tx_bas)
+    out <- out[total, on = tx_bas]
+    setcolorder(out, c(tx_bas, "Eligible", levels))
+    setorderv(out, tx_bas)
+    out[]
+  }
+
+  if (is.na(params@subgroup)) return(list(tabulate(flags)))
+  groups <- sort(unique(DT[[params@subgroup]]))
+  out <- lapply(groups, function(g) tabulate(flags[get(params@subgroup) == g, ]))
+  names(out) <- paste0(params@subgroup, "_", groups)
+  return(out)
+}

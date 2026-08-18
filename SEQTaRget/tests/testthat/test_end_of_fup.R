@@ -268,3 +268,70 @@ test_that("End-of-follow-up expansion is not truncated at the first event", {
   # And the estimate is still readable at k for trials whose status was 1 earlier
   expect_true(all(is.finite(eof@eof.data[[1]]$Proportion)))
 })
+
+test_that("The end-of-follow-up counts table accounts for every trial-period", {
+  skip_on_cran()
+  model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
+  nonunique <- diagnostics(model)$eof.nonunique[[1]]
+  categories <- c("At k", "In window", "Excluded (outside window)", "Excluded (no measurement)")
+  expect_true(all(c("Eligible", categories) %in% names(nonunique)))
+
+  # Trial-period categories are mutually exclusive, so they partition Eligible
+  expect_equal(rowSums(nonunique[, categories, with = FALSE]), nonunique$Eligible)
+
+  # And the two contributing categories are exactly what the estimate is built from
+  expect_equal(nonunique$`At k` + nonunique$`In window`,
+               model@eof.data[[1]][order(A)]$`Trial-periods`)
+
+  # Subject counts are reported too, but may overlap across categories
+  unique_tab <- diagnostics(model)$eof.unique[[1]]
+  expect_true(all(unique_tab$Eligible > 0))
+  expect_true(all(rowSums(unique_tab[, categories, with = FALSE]) >= unique_tab$Eligible))
+
+  printed <- capture.output(show(model))
+  expect_true(any(grepl("End-of-Follow-up Table", printed)))
+})
+
+test_that("A window of zero puts every contributing trial-period in the At k category", {
+  skip_on_cran()
+  nonunique <- diagnostics(eof_run(end_of_fup = TRUE, end_of_fup.time = 12))$eof.nonunique[[1]]
+  expect_true(all(nonunique$`In window` == 0))
+  expect_true(all(nonunique$`At k` > 0))
+})
+
+test_that("Counts tables are absent unless end_of_fup is used", {
+  skip_on_cran()
+  expect_true(all(is.na(diagnostics(eof_run(km.curves = FALSE))$eof.nonunique)))
+})
+
+test_that("Missing outcome measurements are permitted only in end_of_fup mode", {
+  skip_on_cran()
+  # An end-of-follow-up outcome is measured at particular visits, so NA records
+  # "not measured here" - which is what the window exists to handle.
+  set.seed(11)
+  n_id <- 60; n_t <- 20
+  d <- data.table(ID = rep(seq_len(n_id), each = n_t), time = rep(0:(n_t - 1), times = n_id))
+  d[, `:=`(eligible = 1L, tx_init = rbinom(.N, 1, 0.5),
+           N = rnorm(.N), L = rnorm(.N), P = rnorm(.N),
+           outcome = rbinom(.N, 1, 0.3))]
+  d[, sex := rep(rbinom(n_id, 1, 0.5), each = n_t)]
+  d[time %% 4 != 0, outcome := NA]   # measured every 4th visit only
+  d[ID <= 8, outcome := NA]          # never measured at all
+
+  model <- eof_run(data = copy(d), end_of_fup = TRUE, end_of_fup.time = 8, end_of_fup.window = 1)
+  nonunique <- diagnostics(model)$eof.nonunique[[1]]
+  categories <- c("At k", "In window", "Excluded (outside window)", "Excluded (no measurement)")
+
+  # Never-measured trial-periods are now a real, populated category
+  expect_true(sum(nonunique$`Excluded (no measurement)`) > 0)
+  expect_equal(rowSums(nonunique[, categories, with = FALSE]), nonunique$Eligible)
+  expect_equal(nonunique$`At k` + nonunique$`In window`,
+               model@eof.data[[1]][order(A)]$`Trial-periods`)
+
+  # A survival analysis still rejects the same data
+  expect_error(eof_run(data = copy(d)), "Data contains NA values")
+  # And so does end_of_fup if the missingness is in another column
+  d2 <- copy(d)[, outcome := 1L][time == 3, N := NA_real_]
+  expect_error(eof_run(data = d2, end_of_fup = TRUE, end_of_fup.time = 8),
+               "outcome column only")
+})
