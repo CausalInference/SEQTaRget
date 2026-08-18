@@ -17,8 +17,14 @@ data.tables:
 (continuous) in each baseline treatment arm, with its bootstrap
 confidence interval, and the number of contributing trial-periods and
 distinct subjects.
-\item \code{comparison}: pairwise between-arm differences and ratios,
-with bootstrap confidence intervals paired by iteration.
+\item \code{comparison}: the pairwise between-arm difference - in
+proportions for a binary outcome, in means for a continuous one - with
+its bootstrap standard error and confidence interval, paired by
+iteration so the interval accounts for the correlation between arms.
+For a binary outcome the ratio of proportions is also given, with a
+confidence interval computed on the log scale and a \code{log(Ratio) SE}
+for inverse-variance pooling. A ratio is not reported for a continuous
+outcome, where the outcome need not be bounded away from zero.
 }
 }
 \description{
