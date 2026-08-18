@@ -15,13 +15,14 @@ test_that("Unweighted end-of-follow-up estimate is the mean of the selected meas
                    data.return = TRUE)
   expect_s4_class(model, "SEQoutput")
 
-  # Independent re-implementation of the selection rule: value at exactly k when
-  # present, else the earliest non-missing value in [k - w, k + w]
+  # Independent re-implementation of the selection rule: the non-missing value
+  # nearest to k within [k - w, k + w], ties broken toward the earlier one.
+  # Rows are in ascending followup order, so which.min() returns the earlier of
+  # two equidistant measurements.
   manual <- model@DT[!is.na(outcome) & followup >= k - w & followup <= k + w,
                      ][order(ID, trial, followup),
                        ][, {
-                           ex <- which(followup == k)
-                           i <- if (length(ex)) ex[1] else 1L
+                           i <- which.min(abs(followup - k))
                            list(val = outcome[i], arm = tx_init_bas[i])
                          }, by = c("ID", "trial")
                          ][, list(manual = mean(val), n = .N), by = "arm"][order(arm)]
@@ -62,6 +63,30 @@ test_that("Trial-periods measured at exactly k keep that measurement when a wind
 
   # Fallback rows all lie inside the window and none sit at k
   expect_true(all(measured$followup >= k - w & measured$followup <= k + w))
+})
+
+test_that("The window takes the measurement nearest to k, not the earliest", {
+  skip_on_cran()
+  # Hand-built trial-periods where 'nearest' and 'earliest' disagree, driven
+  # through the selection helper directly so the rule is tested in isolation.
+  k <- 3; w <- 2
+  params <- eof_run(end_of_fup = TRUE, end_of_fup.time = k, end_of_fup.window = w)@params
+
+  DT <- data.table::data.table(
+    ID          = c(1L, 1L, 2L, 2L, 3L, 3L),
+    trial       = 0L,
+    followup    = c(1L, 4L, 2L, 3L, 2L, 4L),
+    tx_init_bas = factor(c(0, 0, 1, 1, 0, 0)),
+    outcome     = c(10, 20, 30, 40, 50, 60)
+  )
+  got <- endoffup.measure(DT, params)[order(ID)]
+
+  # ID 1: |1-k|=2 vs |4-k|=1, so the later measurement is nearer - the earliest
+  #       rule would have taken followup 1
+  # ID 2: measured at exactly k, which always wins
+  # ID 3: |2-k|=|4-k|=1, an equidistant tie broken toward the earlier
+  expect_equal(got$followup, c(4L, 3L, 2L))
+  expect_equal(got$eof.value, c(20, 40, 50))
 })
 
 test_that("Continuous end-of-follow-up outcomes are supported and reported as a mean", {

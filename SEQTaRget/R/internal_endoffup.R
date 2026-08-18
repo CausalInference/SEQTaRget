@@ -4,9 +4,11 @@
 #' \code{end_of_fup.time} (\code{k}), rather than as a time-to-event. For each
 #' (id, trial) this returns the single row the estimate is read from:
 #' the measurement at exactly \code{k} when one exists, otherwise - if
-#' \code{end_of_fup.window} is non-zero - the earliest available measurement in
-#' \code{[k - window, k + window]}. Trial-periods with no measurement anywhere in
-#' the window contribute no row, i.e. they are censored out of the estimate.
+#' \code{end_of_fup.window} is non-zero - the measurement nearest to \code{k}
+#' within \code{[k - window, k + window]}, with ties (measurements equally far
+#' either side of \code{k}) broken toward the earlier one. Trial-periods with no
+#' measurement anywhere in the window contribute no row, i.e. they are censored
+#' out of the estimate.
 #'
 #' Rows carrying a missing outcome are not measurements: under
 #' \code{method = "censoring"} these are the artificially censored (treatment
@@ -21,7 +23,7 @@
 #' @import data.table
 #' @keywords internal
 endoffup.measure <- function(DT, params) {
-  followup <- weight <- .priority <- NULL
+  followup <- weight <- .dist <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   k <- params@end_of_fup.time
   w <- params@end_of_fup.window
@@ -33,13 +35,14 @@ endoffup.measure <- function(DT, params) {
                    cols, with = FALSE]
   if (nrow(candidates) == 0L) return(candidates[, "eof.value" := numeric(0)])
 
-  # Prefer the exact-k measurement, then the earliest in the window; ordering by
-  # (priority, followup) and taking the first row per trial-period applies both
-  # rules in one pass.
-  candidates[, .priority := as.integer(followup != k)]
-  setorderv(candidates, c(params@id, "trial", ".priority", "followup"))
+  # Take the measurement nearest to k. The exact-k measurement has distance 0 so
+  # it always wins where one exists; ordering by (distance, followup) and taking
+  # the first row per trial-period breaks equidistant ties - one measurement the
+  # same number of periods either side of k - toward the earlier measurement.
+  candidates[, .dist := abs(followup - k)]
+  setorderv(candidates, c(params@id, "trial", ".dist", "followup"))
   out <- candidates[candidates[, .I[1L], by = c(params@id, "trial")]$V1
-                    ][, .priority := NULL]
+                    ][, .dist := NULL]
 
   # An unweighted analysis is the equally-weighted average of the same values
   if (!"weight" %in% names(out)) out[, weight := 1]

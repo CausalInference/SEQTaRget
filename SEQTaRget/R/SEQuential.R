@@ -64,7 +64,7 @@
 #' # End-of-follow-up outcome: rather than a time-to-event, the outcome is read
 #' # once per trial-period at follow-up time 12 and averaged within each baseline
 #' # arm, weighted by the weight at that time. Trial-periods with no measurement
-#' # at exactly 12 fall back to the earliest one within 12 +/- 3; any with none
+#' # at exactly 12 fall back to the nearest one within 12 +/- 3; any with none
 #' # in that window are censored out of the average. Use end_of_fup.type =
 #' # "continuous" for a continuous outcome, which is reported as a mean.
 #' eof <- SEQuential(data, id.col = "ID",
