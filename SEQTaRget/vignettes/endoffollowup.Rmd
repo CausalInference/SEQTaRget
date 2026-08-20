@@ -69,8 +69,11 @@ end_of_fup(model)
 ```
 
 `end_of_fup()` returns, per subgroup, two tables: `estimates` gives the weighted
-proportion (or mean) in each arm with its bootstrap confidence interval, and
-`comparison` gives the pairwise between-arm contrast: the difference in
+proportion (or mean) in each arm with its bootstrap confidence interval, the
+trial-periods and subjects contributing to it, and the trial-periods excluded for
+want of a measurement in the window - as a count (`Excluded`) and as a share of
+the eligible trial-periods (`% Excluded`), so you can see how much of the arm the
+estimate rests on. `comparison` gives the pairwise between-arm contrast: the difference in
 proportions here, or the difference in means for a continuous outcome,
 with its standard error and confidence interval. For a binary outcome the ratio
 of proportions is reported alongside it, with an interval computed on the log

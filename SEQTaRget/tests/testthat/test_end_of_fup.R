@@ -307,6 +307,29 @@ test_that("End-of-follow-up expansion is not truncated at the first event", {
   expect_true(all(is.finite(eof@eof.data[[1]]$Proportion)))
 })
 
+test_that("The estimates table reports the excluded trial-periods and their share", {
+  skip_on_cran()
+  model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
+  est <- model@eof.data[[1]][order(A)]
+  expect_true(all(c("Excluded", "% Excluded") %in% names(est)))
+
+  # Excluded is everything eligible that did not contribute, so it reconciles
+  # against the diagnostics breakdown of the same trial-periods
+  nonunique <- diagnostics(model)$eof.nonunique[[1]]
+  expect_equal(est$Excluded,
+               nonunique$`Excluded (outside window)` + nonunique$`Excluded (no measurement)`)
+  expect_equal(est$`Trial-periods` + est$Excluded, nonunique$Eligible)
+
+  # The percentage is of the eligible trial-periods, not of the contributors
+  expect_equal(est$`% Excluded`, 100 * est$Excluded / (est$`Trial-periods` + est$Excluded))
+  expect_true(all(est$`% Excluded` >= 0 & est$`% Excluded` <= 100))
+
+  # Widening the window recovers trial-periods, so fewer are excluded
+  narrow <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12)@eof.data[[1]][order(A)]
+  expect_true(all(narrow$Excluded >= est$Excluded))
+  expect_true(any(narrow$Excluded > est$Excluded))
+})
+
 test_that("The end-of-follow-up counts table accounts for every trial-period", {
   skip_on_cran()
   model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)

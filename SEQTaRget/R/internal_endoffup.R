@@ -58,17 +58,29 @@ endoffup.measure <- function(DT, params) {
 #' bounds \code{weight.p99} resolves to) is applied here as it is for the
 #' outcome model, since this average is the estimator in \code{end_of_fup} mode.
 #'
+#' Alongside the estimate this counts the trial-periods excluded for want of a
+#' measurement in the window, so the share of eligible trial-periods dropped can
+#' be reported next to the estimate they were dropped from. Trial-periods are the
+#' denominator because they partition cleanly, whereas one subject can contribute
+#' one trial and be excluded in another.
+#'
 #' @param DT expanded data.table for one bootstrap iteration
 #' @param params SEQparams object
 #' @returns named list of per-arm data.tables, one element per subgroup
 #' @import data.table
 #' @keywords internal
 endoffup.estimate <- function(DT, params) {
-  weight <- eof.value <- NULL
+  weight <- eof.value <- n <- n.excluded <- Eligible <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   measured <- endoffup.measure(DT, params)
 
-  arm_average <- function(dt) {
+  # One row per trial-period: the eligible total the contributors are drawn from,
+  # counted over the same data as endoffup.counts() so the two agree.
+  has_sub <- !is.na(params@subgroup) && params@subgroup %in% names(DT)
+  periods <- unique(DT[, c(params@id, "trial", tx_bas,
+                           if (has_sub) params@subgroup), with = FALSE])
+
+  arm_average <- function(dt, elig) {
     if (nrow(dt) == 0L) return(data.table())
     dt <- copy(dt)[weight < params@weight.lower, weight := params@weight.lower
                    ][weight > params@weight.upper, weight := params@weight.upper]
@@ -76,14 +88,17 @@ endoffup.estimate <- function(DT, params) {
                      n = .N,
                      n.subjects = uniqueN(get(params@id))),
               by = c(tx_bas)]
+    out <- out[elig[, list(Eligible = .N), by = c(tx_bas)], on = tx_bas, nomatch = NULL
+               ][, n.excluded := Eligible - n][, Eligible := NULL]
     setorderv(out, tx_bas)
     out[]
   }
 
-  if (is.na(params@subgroup)) return(list(arm_average(measured)))
+  if (is.na(params@subgroup)) return(list(arm_average(measured, periods)))
 
   groups <- sort(unique(DT[[params@subgroup]]))
-  out <- lapply(groups, function(g) arm_average(measured[get(params@subgroup) == g, ]))
+  out <- lapply(groups, function(g) arm_average(measured[get(params@subgroup) == g, ],
+                                                periods[get(params@subgroup) == g, ]))
   names(out) <- paste0(params@subgroup, "_", groups)
   return(out)
 }
@@ -105,6 +120,7 @@ endoffup.estimate <- function(DT, params) {
 create.endoffup <- function(full, boots, params) {
   estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- NULL
   SE <- LCI <- UCI <- Time <- ratio_logse <- ratio_lci <- ratio_uci <- NULL
+  n <- n.excluded <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")
   z <- qnorm(1 - (1 - params@bootstrap.CI) / 2)
@@ -170,11 +186,17 @@ create.endoffup <- function(full, boots, params) {
   }
 
   label <- if (params@end_of_fup.type == "binary") "Proportion" else "Mean"
-  setnames(data, c(tx_bas, "estimate", "n", "n.subjects"),
-           c("A", label, "Trial-periods", "Subjects"), skip_absent = TRUE)
+  # Share of eligible trial-periods dropped for want of a measurement in the
+  # window, reported beside the estimate they were dropped from.
+  if (all(c("n", "n.excluded") %in% names(data))) {
+    data[, "% Excluded" := 100 * n.excluded / (n + n.excluded)]
+  }
+  setnames(data, c(tx_bas, "estimate", "n", "n.subjects", "n.excluded"),
+           c("A", label, "Trial-periods", "Subjects", "Excluded"), skip_absent = TRUE)
   if (has_ci) setnames(data, c("LCI", "UCI"), paste0(ci_lab, c(" LCI", " UCI")), skip_absent = TRUE)
   data[, `:=`(Time = params@end_of_fup.time, Type = params@end_of_fup.type)]
-  setcolorder(data, c("Type", "Time", "A", label))
+  setcolorder(data, intersect(c("Type", "Time", "A", label, "Trial-periods", "Subjects",
+                                "Excluded", "% Excluded"), names(data)))
 
   if (nrow(comparison) > 0L) {
     # A ratio of means is only interpretable when the outcome is bounded away
