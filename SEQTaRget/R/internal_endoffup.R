@@ -70,7 +70,7 @@ endoffup.measure <- function(DT, params) {
 #' @import data.table
 #' @keywords internal
 endoffup.estimate <- function(DT, params) {
-  weight <- eof.value <- n <- n.excluded <- Eligible <- NULL
+  weight <- eof.value <- n <- n.eligible <- n.excluded <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   measured <- endoffup.measure(DT, params)
 
@@ -88,8 +88,8 @@ endoffup.estimate <- function(DT, params) {
                      n = .N,
                      n.subjects = uniqueN(get(params@id))),
               by = c(tx_bas)]
-    out <- out[elig[, list(Eligible = .N), by = c(tx_bas)], on = tx_bas, nomatch = NULL
-               ][, n.excluded := Eligible - n][, Eligible := NULL]
+    out <- out[elig[, list(n.eligible = .N), by = c(tx_bas)], on = tx_bas, nomatch = NULL
+               ][, n.excluded := n.eligible - n]
     setorderv(out, tx_bas)
     out[]
   }
@@ -120,7 +120,7 @@ endoffup.estimate <- function(DT, params) {
 create.endoffup <- function(full, boots, params) {
   estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- NULL
   SE <- LCI <- UCI <- Time <- ratio_logse <- ratio_lci <- ratio_uci <- NULL
-  n <- n.excluded <- NULL
+  n <- n.eligible <- n.excluded <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")
   z <- qnorm(1 - (1 - params@bootstrap.CI) / 2)
@@ -188,15 +188,21 @@ create.endoffup <- function(full, boots, params) {
   label <- if (params@end_of_fup.type == "binary") "Proportion" else "Mean"
   # Share of eligible trial-periods dropped for want of a measurement in the
   # window, reported beside the estimate they were dropped from.
-  if (all(c("n", "n.excluded") %in% names(data))) {
-    data[, "% Excluded" := 100 * n.excluded / (n + n.excluded)]
+  if (all(c("n.eligible", "n.excluded") %in% names(data))) {
+    data[, "% Excluded" := 100 * n.excluded / n.eligible]
   }
-  setnames(data, c(tx_bas, "estimate", "n", "n.subjects", "n.excluded"),
-           c("A", label, "Trial-periods", "Subjects", "Excluded"), skip_absent = TRUE)
+  # The three trial-period columns share a prefix because they are one partition
+  # in one unit: Eligible = Analysed + Excluded. Subjects is left unprefixed as it
+  # counts people, not trial-periods, and so is not part of that partition.
+  setnames(data, c(tx_bas, "estimate", "n.eligible", "n", "n.excluded", "n.subjects"),
+           c("A", label, "Trial-periods (Eligible)", "Trial-periods (Analysed)",
+             "Trial-periods (Excluded)", "Subjects"), skip_absent = TRUE)
   if (has_ci) setnames(data, c("LCI", "UCI"), paste0(ci_lab, c(" LCI", " UCI")), skip_absent = TRUE)
   data[, `:=`(Time = params@end_of_fup.time, Type = params@end_of_fup.type)]
-  setcolorder(data, intersect(c("Type", "Time", "A", label, "Trial-periods", "Subjects",
-                                "Excluded", "% Excluded"), names(data)))
+  setcolorder(data, intersect(c("Type", "Time", "A", label,
+                                "Trial-periods (Eligible)", "Trial-periods (Analysed)",
+                                "Trial-periods (Excluded)", "% Excluded", "Subjects"),
+                              names(data)))
 
   if (nrow(comparison) > 0L) {
     # A ratio of means is only interpretable when the outcome is bounded away

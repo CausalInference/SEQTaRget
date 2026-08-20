@@ -30,7 +30,7 @@ test_that("Unweighted end-of-follow-up estimate is the mean of the selected meas
 
   got <- model@eof.data[[1]][order(A)]
   expect_equal(got$Proportion, manual$manual)
-  expect_equal(got$`Trial-periods`, manual$n)
+  expect_equal(got$`Trial-periods (Analysed)`, manual$n)
 })
 
 test_that("The time window only adds trial-periods with no measurement at k", {
@@ -39,8 +39,8 @@ test_that("The time window only adds trial-periods with no measurement at k", {
   windowed <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
 
   # Widening the window can only ever add contributors, never remove them
-  expect_true(all(windowed@eof.data[[1]]$`Trial-periods` >= exact@eof.data[[1]]$`Trial-periods`))
-  expect_true(any(windowed@eof.data[[1]]$`Trial-periods` > exact@eof.data[[1]]$`Trial-periods`))
+  expect_true(all(windowed@eof.data[[1]]$`Trial-periods (Analysed)` >= exact@eof.data[[1]]$`Trial-periods (Analysed)`))
+  expect_true(any(windowed@eof.data[[1]]$`Trial-periods (Analysed)` > exact@eof.data[[1]]$`Trial-periods (Analysed)`))
 
   # A window of 0 is the same as no window at all
   expect_equal(eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 0)@eof.data[[1]],
@@ -311,23 +311,27 @@ test_that("The estimates table reports the excluded trial-periods and their shar
   skip_on_cran()
   model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
   est <- model@eof.data[[1]][order(A)]
-  expect_true(all(c("Excluded", "% Excluded") %in% names(est)))
+  expect_true(all(c("Trial-periods (Eligible)", "Trial-periods (Excluded)",
+                    "% Excluded") %in% names(est)))
 
   # Excluded is everything eligible that did not contribute, so it reconciles
   # against the diagnostics breakdown of the same trial-periods
   nonunique <- diagnostics(model)$eof.nonunique[[1]]
-  expect_equal(est$Excluded,
+  expect_equal(est$`Trial-periods (Excluded)`,
                nonunique$`Excluded (outside window)` + nonunique$`Excluded (no measurement)`)
-  expect_equal(est$`Trial-periods` + est$Excluded, nonunique$Eligible)
+  expect_equal(est$`Trial-periods (Eligible)`, nonunique$Eligible)
+  # Eligible is exactly partitioned by the analysed and excluded trial-periods
+  expect_equal(est$`Trial-periods (Analysed)` + est$`Trial-periods (Excluded)`,
+               est$`Trial-periods (Eligible)`)
 
   # The percentage is of the eligible trial-periods, not of the contributors
-  expect_equal(est$`% Excluded`, 100 * est$Excluded / (est$`Trial-periods` + est$Excluded))
+  expect_equal(est$`% Excluded`, 100 * est$`Trial-periods (Excluded)` / est$`Trial-periods (Eligible)`)
   expect_true(all(est$`% Excluded` >= 0 & est$`% Excluded` <= 100))
 
   # Widening the window recovers trial-periods, so fewer are excluded
   narrow <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12)@eof.data[[1]][order(A)]
-  expect_true(all(narrow$Excluded >= est$Excluded))
-  expect_true(any(narrow$Excluded > est$Excluded))
+  expect_true(all(narrow$`Trial-periods (Excluded)` >= est$`Trial-periods (Excluded)`))
+  expect_true(any(narrow$`Trial-periods (Excluded)` > est$`Trial-periods (Excluded)`))
 })
 
 test_that("The end-of-follow-up counts table accounts for every trial-period", {
@@ -342,7 +346,7 @@ test_that("The end-of-follow-up counts table accounts for every trial-period", {
 
   # And the two contributing categories are exactly what the estimate is built from
   expect_equal(nonunique$`At k` + nonunique$`In window`,
-               model@eof.data[[1]][order(A)]$`Trial-periods`)
+               model@eof.data[[1]][order(A)]$`Trial-periods (Analysed)`)
 
   # Subject counts are reported too, but may overlap across categories
   unique_tab <- diagnostics(model)$eof.unique[[1]]
@@ -387,7 +391,7 @@ test_that("Missing outcome measurements are permitted only in end_of_fup mode", 
   expect_true(sum(nonunique$`Excluded (no measurement)`) > 0)
   expect_equal(rowSums(nonunique[, categories, with = FALSE]), nonunique$Eligible)
   expect_equal(nonunique$`At k` + nonunique$`In window`,
-               model@eof.data[[1]][order(A)]$`Trial-periods`)
+               model@eof.data[[1]][order(A)]$`Trial-periods (Analysed)`)
 
   # A survival analysis still rejects the same data
   expect_error(eof_run(data = copy(d)), "Data contains NA values")
