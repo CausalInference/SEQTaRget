@@ -15,10 +15,11 @@ data.tables:
 \itemize{
 \item \code{estimates}: the weighted proportion (binary) or mean
 (continuous) in each baseline treatment arm, with its bootstrap
-confidence interval, the number of contributing trial-periods and
-distinct subjects, and the trial-periods excluded for want of a
-measurement in the window (\code{Excluded}) as a count and as a
-percentage of the eligible trial-periods (\code{\% Excluded}).
+confidence interval, the trial-periods eligible in each arm, split into those analysed and those
+excluded for want of a measurement in the window, with that exclusion also as a
+percentage of the eligible total (\code{Trial-periods (Eligible)} =
+\code{Trial-periods (Analysed)} + \code{Trial-periods (Excluded)}), and the
+number of distinct contributing subjects.
 \item \code{comparison}: the pairwise between-arm difference - in
 proportions for a binary outcome, in means for a continuous one - with
 its bootstrap standard error and confidence interval, paired by
