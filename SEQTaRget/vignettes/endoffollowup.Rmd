@@ -53,6 +53,9 @@ options <- SEQopts(end_of_fup = TRUE,
                    # "binary" reports a proportion, "continuous" a mean
                    end_of_fup.type = "binary",
                    bootstrap = TRUE,
+                   # fixes the bootstrap resamples, so the intervals below are
+                   # reproducible; without it each run draws a fresh seed
+                   seed = 1636,
                    bootstrap.nboot = 20)
 
 model <- SEQuential(SEQdata, id.col = "ID",
@@ -100,6 +103,7 @@ options <- SEQopts(end_of_fup = TRUE,
                    # accept a measurement anywhere in [9, 15] when there is none at 12
                    end_of_fup.window = 3,
                    bootstrap = TRUE,
+                   seed = 1636,
                    bootstrap.nboot = 20)
 
 windowed <- SEQuential(SEQdata, id.col = "ID",
@@ -197,6 +201,7 @@ continuous <- SEQuential(data, id.col = "ID",
                                                  end_of_fup.type = "continuous",
                                                  end_of_fup.window = 3,
                                                  bootstrap = TRUE,
+                                                 seed = 1636,
                                                  bootstrap.nboot = 20))
 
 end_of_fup(continuous)$`1`$estimates
@@ -230,6 +235,7 @@ perprotocol <- SEQuential(SEQdata, id.col = "ID",
                                                      end_of_fup.time = 12,
                                                      end_of_fup.window = 3,
                                                      bootstrap = TRUE,
+                                                     seed = 1636,
                                                      bootstrap.nboot = 20))
 
 end_of_fup(perprotocol)$`1`$estimates
