@@ -20,10 +20,13 @@ bounds \code{weight.p99} resolves to) is applied here as it is for the
 outcome model, since this average is the estimator in \code{end_of_fup} mode.
 }
 \details{
-Alongside the estimate this counts the trial-periods excluded for want of a
-measurement in the window, so the share of eligible trial-periods dropped can
-be reported next to the estimate they were dropped from. Trial-periods are the
-denominator because they partition cleanly, whereas one subject can contribute
-one trial and be excluded in another.
+Alongside the estimate this counts the trial-periods censored for want of a
+measurement in the window - those measured at some point but not within
+\code{[k - window, k + window]} - so that share can be reported next to the
+estimate they were dropped from. Trial-periods never measured at all are
+eligible but are not counted as censored here, so the censored and analysed
+counts need not sum to the eligible total; \code{\link[=endoffup.counts]{endoffup.counts()}} gives the full
+four-way account. Trial-periods are the unit because one subject can be
+analysed in one trial and censored in another.
 }
 \keyword{internal}
