@@ -15,13 +15,11 @@ data.tables:
 \itemize{
 \item \code{estimates}: the weighted proportion (binary) or mean
 (continuous) in each baseline treatment arm, with its bootstrap
-confidence interval, the trial-periods eligible in each arm, those analysed, and those censored
-for want of a measurement in the window - measured at some point but not
-within \code{[k - window, k + window]} - with that censoring also as a
-percentage of the eligible total. Trial-periods never measured at all are
-eligible but are not censored for want of a window measurement, so the three
-counts are not a partition; \code{diagnostics()} gives the full four-way
-account. \code{Subjects} counts the distinct contributing subjects.
+confidence interval, the trial-periods eligible in each arm, partitioned into those analysed,
+those censored for want of a measurement in the window - measured at some
+point but not within \code{[k - window, k + window]} - and those never
+measured at all, with the censoring also as a percentage of the eligible
+total. \code{Subjects} counts the distinct contributing subjects.
 \item \code{comparison}: the pairwise between-arm difference - in
 proportions for a binary outcome, in means for a continuous one - with
 its bootstrap standard error and confidence interval, paired by

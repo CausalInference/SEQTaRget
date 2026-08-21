@@ -24,9 +24,8 @@ Alongside the estimate this counts the trial-periods censored for want of a
 measurement in the window - those measured at some point but not within
 \code{[k - window, k + window]} - so that share can be reported next to the
 estimate they were dropped from. Trial-periods never measured at all are
-eligible but are not counted as censored here, so the censored and analysed
-counts need not sum to the eligible total; \code{\link[=endoffup.counts]{endoffup.counts()}} gives the full
-four-way account. Trial-periods are the unit because one subject can be
-analysed in one trial and censored in another.
+counted separately rather than folded in, so the analysed, censored and
+never-measured counts partition the eligible total. Trial-periods are the unit
+because one subject can be analysed in one trial and censored in another.
 }
 \keyword{internal}
