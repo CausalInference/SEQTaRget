@@ -74,14 +74,13 @@ end_of_fup(model)
 `end_of_fup()` returns, per subgroup, two tables: `estimates` gives the weighted
 proportion (or mean) in each arm with its bootstrap confidence interval, and an
 account of how much of the arm it rests on. `Trial-periods (Eligible)` is every
-trial-period that reached the follow-up time, `(Analysed)` those contributing to
-the estimate, and `(Censored)` those measured at some point but not within the
-window, with `% Censored` giving the latter as a share of the eligible total.
-Those two do not sum to the eligible total: trial-periods never measured at all
-are eligible but are not censored for want of a window measurement, and
-`diagnostics()` below gives the full four-way account. `Subjects` counts the
-distinct people behind the analysed trial-periods; one subject contributes
-several trial-periods and can be analysed in some and censored in others. `comparison` gives the pairwise between-arm contrast: the difference in
+trial-period that reached the follow-up time, and the next three partition it:
+`(Analysed)` contribute to the estimate, `(Censored)` were measured at some point
+but not within the window, and `(No measurement)` were never measured at all - so
+the three sum back to the eligible total. `% Censored` gives the censored share of
+that total. `Subjects` counts the distinct people behind the analysed
+trial-periods; one subject contributes several trial-periods and can be analysed
+in some and censored in others. `comparison` gives the pairwise between-arm contrast: the difference in
 proportions here, or the difference in means for a continuous outcome,
 with its standard error and confidence interval. For a binary outcome the ratio
 of proportions is reported alongside it, with an interval computed on the log

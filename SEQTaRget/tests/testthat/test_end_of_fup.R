@@ -312,18 +312,19 @@ test_that("The estimates table reports the censored trial-periods and their shar
   model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
   est <- model@eof.data[[1]][order(A)]
   expect_true(all(c("Trial-periods (Eligible)", "Trial-periods (Censored)",
-                    "% Censored") %in% names(est)))
+                    "Trial-periods (No measurement)", "% Censored") %in% names(est)))
 
   nonunique <- diagnostics(model)$eof.nonunique[[1]]
   expect_equal(est$`Trial-periods (Eligible)`, nonunique$Eligible)
   expect_equal(est$`Trial-periods (Analysed)`, nonunique$`At k` + nonunique$`In window`)
 
   # Censored counts only the trial-periods measured outside the window; those
-  # never measured at all are eligible but are not censored for want of a
-  # measurement in the window, so the three counts are not a partition
+  # never measured at all are reported separately, so the three counts partition
+  # the eligible total
   expect_equal(est$`Trial-periods (Censored)`, nonunique$`Excluded (outside window)`)
+  expect_equal(est$`Trial-periods (No measurement)`, nonunique$`Excluded (no measurement)`)
   expect_equal(est$`Trial-periods (Analysed)` + est$`Trial-periods (Censored)` +
-                 nonunique$`Excluded (no measurement)`,
+                 est$`Trial-periods (No measurement)`,
                est$`Trial-periods (Eligible)`)
 
   # The percentage is of the eligible trial-periods, not of the contributors
