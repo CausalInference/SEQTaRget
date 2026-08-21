@@ -307,31 +307,33 @@ test_that("End-of-follow-up expansion is not truncated at the first event", {
   expect_true(all(is.finite(eof@eof.data[[1]]$Proportion)))
 })
 
-test_that("The estimates table reports the excluded trial-periods and their share", {
+test_that("The estimates table reports the censored trial-periods and their share", {
   skip_on_cran()
   model <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12, end_of_fup.window = 3)
   est <- model@eof.data[[1]][order(A)]
-  expect_true(all(c("Trial-periods (Eligible)", "Trial-periods (Excluded)",
-                    "% Excluded") %in% names(est)))
+  expect_true(all(c("Trial-periods (Eligible)", "Trial-periods (Censored)",
+                    "% Censored") %in% names(est)))
 
-  # Excluded is everything eligible that did not contribute, so it reconciles
-  # against the diagnostics breakdown of the same trial-periods
   nonunique <- diagnostics(model)$eof.nonunique[[1]]
-  expect_equal(est$`Trial-periods (Excluded)`,
-               nonunique$`Excluded (outside window)` + nonunique$`Excluded (no measurement)`)
   expect_equal(est$`Trial-periods (Eligible)`, nonunique$Eligible)
-  # Eligible is exactly partitioned by the analysed and excluded trial-periods
-  expect_equal(est$`Trial-periods (Analysed)` + est$`Trial-periods (Excluded)`,
+  expect_equal(est$`Trial-periods (Analysed)`, nonunique$`At k` + nonunique$`In window`)
+
+  # Censored counts only the trial-periods measured outside the window; those
+  # never measured at all are eligible but are not censored for want of a
+  # measurement in the window, so the three counts are not a partition
+  expect_equal(est$`Trial-periods (Censored)`, nonunique$`Excluded (outside window)`)
+  expect_equal(est$`Trial-periods (Analysed)` + est$`Trial-periods (Censored)` +
+                 nonunique$`Excluded (no measurement)`,
                est$`Trial-periods (Eligible)`)
 
   # The percentage is of the eligible trial-periods, not of the contributors
-  expect_equal(est$`% Excluded`, 100 * est$`Trial-periods (Excluded)` / est$`Trial-periods (Eligible)`)
-  expect_true(all(est$`% Excluded` >= 0 & est$`% Excluded` <= 100))
+  expect_equal(est$`% Censored`, 100 * est$`Trial-periods (Censored)` / est$`Trial-periods (Eligible)`)
+  expect_true(all(est$`% Censored` >= 0 & est$`% Censored` <= 100))
 
-  # Widening the window recovers trial-periods, so fewer are excluded
+  # Widening the window recovers trial-periods, so fewer are censored
   narrow <- eof_run(end_of_fup = TRUE, end_of_fup.time = 12)@eof.data[[1]][order(A)]
-  expect_true(all(narrow$`Trial-periods (Excluded)` >= est$`Trial-periods (Excluded)`))
-  expect_true(any(narrow$`Trial-periods (Excluded)` > est$`Trial-periods (Excluded)`))
+  expect_true(all(narrow$`Trial-periods (Censored)` >= est$`Trial-periods (Censored)`))
+  expect_true(any(narrow$`Trial-periods (Censored)` > est$`Trial-periods (Censored)`))
 })
 
 test_that("The end-of-follow-up counts table accounts for every trial-period", {

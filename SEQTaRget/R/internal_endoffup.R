@@ -58,11 +58,14 @@ endoffup.measure <- function(DT, params) {
 #' bounds \code{weight.p99} resolves to) is applied here as it is for the
 #' outcome model, since this average is the estimator in \code{end_of_fup} mode.
 #'
-#' Alongside the estimate this counts the trial-periods excluded for want of a
-#' measurement in the window, so the share of eligible trial-periods dropped can
-#' be reported next to the estimate they were dropped from. Trial-periods are the
-#' denominator because they partition cleanly, whereas one subject can contribute
-#' one trial and be excluded in another.
+#' Alongside the estimate this counts the trial-periods censored for want of a
+#' measurement in the window - those measured at some point but not within
+#' \code{[k - window, k + window]} - so that share can be reported next to the
+#' estimate they were dropped from. Trial-periods never measured at all are
+#' eligible but are not counted as censored here, so the censored and analysed
+#' counts need not sum to the eligible total; [endoffup.counts()] gives the full
+#' four-way account. Trial-periods are the unit because one subject can be
+#' analysed in one trial and censored in another.
 #'
 #' @param DT expanded data.table for one bootstrap iteration
 #' @param params SEQparams object
@@ -70,15 +73,22 @@ endoffup.measure <- function(DT, params) {
 #' @import data.table
 #' @keywords internal
 endoffup.estimate <- function(DT, params) {
-  weight <- eof.value <- n <- n.eligible <- n.excluded <- NULL
+  weight <- eof.value <- followup <- n.eligible <- n.censored <- in.window <- measured. <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  k <- params@end_of_fup.time
+  w <- params@end_of_fup.window
   measured <- endoffup.measure(DT, params)
 
-  # One row per trial-period: the eligible total the contributors are drawn from,
-  # counted over the same data as endoffup.counts() so the two agree.
+  # One row per trial-period, flagged as endoffup.counts() flags them so the two
+  # agree. Censored counts only those measured at some point but not within the
+  # window - trial-periods never measured at all (e.g. censored or deviated before
+  # any measurement) are eligible but are not counted here, so the censored and
+  # analysed counts need not sum to the eligible total.
   has_sub <- !is.na(params@subgroup) && params@subgroup %in% names(DT)
-  periods <- unique(DT[, c(params@id, "trial", tx_bas,
-                           if (has_sub) params@subgroup), with = FALSE])
+  periods <- DT[, list(in.window = any(!is.na(get(params@outcome)) &
+                                         followup >= k - w & followup <= k + w),
+                       measured. = any(!is.na(get(params@outcome)))),
+                by = c(params@id, "trial", tx_bas, if (has_sub) params@subgroup)]
 
   arm_average <- function(dt, elig) {
     if (nrow(dt) == 0L) return(data.table())
@@ -88,8 +98,9 @@ endoffup.estimate <- function(DT, params) {
                      n = .N,
                      n.subjects = uniqueN(get(params@id))),
               by = c(tx_bas)]
-    out <- out[elig[, list(n.eligible = .N), by = c(tx_bas)], on = tx_bas, nomatch = NULL
-               ][, n.excluded := n.eligible - n]
+    totals <- elig[, list(n.eligible = .N,
+                          n.censored = sum(measured. & !in.window)), by = c(tx_bas)]
+    out <- out[totals, on = tx_bas, nomatch = NULL]
     setorderv(out, tx_bas)
     out[]
   }
@@ -120,7 +131,7 @@ endoffup.estimate <- function(DT, params) {
 create.endoffup <- function(full, boots, params) {
   estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- NULL
   SE <- LCI <- UCI <- Time <- ratio_logse <- ratio_lci <- ratio_uci <- NULL
-  n <- n.eligible <- n.excluded <- NULL
+  n <- n.eligible <- n.censored <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
   ci_lab <- paste0(format(params@bootstrap.CI * 100, trim = TRUE), "%")
   z <- qnorm(1 - (1 - params@bootstrap.CI) / 2)
@@ -188,20 +199,22 @@ create.endoffup <- function(full, boots, params) {
   label <- if (params@end_of_fup.type == "binary") "Proportion" else "Mean"
   # Share of eligible trial-periods dropped for want of a measurement in the
   # window, reported beside the estimate they were dropped from.
-  if (all(c("n.eligible", "n.excluded") %in% names(data))) {
-    data[, "% Excluded" := 100 * n.excluded / n.eligible]
+  if (all(c("n.eligible", "n.censored") %in% names(data))) {
+    data[, "% Censored" := 100 * n.censored / n.eligible]
   }
-  # The three trial-period columns share a prefix because they are one partition
-  # in one unit: Eligible = Analysed + Excluded. Subjects is left unprefixed as it
-  # counts people, not trial-periods, and so is not part of that partition.
-  setnames(data, c(tx_bas, "estimate", "n.eligible", "n", "n.excluded", "n.subjects"),
+  # The three trial-period columns share a prefix because they are counts in the
+  # same unit. They are not a partition: Censored covers only the trial-periods
+  # measured outside the window, so trial-periods never measured at all are in
+  # Eligible but in neither of the other two. Subjects is left unprefixed as it
+  # counts people rather than trial-periods.
+  setnames(data, c(tx_bas, "estimate", "n.eligible", "n", "n.censored", "n.subjects"),
            c("A", label, "Trial-periods (Eligible)", "Trial-periods (Analysed)",
-             "Trial-periods (Excluded)", "Subjects"), skip_absent = TRUE)
+             "Trial-periods (Censored)", "Subjects"), skip_absent = TRUE)
   if (has_ci) setnames(data, c("LCI", "UCI"), paste0(ci_lab, c(" LCI", " UCI")), skip_absent = TRUE)
   data[, `:=`(Time = params@end_of_fup.time, Type = params@end_of_fup.type)]
   setcolorder(data, intersect(c("Type", "Time", "A", label,
                                 "Trial-periods (Eligible)", "Trial-periods (Analysed)",
-                                "Trial-periods (Excluded)", "% Excluded", "Subjects"),
+                                "Trial-periods (Censored)", "% Censored", "Subjects"),
                               names(data)))
 
   if (nrow(comparison) > 0L) {
