@@ -277,10 +277,6 @@ internal.analysis <- function(params) {
       params_boot@glm.package <- "fastglm"
       # end_of_fup fits no outcome model, so there is nothing to warm-start from
       boot_start <- if (params@end_of_fup) NULL else lapply(full$model, function(sg) coef(sg$model))
-      clean_models <- function(out) {
-        if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
-        out
-      }
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
@@ -289,7 +285,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          return(clean_models(out))
+          return(clean_models(out, params))
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
@@ -297,7 +293,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          return(clean_models(out))
+          return(clean_models(out, params))
         })
       }
     } else {
