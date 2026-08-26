@@ -210,7 +210,8 @@ internal.analysis <- function(params) {
       # Counted from the same data as the estimate so the two always reconcile
       eof.counts <- if (params@end_of_fup && counts) {
         list(unique = endoffup.counts(eof.dt, params, "unique"),
-             nonunique = endoffup.counts(eof.dt, params, "nonunique"))
+             nonunique = endoffup.counts(eof.dt, params, "nonunique"),
+             summary = endoffup.summary(eof.dt, params))
       } else NA
       if (!params@data.return) WDT <- data.table()
       return(list(

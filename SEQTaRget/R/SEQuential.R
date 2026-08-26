@@ -350,6 +350,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
   eof.unique <- if (params@end_of_fup) analytic[[1]]$eof.counts$unique else NA
   eof.nonunique <- if (params@end_of_fup) analytic[[1]]$eof.counts$nonunique else NA
+  # Mean/SD of the analysed measurements stands in for the (suppressed) outcome
+  # count tables when the outcome is continuous
+  eof.summary <- if (params@end_of_fup && params@end_of_fup.type == "continuous") analytic[[1]]$eof.counts$summary else NA
   rm(analytic)
 
   # Outcome tables count outcome == 1 rows - meaningless for a continuous outcome, so NA there
@@ -389,7 +392,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                compevent.unique = compevent.unique,
                compevent.nonunique = compevent.nonunique,
                eof.unique = eof.unique,
-               eof.nonunique = eof.nonunique)
+               eof.nonunique = eof.nonunique,
+               eof.summary = eof.summary)
   
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
   out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info,

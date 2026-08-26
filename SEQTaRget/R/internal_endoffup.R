@@ -315,3 +315,34 @@ endoffup.counts <- function(DT, params, type) {
   names(out) <- paste0(params@subgroup, "_", groups)
   return(out)
 }
+
+#' Per-arm summary of the analysed end-of-follow-up measurements
+#'
+#' N, mean and SD of the raw selected measurements per baseline arm - the
+#' unweighted analogue of the outcome count tables, reported for continuous
+#' outcomes where event counts have no meaning.
+#'
+#' @param DT expanded data.table, weighted or not - as passed to [endoffup.estimate()]
+#' @param params SEQparams object
+#' @returns named list of data.tables, one element per subgroup
+#' @import data.table
+#' @keywords internal
+endoffup.summary <- function(DT, params) {
+  eof.value <- NULL
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  measured <- endoffup.measure(DT, params)
+
+  summarise <- function(dt) {
+    if (nrow(dt) == 0L) return(data.table())
+    out <- dt[, list(N = .N, Mean = mean(eof.value), SD = sd(eof.value)), by = c(tx_bas)]
+    setnames(out, tx_bas, "A")
+    setorderv(out, "A")
+    out[]
+  }
+
+  if (is.na(params@subgroup)) return(list(summarise(measured)))
+  groups <- sort(unique(DT[[params@subgroup]]))
+  out <- lapply(groups, function(g) summarise(measured[get(params@subgroup) == g, ]))
+  names(out) <- paste0(params@subgroup, "_", groups)
+  return(out)
+}

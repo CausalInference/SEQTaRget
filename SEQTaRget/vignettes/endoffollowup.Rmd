@@ -212,8 +212,14 @@ end_of_fup(continuous)$`1`$comparison
 Here `Difference` is the difference in means, and there is no `Ratio` column.
 
 Note that the usual outcome diagnostic tables count `outcome == 1` rows, which
-has no meaning for a continuous outcome, so they are reported as `NA`. The
-follow-up and end-of-follow-up tables remain available.
+has no meaning for a continuous outcome, so they are reported as `NA`. In their
+place `diagnostics()` reports the N, mean and SD of the raw analysed
+measurements per arm in `eof.summary`; the follow-up and end-of-follow-up
+tables remain available.
+
+```{r}
+diagnostics(continuous)$eof.summary
+```
 
 ## Per-protocol effects
 

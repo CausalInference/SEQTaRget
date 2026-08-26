@@ -423,3 +423,24 @@ test_that("A non-binary outcome under the default type points at end_of_fup.type
   survival_err <- expect_error(eof_run(data = copy(d), outcome = "bio"), "must be binary")
   expect_false(grepl("end_of_fup.type", conditionMessage(survival_err), fixed = TRUE))
 })
+
+test_that("A continuous outcome reports mean/SD of the analysed measurements", {
+  skip_on_cran()
+  set.seed(42)
+  d <- copy(SEQdata)
+  d[, cont := 10 + 2 * as.numeric(as.character(tx_init)) + N + rnorm(.N)]
+  model <- eof_run(data = d, outcome = "cont", end_of_fup = TRUE, end_of_fup.time = 12,
+                   end_of_fup.type = "continuous", end_of_fup.window = 3)
+
+  summary_tab <- diagnostics(model)$eof.summary[[1]]
+  expect_named(summary_tab, c("A", "N", "Mean", "SD"))
+  # Same rows as the estimate, and the raw mean should sit near the weighted one
+  est <- model@eof.data[[1]][order(A)]
+  expect_equal(summary_tab$N, est$`Trial-periods (Analysed)`)
+  expect_equal(summary_tab$Mean, est$Mean, tolerance = 0.05)
+  expect_true(all(summary_tab$SD > 0))
+  expect_true(any(grepl("Outcome Summary Table", capture.output(show(model)))))
+
+  # Binary outcomes keep their count tables and gain no summary
+  expect_true(all(is.na(diagnostics(eof_run(end_of_fup = TRUE, end_of_fup.time = 12))$eof.summary)))
+})
