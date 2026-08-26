@@ -101,10 +101,8 @@ SEQexpand <- function(params) {
     # from subsequent periods in the original data. The row indices are computed
     # outside the i-expression: inside DT[i], columns shadow local variables, so a
     # user column named "out" would otherwise shadow the table itself and error.
-    # An end-of-follow-up outcome is a measurement taken at one time, not a
-    # time-to-event, so there is no first event to truncate at: truncating would
-    # discard the very rows the estimate is read from (and for a continuous
-    # outcome, match(1L, ...) would cut at the first value that happens to be 1).
+    # end_of_fup outcomes are measurements, not events - truncating would discard
+    # the rows the estimate is read from
     if (!params@end_of_fup) {
       keep_rows <- out[, .I[seq_len(match(1L, .SD[[1L]], nomatch = .N))],
                        by = c(params@id, "trial"), .SDcols = params@outcome]$V1

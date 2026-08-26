@@ -36,17 +36,14 @@ endoffup.measure <- function(DT, params) {
                    cols, with = FALSE]
   if (nrow(candidates) == 0L) return(candidates[, "eof.value" := numeric(0)])
 
-  # Take the measurement nearest to k. The exact-k measurement has distance 0 so
-  # it always wins where one exists; ordering by (distance, descending followup)
-  # and taking the first row per trial-period breaks equidistant ties - one
-  # measurement the same number of periods either side of k - toward the later
-  # measurement, so the trial-period has at least k of follow-up elapsed.
+  # Nearest to k wins (exact k has distance 0); equidistant ties break toward the
+  # later measurement so at least k of follow-up has elapsed
   candidates[, .dist := abs(followup - k)]
   setorderv(candidates, c(params@id, "trial", ".dist", "followup"), order = c(1L, 1L, 1L, -1L))
   out <- candidates[candidates[, .I[1L], by = c(params@id, "trial")]$V1
                     ][, .dist := NULL]
 
-  # An unweighted analysis is the equally-weighted average of the same values
+  # Unweighted analysis = equal weights
   if (!"weight" %in% names(out)) out[, weight := 1]
   setnames(out, params@outcome, "eof.value")
   return(out[])
@@ -152,8 +149,7 @@ create.endoffup <- function(full, boots, params) {
                            UCI = quantile(estimate, 1 - alpha, na.rm = TRUE)), by = c(tx_bas)]
       data <- data[q, on = tx_bas]
     }
-    # A binary outcome is a proportion, so clamp the normal-approximation
-    # interval to [0, 1]; a continuous outcome has no such bound.
+    # Proportions are bounded, so clamp the binary interval to [0, 1]
     if (params@end_of_fup.type == "binary") data[, `:=`(LCI = pmax(0, LCI), UCI = pmin(1, UCI))]
   }
 
@@ -172,9 +168,7 @@ create.endoffup <- function(full, boots, params) {
         if (!all(c(v1, v2) %in% names(wide))) return(blank)
         d <- wide[[v2]] - wide[[v1]]
         d_se <- sd(d, na.rm = TRUE)
-        # As in create.risk(), a ratio is summarised on the log scale - the scale
-        # on which ratio measures are pooled - and only where it is defined, so
-        # non-positive bootstrap estimates are dropped rather than yielding NaN.
+        # Ratio summarised on the log scale (as in create.risk); non-positive draws dropped
         r <- wide[[v2]] / wide[[v1]]
         r_valid <- r[is.finite(r) & r > 0]
         r_logse <- if (length(r_valid) > 1L) sd(log(r_valid), na.rm = TRUE) else NA_real_
@@ -219,10 +213,7 @@ create.endoffup <- function(full, boots, params) {
                               names(data)))
 
   if (nrow(comparison) > 0L) {
-    # A ratio of means is only interpretable when the outcome is bounded away
-    # from zero, which a continuous outcome need not be (it may even be
-    # negative, leaving log(ratio) undefined), so it is reported for proportions
-    # only. The difference is the contrast that always applies.
+    # Ratios need an outcome bounded away from zero, so they are reported for proportions only
     ratio_cols <- c("Ratio", paste0("Ratio ", ci_lab, c(" LCI", " UCI")), "log(Ratio) SE")
     setnames(comparison, c("V1", "V2", "diff_", "ratio"), c("A_x", "A_y", "Difference", "Ratio"))
     if (has_ci) setnames(comparison,
@@ -305,8 +296,7 @@ endoffup.counts <- function(DT, params, type) {
     out <- dcast(counted, get(tx_bas) ~ .category, value.var = "N", fill = 0L)
     setnames(out, "tx_bas", tx_bas, skip_absent = TRUE)
     for (lv in levels) if (!lv %in% names(out)) out[, (lv) := 0L]
-    # Eligible is the total considered; for trial-periods the four categories
-    # partition it, for subjects they may overlap so it is counted directly.
+    # Trial-period categories partition Eligible; subject categories may overlap
     total <- if (type == "unique") {
       dt[, list(Eligible = uniqueN(get(params@id))), by = c(tx_bas)]
     } else {

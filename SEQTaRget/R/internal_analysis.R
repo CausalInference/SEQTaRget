@@ -117,9 +117,7 @@ internal.analysis <- function(params) {
 
     handler <- function(DT, data, params, start = NULL, counts = FALSE) {
       if (!params@weighted) {
-        # An end-of-follow-up outcome is a weighted average, not a fitted model;
-        # fitting the quasibinomial outcome model would be meaningless for it
-        # (and ill-defined for a continuous outcome), so it is skipped.
+        # end_of_fup is a weighted average, not a fitted model - skip the outcome model
         model <- if (params@end_of_fup) NA else internal.model(DT, params, start = start)
         WDT <- data.table()
       } else if (params@weighted) {
@@ -209,8 +207,7 @@ internal.analysis <- function(params) {
       # iterations, so the per-arm average cannot be recovered afterwards.
       eof.dt <- if (params@weighted) WDT else DT
       eof <- if (params@end_of_fup) endoffup.estimate(eof.dt, params) else NA
-      # Counted from the same data as the estimate so the contributing
-      # categories always reconcile with it; only needed for the full fit.
+      # Counted from the same data as the estimate so the two always reconcile
       eof.counts <- if (params@end_of_fup && counts) {
         list(unique = endoffup.counts(eof.dt, params, "unique"),
              nonunique = endoffup.counts(eof.dt, params, "nonunique"))
@@ -278,8 +275,7 @@ internal.analysis <- function(params) {
       # setup on every resample. The main fit above honors the user's choice.
       # Documented in the glm.package entry of ?SEQopts.
       params_boot@glm.package <- "fastglm"
-      # No outcome model is fit in end_of_fup mode, so there are no coefficients
-      # to warm-start from and nothing to strip off the iteration's result.
+      # end_of_fup fits no outcome model, so there is nothing to warm-start from
       boot_start <- if (params@end_of_fup) NULL else lapply(full$model, function(sg) coef(sg$model))
       clean_models <- function(out) {
         if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })

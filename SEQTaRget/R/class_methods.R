@@ -158,9 +158,7 @@ setMethod("show", "SEQoutput", function(object) {
   outcome.nonunique <- slot(object, "info")$outcome.nonunique
   followup.unique <- slot(object, "info")$followup.unique
   followup.nonunique <- slot(object, "info")$followup.nonunique
-  # A continuous end-of-follow-up outcome has no event counts, so the outcome
-  # tables are NA there; drive the loop off the follow-up tables, which are
-  # always present, so their subgroups still print.
+  # Outcome tables are NA for continuous eof outcomes; loop over the always-present follow-up tables
   has_outcome_tables <- is.list(outcome.unique)
   labelled <- if (has_outcome_tables) outcome.unique else followup.unique
   for (i in seq_along(labelled)) {

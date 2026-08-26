@@ -184,23 +184,18 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   setorderv(data, c(id.col, time.col))
   if (length(pruned) > 0 && verbose) cat("\nPruned\n")
 
-  # An end-of-follow-up outcome is measured at particular times rather than
-  # continuously, so a missing outcome is meaningful there - it records that no
-  # measurement was taken at that time, which is what end_of_fup.window exists to
-  # accommodate. Every other column must still be complete.
+  # end_of_fup: NA outcome = "not measured at this time"; all other columns must be complete
   na.check.cols <- setdiff(names(data), if (params@end_of_fup) params@outcome else character(0))
   if (nrow(data[!complete.cases(data[, na.check.cols, with = FALSE])]) > 0)
     stop("Data contains NA values, please fix before modeling",
          if (params@end_of_fup) " ('end_of_fup' permits missing values in the outcome column only)" else "")
-  # A continuous end-of-follow-up outcome is averaged, not modelled as an event,
-  # so it is the one case where a non-binary outcome column is expected.
+  # Continuous end_of_fup outcomes are averaged, not modelled, so non-binary is expected
   if (!params@hazard && !(params@end_of_fup && params@end_of_fup.type == "continuous")) {
     outcome_vals <- unique(data[[params@outcome]])
     outcome_vals <- outcome_vals[!is.na(outcome_vals)]
     if (!all(outcome_vals %in% c(0L, 1L))) {
       offending <- setdiff(outcome_vals, c(0L, 1L))
-      # A continuous column can hold thousands of distinct values; listing them
-      # all buries the message it is meant to convey.
+      # Cap the listing - a continuous column can hold thousands of distinct values
       shown <- paste(utils::head(offending, 10L), collapse = ", ")
       if (length(offending) > 10L) shown <- paste0(shown, ", ... (", length(offending), " distinct values)")
       stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ", shown,
@@ -306,8 +301,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   analytic <- internal.analysis(params)
   WDT <- analytic[[1]]$WDT
 
-  # In end_of_fup mode no outcome model is fit, so the subgroup labels come from
-  # the per-subgroup end-of-follow-up estimates instead.
+  # end_of_fup fits no outcome model; subgroup labels come from the eof estimates
   subgroups <- if (is.na(params@subgroup)) 1L else
     if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
@@ -358,10 +352,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   eof.nonunique <- if (params@end_of_fup) analytic[[1]]$eof.counts$nonunique else NA
   rm(analytic)
 
-  # The outcome tables count outcome == 1 rows, which is only meaningful for a
-  # binary outcome: for a continuous end-of-follow-up outcome they would count
-  # values that happen to equal exactly 1, so they are reported as NA instead.
-  # The follow-up tables count person-time and stay meaningful either way.
+  # Outcome tables count outcome == 1 rows - meaningless for a continuous outcome, so NA there
   continuous.outcome <- params@end_of_fup && params@end_of_fup.type == "continuous"
   outcome.unique  <- outcome.nonunique <- if (!continuous.outcome) vector("list", n_subgroups) else NA
   followup.unique <- followup.nonunique <- vector("list", n_subgroups)
