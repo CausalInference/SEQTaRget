@@ -117,8 +117,8 @@ windowed <- SEQuential(SEQdata, id.col = "ID",
                                 method = "ITT",
                                 options = options)
 
-end_of_fup(windowed)$`1`$estimates
-end_of_fup(windowed)$`1`$comparison
+end_of_fup(windowed)[[1]]$estimates
+end_of_fup(windowed)[[1]]$comparison
 ```
 
 `comparison` is where the treatment effect lives: `Difference` is the difference
@@ -205,8 +205,8 @@ continuous <- SEQuential(data, id.col = "ID",
                                                  seed = 1636,
                                                  bootstrap.nboot = 20))
 
-end_of_fup(continuous)$`1`$estimates
-end_of_fup(continuous)$`1`$comparison
+end_of_fup(continuous)[[1]]$estimates
+end_of_fup(continuous)[[1]]$comparison
 ```
 
 Here `Difference` is the difference in means, and there is no `Ratio` column.
@@ -245,8 +245,8 @@ perprotocol <- SEQuential(SEQdata, id.col = "ID",
                                                      seed = 1636,
                                                      bootstrap.nboot = 20))
 
-end_of_fup(perprotocol)$`1`$estimates
-end_of_fup(perprotocol)$`1`$comparison
+end_of_fup(perprotocol)[[1]]$estimates
+end_of_fup(perprotocol)[[1]]$comparison
 ```
 
 Subjects who deviate from their assigned strategy are artificially censored at
