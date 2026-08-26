@@ -26,7 +26,10 @@ measured \code{At k}, measured \code{In window}, \code{Excluded
 \code{Eligible}, and \code{At k} plus \code{In window} equals the
 trial-periods contributing to the estimate. The unique (subject) counts
 need not sum to \code{Eligible}, since one subject can fall into
-different categories for different trials.
+different categories for different trials. For a continuous outcome
+\code{eof.summary} additionally reports the N, mean and SD of the raw
+analysed measurements per arm, standing in for the suppressed outcome
+count tables.
 \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
 follow-up vs. the total number of person-time intervals (expanded rows). The
 non-unique count is much larger because each subject contributes one row per
