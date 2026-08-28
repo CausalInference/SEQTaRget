@@ -2,6 +2,7 @@ on:
   push:
     branches-ignore: [main]
     paths: ['SEQTaRget/DESCRIPTION']
+  workflow_dispatch:
 name: sync-citation-version.yaml
 permissions: read-all
 jobs:
