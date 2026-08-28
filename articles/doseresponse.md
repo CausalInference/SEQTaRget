@@ -20,6 +20,7 @@ options <- SEQopts(# tells SEQuential to create Kaplan-Meier curves
                    km.curves = TRUE,
                    # tells SEQuential to bootstrap
                    bootstrap = TRUE,
+                   seed = 1636,
                    # tells SEQuential to run bootstraps 5 times
                    bootstrap.nboot = 5)
 
@@ -72,19 +73,19 @@ km_curve(model, plot.type = "risk")        # retrieve risk plot
 
 risk_data(model)
 #> Index: <Followup>
-#>           Method Followup      A      Risk   95% LCI   95% UCI         SE
-#>           <char>    <num> <char>     <num>     <num>     <num>      <num>
-#> 1: dose-response       60      0 0.5282782 0.2410166 0.8155398 0.14656473
-#> 2: dose-response       60      1 0.8949096 0.8063496 0.9834697 0.04518453
+#>           Method Followup      A      Risk    95% LCI   95% UCI         SE
+#>           <char>    <num> <char>     <num>      <num>     <num>      <num>
+#> 1: dose-response       60      0 0.5282782 0.03851259 1.0000000 0.24988501
+#> 2: dose-response       60      1 0.8949096 0.85228977 0.9375295 0.02174522
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60 risk_0 risk_1  1.6940120  0.8652189   3.316706  0.3427983
-#> 2:       60 risk_1 risk_0  0.5903146  0.3015040   1.155777  0.3427983
-#>    Risk Difference  RD 95% LCI  RD 95% UCI     RD SE
-#>              <num>       <num>       <num>     <num>
-#> 1:       0.3666314  0.06783115  0.66543165 0.1524519
-#> 2:      -0.3666314 -0.66543165 -0.06783115 0.1524519
+#> 1:       60 risk_0 risk_1  1.6940120  0.7612927   3.769479  0.4080876
+#> 2:       60 risk_1 risk_0  0.5903146  0.2652887   1.313555  0.4080876
+#>    Risk Difference RD 95% LCI RD 95% UCI     RD SE
+#>              <num>      <num>      <num>     <num>
+#> 1:       0.3666314 -0.1084919  0.8417547 0.2424143
+#> 2:      -0.3666314 -0.8417547  0.1084919 0.2424143
 ```
 
 ## Dose-response with 5 bootstrap samples and losses-to-followup
@@ -93,6 +94,7 @@ risk_comparison(model)
 
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
+                   seed = 1636,
                    bootstrap.nboot = 5,
                    # tells SEQuential to expect LTFU as the censoring column
                    cense = "LTFU",
@@ -151,17 +153,17 @@ risk_data(model)
 #> Index: <Followup>
 #>           Method Followup      A        Risk 95% LCI    95% UCI         SE
 #>           <char>    <num> <char>       <num>   <num>      <num>      <num>
-#> 1: dose-response       60      0 0.007847443       0 0.02529929 0.00890417
-#> 2: dose-response       60      1 0.018827788       0 0.04862160 0.01520121
+#> 1: dose-response       60      0 0.007847443       0 0.04436325 0.01863086
+#> 2: dose-response       60      1 0.018827788       0 0.04180403 0.01172279
 risk_comparison(model)
-#>    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI log(RR) SE
-#>       <num> <fctr> <fctr>      <num>       <num>      <num>      <num>
-#> 1:       60 risk_0 risk_1  2.3992259 0.042419739  135.69826   2.058858
-#> 2:       60 risk_1 risk_0  0.4168011 0.007369291   23.57393   2.058858
+#>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
+#> 1:       60 risk_0 risk_1  2.3992259 0.21645193  26.593825   1.227335
+#> 2:       60 risk_1 risk_0  0.4168011 0.03760271   4.619963   1.227335
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:      0.01098034 -0.01230360 0.03426429 0.01187978
-#> 2:     -0.01098034 -0.03426429 0.01230360 0.01187978
+#> 1:      0.01098034 -0.01762636 0.03958705 0.01459553
+#> 2:     -0.01098034 -0.03958705 0.01762636 0.01459553
 ```
 
 ## Dose-response with 5 bootstrap samples and competing events
@@ -170,6 +172,7 @@ risk_comparison(model)
 
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
+                   seed = 1636,
                    bootstrap.nboot = 5,
                    # Using LTFU as our competing event
                    compevent = "LTFU")
@@ -222,19 +225,19 @@ km_curve(model, plot.type = "risk")
 
 risk_data(model)
 #> Index: <Followup>
-#>           Method Followup      A        Risk 95% LCI    95% UCI          SE
-#>           <char>    <num> <char>       <num>   <num>      <num>       <num>
-#> 1: dose-response       60      0 0.007586789       0 0.03490503 0.013938132
-#> 2: dose-response       60      1 0.003641046       0 0.01433665 0.005457039
+#>           Method Followup      A        Risk 95% LCI    95% UCI         SE
+#>           <char>    <num> <char>       <num>   <num>      <num>      <num>
+#> 1: dose-response       60      0 0.007586789       0 0.04126782 0.01718451
+#> 2: dose-response       60      1 0.003641046       0 0.03315852 0.01506021
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60  inc_0  inc_1  0.4799192 0.05640515   4.083358   1.092396
-#> 2:       60  inc_1  inc_0  2.0836841 0.24489645  17.728878   1.092396
+#> 1:       60  inc_0  inc_1  0.4799192 0.03776639   6.098608   1.297064
+#> 2:       60  inc_1  inc_0  2.0836841 0.16397183  26.478569   1.297064
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:    -0.003945743 -0.03178104 0.02388956 0.01420194
-#> 2:     0.003945743 -0.02388956 0.03178104 0.01420194
+#> 1:    -0.003945743 -0.03928796 0.03139647 0.01803207
+#> 2:     0.003945743 -0.03139647 0.03928796 0.01803207
 ```
 
 ## Dose-response hazard ratio with 5 bootstrap samples and competing events
@@ -247,6 +250,7 @@ options <- SEQopts(# km.curves must be set to FALSE to turn on hazard
                    # set hazard to TRUE for hazard ratio creation
                    hazard = TRUE,
                    bootstrap = TRUE,                
+                   seed = 1636,
                    bootstrap.nboot = 5,     
                    compevent = "LTFU")
 
@@ -288,7 +292,7 @@ model <- SEQuential(data, id.col = "ID",
 # retrieve hazard ratios
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
-#>    1.0475025    0.9029331    1.2152191
+#>    1.0922586    0.9723626    1.2269383
 ```
 
 ## Dose-response with 5 bootstrap samples and competing events in subgroups defined by sex
@@ -297,6 +301,7 @@ hazard_ratio(model)
 
 options <- SEQopts(km.curves = TRUE,               
                    bootstrap = TRUE,                
+                   seed = 1636,
                    bootstrap.nboot = 5,     
                    compevent = "LTFU",
                    # define the subgroup
@@ -359,35 +364,35 @@ km_curve(model, plot.type = "risk")
 risk_data(model)
 #> $sex_0
 #> Index: <Followup>
-#>           Method Followup      A       Risk     95% LCI    95% UCI          SE
-#>           <char>    <num> <char>      <num>       <num>      <num>       <num>
-#> 1: dose-response       60      0 0.01125753 0.000000000 0.06740746 0.028648449
-#> 2: dose-response       60      1 0.01869016 0.007998263 0.02938205 0.005455149
+#>           Method Followup      A       Risk 95% LCI    95% UCI         SE
+#>           <char>    <num> <char>      <num>   <num>      <num>      <num>
+#> 1: dose-response       60      0 0.01125753       0 0.10799085 0.04935464
+#> 2: dose-response       60      1 0.01869016       0 0.06647973 0.02438288
 #> 
 #> $sex_1
 #> Index: <Followup>
 #>           Method Followup      A       Risk 95% LCI    95% UCI          SE
 #>           <char>    <num> <char>      <num>   <num>      <num>       <num>
-#> 1: dose-response       60      0 0.00659838       0 0.02173867 0.007724777
-#> 2: dose-response       60      1 0.01221464       0 0.02765749 0.007879153
+#> 1: dose-response       60      0 0.00659838       0 0.01436046 0.003960317
+#> 2: dose-response       60      1 0.01221464       0 0.03195559 0.010072100
 risk_comparison(model)
 #> $sex_0
-#>    Followup    A_x    A_y Risk Ratio   RR 95% LCI RR 95% UCI log(RR) SE
-#>       <num> <fctr> <fctr>      <num>        <num>      <num>      <num>
-#> 1:       60  inc_0  inc_1  1.6602358 0.0021614680  1275.2365   3.389821
-#> 2:       60  inc_1  inc_0  0.6023241 0.0007841683   462.6485   3.389821
-#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
-#>              <num>       <num>      <num>      <num>
-#> 1:     0.007432626 -0.05399801 0.06886327 0.03134274
-#> 2:    -0.007432626 -0.06886327 0.05399801 0.03134274
+#>    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI log(RR) SE
+#>       <num> <fctr> <fctr>      <num>       <num>      <num>      <num>
+#> 1:       60  inc_0  inc_1  1.6602358 0.005448632   505.8853    2.91809
+#> 2:       60  inc_1  inc_0  0.6023241 0.001976733   183.5323    2.91809
+#>    Risk Difference  RD 95% LCI RD 95% UCI    RD SE
+#>              <num>       <num>      <num>    <num>
+#> 1:     0.007432626 -0.07416459 0.08902984 0.041632
+#> 2:    -0.007432626 -0.08902984 0.07416459 0.041632
 #> 
 #> $sex_1
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60  inc_0  inc_1  1.8511568 0.13746624  24.928167   1.326651
-#> 2:       60  inc_1  inc_0  0.5402028 0.04011526   7.274513   1.326651
+#> 1:       60  inc_0  inc_1  1.8511568  0.2542675  13.477071   1.012865
+#> 2:       60  inc_1  inc_0  0.5402028  0.0742001   3.932866   1.012865
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:     0.005616256 -0.02152428 0.03275679 0.01384746
-#> 2:    -0.005616256 -0.03275679 0.02152428 0.01384746
+#> 1:     0.005616256 -0.01876165 0.02999416 0.01243794
+#> 2:    -0.005616256 -0.02999416 0.01876165 0.01243794
 ```

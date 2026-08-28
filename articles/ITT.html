@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -97,6 +98,7 @@ the library before getting in to some sample use cases.</p>
 <span>                   km.curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   <span class="co"># tells SEQuential to bootstrap</span></span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>,</span>
 <span>                   <span class="co"># tells SEQuential to run bootstraps 5 times</span></span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
@@ -145,19 +147,19 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.8023135 0.8722029 0.01782926</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8536001 0.8952717 0.01063070</span></span>
+<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI  95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;    &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7519414 0.922575 0.04352979</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8461448 0.902727 0.01443450</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0231392  1.0661110 0.01049558</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9379887  0.9773842 0.01049558</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI  RD 95% UCI       RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      0.03717768  0.02106730  0.05328806 0.008219733</span></span>
-<span><span class="co">#&gt; 2:     -0.03717768 -0.05328806 -0.02106730 0.008219733</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9648478   1.130520 0.04042492</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8845486   1.036433 0.04042492</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI      RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      0.03717768 -0.0278918  0.1022472 0.03319932</span></span>
+<span><span class="co">#&gt; 2:     -0.03717768 -0.1022472  0.0278918 0.03319932</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -165,6 +167,7 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>,</span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>                   <span class="co"># tells SEQuential to expect LTFU as the censoring column</span></span>
 <span>                   cense <span class="op">=</span> <span class="st">"LTFU"</span>,</span>
@@ -219,17 +222,17 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.06709029 0.02211606</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.07751561 0.02620959</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.05562653 0.01626710</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.07255455 0.02367839</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.6624555   1.830429  0.2592782</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.5463201   1.509535  0.2592782</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI     RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.002402164 -0.02220968 0.02701401 0.0125573</span></span>
-<span><span class="co">#&gt; 2:    -0.002402164 -0.02701401 0.02220968 0.0125573</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.8154451   1.487013  0.1532658</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.6724890   1.226324  0.1532658</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI       RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0.002402164 -0.01469810 0.01950243 0.008724784</span></span>
+<span><span class="co">#&gt; 2:    -0.002402164 -0.01950243 0.01469810 0.008724784</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
@@ -237,6 +240,7 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>,</span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>                   <span class="co"># Using LTFU as our competing event</span></span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span><span class="op">)</span></span>
@@ -287,17 +291,17 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.02185652       0 0.05236571 0.01556620</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.02381601       0 0.05145809 0.01410336</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.02185652       0 0.05072346 0.01472830</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.02381601       0 0.06530060 0.02116599</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.7371605   1.610697  0.1993957</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.6208492   1.356557  0.1993957</span></span>
-<span><span class="co">#&gt;    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.001959489 -0.002191523 0.006110502 0.002117902</span></span>
-<span><span class="co">#&gt; 2:    -0.001959489 -0.006110502 0.002191523 0.002117902</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.8076389   1.470140  0.1528084</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.6802073   1.238177  0.1528084</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI       RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0.001959489 -0.01330796 0.01722693 0.007789656</span></span>
+<span><span class="co">#&gt; 2:    -0.001959489 -0.01722693 0.01330796 0.007789656</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
@@ -309,6 +313,7 @@ the library before getting in to some sample use cases.</p>
 <span>                   <span class="co"># set hazard to TRUE for hazard ratio creation</span></span>
 <span>                   hazard <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>,</span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span><span class="op">)</span></span>
 <span></span>
@@ -350,7 +355,7 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co"># retrieve hazard ratios</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
-<span><span class="co">#&gt;    1.0854161    0.7877539    1.4955534</span></span></code></pre></div>
+<span><span class="co">#&gt;    1.1241440    0.8026793    1.5743518</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">ITT with 5 bootstrap samples and competing events in subgroups
@@ -359,6 +364,7 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,               </span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,                </span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>,</span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">5</span>,     </span>
 <span>                   compevent <span class="op">=</span> <span class="st">"LTFU"</span>,</span>
 <span>                   <span class="co"># define the subgroup</span></span>
@@ -415,37 +421,37 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A       Risk     95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.04213833 0.002647929 0.08162873 0.02014853</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.04911213 0.000000000 0.09902072 0.02546404</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.04213833       0 0.1040693 0.03159803</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.04911213       0 0.1479362 0.05042138</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A       Risk    95% LCI    95% UCI          SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.01577026 0.00000000 0.03349881 0.009045348</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.01484521 0.00228603 0.02740439 0.006407862</span></span>
+<span><span class="co">#&gt;    Method Followup      A       Risk     95% LCI    95% UCI          SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.01577026 0.004561386 0.02697913 0.005718917</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.01484521 0.003821687 0.02586873 0.005624349</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1654977  0.4132708   3.286912  0.5289895</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8580026  0.3042369   2.419721  0.5289895</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1654977  0.4953457   2.742297   0.436563</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8580026  0.3646578   2.018792   0.436563</span></span>
 <span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
 <span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.006973797 -0.02002146 0.03396905 0.01377334</span></span>
-<span><span class="co">#&gt; 2:    -0.006973797 -0.03396905 0.02002146 0.01377334</span></span>
+<span><span class="co">#&gt; 1:     0.006973797 -0.06046781 0.07441540 0.03440961</span></span>
+<span><span class="co">#&gt; 2:    -0.006973797 -0.07441540 0.06046781 0.03440961</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9413422  0.5369341   1.650342  0.2864498</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0623130  0.6059349   1.862426  0.2864498</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9413422  0.6122541   1.447316  0.2194731</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0623130  0.6909341   1.633309  0.2194731</span></span>
 <span><span class="co">#&gt;    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE</span></span>
 <span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:   -0.0009250492 -0.008530867 0.006680769 0.003880591</span></span>
-<span><span class="co">#&gt; 2:    0.0009250492 -0.006680769 0.008530867 0.003880591</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:   -0.0009250492 -0.008838726 0.006988628 0.004037664</span></span>
+<span><span class="co">#&gt; 2:    0.0009250492 -0.006988628 0.008838726 0.004037664</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -454,11 +460,11 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -72,7 +73,21 @@
     <p>A named list of diagnostic tables, each broken down by baseline treatment arm.
 The "unique" and "non-unique" variants count different things:</p><ul><li><p><code>outcome.unique</code> / <code>outcome.nonunique</code>: distinct subjects who had the
 outcome vs. the total number of outcome events. These coincide for a one-time
-(terminal) outcome, since each subject contributes at most one event row.</p></li>
+(terminal) outcome, since each subject contributes at most one event row. Both are
+<code>NA</code> for a continuous end-of-follow-up outcome, which has no events to count.</p></li>
+<li><p><code>eof.unique</code> / <code>eof.nonunique</code>: present only when
+<code>end_of_fup = TRUE</code>, accounting for every trial-period at the
+end-of-follow-up time across four mutually exclusive categories -
+measured <code>At k</code>, measured <code>In window</code>, <code>Excluded
+      (outside window)</code> and <code>Excluded (no measurement)</code> - against the
+<code>Eligible</code> total. The non-unique (trial-period) counts partition
+<code>Eligible</code>, and <code>At k</code> plus <code>In window</code> equals the
+trial-periods contributing to the estimate. The unique (subject) counts
+need not sum to <code>Eligible</code>, since one subject can fall into
+different categories for different trials. For a continuous outcome
+<code>eof.summary</code> additionally reports the N, mean and SD of the raw
+analysed measurements per arm, standing in for the suppressed outcome
+count tables.</p></li>
 <li><p><code>followup.unique</code> / <code>followup.nonunique</code>: distinct subjects contributing
 follow-up vs. the total number of person-time intervals (expanded rows). The
 non-unique count is much larger because each subject contributes one row per
@@ -85,11 +100,11 @@ the per-arm event rate.</p></li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

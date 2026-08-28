@@ -15,6 +15,8 @@ prepare.output(
   survival.ce,
   risk,
   runtime,
-  info
+  info,
+  eof.data = list(),
+  eof.comparison = list()
 )
 ```

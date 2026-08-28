@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -160,6 +161,41 @@ within [0, 1])</td>
 <td>Whether to return expanded data as output</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
+</tr>
+<tr class="odd">
+<td><code>end_of_fup</code></td>
+<td>Estimate an outcome measured at a single follow-up time as a
+weighted per-arm average, instead of fitting a survival outcome model.
+Incompatible with <code>km.curves</code>, <code>hazard</code>,
+<code>compevent</code> and the dose-response method</td>
+<td>Logical</td>
+<td><code>TRUE</code></td>
+</tr>
+<tr class="even">
+<td><code>end_of_fup.time</code></td>
+<td>The follow-up time <code>k</code> at which the end-of-follow-up
+outcome is evaluated (required when <code>end_of_fup = TRUE</code>)</td>
+<td>Numeric</td>
+<td><code>12</code></td>
+</tr>
+<tr class="odd">
+<td><code>end_of_fup.type</code></td>
+<td>Type of end-of-follow-up outcome: <code>"binary"</code> reports the
+weighted proportion per arm, <code>"continuous"</code> the weighted
+mean</td>
+<td>Character</td>
+<td><code>"binary"</code></td>
+</tr>
+<tr class="even">
+<td><code>end_of_fup.window</code></td>
+<td>Half-width of the window used when a trial-period has no measurement
+at exactly <code>end_of_fup.time</code>; it then falls back to the
+measurement nearest to <code>k</code> within
+<code>[k - window, k + window]</code> (ties broken toward the later one,
+so at least <code>k</code> of follow-up has elapsed), and is censored if
+there is none</td>
+<td>Numeric</td>
+<td><code>3</code></td>
 </tr>
 <tr class="odd">
 <td><code>expand.only</code></td>
@@ -580,11 +616,11 @@ to <code><a href="https://remlapmot.github.io/parglm/reference/parglm.html" clas
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

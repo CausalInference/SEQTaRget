@@ -42,6 +42,9 @@
 - [`diagnostics()`](https://causalinference.github.io/SEQTaRget/reference/diagnostics.md)
   : Function to return diagnostic tables from a SEQuential object
 
+- [`end_of_fup()`](https://causalinference.github.io/SEQTaRget/reference/end_of_fup.md)
+  : Extract the end-of-follow-up outcome estimates
+
 - [`hazard_ratio()`](https://causalinference.github.io/SEQTaRget/reference/hazard_ratio.md)
   : Function to return hazard ratios from a SEQuential object
 

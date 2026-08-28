@@ -1,4 +1,4 @@
-# SEQTaRget - Sequentially Nested Target Trial Emulation
+# SEQTaRget - Sequential Target Trial Emulation
 
 Implementation of sequential trial emulation for the analysis of
 observational databases. The ‘SEQTaRget’ software accommodates
@@ -193,6 +193,9 @@ several different avenues:
 - [`diagnostics()`](https://causalinference.github.io/SEQTaRget/reference/diagnostics.md)
   : Function to return diagnostic tables from a SEQuential object
 
+- [`end_of_fup()`](https://causalinference.github.io/SEQTaRget/reference/end_of_fup.md)
+  : Extract the end-of-follow-up outcome estimates
+
 - [`hazard_ratio()`](https://causalinference.github.io/SEQTaRget/reference/hazard_ratio.md)
   : Function to return hazard ratios from a SEQuential object
 
@@ -225,6 +228,8 @@ several different avenues:
   Analysis](https://causalinference.github.io/SEQTaRget/articles/censoring.md):
 - [Per-Protocol: Dose-Response
   Analysis](https://causalinference.github.io/SEQTaRget/articles/doseresponse.md):
+- [End-of-Follow-up
+  Outcomes](https://causalinference.github.io/SEQTaRget/articles/endoffollowup.md):
 - [Intention-To-Treat
   Analysis](https://causalinference.github.io/SEQTaRget/articles/ITT.md):
 - [Defining your

@@ -6,6 +6,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/articles/SEQuential.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/articles/censoring.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/articles/doseresponse.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/articles/endoffollowup.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/articles/index.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/articles/seqopts.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/authors.html</loc></url>
@@ -26,17 +27,25 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/SEQweights-class.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/bake_followup_spline.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/bootstrap_id_relabeler.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/cached_cols.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/check_separation.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/clean_fastglm.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/clean_models.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/compevent.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/covariates.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/create.default.LTFU.covariates.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/create.default.covariates.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/create.default.weight.covariates.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/create.endoffup.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/create.risk.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/denominator.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/diagnostics.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/dot-coef_table.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/end_of_fup.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/endoffup.counts.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/endoffup.estimate.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/endoffup.measure.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/endoffup.summary.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/fit_glm.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/followup.table.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/format_time.html</loc></url>
@@ -66,6 +75,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/resolve_risk_times.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/risk_comparison.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/risk_data.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/reference/select_cached_level.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/reference/show-SEQoutput-method.html</loc></url>
 </urlset>
 

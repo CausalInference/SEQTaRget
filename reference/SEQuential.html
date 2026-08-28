@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -173,7 +174,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> ITT model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.59 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.07 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: NA </span>
@@ -269,7 +270,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> censoring model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.02 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 0.92 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: tx_init~sex </span>
@@ -366,6 +367,85 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> |:------|-----:|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |FALSE  | 96251|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |TRUE   |  6498|</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># End-of-follow-up outcome: rather than a time-to-event, the outcome is read</span></span></span>
+<span class="r-in"><span><span class="co"># once per trial-period at follow-up time 12 and averaged within each baseline</span></span></span>
+<span class="r-in"><span><span class="co"># arm, weighted by the weight at that time. Trial-periods with no measurement</span></span></span>
+<span class="r-in"><span><span class="co"># at exactly 12 fall back to the nearest one within 12 +/- 3; any with none</span></span></span>
+<span class="r-in"><span><span class="co"># in that window are censored out of the average. Use end_of_fup.type =</span></span></span>
+<span class="r-in"><span><span class="co"># "continuous" for a continuous outcome, which is reported as a mean.</span></span></span>
+<span class="r-in"><span><span class="va">eof</span> <span class="op">&lt;-</span> <span class="fu">SEQuential</span><span class="op">(</span><span class="va">data</span>, id.col <span class="op">=</span> <span class="st">"ID"</span>,</span></span>
+<span class="r-in"><span>                  time.col <span class="op">=</span> <span class="st">"time"</span>,</span></span>
+<span class="r-in"><span>                  eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span></span>
+<span class="r-in"><span>                  treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span></span>
+<span class="r-in"><span>                  outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span></span>
+<span class="r-in"><span>                  time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"ITT"</span>,</span></span>
+<span class="r-in"><span>                  options <span class="op">=</span> <span class="fu"><a href="SEQopts.html">SEQopts</a></span><span class="op">(</span>end_of_fup <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                    end_of_fup.time <span class="op">=</span> <span class="fl">12</span>,</span></span>
+<span class="r-in"><span>                                    end_of_fup.type <span class="op">=</span> <span class="st">"binary"</span>,</span></span>
+<span class="r-in"><span>                                    end_of_fup.window <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                                    bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                    bootstrap.nboot <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Full dataset: 12,180 observations, 11 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-required columns provided, pruning for efficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Pruned</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Original dataset (eligible subjects): 9,203 observations, 9 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expanding Data...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Pre-filter expansion: 310,080 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expanded dataset: 248,485 observations, 13 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Expansion Successful</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Final analysis dataset: 248,485 observations, 13 variables</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Moving forward with ITT analysis</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bootstrapping with 80% of 300 subjects (240 subjects, ~198,788 observations per resample) 5 times</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Estimating end-of-follow-up outcome at follow-up time 12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
+<span class="r-in"><span><span class="fu"><a href="end_of_fup.html">end_of_fup</a></span><span class="op">(</span><span class="va">eof</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`1`$estimates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Type  Time      A Proportion Trial-periods (Eligible)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;char&gt; &lt;num&gt; &lt;fctr&gt;      &lt;num&gt;                    &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: binary    12      0 0.07570353                     2946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: binary    12      1 0.10247494                     6257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Trial-periods (Analysed) Trial-periods (Censored)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;int&gt;                    &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                     2523                      423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                     4889                     1368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                              0   14.35845      274 0.007991871 0.06003975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                              0   21.86351      248 0.005724500 0.09125513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       95% UCI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 0.09136731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: 0.11369476</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`1`$comparison</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Key: &lt;A_x, A_y&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;       &lt;num&gt;              &lt;num&gt;              &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    12      0      1  0.02677142        0.001615037        0.051927796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    12      1      0 -0.02677142       -0.051927796       -0.001615037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;     &lt;num&gt;         &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    0.01283512 1.3536350     1.0163289     1.8028884     0.1462254</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    0.01283512 0.7387516     0.5546655     0.9839334     0.1462254</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -375,11 +455,11 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

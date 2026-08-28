@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -75,6 +76,10 @@
 <span>  deviation.conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  deviation.excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  deviation.excused_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  end_of_fup <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  end_of_fup.time <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  end_of_fup.type <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>  end_of_fup.window <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  expand.only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -176,7 +181,7 @@
 
 
 <dt id="arg-denominator">denominator<a class="anchor" aria-label="anchor" href="#arg-denominator"></a></dt>
-<dd><p>String: denominator covariates to the right hand side of a formula object</p></dd>
+<dd><p>String or character vector: denominator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order) fits a separate denominator model, with its own covariates, in each arm; this is only supported for post-expansion weights (<code>weight.preexpansion = FALSE</code>)</p></dd>
 
 
 <dt id="arg-deviation">deviation<a class="anchor" aria-label="anchor" href="#arg-deviation"></a></dt>
@@ -197,6 +202,22 @@
 
 <dt id="arg-deviation-excused-cols">deviation.excused_cols<a class="anchor" aria-label="anchor" href="#arg-deviation-excused-cols"></a></dt>
 <dd><p>Character list: excused columns for deviation switches</p></dd>
+
+
+<dt id="arg-end-of-fup">end_of_fup<a class="anchor" aria-label="anchor" href="#arg-end-of-fup"></a></dt>
+<dd><p>Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is <code>FALSE</code>. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with <code>km.curves</code> and <code>hazard</code></p></dd>
+
+
+<dt id="arg-end-of-fup-time">end_of_fup.time<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-time"></a></dt>
+<dd><p>Numeric: the follow-up time <code>k</code> (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when <code>end_of_fup = TRUE</code></p></dd>
+
+
+<dt id="arg-end-of-fup-type">end_of_fup.type<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-type"></a></dt>
+<dd><p>String: type of end-of-follow-up outcome, either <code>'binary'</code> (the default, giving the weighted proportion in each arm) or <code>'continuous'</code> (giving the weighted mean)</p></dd>
+
+
+<dt id="arg-end-of-fup-window">end_of_fup.window<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-window"></a></dt>
+<dd><p>Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly <code>end_of_fup.time</code>, default is <code>0</code> (no window). Those trial-periods fall back to the measurement nearest to <code>k</code> within <code>[k - window, k + window]</code> (ties, i.e. measurements equally far either side of <code>k</code>, are broken toward the later measurement, so that at least <code>k</code> of follow-up has elapsed); any with no measurement anywhere in the window are censored, i.e. excluded from the average</p></dd>
 
 
 <dt id="arg-excused">excused<a class="anchor" aria-label="anchor" href="#arg-excused"></a></dt>
@@ -272,7 +293,7 @@
 
 
 <dt id="arg-numerator">numerator<a class="anchor" aria-label="anchor" href="#arg-numerator"></a></dt>
-<dd><p>String: numerator covariates to the right hand side of a formula object</p></dd>
+<dd><p>String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (<code>weight.preexpansion = FALSE</code>)</p></dd>
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
@@ -389,11 +410,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -129,7 +129,7 @@ SEQuential(data, id.col = "ID",
 #> ITT model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.59 seconds :
+#> SEQuential process completed in 1.07 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas 
 #> Numerator covariates: NA 
@@ -225,7 +225,7 @@ SEQuential(data, id.col = "ID",
 #> censoring model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.02 seconds :
+#> SEQuential process completed in 0.92 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex 
 #> Numerator covariates: tx_init~sex 
@@ -322,5 +322,84 @@ SEQuential(data, id.col = "ID",
 #> |:------|-----:|
 #> |FALSE  | 96251|
 #> |TRUE   |  6498|
+
+# End-of-follow-up outcome: rather than a time-to-event, the outcome is read
+# once per trial-period at follow-up time 12 and averaged within each baseline
+# arm, weighted by the weight at that time. Trial-periods with no measurement
+# at exactly 12 fall back to the nearest one within 12 +/- 3; any with none
+# in that window are censored out of the average. Use end_of_fup.type =
+# "continuous" for a continuous outcome, which is reported as a mean.
+eof <- SEQuential(data, id.col = "ID",
+                  time.col = "time",
+                  eligible.col = "eligible",
+                  treatment.col = "tx_init",
+                  outcome.col = "outcome",
+                  time_varying.cols = c("N", "L", "P"),
+                  fixed.cols = "sex",
+                  method = "ITT",
+                  options = SEQopts(end_of_fup = TRUE,
+                                    end_of_fup.time = 12,
+                                    end_of_fup.type = "binary",
+                                    end_of_fup.window = 3,
+                                    bootstrap = TRUE,
+                                    bootstrap.nboot = 5))
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Non-required columns provided, pruning for efficiency
+#> 
+#> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
+#> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset: 248,485 observations, 13 variables
+#> 
+#> Expansion Successful
+#> 
+#> Final analysis dataset: 248,485 observations, 13 variables
+#> 
+#> Moving forward with ITT analysis
+#> 
+#> Bootstrapping with 80% of 300 subjects (240 subjects, ~198,788 observations per resample) 5 times
+#> 
+#> Estimating end-of-follow-up outcome at follow-up time 12 
+#> 
+#> Completed
+end_of_fup(eof)
+#> $`1`
+#> $`1`$estimates
+#>      Type  Time      A Proportion Trial-periods (Eligible)
+#>    <char> <num> <fctr>      <num>                    <int>
+#> 1: binary    12      0 0.07570353                     2946
+#> 2: binary    12      1 0.10247494                     6257
+#>    Trial-periods (Analysed) Trial-periods (Censored)
+#>                       <int>                    <int>
+#> 1:                     2523                      423
+#> 2:                     4889                     1368
+#>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
+#>                             <int>      <num>    <int>       <num>      <num>
+#> 1:                              0   14.35845      274 0.007991871 0.06003975
+#> 2:                              0   21.86351      248 0.005724500 0.09125513
+#>       95% UCI
+#>         <num>
+#> 1: 0.09136731
+#> 2: 0.11369476
+#> 
+#> $`1`$comparison
+#> Key: <A_x, A_y>
+#>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
+#>    <num> <fctr> <fctr>       <num>              <num>              <num>
+#> 1:    12      0      1  0.02677142        0.001615037        0.051927796
+#> 2:    12      1      0 -0.02677142       -0.051927796       -0.001615037
+#>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
+#>            <num>     <num>         <num>         <num>         <num>
+#> 1:    0.01283512 1.3536350     1.0163289     1.8028884     0.1462254
+#> 2:    0.01283512 0.7387516     0.5546655     0.9839334     0.1462254
+#> 
+#> 
 # }
 ```

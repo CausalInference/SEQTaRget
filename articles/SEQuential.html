@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -119,6 +120,7 @@ bootstrap samples.</p>
 <span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#asks the function to return survival and risk estimates</span></span>
 <span>                   bootstrap <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#asks the model to perform bootstrapping</span></span>
+<span>                   seed <span class="op">=</span> <span class="fl">1636</span>, <span class="co">#fixes the resamples so the intervals are reproducible</span></span>
 <span>                   bootstrap.nboot <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="co">#asks the model for 20 bootstrap samples</span></span></code></pre></div>
 <p>In general, options will be in the form
 <code>{option}.{parameter}</code> - here you may notice that we use
@@ -205,13 +207,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -5.1917949              0.2138155              0.0268031  </span></span>
+<span><span class="co">#&gt;            -7.5686664              0.0572035              0.0481829  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001253              0.0094144              0.0007377  </span></span>
+<span><span class="co">#&gt;            -0.0002398              0.0694546              0.0002991  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.3415499              0.0066648              0.0327849  </span></span>
+<span><span class="co">#&gt;             0.3623319              0.0012608              0.0078599  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.0282247              0.0005433  </span></span>
+<span><span class="co">#&gt;             0.2267346             -0.0008032  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[3]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -220,13 +222,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -2.961e+00              2.190e-01              3.144e-02  </span></span>
+<span><span class="co">#&gt;            -1.068e+01              2.771e-01              3.246e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -4.660e-05             -3.476e-02              1.314e-03  </span></span>
+<span><span class="co">#&gt;            -1.191e-04              1.086e-01              2.596e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             2.908e-01              3.530e-03             -1.467e-01  </span></span>
+<span><span class="co">#&gt;             1.961e-01              4.332e-03             -1.251e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;            -2.287e-01              4.059e-05  </span></span>
+<span><span class="co">#&gt;             5.994e-01             -1.063e-05  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[4]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -235,13 +237,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -9.075e+00              2.802e-01              4.014e-02  </span></span>
+<span><span class="co">#&gt;            -0.9669277             -0.0847453              0.0222841  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -2.142e-04              8.476e-02              5.371e-04  </span></span>
+<span><span class="co">#&gt;            -0.0001863             -0.0594655              0.0011550  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             5.815e-02              1.189e-05             -1.225e-01  </span></span>
+<span><span class="co">#&gt;             0.3406604              0.0067373              0.0408462  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             4.210e-01             -1.606e-03  </span></span>
+<span><span class="co">#&gt;            -0.3909486              0.0071088  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[5]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -250,13 +252,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -6.4193939              0.1987765              0.0344510  </span></span>
+<span><span class="co">#&gt;            -7.5351394              0.4268098              0.0373349  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001026              0.0295477              0.0007441  </span></span>
+<span><span class="co">#&gt;            -0.0002502              0.0526084              0.0005318  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.3380944             -0.0038997              0.0247087  </span></span>
+<span><span class="co">#&gt;             0.5449350              0.0047661             -0.1495825  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1497100             -0.0008964  </span></span>
+<span><span class="co">#&gt;             0.2469561             -0.0042417  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[6]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -265,13 +267,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -8.5713230              0.4375908              0.0376961  </span></span>
+<span><span class="co">#&gt;            -7.6406240             -0.1156940              0.0389073  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001699              0.0733460              0.0003134  </span></span>
+<span><span class="co">#&gt;            -0.0002795              0.0742193              0.0004675  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;            -0.1445591              0.0036777              0.0445167  </span></span>
+<span><span class="co">#&gt;             0.3281369              0.0083933             -0.1784712  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.3784758             -0.0057545  </span></span>
+<span><span class="co">#&gt;             0.2912902              0.0030521  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[7]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -280,13 +282,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -1.9454759              0.4054962              0.0668470  </span></span>
+<span><span class="co">#&gt;            -9.0018102              0.3579004              0.0317738  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0004881             -0.0575593              0.0013747  </span></span>
+<span><span class="co">#&gt;            -0.0001707              0.0776669              0.0004174  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0244046              0.0064814              0.1516499  </span></span>
+<span><span class="co">#&gt;             0.0955384              0.0056463             -0.0122759  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;            -0.3976841             -0.0093021  </span></span>
+<span><span class="co">#&gt;             0.4311688             -0.0042654  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[8]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -295,13 +297,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -6.5992636              0.5404326              0.0442982  </span></span>
+<span><span class="co">#&gt;             -4.217360               0.224570               0.047272  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0002736              0.0315852              0.0006899  </span></span>
+<span><span class="co">#&gt;             -0.000149              -0.009824               0.001069  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.3406119              0.0034334             -0.0828339  </span></span>
+<span><span class="co">#&gt;              0.275748               0.004007               0.065621  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1389118             -0.0090328  </span></span>
+<span><span class="co">#&gt;             -0.122678              -0.004013  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[9]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -310,13 +312,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -3.1412782             -0.0335680              0.0483112  </span></span>
+<span><span class="co">#&gt;            -4.536e+00              1.509e-01              3.540e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0003257             -0.0097116              0.0008772  </span></span>
+<span><span class="co">#&gt;            -6.786e-05              1.980e-03              8.863e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0017989              0.0030678              0.0103008  </span></span>
+<span><span class="co">#&gt;             1.457e-01              7.400e-03             -3.109e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;            -0.2216942              0.0053997  </span></span>
+<span><span class="co">#&gt;            -6.592e-02             -4.370e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[10]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -325,13 +327,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -3.4239123              0.1856021              0.0329491  </span></span>
+<span><span class="co">#&gt;            -7.123e+00              8.728e-02              3.766e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001788             -0.0140938              0.0008658  </span></span>
+<span><span class="co">#&gt;            -9.976e-07              5.440e-02              6.127e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0129788              0.0002282             -0.0294013  </span></span>
+<span><span class="co">#&gt;             1.821e-02              8.177e-05             -2.843e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;            -0.1334241             -0.0034121  </span></span>
+<span><span class="co">#&gt;             2.211e-01              4.661e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[11]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -340,13 +342,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -7.4415862              0.2425934              0.0546454  </span></span>
+<span><span class="co">#&gt;            -2.201e+00              8.844e-02              2.223e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001933              0.0594890              0.0003971  </span></span>
+<span><span class="co">#&gt;             8.478e-05             -4.554e-02              1.403e-03  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.3481986              0.0008652              0.1021379  </span></span>
+<span><span class="co">#&gt;             9.105e-02              3.699e-03             -1.426e-01  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1864135             -0.0013004  </span></span>
+<span><span class="co">#&gt;            -2.769e-01              8.158e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[12]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -355,13 +357,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -4.1350666              0.4427235              0.0467969  </span></span>
+<span><span class="co">#&gt;            -8.099e+00              4.642e-02              2.612e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0003048             -0.0123856              0.0011763  </span></span>
+<span><span class="co">#&gt;            -2.194e-05              6.413e-02              6.372e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.1711764              0.0037520             -0.1486645  </span></span>
+<span><span class="co">#&gt;             1.690e-01              5.351e-03             -4.436e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;            -0.1049486             -0.0059308  </span></span>
+<span><span class="co">#&gt;             3.349e-01              7.994e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[13]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -370,13 +372,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -6.6131676              0.0709139              0.0357118  </span></span>
+<span><span class="co">#&gt;            -9.0555175              0.6478047              0.0542168  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0001389              0.0424103              0.0008050  </span></span>
+<span><span class="co">#&gt;            -0.0004703              0.0799784              0.0001404  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0755352              0.0035227             -0.0699716  </span></span>
+<span><span class="co">#&gt;             0.2240107              0.0037200              0.0968174  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1785358              0.0078700  </span></span>
+<span><span class="co">#&gt;             0.3840352             -0.0119769  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[14]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -385,13 +387,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -8.497e+00              8.983e-02              2.471e-02  </span></span>
+<span><span class="co">#&gt;            -1.046e+01              6.029e-01              5.089e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -5.818e-05              7.526e-02              2.603e-04  </span></span>
+<span><span class="co">#&gt;            -3.486e-04              1.072e-01              1.740e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             1.391e-01              5.211e-03              2.298e-02  </span></span>
+<span><span class="co">#&gt;             1.096e-01              4.194e-03             -5.617e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             3.750e-01              1.838e-03  </span></span>
+<span><span class="co">#&gt;             5.530e-01             -1.541e-02  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[15]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -400,13 +402,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -1.035e+01              1.610e-01              2.720e-02  </span></span>
+<span><span class="co">#&gt;            -9.4339042              0.3195517              0.0446209  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -1.003e-04              1.194e-01             -1.737e-05  </span></span>
+<span><span class="co">#&gt;            -0.0001962              0.0984771              0.0001429  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             2.605e-03              3.526e-03             -9.449e-02  </span></span>
+<span><span class="co">#&gt;             0.0860115              0.0016125             -0.0215202  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             6.084e-01              1.318e-03  </span></span>
+<span><span class="co">#&gt;             0.4390679             -0.0090178  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[16]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -415,13 +417,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -9.713e+00             -1.622e-01              2.763e-02  </span></span>
+<span><span class="co">#&gt;            -2.5128968              0.2105845              0.0342825  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -6.866e-05              1.043e-01              2.366e-04  </span></span>
+<span><span class="co">#&gt;            -0.0002374             -0.0369591              0.0008865  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;            -2.591e-01              6.600e-03              5.568e-02  </span></span>
+<span><span class="co">#&gt;             0.1569439              0.0085729              0.1120179  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             5.192e-01              1.220e-02  </span></span>
+<span><span class="co">#&gt;            -0.2619360             -0.0023137  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[17]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -430,13 +432,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -6.3622960              0.2681109              0.0535158  </span></span>
+<span><span class="co">#&gt;            -6.124e+00              7.368e-02              2.219e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0003208              0.0328384              0.0008411  </span></span>
+<span><span class="co">#&gt;             3.226e-06              2.556e-02              6.103e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0604727              0.0001008             -0.0156759  </span></span>
+<span><span class="co">#&gt;             2.588e-01              5.984e-03              1.137e-01  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1077737             -0.0004064  </span></span>
+<span><span class="co">#&gt;             1.317e-01              6.115e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[18]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -445,13 +447,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -6.0133538              0.4334731              0.0348728  </span></span>
+<span><span class="co">#&gt;            -6.3051565              0.4621448              0.0446341  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0002265              0.0119547              0.0008208  </span></span>
+<span><span class="co">#&gt;            -0.0001721              0.0389188              0.0006612  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;            -0.0705135              0.0085622              0.1244049  </span></span>
+<span><span class="co">#&gt;            -0.0825751              0.0035661             -0.1198744  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.1336921             -0.0027683  </span></span>
+<span><span class="co">#&gt;             0.1311997             -0.0090016  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[19]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -460,13 +462,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -1.118e+01              1.582e-01              3.449e-02  </span></span>
+<span><span class="co">#&gt;            -8.471e+00              2.708e-01              4.048e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -1.855e-04              1.280e-01             -5.071e-05  </span></span>
+<span><span class="co">#&gt;            -8.973e-05              6.878e-02              4.768e-04  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;            -2.862e-02              7.598e-03              5.807e-02  </span></span>
+<span><span class="co">#&gt;             1.661e-01              2.092e-03              6.857e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             6.667e-01              1.608e-03  </span></span>
+<span><span class="co">#&gt;             3.510e-01             -5.788e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[20]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -475,13 +477,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -5.0893119              0.0368604              0.0405044  </span></span>
+<span><span class="co">#&gt;            -1.009e+01              1.894e-01              3.772e-02  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -0.0002072              0.0201730              0.0008274  </span></span>
+<span><span class="co">#&gt;            -1.252e-04              1.117e-01             -6.498e-05  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             0.0768989              0.0011696             -0.0736585  </span></span>
+<span><span class="co">#&gt;             2.295e-01              2.054e-03              4.281e-02  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             0.0237280              0.0021279  </span></span>
+<span><span class="co">#&gt;             5.282e-01             -2.651e-03  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`1`[[21]]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -490,13 +492,13 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;           (Intercept)           tx_init_bas1               followup  </span></span>
-<span><span class="co">#&gt;            -1.076e+01              3.120e-01              2.902e-02  </span></span>
+<span><span class="co">#&gt;            -8.9528151              0.3514119              0.0584130  </span></span>
 <span><span class="co">#&gt;           followup_sq                  trial               trial_sq  </span></span>
-<span><span class="co">#&gt;            -1.353e-04              1.069e-01              2.284e-04  </span></span>
+<span><span class="co">#&gt;            -0.0005134              0.0986973             -0.0000760  </span></span>
 <span><span class="co">#&gt;                  sex1                  N_bas                  L_bas  </span></span>
-<span><span class="co">#&gt;             3.399e-01              1.873e-04             -2.830e-02  </span></span>
+<span><span class="co">#&gt;             0.2732790              0.0026618              0.0094163  </span></span>
 <span><span class="co">#&gt;                 P_bas  tx_init_bas1:followup  </span></span>
-<span><span class="co">#&gt;             6.125e-01             -5.477e-03</span></span>
+<span><span class="co">#&gt;             0.3964909             -0.0164729</span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span>    <span class="co"># Prints the survival curve</span></span></code></pre></div>
 <p><img src="SEQuential_files/figure-html/outcome-1.png" class="r-plt" alt="Survival curve by treatment group." width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -504,17 +506,17 @@ provide a few different methods to handle obtaining your results.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7723191 0.9021973 0.03313281</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8137729 0.9350989 0.03095109</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7663552 0.9081612 0.03617568</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8180477 0.9308241 0.02877002</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  1.0030635  1.0874485 0.02060634</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.9195838  0.9969459 0.02060634</span></span>
-<span><span class="co">#&gt;    Risk Difference   RD 95% LCI   RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;        &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      0.03717768  0.002812309  0.071543050 0.01753367</span></span>
-<span><span class="co">#&gt; 2:     -0.03717768 -0.071543050 -0.002812309 0.01753367</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9654981   1.129759 0.04008114</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8851448   1.035735 0.04008114</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      0.03717768 -0.02931187 0.10366723 0.03392386</span></span>
+<span><span class="co">#&gt; 2:     -0.03717768 -0.10366723 0.02931187 0.03392386</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -524,11 +526,11 @@ provide a few different methods to handle obtaining your results.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -24,6 +24,10 @@ SEQopts(
   deviation.conditions = c(NA, NA),
   deviation.excused = FALSE,
   deviation.excused_cols = c(NA, NA),
+  end_of_fup = FALSE,
+  end_of_fup.time = NA,
+  end_of_fup.type = "binary",
+  end_of_fup.window = 0,
   excused = FALSE,
   excused.cols = c(NA, NA),
   expand.only = FALSE,
@@ -134,8 +138,12 @@ SEQopts(
 
 - denominator:
 
-  String: denominator covariates to the right hand side of a formula
-  object
+  String or character vector: denominator covariates to the right hand
+  side of a formula object. A single string fits the same model in every
+  treatment arm. A vector with one formula per `treat.level` (in
+  `treat.level` order) fits a separate denominator model, with its own
+  covariates, in each arm; this is only supported for post-expansion
+  weights (`weight.preexpansion = FALSE`)
 
 - deviation:
 
@@ -158,6 +166,37 @@ SEQopts(
 - deviation.excused_cols:
 
   Character list: excused columns for deviation switches
+
+- end_of_fup:
+
+  Logical: estimate an end-of-follow-up outcome - one measured at a
+  single follow-up time rather than as a time-to-event - instead of
+  fitting a survival outcome model, default is `FALSE`. The estimate is
+  the weighted average of the outcome within each baseline treatment
+  arm, weighted by the period-trial-specific weight at the time the
+  outcome is taken. Incompatible with `km.curves` and `hazard`
+
+- end_of_fup.time:
+
+  Numeric: the follow-up time `k` (in follow-up periods since trial
+  enrollment) at which the end-of-follow-up outcome is evaluated.
+  Required when `end_of_fup = TRUE`
+
+- end_of_fup.type:
+
+  String: type of end-of-follow-up outcome, either `'binary'` (the
+  default, giving the weighted proportion in each arm) or `'continuous'`
+  (giving the weighted mean)
+
+- end_of_fup.window:
+
+  Numeric: half-width of the window used when a trial-period has no
+  outcome measurement at exactly `end_of_fup.time`, default is `0` (no
+  window). Those trial-periods fall back to the measurement nearest to
+  `k` within `[k - window, k + window]` (ties, i.e. measurements equally
+  far either side of `k`, are broken toward the later measurement, so
+  that at least `k` of follow-up has elapsed); any with no measurement
+  anywhere in the window are censored, i.e. excluded from the average
 
 - excused:
 
@@ -273,8 +312,12 @@ SEQopts(
 
 - numerator:
 
-  String: numerator covariates to the right hand side of a formula
-  object
+  String or character vector: numerator covariates to the right hand
+  side of a formula object. A single string fits the same model in every
+  treatment arm. A vector with one formula per `treat.level` (in
+  `treat.level` order) fits a separate numerator model, with its own
+  covariates, in each arm; this is only supported for post-expansion
+  weights (`weight.preexpansion = FALSE`)
 
 - parallel:
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -49,6 +50,12 @@
       <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.4.4" id="seqtarget-v144">SEQTaRget v1.4.4<a class="anchor" aria-label="anchor" href="#seqtarget-v144"></a></h2>
+<ul><li>Add support for end-of-follow-up outcomes - outcomes evaluated at a single user-specified follow-up time rather than as a time-to-event - through <code>end_of_fup</code>, <code>end_of_fup.time</code>, <code>end_of_fup.type</code> and <code>end_of_fup.window</code> in <code><a href="../reference/SEQopts.html">SEQopts()</a></code>. The outcome may be <code>"binary"</code> (reported as the weighted proportion in each arm) or <code>"continuous"</code> (the weighted mean). For each trial-period the measurement at <code>end_of_fup.time</code> is taken, weighted by the period-trial-specific weight at that time; where no measurement exists at exactly that time, <code>end_of_fup.window</code> allows a fallback to the measurement nearest to that time within <code>[k - window, k + window]</code> (ties broken toward the later measurement, so that at least <code>k</code> of follow-up has elapsed), and trial-periods with no measurement anywhere in the window are censored out of the average. Results are returned in the new <code>eof.data</code> and <code>eof.comparison</code> slots and via the new <code><a href="../reference/end_of_fup.html">end_of_fup()</a></code> accessor, with per-arm bootstrap confidence intervals and the pairwise between-arm difference (in proportions for a binary outcome, in means for a continuous one) with its standard error and confidence interval. For binary outcomes the ratio of proportions is also reported, with a log-scale confidence interval and a <code>log(Ratio) SE</code> for inverse-variance pooling; no ratio is given for continuous outcomes, which need not be bounded away from zero. The estimates table also accounts for how much of each arm the estimate rests on: <code>Trial-periods (Eligible)</code> is every trial-period reaching the follow-up time, <code>Trial-periods (Analysed)</code> those contributing, and <code>Trial-periods (Censored)</code> those measured at some point but not within the window, and <code>Trial-periods (No measurement)</code> those never measured at all, so the three partition the eligible total; <code>% Censored</code> gives the censored share of that total. Trial-periods are the unit because one subject can be analysed in one trial and censored in another. <code><a href="../reference/diagnostics.html">diagnostics()</a></code> gains <code>eof.summary</code> (for continuous outcomes: N, mean and SD of the raw analysed measurements per arm, standing in for the suppressed outcome count tables) plus <code>eof.unique</code> and <code>eof.nonunique</code>, accounting for every trial-period at <code>k</code> across four mutually exclusive categories (measured at <code>k</code>, measured in the window, excluded outside the window, excluded with no measurement) against the eligible total; the trial-period counts partition that total, and the two contributing categories sum to the trial-periods behind the estimate. Because an end-of-follow-up outcome is measured at particular times, this is also the one mode in which the outcome column may contain <code>NA</code> (recording that no measurement was taken); every other column must still be complete. See the new “End-of-Follow-up Outcomes” vignette. No outcome model is fit in this mode, so it is incompatible with <code>km.curves</code>, <code>hazard</code>, <code>compevent</code> and the dose-response method, and the expansion is not truncated at the first outcome event.</li>
+<li>Set an explicit <code>seed</code> on every bootstrapping example in the vignettes. Since unseeded runs now draw a genuinely random seed, these examples produced different confidence intervals on every render; they are also a better illustration of reproducible practice.</li>
+<li>Allow arm-specific treatment-weight models: <code>numerator</code> and <code>denominator</code> in <code><a href="../reference/SEQopts.html">SEQopts()</a></code> now also accept a character vector with one formula per <code>treat.level</code> (in <code>treat.level</code> order), fitting a separate numerator/denominator model - with its own covariates - in each treatment arm. Only the estimates from the respective arm’s model are used to construct that arm’s weights. A single string keeps the previous behaviour (the same formula in every arm). Arm-specific formulas are only supported for weights estimated on the post-expansion data (<code>weight.preexpansion = FALSE</code>); the LTFU, visit, and outcome models are unaffected.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.4.3" id="seqtarget-v143">SEQTaRget v1.4.3<a class="anchor" aria-label="anchor" href="#seqtarget-v143"></a></h2><p class="text-muted">CRAN release: 2026-06-23</p>
 <ul><li>Fix “Risk Differerence” typo in <code>risk.times</code> output</li>
@@ -205,11 +212,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ryan O’Dea, Alejandro Szmulewicz, Tom Palmer, Paul Madley-Dowd, Miguel Hernán.</p>
+  <p>Developed by Ryan O’Dea, Tom Palmer, Paul Madley-Dowd, Alejandro Szmulewicz, Miguel A. Hernán.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
