@@ -29,3 +29,5 @@ navbar:
         href: articles/censoring.html
       - text: "Per-Protocol: Dose-Response Analysis"
         href: articles/doseresponse.html
+      - text: End-of-Follow-up Outcomes
+        href: articles/endoffollowup.html

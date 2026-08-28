@@ -33,13 +33,18 @@ setMethod("show", "SEQoutput", function(object) {
   risk.data <- slot(object, "risk.data")
   risk.comparison <- slot(object, "risk.comparison")
   if (!params@hazard) {
-    outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
+    # No outcome model is fit for an end-of-follow-up outcome
+    if (!params@end_of_fup) outcome_model <- lapply(slot(object, "outcome.model"), function(x) x[[1]])
     weight_statistics <- slot(object, "weight.statistics")[[1]][[1]]
   }
 
   cat("SEQuential process completed in", elapsed_time, ":\n")
   cat("Initialized with:\n")
-  cat("Outcome covariates:", outcome, "\n")
+  if (params@end_of_fup) {
+    cat("End-of-follow-up outcome:", params@outcome,
+        paste0("(", params@end_of_fup.type, ")"), "at follow-up time", params@end_of_fup.time,
+        if (params@end_of_fup.window > 0) paste0("+/- ", params@end_of_fup.window) else "", "\n")
+  } else cat("Outcome covariates:", outcome, "\n")
   cat("Numerator covariates:", paste(numerator, collapse = " | "), "\n")
   cat("Denominator covariates:", paste(denominator, collapse = " | "), "\n\n")
 
@@ -48,13 +53,15 @@ setMethod("show", "SEQoutput", function(object) {
   } 
   if (!params@hazard) {
     cat("Full Model Information ========================================== \n")
-    cat("\nOutcome Model ==================================================== \n")
-    cat("Coefficients and Weighting:\n")
-    for (i in seq_along(outcome_model)) {
-      if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
-      print(.coef_table(outcome_model[[i]]))
+    if (!params@end_of_fup) {
+      cat("\nOutcome Model ==================================================== \n")
+      cat("Coefficients and Weighting:\n")
+      for (i in seq_along(outcome_model)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome_model)[[i]], "\n")
+        print(.coef_table(outcome_model[[i]]))
+      }
     }
-    
+
     if (params@weighted) {
       cat("\nWeight Information ============================================= \n")
       if (params@method != "ITT") {
@@ -126,7 +133,18 @@ setMethod("show", "SEQoutput", function(object) {
         print(kable(risk.comparison[[i]]))
       }
     }
-  
+
+    if (params@end_of_fup) {
+      eof.data <- slot(object, "eof.data")
+      eof.comparison <- slot(object, "eof.comparison")
+      cat("End-of-Follow-up Outcome ==========================================\n")
+      for (i in seq_along(eof.data)) {
+        if (!is.na(params@subgroup)) cat("For subgroup: ", names(eof.data)[[i]], "\n")
+        print(kable(eof.data[[i]]))
+        print(kable(eof.comparison[[i]]))
+      }
+    }
+
   } else {
     cat("Hazard ============================================================\n")
     for (i in seq_along(hazard)) {
@@ -140,12 +158,20 @@ setMethod("show", "SEQoutput", function(object) {
   outcome.nonunique <- slot(object, "info")$outcome.nonunique
   followup.unique <- slot(object, "info")$followup.unique
   followup.nonunique <- slot(object, "info")$followup.nonunique
-  for (i in seq_along(outcome.unique)) {
-    if (!is.na(params@subgroup)) cat("For subgroup: ", names(outcome.unique)[[i]], "\n")
-    cat("Unique Outcome Table (distinct subjects who had the outcome): ")
-    print(kable(outcome.unique[[i]]))
-    cat("\nNon-Unique Outcome Table (total outcome events): ")
-    print(kable(outcome.nonunique[[i]]))
+  # Outcome tables are NA for continuous eof outcomes; loop over the always-present follow-up tables
+  has_outcome_tables <- is.list(outcome.unique)
+  labelled <- if (has_outcome_tables) outcome.unique else followup.unique
+  for (i in seq_along(labelled)) {
+    if (!is.na(params@subgroup)) cat("For subgroup: ", names(labelled)[[i]], "\n")
+    if (has_outcome_tables) {
+      cat("Unique Outcome Table (distinct subjects who had the outcome): ")
+      print(kable(outcome.unique[[i]]))
+      cat("\nNon-Unique Outcome Table (total outcome events): ")
+      print(kable(outcome.nonunique[[i]]))
+    } else if (params@end_of_fup) {
+      cat("Outcome Summary Table (analysed end-of-follow-up measurements): ")
+      print(kable(slot(object, "info")$eof.summary[[i]]))
+    }
     if (!is.null(followup.unique)) {
       cat("\nUnique Follow-up Table (distinct subjects contributing follow-up): ")
       print(kable(followup.unique[[i]]))
@@ -156,6 +182,18 @@ setMethod("show", "SEQoutput", function(object) {
     }
   }
     
+  if (params@end_of_fup) {
+    eof.unique <- slot(object, "info")$eof.unique
+    eof.nonunique <- slot(object, "info")$eof.nonunique
+    for (i in seq_along(eof.nonunique)) {
+      if (!is.na(params@subgroup)) cat("For subgroup: ", names(eof.nonunique)[[i]], "\n")
+      cat("\nEnd-of-Follow-up Table (trial-periods; categories sum to Eligible): ")
+      print(kable(eof.nonunique[[i]]))
+      cat("\nEnd-of-Follow-up Table (distinct subjects; categories may overlap): ")
+      print(kable(eof.unique[[i]]))
+    }
+  }
+
   if (slot(params, "method") == "censoring") {
     cat("\nUnique Switch Table: ")
     print(kable(slot(object, "info")$switch.unique))
@@ -237,6 +275,46 @@ covariates <- function(object) {
   return(list(Outcome = format_formula(object@outcome),
               Numerator = format_formula(object@numerator),
               Denominator = format_formula(object@denominator)))
+}
+
+#' Extract the end-of-follow-up outcome estimates
+#'
+#' Available when [SEQuential()] was run with \code{end_of_fup = TRUE}. The
+#' estimate in each arm is the weighted average of the outcome measured at
+#' \code{end_of_fup.time}, weighted by the period-trial-specific weight at the
+#' time the measurement was taken.
+#'
+#' @param object SEQoutput object
+#'
+#' @returns A named list, one element per subgroup, each a list of two
+#'   data.tables:
+#'   \itemize{
+#'     \item \code{estimates}: the weighted proportion (binary) or mean
+#'       (continuous) in each baseline treatment arm, with its bootstrap
+#'       confidence interval, the trial-periods eligible in each arm, partitioned into those analysed,
+#'       those censored for want of a measurement in the window - measured at some
+#'       point but not within \code{[k - window, k + window]} - and those never
+#'       measured at all, with the censoring also as a percentage of the eligible
+#'       total. \code{Subjects} counts the distinct contributing subjects.
+#'     \item \code{comparison}: the pairwise between-arm difference - in
+#'       proportions for a binary outcome, in means for a continuous one - with
+#'       its bootstrap standard error and confidence interval, paired by
+#'       iteration so the interval accounts for the correlation between arms.
+#'       For a binary outcome the ratio of proportions is also given, with a
+#'       confidence interval computed on the log scale and a \code{log(Ratio) SE}
+#'       for inverse-variance pooling. A ratio is not reported for a continuous
+#'       outcome, where the outcome need not be bounded away from zero.
+#'   }
+#' @importFrom methods is slot
+#' @export
+end_of_fup <- function(object) {
+  if (!is(object, "SEQoutput")) stop("Object is not of class SEQoutput")
+  if (!object@params@end_of_fup) stop("End-of-follow-up estimates were not created as a result of 'end_of_fup = FALSE'")
+  data <- slot(object, "eof.data")
+  comparison <- slot(object, "eof.comparison")
+  out <- lapply(seq_along(data), function(i) list(estimates = data[[i]], comparison = comparison[[i]]))
+  names(out) <- names(data)
+  return(out)
 }
 
 #' Function to print Kaplan-Meier curves
@@ -358,7 +436,21 @@ hazard_ratio <- function(object) {
 #'   \itemize{
 #'     \item \code{outcome.unique} / \code{outcome.nonunique}: distinct subjects who had the
 #'       outcome vs. the total number of outcome events. These coincide for a one-time
-#'       (terminal) outcome, since each subject contributes at most one event row.
+#'       (terminal) outcome, since each subject contributes at most one event row. Both are
+#'       \code{NA} for a continuous end-of-follow-up outcome, which has no events to count.
+#'     \item \code{eof.unique} / \code{eof.nonunique}: present only when
+#'       \code{end_of_fup = TRUE}, accounting for every trial-period at the
+#'       end-of-follow-up time across four mutually exclusive categories -
+#'       measured \code{At k}, measured \code{In window}, \code{Excluded
+#'       (outside window)} and \code{Excluded (no measurement)} - against the
+#'       \code{Eligible} total. The non-unique (trial-period) counts partition
+#'       \code{Eligible}, and \code{At k} plus \code{In window} equals the
+#'       trial-periods contributing to the estimate. The unique (subject) counts
+#'       need not sum to \code{Eligible}, since one subject can fall into
+#'       different categories for different trials. For a continuous outcome
+#'       \code{eof.summary} additionally reports the N, mean and SD of the raw
+#'       analysed measurements per arm, standing in for the suppressed outcome
+#'       count tables.
 #'     \item \code{followup.unique} / \code{followup.nonunique}: distinct subjects contributing
 #'       follow-up vs. the total number of person-time intervals (expanded rows). The
 #'       non-unique count is much larger because each subject contributes one row per

@@ -88,6 +88,28 @@ SEQuential(data, id.col = "ID",
            options = SEQopts(weighted = TRUE,
                              numerator = "sex",
                              denominator = "N + L + P + sex"))
+
+# End-of-follow-up outcome: rather than a time-to-event, the outcome is read
+# once per trial-period at follow-up time 12 and averaged within each baseline
+# arm, weighted by the weight at that time. Trial-periods with no measurement
+# at exactly 12 fall back to the nearest one within 12 +/- 3; any with none
+# in that window are censored out of the average. Use end_of_fup.type =
+# "continuous" for a continuous outcome, which is reported as a mean.
+eof <- SEQuential(data, id.col = "ID",
+                  time.col = "time",
+                  eligible.col = "eligible",
+                  treatment.col = "tx_init",
+                  outcome.col = "outcome",
+                  time_varying.cols = c("N", "L", "P"),
+                  fixed.cols = "sex",
+                  method = "ITT",
+                  options = SEQopts(end_of_fup = TRUE,
+                                    end_of_fup.time = 12,
+                                    end_of_fup.type = "binary",
+                                    end_of_fup.window = 3,
+                                    bootstrap = TRUE,
+                                    bootstrap.nboot = 5))
+end_of_fup(eof)
 }
 
 }

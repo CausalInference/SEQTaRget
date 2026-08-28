@@ -23,6 +23,10 @@ SEQopts(
   deviation.conditions = c(NA, NA),
   deviation.excused = FALSE,
   deviation.excused_cols = c(NA, NA),
+  end_of_fup = FALSE,
+  end_of_fup.time = NA,
+  end_of_fup.type = "binary",
+  end_of_fup.window = 0,
   excused = FALSE,
   excused.cols = c(NA, NA),
   expand.only = FALSE,
@@ -106,6 +110,14 @@ SEQopts(
 \item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is \code{FALSE}}
 
 \item{deviation.excused_cols}{Character list: excused columns for deviation switches}
+
+\item{end_of_fup}{Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is \code{FALSE}. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}}
+
+\item{end_of_fup.time}{Numeric: the follow-up time \code{k} (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when \code{end_of_fup = TRUE}}
+
+\item{end_of_fup.type}{String: type of end-of-follow-up outcome, either \code{'binary'} (the default, giving the weighted proportion in each arm) or \code{'continuous'} (giving the weighted mean)}
+
+\item{end_of_fup.window}{Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly \code{end_of_fup.time}, default is \code{0} (no window). Those trial-periods fall back to the measurement nearest to \code{k} within \verb{[k - window, k + window]} (ties, i.e. measurements equally far either side of \code{k}, are broken toward the later measurement, so that at least \code{k} of follow-up has elapsed); any with no measurement anywhere in the window are censored, i.e. excluded from the average}
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 

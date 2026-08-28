@@ -33,6 +33,10 @@ parameter.setter <- function(data, DT,
     followup.max = opts@followup.max,
     survival.max = opts@survival.max,
     risk.times = opts@risk.times,
+    end_of_fup = opts@end_of_fup,
+    end_of_fup.time = opts@end_of_fup.time,
+    end_of_fup.type = opts@end_of_fup.type,
+    end_of_fup.window = opts@end_of_fup.window,
     weighted = opts@weighted,
     weight.preexpansion = opts@weight.preexpansion,
     excused = opts@excused,
@@ -128,6 +132,23 @@ parameter.simplifier <- function(params) {
   params@deviation.excused_cols <- equalizer(params@deviation.excused_cols, params@treat.level)
   params@weight.eligible_cols <- equalizer(params@weight.eligible_cols, params@treat.level)
 
+  # End-of-follow-up outcomes replace the survival outcome model with a direct
+  # weighted average at a single follow-up time, so the survival-based outputs
+  # have no meaning here and the requested time must lie inside the expansion.
+  if (params@end_of_fup) {
+    if (params@km.curves || params@hazard)
+      stop("'end_of_fup' is not compatible with 'km.curves' or 'hazard': an end-of-follow-up outcome is evaluated at a single time, so there is no survival curve or hazard to estimate")
+    if (params@method == "dose-response")
+      stop("'end_of_fup' is not supported for the dose-response method")
+    if (!is.na(params@compevent))
+      stop("'end_of_fup' is not compatible with 'compevent': competing events are a survival-outcome concept")
+    upper <- params@end_of_fup.time + params@end_of_fup.window
+    if (upper > params@followup.max)
+      stop("'end_of_fup.time' plus 'end_of_fup.window' (", upper, ") exceeds the maximum follow-up (", params@followup.max, "); widen 'followup.max' or narrow the window")
+    if (params@end_of_fup.time - params@end_of_fup.window < params@followup.min)
+      stop("'end_of_fup.time' minus 'end_of_fup.window' (", params@end_of_fup.time - params@end_of_fup.window, ") is below the minimum follow-up (", params@followup.min, ")")
+  }
+
   if (params@km.curves && params@hazard) stop("Kaplan-Meier Curves and Hazard Ratio or Robust Standard Errors are not compatible. Please select one.")
   if (sum(params@followup.include, params@followup.class, params@followup.spline) > 1) stop("followup.include, followup.class, and followup.spline are exclusive. Please select one")
 
@@ -181,7 +202,8 @@ parameter.simplifier <- function(params) {
 #' @importFrom methods new
 #' @import data.table
 #' @keywords internal
-prepare.output <- function(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info) {
+prepare.output <- function(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info,
+                           eof.data = list(), eof.comparison = list()) {
   risk.comparison <- lapply(risk, \(x) x$risk.comparison)
   risk.data <- lapply(risk, \(x) x$risk.data)
   
@@ -205,6 +227,8 @@ prepare.output <- function(params, WDT, outcome, weights, hazard, survival.data,
       survival.data = if (!params@km.curves) list() else survival.data,
       risk.comparison = if (!params@km.curves) list() else risk.comparison,
       risk.data = if (!params@km.curves) list() else risk.data,
+      eof.data = if (!params@end_of_fup) list() else eof.data,
+      eof.comparison = if (!params@end_of_fup) list() else eof.comparison,
       time = runtime,
       info = info,
       ce.model = survival.ce

@@ -60,6 +60,28 @@
 #'            options = SEQopts(weighted = TRUE,
 #'                              numerator = "sex",
 #'                              denominator = "N + L + P + sex"))
+#'
+#' # End-of-follow-up outcome: rather than a time-to-event, the outcome is read
+#' # once per trial-period at follow-up time 12 and averaged within each baseline
+#' # arm, weighted by the weight at that time. Trial-periods with no measurement
+#' # at exactly 12 fall back to the nearest one within 12 +/- 3; any with none
+#' # in that window are censored out of the average. Use end_of_fup.type =
+#' # "continuous" for a continuous outcome, which is reported as a mean.
+#' eof <- SEQuential(data, id.col = "ID",
+#'                   time.col = "time",
+#'                   eligible.col = "eligible",
+#'                   treatment.col = "tx_init",
+#'                   outcome.col = "outcome",
+#'                   time_varying.cols = c("N", "L", "P"),
+#'                   fixed.cols = "sex",
+#'                   method = "ITT",
+#'                   options = SEQopts(end_of_fup = TRUE,
+#'                                     end_of_fup.time = 12,
+#'                                     end_of_fup.type = "binary",
+#'                                     end_of_fup.window = 3,
+#'                                     bootstrap = TRUE,
+#'                                     bootstrap.nboot = 5))
+#' end_of_fup(eof)
 #' }
 #'
 #' @export
@@ -162,11 +184,23 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   setorderv(data, c(id.col, time.col))
   if (length(pruned) > 0 && verbose) cat("\nPruned\n")
 
-  if (nrow(data[!complete.cases(data)]) > 0) stop("Data contains NA values, please fix before modeling")
-  if (!params@hazard) {
+  # end_of_fup: NA outcome = "not measured at this time"; all other columns must be complete
+  na.check.cols <- setdiff(names(data), if (params@end_of_fup) params@outcome else character(0))
+  if (nrow(data[!complete.cases(data[, na.check.cols, with = FALSE])]) > 0)
+    stop("Data contains NA values, please fix before modeling",
+         if (params@end_of_fup) " ('end_of_fup' permits missing values in the outcome column only)" else "")
+  # Continuous end_of_fup outcomes are averaged, not modelled, so non-binary is expected
+  if (!params@hazard && !(params@end_of_fup && params@end_of_fup.type == "continuous")) {
     outcome_vals <- unique(data[[params@outcome]])
-    if (!all(outcome_vals %in% c(0L, 1L))) stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ",
-                                                 paste(setdiff(outcome_vals, c(0L, 1L)), collapse = ", "))
+    outcome_vals <- outcome_vals[!is.na(outcome_vals)]
+    if (!all(outcome_vals %in% c(0L, 1L))) {
+      offending <- setdiff(outcome_vals, c(0L, 1L))
+      # Cap the listing - a continuous column can hold thousands of distinct values
+      shown <- paste(utils::head(offending, 10L), collapse = ", ")
+      if (length(offending) > 10L) shown <- paste0(shown, ", ... (", length(offending), " distinct values)")
+      stop("'", outcome.col, "' must be binary (0/1) for ", method, " analysis but contains values: ", shown,
+           if (params@end_of_fup) "\n  For an outcome that is not 0/1, set 'end_of_fup.type = \"continuous\"' in SEQopts()" else "")
+    }
   }
   dup_check <- data[, .N, by = c(id.col, time.col)]
   dup_check <- dup_check[dup_check$N > 1L, ]
@@ -267,11 +301,25 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   analytic <- internal.analysis(params)
   WDT <- analytic[[1]]$WDT
 
-  subgroups <- if (is.na(params@subgroup)) 1L else names(analytic[[1]]$model)
+  # end_of_fup fits no outcome model; subgroup labels come from the eof estimates
+  subgroups <- if (is.na(params@subgroup)) 1L else
+    if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
-  if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- subgroups
-  if (!params@hazard) {
+  eof.data <- eof.comparison <- vector("list", n_subgroups)
+  if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- names(eof.data) <- names(eof.comparison) <- subgroups
+  if (params@end_of_fup) {
+    if (params@verbose) cat("\nEstimating end-of-follow-up outcome at follow-up time", params@end_of_fup.time, "\n")
+    for (i in seq_along(subgroups)) {
+      label <- subgroups[[i]]
+      eof <- create.endoffup(full = analytic[[1]]$eof[[i]],
+                             boots = lapply(analytic[-1], function(x) x$eof[[i]]),
+                             params = params)
+      eof.data[[label]] <- eof$eof.data
+      eof.comparison[[label]] <- eof$eof.comparison
+      weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
+    }
+  } else if (!params@hazard) {
     if (params@verbose) cat("\n", method, " model created successfully\n", sep = "")
 
     # Survival Information =======================================
@@ -300,22 +348,32 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }
+  eof.unique <- if (params@end_of_fup) analytic[[1]]$eof.counts$unique else NA
+  eof.nonunique <- if (params@end_of_fup) analytic[[1]]$eof.counts$nonunique else NA
+  # Mean/SD of the analysed measurements stands in for the (suppressed) outcome
+  # count tables when the outcome is continuous
+  eof.summary <- if (params@end_of_fup && params@end_of_fup.type == "continuous") analytic[[1]]$eof.counts$summary else NA
   rm(analytic)
 
-  outcome.unique  <- outcome.nonunique <- vector("list", n_subgroups)
+  # Outcome tables count outcome == 1 rows - meaningless for a continuous outcome, so NA there
+  continuous.outcome <- params@end_of_fup && params@end_of_fup.type == "continuous"
+  outcome.unique  <- outcome.nonunique <- if (!continuous.outcome) vector("list", n_subgroups) else NA
   followup.unique <- followup.nonunique <- vector("list", n_subgroups)
   compevent.unique <- compevent.nonunique <- if (!is.na(params@compevent)) vector("list", n_subgroups) else NA
   if (n_subgroups > 0) {
-    names(outcome.unique) <- names(outcome.nonunique) <-
-      names(followup.unique) <- names(followup.nonunique) <- subgroups
+    names(followup.unique) <- names(followup.nonunique) <- subgroups
+    if (!continuous.outcome)
+      names(outcome.unique) <- names(outcome.nonunique) <- subgroups
     if (!is.na(params@compevent))
       names(compevent.unique) <- names(compevent.nonunique) <- subgroups
   }
   filter <- sort(unique(data[[params@subgroup]]))
   for (i in seq_along(subgroups)) {
     label <- subgroups[[i]]
-    outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
-    outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
+    if (!continuous.outcome) {
+      outcome.unique[[label]] <- outcome.table(params, type = "unique", filter = filter[[i]])
+      outcome.nonunique[[label]] <- outcome.table(params, type = "nonunique", filter = filter[[i]])
+    }
     followup.unique[[label]] <- followup.table(params, type = "unique", filter = filter[[i]])
     followup.nonunique[[label]] <- followup.table(params, type = "nonunique", filter = filter[[i]])
     if (!is.na(params@compevent)) {
@@ -332,10 +390,14 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                switch.unique = switch.unique,
                switch.nonunique = switch.nonunique,
                compevent.unique = compevent.unique,
-               compevent.nonunique = compevent.nonunique)
+               compevent.nonunique = compevent.nonunique,
+               eof.unique = eof.unique,
+               eof.nonunique = eof.nonunique,
+               eof.summary = eof.summary)
   
   runtime <- format_time(round(as.numeric(difftime(Sys.time(), time.start, "secs")), 2))
-  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info)
+  out <- prepare.output(params, WDT, outcome, weights, hazard, survival.data, survival.ce, risk, runtime, info,
+                        eof.data, eof.comparison)
 
   if (params@verbose) cat("\nCompleted\n")
   plan("sequential")

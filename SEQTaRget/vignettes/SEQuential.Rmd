@@ -32,6 +32,7 @@ library(SEQTaRget)
 
 options <- SEQopts(km.curves = TRUE, #asks the function to return survival and risk estimates
                    bootstrap = TRUE, #asks the model to perform bootstrapping
+                   seed = 1636, #fixes the resamples so the intervals are reproducible
                    bootstrap.nboot = 20) #asks the model for 20 bootstrap samples
 ```
 

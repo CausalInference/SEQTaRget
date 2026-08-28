@@ -314,3 +314,13 @@ compevent.table <- function(params, type, filter = NA) {
   }
   return(out)
 }
+
+#' Strip fitted-model bulk from a bootstrap iteration's result
+#'
+#' No-op in end_of_fup mode, which fits no outcome model.
+#'
+#' @keywords internal
+clean_models <- function(out, params) {
+  if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
+  out
+}

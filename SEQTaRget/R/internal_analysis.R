@@ -115,9 +115,10 @@ internal.analysis <- function(params) {
     followup <- NULL
     isExcused <- NULL
 
-    handler <- function(DT, data, params, start = NULL) {
+    handler <- function(DT, data, params, start = NULL, counts = FALSE) {
       if (!params@weighted) {
-        model <- internal.model(DT, params, start = start)
+        # end_of_fup is a weighted average, not a fitted model - skip the outcome model
+        model <- if (params@end_of_fup) NA else internal.model(DT, params, start = start)
         WDT <- data.table()
       } else if (params@weighted) {
         WT <- internal.weights(DT, data, params, formula_cache)
@@ -199,19 +200,32 @@ internal.analysis <- function(params) {
           params@weight.lower <- stats$p01
           params@weight.upper <- stats$p99
         }
-        model <- internal.model(WDT, params, start = start)
+        model <- if (params@end_of_fup) NA else internal.model(WDT, params, start = start)
       }
+      # Computed here, while the weighted data still exists: WDT is dropped
+      # below unless data.return, and is discarded outright on bootstrap
+      # iterations, so the per-arm average cannot be recovered afterwards.
+      eof.dt <- if (params@weighted) WDT else DT
+      eof <- if (params@end_of_fup) endoffup.estimate(eof.dt, params) else NA
+      # Counted from the same data as the estimate so the two always reconcile
+      eof.counts <- if (params@end_of_fup && counts) {
+        list(unique = endoffup.counts(eof.dt, params, "unique"),
+             nonunique = endoffup.counts(eof.dt, params, "nonunique"),
+             summary = endoffup.summary(eof.dt, params))
+      } else NA
       if (!params@data.return) WDT <- data.table()
       return(list(
         model = model,
         weighted_stats = if (params@weighted) stats else NA,
+        eof = eof,
+        eof.counts = eof.counts,
         WDT = WDT
       ))
     }
 
     original_nrow <- nrow(params@DT)
     original_names <- names(params@DT)
-    full <- handler(params@DT, params@data, params)
+    full <- handler(params@DT, params@data, params, counts = TRUE)
     stopifnot(identical(nrow(params@DT), original_nrow))
     stopifnot(identical(names(params@DT), original_names))
 
@@ -262,7 +276,8 @@ internal.analysis <- function(params) {
       # setup on every resample. The main fit above honors the user's choice.
       # Documented in the glm.package entry of ?SEQopts.
       params_boot@glm.package <- "fastglm"
-      boot_start <- lapply(full$model, function(sg) coef(sg$model))
+      # end_of_fup fits no outcome model, so there is nothing to warm-start from
+      boot_start <- if (params@end_of_fup) NULL else lapply(full$model, function(sg) coef(sg$model))
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)
@@ -271,8 +286,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
-          return(out)
+          return(clean_models(out, params))
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
       } else {
         lapply(seq_len(params@bootstrap.nboot), function(x) {
@@ -280,8 +294,7 @@ internal.analysis <- function(params) {
           bs <- bootstrap_sample(params@DT, params@data, params, UIDs, lnID)
           out <- handler(bs$RMDT, bs$RMdata, params_boot, start = boot_start)
           out$WDT <- NULL
-          out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
-          return(out)
+          return(clean_models(out, params))
         })
       }
     } else {

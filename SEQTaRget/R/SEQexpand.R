@@ -101,9 +101,13 @@ SEQexpand <- function(params) {
     # from subsequent periods in the original data. The row indices are computed
     # outside the i-expression: inside DT[i], columns shadow local variables, so a
     # user column named "out" would otherwise shadow the table itself and error.
-    keep_rows <- out[, .I[seq_len(match(1L, .SD[[1L]], nomatch = .N))],
-                     by = c(params@id, "trial"), .SDcols = params@outcome]$V1
-    out <- out[keep_rows]
+    # end_of_fup outcomes are measurements, not events - truncating would discard
+    # the rows the estimate is read from
+    if (!params@end_of_fup) {
+      keep_rows <- out[, .I[seq_len(match(1L, .SD[[1L]], nomatch = .N))],
+                       by = c(params@id, "trial"), .SDcols = params@outcome]$V1
+      out <- out[keep_rows]
+    }
 
     # Row count after eligibility filtering and outcome truncation, before any
     # method-specific reduction (dose-response, PP censoring, first-trial selection).
