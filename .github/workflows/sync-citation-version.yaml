@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main]
+    branches-ignore: [main]
     paths: ['SEQTaRget/DESCRIPTION']
 name: sync-citation-version.yaml
 permissions: read-all
