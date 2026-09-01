@@ -2,6 +2,8 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
+    # Render on the working branches, where direct pushes are allowed.
+    branches-ignore: [main]
     paths: ['**/README.Rmd']
 name: render-rmarkdown.yaml
 permissions: read-all
@@ -69,5 +71,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m 'Re-build README files'
-            git push origin
+            git push origin HEAD:${{ github.ref_name }}
           fi
