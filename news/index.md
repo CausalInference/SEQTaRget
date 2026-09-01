@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.4.4
 
+CRAN release: 2026-08-28
+
 - Add support for end-of-follow-up outcomes - outcomes evaluated at a
   single user-specified follow-up time rather than as a time-to-event -
   through `end_of_fup`, `end_of_fup.time`, `end_of_fup.type` and
