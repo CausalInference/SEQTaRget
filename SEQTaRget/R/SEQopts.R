@@ -134,7 +134,26 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   cense.denominator <- gsub("\\s", "", cense.denominator)
   visit.numerator <- gsub("\\s", "", visit.numerator)
   visit.denominator <- gsub("\\s", "", visit.denominator)
-  
+
+  # Formula arguments are scalar by construction: they are tested downstream with
+  # is.na() and `||`, which error on a vector ("'length = 2' in coercion to
+  # 'logical(1)'") or resolve to NA on a zero-length value ("missing value where
+  # TRUE/FALSE needed") several frames from the argument that caused it. Only
+  # 'numerator'/'denominator' may be a vector - one formula per treat.level -
+  # which parameter.simplifier() validates against 'treat.level' once the method and
+  # weighting options are known.
+  for (nm in c("covariates", "cense.numerator", "cense.denominator",
+               "visit.numerator", "visit.denominator")) {
+    if (length(get(nm)) != 1L)
+      stop("'", nm, "' must be a single formula string, or NA, but a value of length ",
+           length(get(nm)), " was supplied")
+  }
+  for (nm in c("numerator", "denominator")) {
+    if (length(get(nm)) < 1L)
+      stop("'", nm, "' must be a single formula string, NA, or one formula per 'treat.level', ",
+           "but a zero-length value was supplied")
+  }
+
   weighted <- as.logical(weighted)
   weight.preexpansion <- as.logical(weight.preexpansion)
   weight.spline <- as.logical(weight.spline)
