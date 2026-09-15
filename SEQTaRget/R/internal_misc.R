@@ -169,45 +169,76 @@ allNA <- function(x) {
   all(is.na(x))
 }
 
-#' Bake fixed knots into any `ns(followup, df = N)` term in `params@covariates`
+#' Bake fixed knots into every `ns(x, df = N)` term of a formula string
 #'
-#' `splines::ns()` recomputes knots from whatever data it sees, so without fixed
-#' knots the basis at prediction time differs from the basis used at fit time.
-#' This helper rewrites every `ns(followup, df = N)` token in
-#' `params@covariates` to an explicit `ns(followup, knots = c(...), Boundary.knots = c(...))`
-#' computed once from the full expanded `followup` column. The result is a
-#' formula whose `model.matrix` output is invariant to the row subset passed in.
+#' `splines::ns()` recomputes its knots from whatever data it sees, so without
+#' fixed knots the basis built at prediction time differs from the one used at
+#' fit time (the weight and outcome models are fit on, and predicted over,
+#' different row subsets). This helper rewrites every `ns(x, df = N)` token in
+#' `covs` to an explicit `ns(x, knots = c(...), Boundary.knots = c(...))`,
+#' with the knots computed once from the full `x` column of `data` - the
+#' quantiles `ns()` itself would use. The result is a formula whose
+#' `model.matrix` output is invariant to the row subset passed in, and constant
+#' across bootstrap resamples.
 #'
-#' Returns the original covariates string unchanged when no `ns(followup, df = ...)`
-#' token is present (e.g. user supplied custom covariates that already specify
-#' knots).
+#' Tokens are left unchanged when the variable is absent from `data` or is not
+#' numeric, and when the term already carries explicit knots (only the
+#' `df = N` form is rewritten), so user-supplied bases pass through untouched.
 #'
+#' @param covs character vector of RHS formula strings (may be `NA`)
+#' @param data `data.table` holding the columns the model is fit on
+#' @returns `covs` with every bakeable `ns()` term rewritten
 #' @keywords internal
-bake_followup_spline <- function(params) {
-  covs <- params@covariates
+bake_spline_knots <- function(covs, data) {
+  if (length(covs) == 0L) return(covs)
+  vapply(covs, bake_spline_knots_one, character(1), data = data, USE.NAMES = FALSE)
+}
+
+#' Bake fixed knots into a single formula string
+#' @param covs single RHS formula string
+#' @param data `data.table` holding the columns the model is fit on
+#' @keywords internal
+bake_spline_knots_one <- function(covs, data) {
   if (is.null(covs) || is.na(covs) || !nzchar(covs)) return(covs)
-  re <- "ns\\(\\s*followup\\s*,\\s*df\\s*=\\s*(\\d+)\\s*\\)"
-  if (!grepl(re, covs)) return(covs)
+  # Knots are written into a formula string that is re-parsed and also shown by
+  # covariates(), so keep them out of scientific notation
+  fmt_knot <- function(x) format(x, digits = 15, trim = TRUE, scientific = FALSE)
+  # ns(<var>, df = <N>) - the only form with data-dependent knots to bake
+  re <- "ns\\(\\s*([.A-Za-z][.A-Za-z0-9_]*)\\s*,\\s*df\\s*=\\s*(\\d+)\\s*\\)"
+  tokens <- unique(regmatches(covs, gregexpr(re, covs))[[1]])
+  if (length(tokens) == 0L) return(covs)
 
-  fu <- params@DT[["followup"]]
-  if (is.null(fu) || length(fu) == 0L) return(covs)
-  bks <- range(fu, na.rm = TRUE)
+  for (token in tokens) {
+    var <- sub(re, "\\1", token)
+    df <- as.integer(sub(re, "\\2", token))
+    x <- data[[var]]
+    if (is.null(x) || length(x) == 0L || !is.numeric(x) || all(is.na(x))) next
+    bks <- range(x, na.rm = TRUE)
 
-  m <- regmatches(covs, regexpr(re, covs))
-  df <- as.integer(sub(re, "\\1", m))
+    # ns(df = k) places k - 1 interior knots at equally spaced quantiles
+    probs <- if (df >= 2L) seq(0, 1, length.out = df + 1L)[-c(1L, df + 1L)] else numeric(0)
+    knots <- if (length(probs) > 0L) as.numeric(quantile(x, probs, names = FALSE, na.rm = TRUE)) else numeric(0)
 
-  probs <- if (df >= 2L) seq(0, 1, length.out = df + 1L)[-c(1L, df + 1L)] else numeric(0)
-  knots <- if (length(probs) > 0L) as.numeric(quantile(fu, probs, names = FALSE, na.rm = TRUE)) else numeric(0)
+    # Too few distinct values for the requested df leaves tied interior knots,
+    # or knots sitting on a boundary, which give a degenerate basis. Keep the
+    # distinct interior ones (a smaller basis, but still a consistent one)
+    usable <- unique(knots[knots > bks[1] & knots < bks[2]])
+    if (length(usable) < length(knots))
+      warning("'", var, "' has too few distinct values for ns(df = ", df, "); ",
+              "using ", length(usable), " interior knot(s) instead of ", length(knots))
+    knots <- usable
 
-  replacement <- if (length(knots) == 0L) {
-    sprintf("ns(followup, df = 1, Boundary.knots = c(%s, %s))",
-            format(bks[1], digits = 15), format(bks[2], digits = 15))
-  } else {
-    sprintf("ns(followup, knots = c(%s), Boundary.knots = c(%s, %s))",
-            paste(format(knots, digits = 15), collapse = ", "),
-            format(bks[1], digits = 15), format(bks[2], digits = 15))
+    replacement <- if (length(knots) == 0L) {
+      sprintf("ns(%s, df = 1, Boundary.knots = c(%s, %s))",
+              var, fmt_knot(bks[1]), fmt_knot(bks[2]))
+    } else {
+      sprintf("ns(%s, knots = c(%s), Boundary.knots = c(%s, %s))",
+              var, paste(vapply(knots, fmt_knot, character(1)), collapse = ", "),
+              fmt_knot(bks[1]), fmt_knot(bks[2]))
+    }
+    covs <- gsub(token, replacement, covs, fixed = TRUE)
   }
-  gsub(re, replacement, covs)
+  covs
 }
 
 #' Extract underlying column names from RHS formula strings

@@ -273,9 +273,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (params@verbose) cat("\nMoving forward with", params@method, "analysis\n")
 
-  # Bake fixed knots for followup spline so the basis is identical at
-  # fit and prediction time across bootstraps and survival prediction grids.
-  if (params@followup.spline) params@covariates <- bake_followup_spline(params)
+  # Bake fixed knots into every ns(x, df = N) term - default or user-supplied -
+  # so the basis is identical at fit and prediction time across bootstraps and
+  # survival prediction grids. Outcome-model terms take their knots from the
+  # expanded data; weight-model terms from whichever data those models are fit
+  # on, which is the pre-expansion data when weight.preexpansion = TRUE.
+  params@covariates <- bake_spline_knots(params@covariates, params@DT)
+  if (params@weighted) {
+    weight.data <- if (params@weight.preexpansion) params@data else params@DT
+    for (nm in c("numerator", "denominator", "cense.numerator", "cense.denominator",
+                 "visit.numerator", "visit.denominator")) {
+      slot(params, nm) <- bake_spline_knots(slot(params, nm), weight.data)
+    }
+  }
 
   # Switch Diagnostics (Censoring) =============================
   if (method == "censoring") {
