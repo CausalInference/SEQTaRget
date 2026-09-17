@@ -219,9 +219,8 @@ bake_spline_knots_one <- function(covs, data) {
     probs <- if (df >= 2L) seq(0, 1, length.out = df + 1L)[-c(1L, df + 1L)] else numeric(0)
     knots <- if (length(probs) > 0L) as.numeric(quantile(x, probs, names = FALSE, na.rm = TRUE)) else numeric(0)
 
-    # Too few distinct values for the requested df leaves tied interior knots,
-    # or knots sitting on a boundary, which give a degenerate basis. Keep the
-    # distinct interior ones (a smaller basis, but still a consistent one)
+    # Too few distinct values leaves tied or boundary knots (a degenerate basis);
+    # keep the distinct interior ones - a smaller but still consistent basis
     usable <- unique(knots[knots > bks[1] & knots < bks[2]])
     if (length(usable) < length(knots))
       warning("'", var, "' has too few distinct values for ns(df = ", df, "); ",

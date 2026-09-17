@@ -62,11 +62,8 @@ create.default.weight.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
-  # weight.spline replaces the quadratic in each time axis - trial and followup
-  # post-expansion, the time column pre-expansion - with a natural cubic spline,
-  # letting the baseline hazard of treatment vary flexibly over time rather than
-  # only rising or flattening off. Knots are baked in SEQuential() once the
-  # weight data exist, so the basis is identical at fit and prediction time.
+  # weight.spline swaps each time quadratic (trial/followup post-expansion, the time column
+  # pre-expansion) for a natural cubic spline; knots are baked in SEQuential() once weight data exist
   time_terms <- function(var) {
     if (params@weight.spline) sprintf("ns(%s, df = %d)", var, params@weight.spline.df)
     else paste0(var, c("", params@indicator.squared), collapse = "+")

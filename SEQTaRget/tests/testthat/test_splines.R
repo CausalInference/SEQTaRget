@@ -197,9 +197,8 @@ test_that("weight-model ns() knots are baked from the data the weight models are
 })
 
 test_that("a df-form ns() weight model matches the same model with explicit knots", {
-  # Without baked knots, ns() rebuilds its basis from whatever rows it is handed,
-  # so the basis used to predict the weights differs from the one fitted and the
-  # two specifications - which are mathematically the same model - disagree.
+  # Without baked knots ns() rebuilds its basis from whatever rows it is handed,
+  # so the fitted and prediction bases would differ and the two specs disagree
   data <- copy(SEQdata)
   fit <- function(followup_term) {
     suppressWarnings(SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome",
