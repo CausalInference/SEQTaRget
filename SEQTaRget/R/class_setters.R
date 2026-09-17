@@ -39,6 +39,7 @@ parameter.setter <- function(data, DT,
     end_of_fup.window = opts@end_of_fup.window,
     weighted = opts@weighted,
     weight.preexpansion = opts@weight.preexpansion,
+    weight.stabilized = opts@weight.stabilized,
     weight.spline = opts@weight.spline,
     weight.spline.df = opts@weight.spline.df,
     excused = opts@excused,
@@ -158,6 +159,9 @@ parameter.simplifier <- function(params) {
     params@LTFU <- TRUE
     params@weighted <- TRUE
   }
+
+  if (!params@weight.stabilized && (!params@weighted || params@method == "ITT"))
+    warning("'weight.stabilized = FALSE' only affects the treatment weight models of a weighted, non-ITT analysis and has no effect here")
 
   if (params@method == "ITT" && params@weighted && !params@LTFU && is.na(params@visit)) {
     warning("Without LTFU or Visit, weighted ITT model is not supported, automatically changed to weighted = FALSE")

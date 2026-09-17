@@ -80,6 +80,7 @@ In general these only affect analytic methods of 'dose-response' and 'censoring'
 | `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
 | `weight.p99` | Whether to truncate weights at the 1st and 99th percentiles | Logical | `TRUE` |
 | `weight.preexpansion` | Whether weighting should be done on pre-expanded data | Logical | `TRUE` |
+| `weight.stabilized` | Use stabilized IP weights; `FALSE` fits no numerator models and uses unstabilized weights (cumulative products of `1/denominator`) for the treatment weights only | Logical | `TRUE` |
 | `weight.spline` | Whether the default weight models should model time with a natural cubic spline rather than a quadratic | Logical | `TRUE` |
 | `weight.spline.df` | Degrees of freedom passed to `splines::ns()` when `weight.spline = TRUE` | Integer | `4L` |
 | `weight.upper` | Upper truncation for weight values | Numeric double | `10.0` |

@@ -111,8 +111,8 @@ internal.weights <- function(DT, data, params, cache) {
         eligible_col <- params@weight.eligible_cols[[i]]
         level_data <- if (!is.na(eligible_col)) model.data[get(eligible_col) == 1, ] else model.data
 
-        # Fit numerator model (skip if excused & preexpansion)
-        if (!((params@excused || params@deviation.excused) && params@weight.preexpansion)) {
+        # Fit numerator model (skip if unstabilized, or excused & preexpansion)
+        if (params@weight.stabilized && !((params@excused || params@deviation.excused) && params@weight.preexpansion)) {
           n.data <- prepare.data_cached(level_data, params, type = "numerator", model = level, case = "default", cache)
           if (length(unique(n.data$y)) < 2L) {
             numerator_models[[i]] <- list(skip = TRUE)
@@ -142,20 +142,24 @@ internal.weights <- function(DT, data, params, cache) {
       if (!(params@excused || params@deviation.excused)) {
         for (i in seq_along(params@treat.level)) {
           level <- params@treat.level[[i]]
-          if (isTRUE(numerator_models[[i]]$skip) || isTRUE(denominator_models[[i]]$skip)) {
+          num_skip <- if (params@weight.stabilized) isTRUE(numerator_models[[i]]$skip) else FALSE
+          if (num_skip || isTRUE(denominator_models[[i]]$skip)) {
             out[tx_lag == level, `:=`(numerator = 1, denominator = 1)]
           } else {
-            out[tx_lag == level, `:=`(
-              numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level, cache = cache),
-              denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level, cache = cache))]
+            # Unstabilized weights: numerator fixed at 1, so only the denominator
+            # is predicted and flipped for the untreated level
+            out[tx_lag == level, numerator := if (params@weight.stabilized)
+              inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level, cache = cache) else 1]
+            out[tx_lag == level,
+                denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level, cache = cache)]
 
-            if (i == 1) {
-              out[tx_lag == level & get(params@treatment) == params@treat.level[[i]],
-                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+            flip <- if (i == 1) {
+              out[, tx_lag == level & get(params@treatment) == params@treat.level[[i]]]
             } else {
-              out[tx_lag == level & get(params@treatment) != params@treat.level[[i]],
-                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
+              out[, tx_lag == level & get(params@treatment) != params@treat.level[[i]]]
             }
+            out[flip, denominator := 1 - denominator]
+            if (params@weight.stabilized) out[flip, numerator := 1 - numerator]
           }
         }
       } else {
@@ -181,7 +185,7 @@ internal.weights <- function(DT, data, params, cache) {
           }
         }
 
-        if (params@weight.preexpansion) {
+        if (params@weight.preexpansion || !params@weight.stabilized) {
           out[, numerator := 1]
         } else {
           if (params@multinomial && !params@weight.preexpansion) multi <- FALSE else multi <- params@multinomial
@@ -220,7 +224,7 @@ internal.weights <- function(DT, data, params, cache) {
 
     weight.info <- new("SEQweights", weights = out)
     
-    if (!((params@excused || params@deviation.excused) && params@weight.preexpansion) && params@method != "ITT") {
+    if (params@weight.stabilized && !((params@excused || params@deviation.excused) && params@weight.preexpansion) && params@method != "ITT") {
       coef.numerator <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
         coef.numerator[[i]] <- if (!isTRUE(numerator_models[[i]]$skip)) clean_fastglm(numerator_models[[i]]) else NULL
