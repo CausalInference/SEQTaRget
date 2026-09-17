@@ -72,6 +72,7 @@ SEQopts(
   weight.preexpansion = TRUE,
   weight.spline = FALSE,
   weight.spline.df = 4L,
+  weight.stabilized = TRUE,
   weight.upper = Inf,
   weighted = FALSE
 )
@@ -210,6 +211,8 @@ SEQopts(
 \item{weight.spline}{Logical: model time in the default weight models with a natural cubic spline (\code{splines::ns()}) instead of a quadratic, default is \code{FALSE}. This makes the baseline hazard of treatment (and of censoring, for the \code{cense} and \code{visit} models) a flexible function of time rather than one that can only rise or flatten off. The terms replaced are \code{trial}/\code{trial_sq} and \code{followup}/\code{followup_sq} when \code{weight.preexpansion = FALSE}, and the time column and its square when \code{weight.preexpansion = TRUE}. Ignored for weight models whose formula is supplied through \code{numerator}, \code{denominator}, \code{cense.numerator}, \code{cense.denominator}, \code{visit.numerator} or \code{visit.denominator} - write \code{ns()} terms into those formulas directly for finer control (e.g. a spline in \code{followup} only). Knots of any \code{ns(x, df = N)} term are fixed from the full data before fitting, so the basis is the same at fit and prediction time and across bootstrap resamples}
 
 \item{weight.spline.df}{Integer: degrees of freedom passed to \code{splines::ns()} when \code{weight.spline = TRUE}. With \code{df = k}, \code{ns()} places \code{k - 1} interior knots at quantiles of the term. Must be \verb{>= 1}; \code{df = 1} is equivalent to a linear term and is generally not what you want. Default is \code{4} (3 interior knots)}
+
+\item{weight.stabilized}{Logical: use stabilized IP weights, default is \code{TRUE}. When \code{FALSE} the treatment weights are unstabilized - no numerator models are fit and the weights are cumulative products of \code{1 / denominator}, so any supplied \code{numerator} is ignored. Applies to the treatment weight models only; the LTFU (\code{cense}) and \code{visit} weights keep their numerator models. Unstabilized weights are typically far more variable, so consider truncation via \code{weight.lower}/\code{weight.upper} or \code{weight.p99}}
 
 \item{weight.upper}{Numeric: weights truncated at upper end at this weight, default is \code{Inf}. As with \code{weight.lower}, truncation affects only the weights used to fit the outcome model, not those reported in \code{weight.statistics} or the returned data.}
 
