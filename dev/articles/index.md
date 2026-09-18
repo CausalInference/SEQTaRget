@@ -6,6 +6,8 @@
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/censoring.md):
 - [Per-Protocol: Dose-Response
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/doseresponse.md):
+- [End-of-Follow-up
+  Outcomes](https://causalinference.github.io/SEQTaRget/dev/articles/endoffollowup.md):
 - [Intention-To-Treat
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/ITT.md):
 - [Defining your

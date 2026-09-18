@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.4.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -302,11 +303,152 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; 2:       60 risk_1 risk_0  1.0021092     0.002030621</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="per-protocol-censoring-a-flexible-baseline-hazard-in-the-weight-models">Per-protocol, censoring, a flexible baseline hazard in the weight
+models<a class="anchor" aria-label="anchor" href="#per-protocol-censoring-a-flexible-baseline-hazard-in-the-weight-models"></a>
+</h2>
+<p>By default the weight models are quadratic in time:
+<code>followup</code>, <code>followup_sq</code>, <code>trial</code> and
+<code>trial_sq</code> when <code>weight.preexpansion = FALSE</code>, and
+the time column and its square when
+<code>weight.preexpansion = TRUE</code>. A quadratic only lets the
+hazard of treatment rise or flatten off, which can fit poorly when the
+cumulative incidence of treatment moves through several phases over
+follow-up. <code>weight.spline = TRUE</code> replaces each of those
+quadratics with a natural cubic spline basis
+(<code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code>) with <code>weight.spline.df</code> degrees
+of freedom, letting the baseline hazard take a flexible shape over time.
+This applies to the treatment weight models and, when <code>cense</code>
+or <code>visit</code> is set, to those models too.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   weight.preexpansion <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                   <span class="co"># model time in the weight models as a natural cubic spline</span></span>
+<span>                   weight.spline <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   <span class="co"># 4 degrees of freedom, i.e. 3 interior knots at quantiles</span></span>
+<span>                   weight.spline.df <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">SEQdata</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>,</span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
+<span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
+<span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
+<span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
+<span>                    outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span>
+<span>                    time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span>
+<span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
+<span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 9 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt;   entering outcome model (uncensored): 96,251</span></span>
+<span><span class="co">#&gt;   artificially censored (treatment switch): 6,498</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Completed</span></span>
+<span></span>
+<span><span class="co"># the weight model formulas, with the spline knots fixed from the data</span></span>
+<span><span class="fu"><a href="../reference/covariates.html">covariates</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $Outcome</span></span>
+<span><span class="co">#&gt; [1] "outcome ~ tx_init_bas + followup + followup_sq + trial + trial_sq + sex + N_bas + L_bas + P_bas + tx_init_bas*followup"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Numerator</span></span>
+<span><span class="co">#&gt; [1] "tx_init ~ sex + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 7, 14), Boundary.knots = c(0, 58)) + ns(trial, knots = c(8, 16, 26), Boundary.knots = c(0, 59))"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Denominator</span></span>
+<span><span class="co">#&gt; [1] "tx_init ~ sex + N + L + P + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 7, 14), Boundary.knots = c(0, 58)) + ns(trial, knots = c(8, 16, 26), Boundary.knots = c(0, 59))"</span></span></code></pre></div>
+<p>For finer control - a spline in <code>followup</code> but not
+<code>trial</code>, a different number of knots per term, or a spline in
+a time-varying confounder - write the <code>ns()</code> terms into
+<code>numerator</code> and <code>denominator</code> yourself. Any
+<code>ns(x, df = N)</code> term in a model formula has its knots fixed
+from the data the model is fit on before fitting, so the basis is the
+same when the model is fit and when it is used to predict the weights,
+and is held constant across bootstrap resamples.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                   weight.preexpansion <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                   numerator <span class="op">=</span> <span class="st">"sex+N_bas+L_bas+P_bas+ns(followup, df = 5)+trial+trial_sq"</span>,</span>
+<span>                   denominator <span class="op">=</span> <span class="st">"sex+N+L+P+N_bas+L_bas+P_bas+ns(followup, df = 5)+trial+trial_sq"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQuential.html">SEQuential</a></span><span class="op">(</span><span class="va">data</span>,</span>
+<span>                    id.col <span class="op">=</span> <span class="st">"ID"</span>,</span>
+<span>                    time.col <span class="op">=</span> <span class="st">"time"</span>,</span>
+<span>                    eligible.col <span class="op">=</span> <span class="st">"eligible"</span>,</span>
+<span>                    treatment.col <span class="op">=</span> <span class="st">"tx_init"</span>,</span>
+<span>                    outcome.col <span class="op">=</span> <span class="st">"outcome"</span>,</span>
+<span>                    time_varying.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"L"</span>, <span class="st">"P"</span><span class="op">)</span>,</span>
+<span>                    fixed.cols <span class="op">=</span> <span class="st">"sex"</span>,</span>
+<span>                    method <span class="op">=</span> <span class="st">"censoring"</span>,</span>
+<span>                    options <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Full dataset: 12,180 observations, 11 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Non-required columns provided, pruning for efficiency</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pruned</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Original dataset (eligible subjects): 9,203 observations, 9 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanding Data...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pre-filter expansion: 310,080 observations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (pre-censoring): 248,485 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expanded dataset (post-censoring): 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt;   entering outcome model (uncensored): 96,251</span></span>
+<span><span class="co">#&gt;   artificially censored (treatment switch): 6,498</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Expansion Successful</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Final analysis dataset: 102,749 observations, 18 variables</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Moving forward with censoring analysis</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; censoring model created successfully</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Completed</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/covariates.html">covariates</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $Outcome</span></span>
+<span><span class="co">#&gt; [1] "outcome ~ tx_init_bas + followup + followup_sq + trial + trial_sq + sex + N_bas + L_bas + P_bas"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Numerator</span></span>
+<span><span class="co">#&gt; [1] "tx_init ~ sex + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 5, 9, 16), Boundary.knots = c(0, 58)) + trial + trial_sq"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Denominator</span></span>
+<span><span class="co">#&gt; [1] "tx_init ~ sex + N + L + P + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 5, 9, 16), Boundary.knots = c(0, 58)) + trial + trial_sq"</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions">Per-protocol, censoring, weights in post-expanded data and no
 truncation, excused conditions for initiators and non-initiators
 (i.e. dynamic interventions)<a class="anchor" aria-label="anchor" href="#per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   weight.preexpansion <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -353,8 +495,8 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="censoring_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p><img src="censoring_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;       Method Followup      A      Risk</span></span>
@@ -372,7 +514,7 @@ truncation, excused conditions for initiators and non-initiators
 truncation, excused conditions for initiators and non-initiators
 (i.e. dynamic interventions) and a competing event<a class="anchor" aria-label="anchor" href="#per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-a-competing-event"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span>km.curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   weight.preexpansion <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -425,8 +567,8 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/km_curve.html">km_curve</a></span><span class="op">(</span><span class="va">model</span>, plot.type <span class="op">=</span> <span class="st">"risk"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="censoring_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p><img src="censoring_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Risk plot by treatment group." width="700"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;       Method Followup      A       Risk</span></span>
@@ -444,7 +586,7 @@ truncation, excused conditions for initiators and non-initiators
 truncation, excused conditions for initiators and non-initiators
 (i.e. dynamic interventions) and hazard ratio<a class="anchor" aria-label="anchor" href="#per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio"></a>
 </h2>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SEQopts.html">SEQopts</a></span><span class="op">(</span><span class="co"># tell SEQuential to run hazard ratios</span></span>
 <span>                   hazard <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   weighted <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -488,7 +630,7 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; Completed</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
-<span><span class="co">#&gt;     3.004905           NA           NA</span></span></code></pre></div>
+<span><span class="co">#&gt;     3.009221           NA           NA</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

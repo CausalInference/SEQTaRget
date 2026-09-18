@@ -26,13 +26,13 @@ Source:
 [`DESCRIPTION`](https://github.com/CausalInference/SEQTaRget/blob/main/DESCRIPTION)
 
 O'Dea R, Palmer T, Madley-Dowd P, Szmulewicz A, Hernán M (2026).
-*SEQTaRget: Sequential Trial Emulation*. R package version 1.4.3.9000,
+*SEQTaRget: Sequential Trial Emulation*. R package version 1.4.4.9000,
 <https://causalinference.github.io/SEQTaRget/>.
 
     @Manual{,
       title = {SEQTaRget: Sequential Trial Emulation},
       author = {Ryan O'Dea and Tom Palmer and Paul Madley-Dowd and Alejandro Szmulewicz and Miguel A. Hernán},
       year = {2026},
-      note = {R package version 1.4.3.9000},
+      note = {R package version 1.4.4.9000},
       url = {https://causalinference.github.io/SEQTaRget/},
     }

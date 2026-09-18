@@ -193,6 +193,9 @@ several different avenues:
 - [`diagnostics()`](https://causalinference.github.io/SEQTaRget/dev/reference/diagnostics.md)
   : Function to return diagnostic tables from a SEQuential object
 
+- [`end_of_fup()`](https://causalinference.github.io/SEQTaRget/dev/reference/end_of_fup.md)
+  : Extract the end-of-follow-up outcome estimates
+
 - [`hazard_ratio()`](https://causalinference.github.io/SEQTaRget/dev/reference/hazard_ratio.md)
   : Function to return hazard ratios from a SEQuential object
 
@@ -225,6 +228,8 @@ several different avenues:
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/censoring.md):
 - [Per-Protocol: Dose-Response
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/doseresponse.md):
+- [End-of-Follow-up
+  Outcomes](https://causalinference.github.io/SEQTaRget/dev/articles/endoffollowup.md):
 - [Intention-To-Treat
   Analysis](https://causalinference.github.io/SEQTaRget/dev/articles/ITT.md):
 - [Defining your

@@ -233,6 +233,150 @@ risk_comparison(model)
 #> 2:       60 risk_1 risk_0  1.0021092     0.002030621
 ```
 
+## Per-protocol, censoring, a flexible baseline hazard in the weight models
+
+By default the weight models are quadratic in time: `followup`,
+`followup_sq`, `trial` and `trial_sq` when
+`weight.preexpansion = FALSE`, and the time column and its square when
+`weight.preexpansion = TRUE`. A quadratic only lets the hazard of
+treatment rise or flatten off, which can fit poorly when the cumulative
+incidence of treatment moves through several phases over follow-up.
+`weight.spline = TRUE` replaces each of those quadratics with a natural
+cubic spline basis
+([`splines::ns()`](https://rdrr.io/r/splines/ns.html)) with
+`weight.spline.df` degrees of freedom, letting the baseline hazard take
+a flexible shape over time. This applies to the treatment weight models
+and, when `cense` or `visit` is set, to those models too.
+
+``` r
+
+options <- SEQopts(km.curves = TRUE,
+                   weighted = TRUE,
+                   weight.preexpansion = FALSE,
+                   # model time in the weight models as a natural cubic spline
+                   weight.spline = TRUE,
+                   # 4 degrees of freedom, i.e. 3 interior knots at quantiles
+                   weight.spline.df = 4L)
+
+data <- SEQdata
+model <- SEQuential(data,
+                    id.col = "ID",
+                    time.col = "time",
+                    eligible.col = "eligible",
+                    treatment.col = "tx_init",
+                    outcome.col = "outcome",
+                    time_varying.cols = c("N", "L", "P"),
+                    fixed.cols = "sex",
+                    method = "censoring",
+                    options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Non-required columns provided, pruning for efficiency
+#> 
+#> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
+#> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 18 variables
+#>   entering outcome model (uncensored): 96,251
+#>   artificially censored (treatment switch): 6,498
+#> 
+#> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 18 variables
+#> 
+#> Moving forward with censoring analysis
+#> 
+#> censoring model created successfully
+#> 
+#> Creating Survival curves
+#> 
+#> Completed
+
+# the weight model formulas, with the spline knots fixed from the data
+covariates(model)
+#> $Outcome
+#> [1] "outcome ~ tx_init_bas + followup + followup_sq + trial + trial_sq + sex + N_bas + L_bas + P_bas + tx_init_bas*followup"
+#> 
+#> $Numerator
+#> [1] "tx_init ~ sex + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 7, 14), Boundary.knots = c(0, 58)) + ns(trial, knots = c(8, 16, 26), Boundary.knots = c(0, 59))"
+#> 
+#> $Denominator
+#> [1] "tx_init ~ sex + N + L + P + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 7, 14), Boundary.knots = c(0, 58)) + ns(trial, knots = c(8, 16, 26), Boundary.knots = c(0, 59))"
+```
+
+For finer control - a spline in `followup` but not `trial`, a different
+number of knots per term, or a spline in a time-varying confounder -
+write the `ns()` terms into `numerator` and `denominator` yourself. Any
+`ns(x, df = N)` term in a model formula has its knots fixed from the
+data the model is fit on before fitting, so the basis is the same when
+the model is fit and when it is used to predict the weights, and is held
+constant across bootstrap resamples.
+
+``` r
+
+options <- SEQopts(weighted = TRUE,
+                   weight.preexpansion = FALSE,
+                   numerator = "sex+N_bas+L_bas+P_bas+ns(followup, df = 5)+trial+trial_sq",
+                   denominator = "sex+N+L+P+N_bas+L_bas+P_bas+ns(followup, df = 5)+trial+trial_sq")
+
+model <- SEQuential(data,
+                    id.col = "ID",
+                    time.col = "time",
+                    eligible.col = "eligible",
+                    treatment.col = "tx_init",
+                    outcome.col = "outcome",
+                    time_varying.cols = c("N", "L", "P"),
+                    fixed.cols = "sex",
+                    method = "censoring",
+                    options = options)
+#> 
+#> Full dataset: 12,180 observations, 11 variables
+#> 
+#> Non-required columns provided, pruning for efficiency
+#> 
+#> Pruned
+#> 
+#> Original dataset (eligible subjects): 9,203 observations, 9 variables
+#> 
+#> Expanding Data...
+#> 
+#> Pre-filter expansion: 310,080 observations
+#> 
+#> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
+#> 
+#> Expanded dataset (post-censoring): 102,749 observations, 18 variables
+#>   entering outcome model (uncensored): 96,251
+#>   artificially censored (treatment switch): 6,498
+#> 
+#> Expansion Successful
+#> 
+#> Final analysis dataset: 102,749 observations, 18 variables
+#> 
+#> Moving forward with censoring analysis
+#> 
+#> censoring model created successfully
+#> 
+#> Completed
+
+covariates(model)
+#> $Outcome
+#> [1] "outcome ~ tx_init_bas + followup + followup_sq + trial + trial_sq + sex + N_bas + L_bas + P_bas"
+#> 
+#> $Numerator
+#> [1] "tx_init ~ sex + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 5, 9, 16), Boundary.knots = c(0, 58)) + trial + trial_sq"
+#> 
+#> $Denominator
+#> [1] "tx_init ~ sex + N + L + P + N_bas + L_bas + P_bas + ns(followup, knots = c(2, 5, 9, 16), Boundary.knots = c(0, 58)) + trial + trial_sq"
+```
+
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions)
 
 ``` r
@@ -286,7 +430,7 @@ km_curve(model, plot.type = "risk")
 ```
 
 ![Risk plot by treatment
-group.](censoring_files/figure-html/unnamed-chunk-5-1.png)
+group.](censoring_files/figure-html/unnamed-chunk-7-1.png)
 
 ``` r
 
@@ -362,7 +506,7 @@ km_curve(model, plot.type = "risk")
 ```
 
 ![Risk plot by treatment
-group.](censoring_files/figure-html/unnamed-chunk-6-1.png)
+group.](censoring_files/figure-html/unnamed-chunk-8-1.png)
 
 ``` r
 
@@ -426,5 +570,5 @@ model <- SEQuential(data,
 #> Completed
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
-#>     3.004905           NA           NA
+#>     3.009221           NA           NA
 ```

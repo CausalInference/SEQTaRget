@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.3.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.4.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/ITT.html">Intention-To-Treat Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/censoring.html">Per Protocol: Censoring Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/doseresponse.html">Per-Protocol: Dose-Response Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/endoffollowup.html">End-of-Follow-up Outcomes</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -75,6 +76,10 @@
 <span>  deviation.conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  deviation.excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  deviation.excused_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  end_of_fup <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  end_of_fup.time <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  end_of_fup.type <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>  end_of_fup.window <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  excused <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  excused.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  expand.only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -118,6 +123,8 @@
 <span>  weight.lag_condition <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  weight.p99 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  weight.preexpansion <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  weight.spline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  weight.spline.df <span class="op">=</span> <span class="fl">4L</span>,</span>
 <span>  weight.upper <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -197,6 +204,22 @@
 
 <dt id="arg-deviation-excused-cols">deviation.excused_cols<a class="anchor" aria-label="anchor" href="#arg-deviation-excused-cols"></a></dt>
 <dd><p>Character list: excused columns for deviation switches</p></dd>
+
+
+<dt id="arg-end-of-fup">end_of_fup<a class="anchor" aria-label="anchor" href="#arg-end-of-fup"></a></dt>
+<dd><p>Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is <code>FALSE</code>. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with <code>km.curves</code> and <code>hazard</code></p></dd>
+
+
+<dt id="arg-end-of-fup-time">end_of_fup.time<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-time"></a></dt>
+<dd><p>Numeric: the follow-up time <code>k</code> (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when <code>end_of_fup = TRUE</code></p></dd>
+
+
+<dt id="arg-end-of-fup-type">end_of_fup.type<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-type"></a></dt>
+<dd><p>String: type of end-of-follow-up outcome, either <code>'binary'</code> (the default, giving the weighted proportion in each arm) or <code>'continuous'</code> (giving the weighted mean)</p></dd>
+
+
+<dt id="arg-end-of-fup-window">end_of_fup.window<a class="anchor" aria-label="anchor" href="#arg-end-of-fup-window"></a></dt>
+<dd><p>Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly <code>end_of_fup.time</code>, default is <code>0</code> (no window). Those trial-periods fall back to the measurement nearest to <code>k</code> within <code>[k - window, k + window]</code> (ties, i.e. measurements equally far either side of <code>k</code>, are broken toward the later measurement, so that at least <code>k</code> of follow-up has elapsed); any with no measurement anywhere in the window are censored, i.e. excluded from the average</p></dd>
 
 
 <dt id="arg-excused">excused<a class="anchor" aria-label="anchor" href="#arg-excused"></a></dt>
@@ -369,6 +392,14 @@
 
 <dt id="arg-weight-preexpansion">weight.preexpansion<a class="anchor" aria-label="anchor" href="#arg-weight-preexpansion"></a></dt>
 <dd><p>Logical: whether weighting should be done on pre-expanded data, default <code>TRUE</code></p></dd>
+
+
+<dt id="arg-weight-spline">weight.spline<a class="anchor" aria-label="anchor" href="#arg-weight-spline"></a></dt>
+<dd><p>Logical: model time in the default weight models with a natural cubic spline (<code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code>) instead of a quadratic, default is <code>FALSE</code>. This makes the baseline hazard of treatment (and of censoring, for the <code>cense</code> and <code>visit</code> models) a flexible function of time rather than one that can only rise or flatten off. The terms replaced are <code>trial</code>/<code>trial_sq</code> and <code>followup</code>/<code>followup_sq</code> when <code>weight.preexpansion = FALSE</code>, and the time column and its square when <code>weight.preexpansion = TRUE</code>. Ignored for weight models whose formula is supplied through <code>numerator</code>, <code>denominator</code>, <code>cense.numerator</code>, <code>cense.denominator</code>, <code>visit.numerator</code> or <code>visit.denominator</code> - write <code>ns()</code> terms into those formulas directly for finer control (e.g. a spline in <code>followup</code> only). Knots of any <code>ns(x, df = N)</code> term are fixed from the full data before fitting, so the basis is the same at fit and prediction time and across bootstrap resamples</p></dd>
+
+
+<dt id="arg-weight-spline-df">weight.spline.df<a class="anchor" aria-label="anchor" href="#arg-weight-spline-df"></a></dt>
+<dd><p>Integer: degrees of freedom passed to <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> when <code>weight.spline = TRUE</code>. With <code>df = k</code>, <code>ns()</code> places <code>k - 1</code> interior knots at quantiles of the term. Must be <code>&gt;= 1</code>; <code>df = 1</code> is equivalent to a linear term and is generally not what you want. Default is <code>4</code> (3 interior knots)</p></dd>
 
 
 <dt id="arg-weight-upper">weight.upper<a class="anchor" aria-label="anchor" href="#arg-weight-upper"></a></dt>

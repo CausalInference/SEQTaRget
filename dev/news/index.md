@@ -2,6 +2,110 @@
 
 ## SEQTaRget (development version)
 
+- Validate in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
+  that `covariates`, `cense.numerator`, `cense.denominator`,
+  `visit.numerator` and `visit.denominator` are single formula strings,
+  and that `numerator`/`denominator` are non-empty. These are scalar by
+  construction - they are tested downstream with
+  [`is.na()`](https://rdrr.io/r/base/NA.html) and `||`, which errors
+  with `'length = 2' in coercion to 'logical(1)'` on a vector, or
+  `missing value where TRUE/FALSE needed` on a zero-length value,
+  several frames from the argument that caused it. The error now names
+  the offending argument at the point it is supplied. `numerator` and
+  `denominator` may still be a character vector with one formula per
+  `treat.level`, which is validated against `treat.level` as before.
+- Allow a flexible function of time for the baseline hazard in the
+  weight models through `weight.spline` and `weight.spline.df` in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md).
+  The default weight models are quadratic in time - `followup`,
+  `followup_sq`, `trial` and `trial_sq` when
+  `weight.preexpansion = FALSE`, the time column and its square when
+  `weight.preexpansion = TRUE` - which only allows the hazard of
+  treatment to rise or flatten off. With `weight.spline = TRUE` each of
+  those quadratics is replaced by a natural cubic spline basis
+  ([`splines::ns()`](https://rdrr.io/r/splines/ns.html)) with
+  `weight.spline.df` degrees of freedom (default `4`, i.e. 3 interior
+  knots at quantiles), so the baseline hazard can take a flexible shape
+  over follow-up. This covers the treatment weight models and, where
+  specified, the `cense` and `visit` models, under both settings of
+  `weight.preexpansion`. Weight models supplied through `numerator`,
+  `denominator`, `cense.numerator`, `cense.denominator`,
+  `visit.numerator` or `visit.denominator` are left as written, so
+  `ns()` terms can also be placed by hand for finer control.
+- Fix `ns(x, df = N)` terms in any model formula silently using a
+  different spline basis when fitting and when predicting.
+  [`splines::ns()`](https://rdrr.io/r/splines/ns.html) recomputes its
+  knots from whatever rows it is passed, and the weight models are fit
+  on one row subset (e.g. the denominator model excludes
+  `followup == 0`) and then used to predict over another, so the knots -
+  and hence the basis - differed between the two, and differed again in
+  each bootstrap resample. Knots are now fixed from the full data the
+  model is fit on before fitting, for the outcome, treatment weight,
+  censoring and visit models alike, so the basis is identical at fit and
+  prediction time and constant across resamples. Previously this
+  affected only user-supplied `ns()` terms; a spline on `followup` in a
+  post-expansion weight model changed weights by up to 0.21 in the
+  package’s own example data. Formulas that already give explicit
+  `knots`/`Boundary.knots` are unchanged, as are terms whose variable is
+  absent or non-numeric.
+
+## SEQTaRget v1.4.4
+
+CRAN release: 2026-08-28
+
+- Add support for end-of-follow-up outcomes - outcomes evaluated at a
+  single user-specified follow-up time rather than as a time-to-event -
+  through `end_of_fup`, `end_of_fup.time`, `end_of_fup.type` and
+  `end_of_fup.window` in
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md).
+  The outcome may be `"binary"` (reported as the weighted proportion in
+  each arm) or `"continuous"` (the weighted mean). For each trial-period
+  the measurement at `end_of_fup.time` is taken, weighted by the
+  period-trial-specific weight at that time; where no measurement exists
+  at exactly that time, `end_of_fup.window` allows a fallback to the
+  measurement nearest to that time within `[k - window, k + window]`
+  (ties broken toward the later measurement, so that at least `k` of
+  follow-up has elapsed), and trial-periods with no measurement anywhere
+  in the window are censored out of the average. Results are returned in
+  the new `eof.data` and `eof.comparison` slots and via the new
+  [`end_of_fup()`](https://causalinference.github.io/SEQTaRget/dev/reference/end_of_fup.md)
+  accessor, with per-arm bootstrap confidence intervals and the pairwise
+  between-arm difference (in proportions for a binary outcome, in means
+  for a continuous one) with its standard error and confidence interval.
+  For binary outcomes the ratio of proportions is also reported, with a
+  log-scale confidence interval and a `log(Ratio) SE` for
+  inverse-variance pooling; no ratio is given for continuous outcomes,
+  which need not be bounded away from zero. The estimates table also
+  accounts for how much of each arm the estimate rests on:
+  `Trial-periods (Eligible)` is every trial-period reaching the
+  follow-up time, `Trial-periods (Analysed)` those contributing, and
+  `Trial-periods (Censored)` those measured at some point but not within
+  the window, and `Trial-periods (No measurement)` those never measured
+  at all, so the three partition the eligible total; `% Censored` gives
+  the censored share of that total. Trial-periods are the unit because
+  one subject can be analysed in one trial and censored in another.
+  [`diagnostics()`](https://causalinference.github.io/SEQTaRget/dev/reference/diagnostics.md)
+  gains `eof.summary` (for continuous outcomes: N, mean and SD of the
+  raw analysed measurements per arm, standing in for the suppressed
+  outcome count tables) plus `eof.unique` and `eof.nonunique`,
+  accounting for every trial-period at `k` across four mutually
+  exclusive categories (measured at `k`, measured in the window,
+  excluded outside the window, excluded with no measurement) against the
+  eligible total; the trial-period counts partition that total, and the
+  two contributing categories sum to the trial-periods behind the
+  estimate. Because an end-of-follow-up outcome is measured at
+  particular times, this is also the one mode in which the outcome
+  column may contain `NA` (recording that no measurement was taken);
+  every other column must still be complete. See the new
+  “End-of-Follow-up Outcomes” vignette. No outcome model is fit in this
+  mode, so it is incompatible with `km.curves`, `hazard`, `compevent`
+  and the dose-response method, and the expansion is not truncated at
+  the first outcome event.
+- Set an explicit `seed` on every bootstrapping example in the
+  vignettes. Since unseeded runs now draw a genuinely random seed, these
+  examples produced different confidence intervals on every render; they
+  are also a better illustration of reproducible practice.
 - Allow arm-specific treatment-weight models: `numerator` and
   `denominator` in
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)

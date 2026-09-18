@@ -22,6 +22,10 @@ here in greater detail:
 | `compevent` | Column name for competing event variable | Character | `"death"` |
 | `covariates` | If provided, forces covariates for outcome models | Character | `"X1+X2*X3+X4"` |
 | `data.return` | Whether to return expanded data as output | Logical | `TRUE` |
+| `end_of_fup` | Estimate an outcome measured at a single follow-up time as a weighted per-arm average, instead of fitting a survival outcome model. Incompatible with `km.curves`, `hazard`, `compevent` and the dose-response method | Logical | `TRUE` |
+| `end_of_fup.time` | The follow-up time `k` at which the end-of-follow-up outcome is evaluated (required when `end_of_fup = TRUE`) | Numeric | `12` |
+| `end_of_fup.type` | Type of end-of-follow-up outcome: `"binary"` reports the weighted proportion per arm, `"continuous"` the weighted mean | Character | `"binary"` |
+| `end_of_fup.window` | Half-width of the window used when a trial-period has no measurement at exactly `end_of_fup.time`; it then falls back to the measurement nearest to `k` within `[k - window, k + window]` (ties broken toward the later one, so at least `k` of follow-up has elapsed), and is censored if there is none | Numeric | `3` |
 | `expand.only` | Return the expanded dataset and skip analysis | Logical | `TRUE` |
 | `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
 | `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |
@@ -67,6 +71,8 @@ the case of a censoring variable like loss-to-followup.
 | `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
 | `weight.p99` | Whether to truncate weights at the 1st and 99th percentiles | Logical | `TRUE` |
 | `weight.preexpansion` | Whether weighting should be done on pre-expanded data | Logical | `TRUE` |
+| `weight.spline` | Whether the default weight models should model time with a natural cubic spline rather than a quadratic | Logical | `TRUE` |
+| `weight.spline.df` | Degrees of freedom passed to [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when `weight.spline = TRUE` | Integer | `4L` |
 | `weight.upper` | Upper truncation for weight values | Numeric double | `10.0` |
 | `weighted` | Whether the analysis should be weighted | Logical | `TRUE` |
 

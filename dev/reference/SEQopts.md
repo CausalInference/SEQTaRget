@@ -24,6 +24,10 @@ SEQopts(
   deviation.conditions = c(NA, NA),
   deviation.excused = FALSE,
   deviation.excused_cols = c(NA, NA),
+  end_of_fup = FALSE,
+  end_of_fup.time = NA,
+  end_of_fup.type = "binary",
+  end_of_fup.window = 0,
   excused = FALSE,
   excused.cols = c(NA, NA),
   expand.only = FALSE,
@@ -67,6 +71,8 @@ SEQopts(
   weight.lag_condition = TRUE,
   weight.p99 = FALSE,
   weight.preexpansion = TRUE,
+  weight.spline = FALSE,
+  weight.spline.df = 4L,
   weight.upper = Inf,
   weighted = FALSE
 )
@@ -162,6 +168,37 @@ SEQopts(
 - deviation.excused_cols:
 
   Character list: excused columns for deviation switches
+
+- end_of_fup:
+
+  Logical: estimate an end-of-follow-up outcome - one measured at a
+  single follow-up time rather than as a time-to-event - instead of
+  fitting a survival outcome model, default is `FALSE`. The estimate is
+  the weighted average of the outcome within each baseline treatment
+  arm, weighted by the period-trial-specific weight at the time the
+  outcome is taken. Incompatible with `km.curves` and `hazard`
+
+- end_of_fup.time:
+
+  Numeric: the follow-up time `k` (in follow-up periods since trial
+  enrollment) at which the end-of-follow-up outcome is evaluated.
+  Required when `end_of_fup = TRUE`
+
+- end_of_fup.type:
+
+  String: type of end-of-follow-up outcome, either `'binary'` (the
+  default, giving the weighted proportion in each arm) or `'continuous'`
+  (giving the weighted mean)
+
+- end_of_fup.window:
+
+  Numeric: half-width of the window used when a trial-period has no
+  outcome measurement at exactly `end_of_fup.time`, default is `0` (no
+  window). Those trial-periods fall back to the measurement nearest to
+  `k` within `[k - window, k + window]` (ties, i.e. measurements equally
+  far either side of `k`, are broken toward the later measurement, so
+  that at least `k` of follow-up has elapsed); any with no measurement
+  anywhere in the window are censored, i.e. excluded from the average
 
 - excused:
 
@@ -422,6 +459,33 @@ SEQopts(
 
   Logical: whether weighting should be done on pre-expanded data,
   default `TRUE`
+
+- weight.spline:
+
+  Logical: model time in the default weight models with a natural cubic
+  spline ([`splines::ns()`](https://rdrr.io/r/splines/ns.html)) instead
+  of a quadratic, default is `FALSE`. This makes the baseline hazard of
+  treatment (and of censoring, for the `cense` and `visit` models) a
+  flexible function of time rather than one that can only rise or
+  flatten off. The terms replaced are `trial`/`trial_sq` and
+  `followup`/`followup_sq` when `weight.preexpansion = FALSE`, and the
+  time column and its square when `weight.preexpansion = TRUE`. Ignored
+  for weight models whose formula is supplied through `numerator`,
+  `denominator`, `cense.numerator`, `cense.denominator`,
+  `visit.numerator` or `visit.denominator` - write `ns()` terms into
+  those formulas directly for finer control (e.g. a spline in `followup`
+  only). Knots of any `ns(x, df = N)` term are fixed from the full data
+  before fitting, so the basis is the same at fit and prediction time
+  and across bootstrap resamples
+
+- weight.spline.df:
+
+  Integer: degrees of freedom passed to
+  [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when
+  `weight.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior
+  knots at quantiles of the term. Must be `>= 1`; `df = 1` is equivalent
+  to a linear term and is generally not what you want. Default is `4` (3
+  interior knots)
 
 - weight.upper:
 
