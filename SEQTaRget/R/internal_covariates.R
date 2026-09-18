@@ -62,9 +62,15 @@ create.default.weight.covariates <- function(params, type) {
   timeVarying <- NULL
   timeVarying_bas <- NULL
   fixed <- NULL
-  trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
-  followup <- paste0("followup", c("", params@indicator.squared), collapse = "+")
-  time <- paste0(params@time, c("", params@indicator.squared), collapse = "+")
+  # weight.spline swaps each time quadratic (trial/followup post-expansion, the time column
+  # pre-expansion) for a natural cubic spline; knots are baked in SEQuential() once weight data exist
+  time_terms <- function(var) {
+    if (params@weight.spline) sprintf("ns(%s, df = %d)", var, params@weight.spline.df)
+    else paste0(var, c("", params@indicator.squared), collapse = "+")
+  }
+  trial <- time_terms("trial")
+  followup <- time_terms("followup")
+  time <- time_terms(params@time)
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -108,7 +114,13 @@ create.default.LTFU.covariates <- function(params, type) {
   fixed <- NULL
   trial <- NULL
   followup <- NULL
-  time <- paste0(params@time, c("", params@indicator.squared), collapse = "+")
+  # As in create.default.weight.covariates(), weight.spline swaps each time
+  # quadratic for a natural cubic spline basis
+  time_terms <- function(var) {
+    if (params@weight.spline) sprintf("ns(%s, df = %d)", var, params@weight.spline.df)
+    else paste0(var, c("", params@indicator.squared), collapse = "+")
+  }
+  time <- time_terms(params@time)
 
   if (length(params@time_varying) > 0) {
     timeVarying <- paste0(params@time_varying, collapse = "+")
@@ -119,8 +131,8 @@ create.default.LTFU.covariates <- function(params, type) {
     fixed <- paste0(params@fixed, collapse = "+")
   }
 
-  if (params@trial.include) trial <- paste0("trial", c("", params@indicator.squared), collapse = "+")
-  if (params@followup.include) followup <- paste0("followup", c("", params@indicator.squared), collapse = "+")
+  if (params@trial.include) trial <- time_terms("trial")
+  if (params@followup.include) followup <- time_terms("followup")
 
   if (type == "numerator") {
     if (params@weight.preexpansion) out <- paste0(c("tx_lag", time, fixed), collapse = "+")

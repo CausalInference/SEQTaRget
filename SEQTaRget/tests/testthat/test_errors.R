@@ -56,3 +56,24 @@ test_that("Missing Observations in Data", {
                             method = "ITT",
                             options = SEQopts()))
 })
+
+test_that("SEQopts() rejects non-scalar formula arguments at the point they are supplied", {
+  # These slots are tested downstream with is.na()/`||`, which errors with
+  # "'length = 2' in coercion to 'logical(1)'" several frames from the cause
+  expect_error(SEQopts(covariates = c("sex", "N")), "'covariates' must be a single formula string")
+  expect_error(SEQopts(cense.numerator = c("sex", "N")), "'cense.numerator' must be a single formula string")
+  expect_error(SEQopts(cense.denominator = c("sex", "N")), "'cense.denominator' must be a single formula string")
+  expect_error(SEQopts(visit.numerator = c("sex", "N")), "'visit.numerator' must be a single formula string")
+  expect_error(SEQopts(visit.denominator = c("sex", "N")), "'visit.denominator' must be a single formula string")
+
+  # Zero-length resolves to NA in the same tests, giving "missing value where
+  # TRUE/FALSE needed" instead
+  expect_error(SEQopts(covariates = character(0)), "a value of length 0 was supplied")
+  expect_error(SEQopts(numerator = character(0)), "a zero-length value was supplied")
+  expect_error(SEQopts(denominator = character(0)), "a zero-length value was supplied")
+
+  # A vector numerator/denominator is still allowed - one formula per treat.level,
+  # validated against treat.level in parameter.simplifier()
+  expect_s4_class(SEQopts(numerator = c("sex", "sex+N"), denominator = c("sex+L", "sex+N+L")), "SEQopts")
+  expect_s4_class(SEQopts(covariates = "sex+N"), "SEQopts")
+})

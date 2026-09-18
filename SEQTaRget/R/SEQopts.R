@@ -65,6 +65,8 @@
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value, default `TRUE`
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}. The percentiles are taken from the untruncated weight distribution (as reported in \code{weight.statistics}), and as with \code{weight.lower}/\code{weight.upper} the truncation affects only the weights used to fit the outcome model.
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
+#' @param weight.spline Logical: model time in the default weight models with a natural cubic spline (`splines::ns()`) instead of a quadratic, default is `FALSE`. This makes the baseline hazard of treatment (and of censoring, for the `cense` and `visit` models) a flexible function of time rather than one that can only rise or flatten off. The terms replaced are `trial`/`trial_sq` and `followup`/`followup_sq` when `weight.preexpansion = FALSE`, and the time column and its square when `weight.preexpansion = TRUE`. Ignored for weight models whose formula is supplied through \code{numerator}, \code{denominator}, \code{cense.numerator}, \code{cense.denominator}, \code{visit.numerator} or \code{visit.denominator} - write `ns()` terms into those formulas directly for finer control (e.g. a spline in `followup` only). Knots of any `ns(x, df = N)` term are fixed from the full data before fitting, so the basis is the same at fit and prediction time and across bootstrap resamples
+#' @param weight.spline.df Integer: degrees of freedom passed to `splines::ns()` when `weight.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior knots at quantiles of the term. Must be `>= 1`; `df = 1` is equivalent to a linear term and is generally not what you want. Default is `4` (3 interior knots)
 #' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`. As with \code{weight.lower}, truncation affects only the weights used to fit the outcome model, not those reported in \code{weight.statistics} or the returned data.
 #' @param weighted Logical: whether or not to perform weighted analysis, default is `FALSE`
 #' @returns An object of class 'SEQopts'
@@ -87,7 +89,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     treat.level = c(0, 1), trial.include = TRUE,
                     visit = NA, visit.denominator = NA, visit.numerator = NA,
                     weight.eligible_cols = c(),
-                    weight.lower = 0, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE, weight.upper = Inf, weighted = FALSE) {
+                    weight.lower = 0, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE,
+                    weight.spline = FALSE, weight.spline.df = 4L, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -131,9 +134,29 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
   cense.denominator <- gsub("\\s", "", cense.denominator)
   visit.numerator <- gsub("\\s", "", visit.numerator)
   visit.denominator <- gsub("\\s", "", visit.denominator)
-  
+
+  # Non-scalar formula arguments fail confusingly several frames downstream (is.na()/`||`), so reject
+  # them here; only numerator/denominator may be vectors, validated later in parameter.simplifier()
+  for (nm in c("covariates", "cense.numerator", "cense.denominator",
+               "visit.numerator", "visit.denominator")) {
+    if (length(get(nm)) != 1L)
+      stop("'", nm, "' must be a single formula string, or NA, but a value of length ",
+           length(get(nm)), " was supplied")
+  }
+  for (nm in c("numerator", "denominator")) {
+    if (length(get(nm)) < 1L)
+      stop("'", nm, "' must be a single formula string, NA, or one formula per 'treat.level', ",
+           "but a zero-length value was supplied")
+  }
+
   weighted <- as.logical(weighted)
   weight.preexpansion <- as.logical(weight.preexpansion)
+  weight.spline <- as.logical(weight.spline)
+  weight.spline.df <- as.integer(weight.spline.df)
+  if (length(weight.spline.df) != 1L || is.na(weight.spline.df) || weight.spline.df < 1L)
+    stop("'weight.spline.df' must be a single integer >= 1")
+  if (weight.spline && weight.spline.df < 3L)
+    warning("'weight.spline.df' < 3 will not give a meaningfully non-linear basis; consider df >= 3")
 
   excused <- as.logical(excused)
   excused.cols <- as.list(excused.cols)
@@ -240,6 +263,8 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       weight.upper = weight.upper,
       weight.p99 = weight.p99,
       weight.preexpansion = weight.preexpansion,
+      weight.spline = weight.spline,
+      weight.spline.df = weight.spline.df,
       excused = excused,
       cense = cense,
       compevent = compevent,
