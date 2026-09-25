@@ -156,3 +156,51 @@ test_that("Default Covariate Creation: Post-Expansion Excused Censoring", {
                 "sex", "race", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })
+
+test_that("factorize() leaves numeric fixed covariates numeric and encodes non-numeric ones as factors", {
+  params <- parameter.setter(
+    data = data.table(),
+    DT = data.table(),
+    id.col = "ID",
+    time.col = "time", eligible.col = "eligible",
+    outcome.col = "outcome", treatment.col = "treatment",
+    time_varying.cols = list("N", "grade"),
+    fixed.cols = list("age", "sex", "region", "smoker"),
+    method = "ITT", verbose = TRUE, opts = SEQopts()
+  )
+  DT <- data.table(treatment = c(0, 1, 1), treatment_bas = c(0, 0, 1),
+                   age = c(34.5, 61.2, 47.8), sex = c(0L, 1L, 1L),
+                   region = c("north", "south", "north"), smoker = c(TRUE, FALSE, TRUE),
+                   N = c(1.2, 3.4, 5.6), N_bas = c(1.2, 1.2, 5.6),
+                   grade = c("a", "b", "b"), grade_bas = c("a", "a", "b"))
+  out <- factorize(DT, params)
+
+  # Treatment is always categorical
+  expect_true(is.factor(out$treatment))
+  expect_true(is.factor(out$treatment_bas))
+  # Numeric covariates are untouched, whether fixed or time-varying
+  expect_identical(out$age, c(34.5, 61.2, 47.8))
+  expect_identical(out$sex, c(0L, 1L, 1L))
+  expect_identical(out$N, c(1.2, 3.4, 5.6))
+  expect_identical(out$N_bas, c(1.2, 1.2, 5.6))
+  # Non-numeric covariates are encoded as factors
+  expect_true(is.factor(out$region))
+  expect_true(is.factor(out$smoker))
+  expect_true(is.factor(out$grade))
+  expect_true(is.factor(out$grade_bas))
+})
+
+test_that("A continuous fixed covariate enters the outcome model as a single term", {
+  data <- data.table::copy(SEQdata)
+  set.seed(1)
+  ages <- data.table(ID = unique(data$ID), age = round(runif(uniqueN(data$ID), 20, 80), 1))
+  data <- ages[data, on = "ID"]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+    list("N", "L", "P"), list("sex", "age"),
+    method = "ITT", options = SEQopts(), verbose = FALSE
+  ))
+  coefs <- names(coef(model@outcome.model[[1]][[1]]))
+  expect_true("age" %in% coefs)
+  expect_equal(sum(startsWith(coefs, "age")), 1L)
+  expect_true("sex" %in% coefs)
+})

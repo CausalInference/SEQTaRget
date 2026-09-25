@@ -121,24 +121,25 @@ create.risk <- function(data, params, boot_risks = NULL) {
 }
 
 factorize <- function(data, params) {
-  # Fixed covariates and treatment columns are always treated as categorical.
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline),
-                      params@treatment))
-  coercion <- encodes[encodes %in% names(data)]
-  if (length(coercion) > 0) data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
+  # Treatment columns are always treated as categorical.
+  treat <- unlist(c(paste0(params@treatment, params@indicator.baseline), params@treatment))
+  treat <- treat[treat %in% names(data)]
+  if (length(treat) > 0) data[, (treat) := lapply(.SD, as.factor), .SDcols = treat]
 
-  # Categorical (character) time-varying covariates - and their baseline (_bas)
-  # counterparts - must also get a stable factor encoding, with levels fixed from
-  # the full data, so that bootstrap resamples cannot realise different level sets
-  # and produce model matrices that differ in their columns between fit and
-  # prediction (which raises "newdata provided does not match fitted model").
-  # Numeric time-varying covariates are left untouched so continuous covariates
-  # are not turned into factors.
+  # Categorical (non-numeric) fixed and time-varying covariates - and the
+  # baseline (_bas) counterparts of the latter - must get a stable factor
+  # encoding, with levels fixed from the full data, so that bootstrap resamples
+  # cannot realise different level sets and produce model matrices that differ
+  # in their columns between fit and prediction (which raises "newdata provided
+  # does not match fitted model"). Numeric covariates are left untouched so that
+  # continuous covariates such as age enter the models as a single term rather
+  # than one indicator per distinct value; integer-coded categories must be
+  # supplied as factor or character columns.
   tv <- unlist(params@time_varying)
-  tv <- unique(c(tv, paste0(tv, params@indicator.baseline)))
-  tv <- tv[tv %in% names(data)]
-  tv_cat <- tv[vapply(tv, function(col) is.character(data[[col]]), logical(1))]
-  if (length(tv_cat) > 0) data[, (tv_cat) := lapply(.SD, as.factor), .SDcols = tv_cat]
+  covs <- unique(c(unlist(params@fixed), tv, paste0(tv, params@indicator.baseline)))
+  covs <- covs[covs %in% names(data)]
+  cat_cols <- covs[!vapply(covs, function(col) is.numeric(data[[col]]), logical(1))]
+  if (length(cat_cols) > 0) data[, (cat_cols) := lapply(.SD, as.factor), .SDcols = cat_cols]
 
   return(data)
 }

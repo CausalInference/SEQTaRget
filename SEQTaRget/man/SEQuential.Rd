@@ -33,7 +33,7 @@ SEQuential(
 
 \item{time_varying.cols}{List: column names for time varying columns}
 
-\item{fixed.cols}{List: column names for fixed columns}
+\item{fixed.cols}{List: column names for fixed columns. Numeric columns enter the models as they are, as a single term; character, logical and factor columns are treated as categorical. Supply an integer-coded categorical variable (e.g. region coded 1-5) as a factor or character column, otherwise it is modelled as a linear term}
 
 \item{method}{String: method of analysis to perform; should be one of \code{"ITT"}, \code{"dose-response"}, or \code{"censoring"}}
 

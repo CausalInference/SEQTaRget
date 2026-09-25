@@ -14,7 +14,7 @@
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
-#' @param fixed.cols List: column names for fixed columns
+#' @param fixed.cols List: column names for fixed columns. Numeric columns enter the models as they are, as a single term; character, logical and factor columns are treated as categorical. Supply an integer-coded categorical variable (e.g. region coded 1-5) as a factor or character column, otherwise it is modelled as a linear term
 #' @param method String: method of analysis to perform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
