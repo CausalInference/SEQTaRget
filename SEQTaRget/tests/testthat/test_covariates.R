@@ -204,3 +204,22 @@ test_that("A continuous fixed covariate enters the outcome model as a single ter
   expect_equal(sum(startsWith(coefs, "age")), 1L)
   expect_true("sex" %in% coefs)
 })
+
+test_that("Default Covariate Creation: subgroup drops only the subgroup variable from the fixed covariates", {
+  params <- parameter.setter(
+    data = data.table(),
+    DT = data.table(),
+    id.col = "ID",
+    time.col = "time", eligible.col = "eligible",
+    outcome.col = "outcome", treatment.col = "treatment",
+    time_varying.cols = list("N", "L", "P"),
+    fixed.cols = list("sex", "race", "age"),
+    method = "ITT", verbose = TRUE, opts = SEQopts(subgroup = "sex")
+  )
+  covariates <- create.default.covariates(params)
+  components <- unlist(strsplit(covariates, "\\+"))
+
+  expected <- c("treatment_bas", "followup", "followup_sq", "trial", "trial_sq",
+                "race", "age", "N_bas", "L_bas", "P_bas")
+  expect_true(setequal(components, expected))
+})
