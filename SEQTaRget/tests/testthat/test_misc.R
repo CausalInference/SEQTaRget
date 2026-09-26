@@ -341,3 +341,18 @@ test_that("character time-varying covariates get a stable factor encoding", {
   # Numeric time-varying covariates must remain numeric (not turned into factors)
   expect_true(is.numeric(model@DT$N_bas))
 })
+
+test_that("Treatment weights do not depend on the order of treat.level", {
+  skip_on_cran()
+  fit <- function(treat.level) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE,
+                                                           weight.preexpansion = FALSE, data.return = TRUE)))
+    SEQ_data(model)[followup > 0, .(numerator = mean(numerator), denominator = mean(denominator)),
+                    keyby = .(tx_init_bas, stay = tx_init == tx_init_bas)]
+  }
+  a <- fit(c(0, 1))
+  expect_equal(fit(c(1, 0)), a)
+  expect_true(all(a[stay == TRUE, denominator] > 0.5))
+})
