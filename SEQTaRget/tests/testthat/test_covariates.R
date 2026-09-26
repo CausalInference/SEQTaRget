@@ -223,3 +223,42 @@ test_that("Default Covariate Creation: subgroup drops only the subgroup variable
                 "race", "age", "N_bas", "L_bas", "P_bas")
   expect_true(setequal(components, expected))
 })
+
+test_that("Transformed terms such as log(x) are not treated as simple additive formulas", {
+  params <- parameter.setter(
+    data = data.table(),
+    DT = data.table(),
+    id.col = "ID",
+    time.col = "time", eligible.col = "eligible",
+    outcome.col = "outcome", treatment.col = "treatment",
+    time_varying.cols = list("N", "L", "P"),
+    fixed.cols = list("sex"),
+    method = "ITT", verbose = FALSE,
+    opts = SEQopts(covariates = "sex + N", cense.numerator = "sex + log(P)",
+                   cense.denominator = "sex + P - 1", visit.numerator = "sex + offset(P)",
+                   visit.denominator = "sex + N:P")
+  )
+  cache <- init_formula_cache(params)
+  expect_true(cache$covariates$is_simple)
+  expect_false(cache$cense_numerator$is_simple)
+  expect_false(cache$cense_denominator$is_simple)
+  expect_false(cache$visit_numerator$is_simple)
+  expect_false(cache$visit_denominator$is_simple)
+
+  X <- fast_model_matrix(cache$cense_numerator$formula, data.table(sex = c(0, 1), P = c(1, exp(1))),
+                         cache$cense_numerator$cols, is_simple = cache$cense_numerator$is_simple)
+  expect_equal(unname(X[, "log(P)"]), c(0, 1))
+})
+
+test_that("log(x) and I(log(x)) in a weight model give identical results", {
+  skip_on_cran()
+  fit <- function(denom) {
+    suppressWarnings(SEQuential(copy(SEQdata.LTFU), "ID", "time", "eligible", "tx_init", "outcome",
+               list("N", "L", "P"), list("sex"),
+               method = "ITT", verbose = FALSE,
+               options = SEQopts(cense = "LTFU", cense.denominator = denom)))
+  }
+  a <- fit("sex + N + L + log(P) + time + time_sq")
+  b <- fit("sex + N + L + I(log(P)) + time + time_sq")
+  expect_equal(unname(coef(a@outcome.model[[1]][[1]])), unname(coef(b@outcome.model[[1]][[1]])))
+})
