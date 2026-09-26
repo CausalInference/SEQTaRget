@@ -371,3 +371,11 @@ test_that("Column names containing the baseline or squared indicator mid-name ar
                                        method = "ITT", verbose = FALSE, options = SEQopts()))
   expect_true(all(c("bmi_baseline", "bmi_sqrt_bas") %in% names(coef(model@outcome.model[[1]][[1]]))))
 })
+
+test_that("verbose = FALSE prints nothing when creating survival curves", {
+  for (subgroup in list(NA, "sex")) {
+    expect_output(suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                              list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                              options = SEQopts(km.curves = TRUE, subgroup = subgroup))), NA)
+  }
+})

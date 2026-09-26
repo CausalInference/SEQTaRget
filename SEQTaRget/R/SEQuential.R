@@ -335,7 +335,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- lapply(analytic, function(x) x$model[[i]])
         
       if (params@km.curves) {
-        if (is.na(params@subgroup) && params@verbose) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
+        if (params@verbose) {
+          if (is.na(params@subgroup)) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
+        }
         survival <- internal.survival(params, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
