@@ -356,3 +356,18 @@ test_that("Treatment weights do not depend on the order of treat.level", {
   expect_equal(fit(c(1, 0)), a)
   expect_true(all(a[stay == TRUE, denominator] > 0.5))
 })
+
+test_that("Column names containing the baseline or squared indicator mid-name are expanded", {
+  data <- data.table::copy(SEQdata)
+  set.seed(1)
+  data[, bmi_baseline := round(rnorm(1), 1), by = ID][, bmi_sqrt := sqrt(abs(N))]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P", "bmi_sqrt"), list("sex", "bmi_baseline"),
+                                       method = "censoring", verbose = FALSE, options = SEQopts(weighted = TRUE)))
+  expect_true("bmi_baseline" %in% names(coef(model@outcome.model[[1]][[1]])))
+
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P", "bmi_sqrt"), list("sex", "bmi_baseline"),
+                                       method = "ITT", verbose = FALSE, options = SEQopts()))
+  expect_true(all(c("bmi_baseline", "bmi_sqrt_bas") %in% names(coef(model@outcome.model[[1]][[1]]))))
+})

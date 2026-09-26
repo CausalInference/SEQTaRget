@@ -35,13 +35,16 @@ SEQexpand <- function(params) {
                   params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
     vars <- vars[!vars %in% vars.nin]
-    vars.base <- vars[grep(params@indicator.baseline, vars)]
-    vars.sq <- vars[grep(params@indicator.squared, vars)]
+    # The indicators are suffixes: match them literally and only at the end of
+    # the name, so columns such as "bmi_baseline" or "bmi_sqrt" are left alone
+    strip_suffix <- function(x, suffix) substr(x, 1L, nchar(x) - nchar(suffix))
+    vars.base <- vars[endsWith(vars, params@indicator.baseline)]
+    vars.sq <- vars[endsWith(vars, params@indicator.squared)]
     vars.time <- c(vars[!vars %in% vars.base], unlist(params@excused.cols), unlist(params@deviation.excused_cols))
     vars.time <- vars.time[!is.na(vars.time)]
-    vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
+    vars.base <- unique(strip_suffix(vars.base, params@indicator.baseline))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
-    vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
+    vars.sq <- unique(strip_suffix(vars.sq, params@indicator.squared))
 
     data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
                ][, trial := rowid(get(params@id)) - 1
