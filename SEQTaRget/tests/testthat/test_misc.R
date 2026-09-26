@@ -379,3 +379,12 @@ test_that("verbose = FALSE prints nothing when creating survival curves", {
                                               options = SEQopts(km.curves = TRUE, subgroup = subgroup))), NA)
   }
 })
+
+test_that("SEQuential does not convert or modify a data.frame supplied as data", {
+  df <- as.data.frame(SEQdata)
+  snapshot <- data.table::copy(df)
+  suppressWarnings(SEQuential(df, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                              method = "ITT", verbose = FALSE, options = SEQopts()))
+  expect_false(is.data.table(df))
+  expect_identical(df, snapshot)
+})

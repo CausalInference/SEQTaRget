@@ -109,7 +109,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
   
-  setDT(data)
+  # setDT() on the caller's data.frame would convert it to a data.table in
+  # place. as.list() gives a shallow copy - a new list sharing the column
+  # vectors - so only that is converted. Nothing below modifies a column in
+  # place before the pruning subset, which copies.
+  if (!is.data.table(data)) data <- setDT(as.list(data))
   if (verbose) cat("\nFull dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   time.start <- Sys.time()
 
