@@ -37,9 +37,14 @@ multinomial <- function(X, y, family = quasibinomial(), params) {
   baseline <- ylevels[1]
   models <- list()
 
+  # Baseline-category logits: each class is fit against the baseline only, on
+  # the rows in {baseline, class}, so that the softmax in multinomial.predict()
+  # recovers the class probabilities. Fitting against all other rows
+  # (one-vs-rest) estimates a different quantity that the softmax misinterprets.
   for (class in ylevels[-1]) {
-    ybin <- ifelse(y == class, 1, 0)
-    model <- fit_glm(X, ybin, family, params = params)
+    rows <- y == class | y == baseline
+    ybin <- as.numeric(y[rows] == class)
+    model <- fit_glm(X[rows, , drop = FALSE], ybin, family, params = params)
     check_separation(model, label = paste0("multinomial (class = ", class, ")"))
     models[[class]] <- model
   }

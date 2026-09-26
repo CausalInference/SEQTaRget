@@ -26,10 +26,10 @@ test_that("Multinomial Censoring Pre-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -449.832275405838, tx_init_bas1 = 18.1973453707481, 
-                   tx_init_bas2 = -0.718731801861477, followup = 0.774243620146147, 
-                   followup_sq = -0.28420788583335, trial = 24.3523643961688, 
-                   trial_sq = -0.362290475321413, sex = 18.6843757434277)
+  expected <- list(`(Intercept)` = -449.303401632919, tx_init_bas1 = 18.1757926801988, 
+                   tx_init_bas2 = -0.731840897420851, followup = 0.773093243824455, 
+                   followup_sq = -0.284168948653283, trial = 24.3233957877663, 
+                   trial_sq = -0.361878001032878, sex = 18.6859136701556)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -46,11 +46,11 @@ test_that("Multinomial Censoring Post-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -448.710562199608, tx_init_bas1 = 17.9284837382002, 
-                   tx_init_bas2 = -0.761587951039862, followup = 0.790913824567396, 
-                   followup_sq = -0.289055118679556, trial = 23.903453873774, 
-                   trial_sq = -0.355064037507412, sex = 18.7273679453924, N_bas = 0.0041197541792462, 
-                   L_bas = 0.352474411172885, P_bas = 1.07955496166783)
+  expected <- list(`(Intercept)` = -448.556328969027, tx_init_bas1 = 17.9072810845517, 
+                   tx_init_bas2 = -0.807449870373759, followup = 0.791653874698164, 
+                   followup_sq = -0.289468077734324, trial = 23.8930882667934, 
+                   trial_sq = -0.354923320313731, sex = 18.7437405771097, N_bas = 0.00362892358099154, 
+                   L_bas = 0.351094964247247, P_bas = 1.08933609926642)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -65,9 +65,9 @@ test_that("Multinomial Censoring Excused Pre-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -50.7111118692773, tx_init_bas1 = -4.566272104771, 
-                   followup = 0.777168505, followup_sq = -0.0278074277750756, 
-                   trial = 3.50456119247621, trial_sq = -0.0697743189877489)
+  expected <- list(`(Intercept)` = -46.2709969346726, tx_init_bas1 = -4.32046243378271, 
+                   followup = 0.606615641500371, followup_sq = -0.0232451765293424, 
+                   trial = 3.1538796309021, trial_sq = -0.0611677087418465)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -105,4 +105,18 @@ test_that("Multinomial weights give each arm's stayers the probability of stayin
   # Observed stay rates in SEQdata.multitreatment are 0.80, 0.95 and 0.95
   expect_true(all(a$denominator > 0.75))
   expect_equal(stayers(c(2, 0, 1)), a)
+})
+
+test_that("multinomial() recovers baseline-category logit coefficients and class probabilities", {
+  set.seed(42)
+  n <- 20000
+  x <- rnorm(n)
+  eta <- cbind(0, -0.5 + 0.8 * x, 0.3 + 1.5 * x)
+  p <- exp(eta) / rowSums(exp(eta))
+  y <- apply(p, 1, function(pr) sample(0:2, 1, prob = pr))
+  X <- cbind(1, x)
+  model <- SEQTaRget:::multinomial(X, y, params = SEQopts())
+  coefs <- sapply(model$models, coef)
+  expect_equal(unname(coefs), cbind(c(-0.5, 0.8), c(0.3, 1.5)), tolerance = 0.1)
+  expect_lt(max(abs(SEQTaRget:::multinomial.predict(model, X) - p)), 0.03)
 })
