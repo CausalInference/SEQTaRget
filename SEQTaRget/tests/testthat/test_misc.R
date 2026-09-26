@@ -388,3 +388,21 @@ test_that("SEQuential does not convert or modify a data.frame supplied as data",
   expect_false(is.data.table(df))
   expect_identical(df, snapshot)
 })
+
+test_that("Post-expansion excused-censoring weights use the probability of remaining uncensored in every arm", {
+  skip_on_cran()
+  fit <- function(treat.level, excused.cols) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE, excused = TRUE,
+                                                           excused.cols = excused.cols, weight.preexpansion = FALSE,
+                                                           data.return = TRUE)))
+    SEQ_data(model)[followup > 0 & !is.na(outcome) & tx_init == tx_init_bas,
+                    .(numerator = mean(numerator, na.rm = TRUE), denominator = mean(denominator, na.rm = TRUE),
+                      max_weight = max(weight)), keyby = tx_init_bas]
+  }
+  a <- fit(c(0, 1), c("excusedZero", "excusedOne"))
+  expect_true(all(a$numerator > 0.5 & a$denominator > 0.5))
+  expect_true(all(a$max_weight < 10))
+  expect_equal(fit(c(1, 0), c("excusedOne", "excusedZero")), a)
+})

@@ -65,9 +65,9 @@ test_that("Multinomial Censoring Excused Pre-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -46.2709969346726, tx_init_bas1 = -4.32046243378271, 
-                   followup = 0.606615641500371, followup_sq = -0.0232451765293424, 
-                   trial = 3.1538796309021, trial_sq = -0.0611677087418465)
+  expected <- list(`(Intercept)` = -21.8949018684673, tx_init_bas1 = -3.73827849172365, 
+                   followup = 0.41105762600194, followup_sq = -0.0191563007341123, 
+                   trial = 1.25367990076122, trial_sq = -0.023345556558072)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -82,11 +82,11 @@ test_that("Multinomial Censoring Excused Post-Expansion", {
   )
   expect_s4_class(model, "SEQoutput")
   
-  expected <- list(`(Intercept)` = -8.93642594359111, tx_init_bas1 = -5.61451410491509, 
-                   followup = 1.04686013063719, followup_sq = -0.0993244245914494, 
-                   trial = 0.486647207785848, trial_sq = -0.0121460057546972, 
-                   sex = 10.2124817342716, N_bas = 0.114894698211935, L_bas = 0.377648021676872, 
-                   P_bas = -2.23793202270577)
+  expected <- list(`(Intercept)` = 17.9469060252345, tx_init_bas1 = -4.72788102774046, 
+                   followup = 0.454935693810526, followup_sq = -0.0205982791634356, 
+                   trial = 0.37381807123301, trial_sq = -0.0191154647734813, 
+                   sex = 18.746619920252, N_bas = 0.00691560531811212, L_bas = 0.233501857813195, 
+                   P_bas = -6.80899101683983)
   
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
