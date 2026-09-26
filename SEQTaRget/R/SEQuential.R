@@ -22,7 +22,6 @@
 #' @import data.table doRNG
 #' @importFrom methods is
 #' @importFrom future plan
-#' @importFrom doFuture registerDoFuture
 #' @importFrom stats complete.cases
 #' 
 #' @returns An S4 object of class SEQoutput. If `options = SEQopts(expand.only = TRUE)`, returns the expanded `data.table` directly, with analysis steps skipped.
@@ -152,10 +151,12 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   # Parallel Setup ==================================
+  # Restore the caller's future plan on exit - on normal returns, the
+  # expand.only early return, and errors - which also shuts down the
+  # multisession workers
   if (params@parallel) {
-    registerDoFuture()
-    registerDoRNG()
-    plan("multisession", workers = params@ncores, gc = TRUE)
+    old_plan <- plan("multisession", workers = params@ncores, gc = TRUE)
+    on.exit(plan(old_plan), add = TRUE)
   }
   
   # Data Checking ====================================
@@ -271,7 +272,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Early return if user only wants the expanded dataset =======
   if (params@expand.only) {
     if (params@verbose) cat("\nexpand.only = TRUE: returning expanded data.table and skipping analysis\n")
-    plan("sequential")
     return(params@DT)
   }
 
@@ -413,6 +413,5 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                         eof.data, eof.comparison)
 
   if (params@verbose) cat("\nCompleted\n")
-  plan("sequential")
   return(out)
 }
