@@ -123,11 +123,13 @@ internal.hazard <- function(model, params, cache) {
       setDTthreads(1)
       on.exit(setDTthreads(old_threads), add = TRUE)
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
+        if (is.null(model[[x + 1]])) return(NA_real_)
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x + 1]]$model, cache)
       }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
+        if (is.null(model[[x + 1]])) return(NA_real_)
         set.seed(params@seed + x)
         RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x + 1]]$model, cache)
@@ -145,7 +147,7 @@ internal.hazard <- function(model, params, cache) {
       ci <- exp(sort(c(full + z*se, full - z*se), decreasing = FALSE))
     } else ci <- exp(quantile(bootstrap, 
                               probs = c((1 - params@bootstrap.CI)/2, 
-                                        1 - (1 - params@bootstrap.CI)/2)))
+                                        1 - (1 - params@bootstrap.CI)/2), na.rm = TRUE))
   } else {
     ci <- c(NA_real_, NA_real_)
   }

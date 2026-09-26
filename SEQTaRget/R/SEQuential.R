@@ -316,6 +316,24 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   subgroups <- if (is.na(params@subgroup)) 1L else
     if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
+
+  # Per-subgroup results are lists named by subgroup. A bootstrap resample that
+  # drew no one from a subgroup has no entry for it, so match by name - by
+  # position every later subgroup would pick up its neighbour's result - and
+  # leave NULL in that resample's slot. Positions are kept because the survival
+  # and hazard bootstraps redraw each resample from its index.
+  subgroup_results <- function(field, label) {
+    out <- lapply(analytic, function(x) x[[field]][[label]])
+    n_missing <- sum(vapply(out[-1], is.null, logical(1)))
+    if (n_missing > 0) warning(n_missing, " of ", length(out) - 1L, " bootstrap resamples contain no one from subgroup ",
+                               label, " and are left out of its confidence intervals", call. = FALSE)
+    out
+  }
+  # With no usable resample for a subgroup, report it without a confidence interval
+  subgroup_params <- function(models) {
+    if (params@bootstrap && all(vapply(models[-1], is.null, logical(1)))) params@bootstrap <- FALSE
+    params
+  }
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
   eof.data <- eof.comparison <- vector("list", n_subgroups)
   if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- names(eof.data) <- names(eof.comparison) <- subgroups
@@ -323,9 +341,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (params@verbose) cat("\nEstimating end-of-follow-up outcome at follow-up time", params@end_of_fup.time, "\n")
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      eof <- create.endoffup(full = analytic[[1]]$eof[[i]],
-                             boots = lapply(analytic[-1], function(x) x$eof[[i]]),
-                             params = params)
+      eofs <- subgroup_results("eof", label)
+      eof <- create.endoffup(full = eofs[[1]], boots = eofs[-1], params = params)
       eof.data[[label]] <- eof$eof.data
       eof.comparison[[label]] <- eof$eof.comparison
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
@@ -336,18 +353,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # Survival Information =======================================
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      models <- lapply(analytic, function(x) x$model[[i]])
-        
+      models <- subgroup_results("model", label)
+      params_sg <- subgroup_params(models)
+
       if (params@km.curves) {
         if (params@verbose) {
           if (is.na(params@subgroup)) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
         }
-        survival <- internal.survival(params, models)
+        survival <- internal.survival(params_sg, models)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
-        risk[[label]] <- create.risk(survival$data, params, survival$boot_risks)
+        risk[[label]] <- create.risk(survival$data, params_sg, survival$boot_risks)
       }
-      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
+      outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
@@ -355,9 +373,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     formula_cache <- init_formula_cache(params)
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      models <- lapply(analytic, function(x) x$model[[i]])
-      hazard[[label]] <- internal.hazard(models, params, formula_cache)
-      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
+      models <- subgroup_results("model", label)
+      hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache)
+      outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }

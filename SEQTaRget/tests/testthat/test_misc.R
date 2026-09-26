@@ -406,3 +406,23 @@ test_that("Post-expansion excused-censoring weights use the probability of remai
   expect_true(all(a$max_weight < 10))
   expect_equal(fit(c(1, 0), c("excusedOne", "excusedZero")), a)
 })
+
+test_that("Bootstrap results are matched to subgroups by name when a resample misses a subgroup", {
+  skip_on_cran()
+  data <- data.table::copy(SEQdata)
+  ids <- sort(unique(data$ID))
+  # Subgroup "b" has two subjects, so some resamples draw neither of them
+  data[, grp := ifelse(ID %in% ids[1:2], "b", ifelse(ID %% 2 == 0, "a", "c"))]
+  warnings <- character()
+  model <- withCallingHandlers(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex", "grp"),
+               method = "ITT", verbose = FALSE,
+               options = SEQopts(subgroup = "grp", bootstrap = TRUE, bootstrap.nboot = 10, seed = 1, km.curves = TRUE)),
+    warning = function(w) { warnings <<- c(warnings, conditionMessage(w)); invokeRestart("muffleWarning") })
+  expect_true(any(grepl("bootstrap resamples contain no one from subgroup grp_b", warnings)))
+  missing_b <- vapply(model@outcome.model$grp_b, is.null, logical(1))
+  expect_true(any(missing_b))
+  # The other subgroups have a model from every resample, including those that missed grp_b
+  expect_false(any(vapply(model@outcome.model$grp_c, is.null, logical(1))))
+  expect_true(all(c("95% LCI", "95% UCI") %in% names(risk_data(model)$grp_c)))
+})

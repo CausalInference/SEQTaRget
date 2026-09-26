@@ -129,6 +129,7 @@ internal.survival <- function(params, outcome) {
         on.exit(setDTthreads(old_threads), add = TRUE)
 
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
+          if (is.null(outcome[[x]])) return(NULL)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
           rm(RMDT)
@@ -139,6 +140,7 @@ internal.survival <- function(params, outcome) {
           # outcome[[x]] was fit (in internal.analysis) on the resample drawn under
           # seed + (x - 1); reuse that seed so the standardization population here
           # is the same resample the model was trained on.
+          if (is.null(outcome[[x]])) return(NULL)
           set.seed(params@seed + x - 1L)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
@@ -147,6 +149,8 @@ internal.survival <- function(params, outcome) {
         })
       }
       rm(baseDT)
+      # Resamples with no outcome model for this subgroup (see SEQuential)
+      result <- Filter(Negate(is.null), result)
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       rm(result)
