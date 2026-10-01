@@ -355,6 +355,30 @@ test_that("Treatment weights do not depend on the order of treat.level", {
   a <- fit(c(0, 1))
   expect_equal(fit(c(1, 0)), a)
   expect_true(all(a[stay == TRUE, denominator] > 0.5))
+
+  # Pre-expansion: a subject's first row has no previous treatment and used to be
+  # fitted as if it followed treat.level[[1]], so the estimates moved with the order
+  coefs <- function(treat.level) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE,
+                                                           weight.preexpansion = TRUE)))
+    coef(model@outcome.model[[1]][[1]])
+  }
+  expect_equal(coefs(c(1, 0)), coefs(c(0, 1)))
+})
+
+test_that("Pre-expansion weight models leave out each subject's first row", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                       options = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)))
+  fitted <- model@weight.statistics[[1]][[1]]$coef.denominator[[1]]
+
+  # The same model fitted by hand on rows that do have a previous treatment
+  data <- data.table::copy(SEQdata)[order(ID, time)][, lag := shift(tx_init), by = "ID"][, time_sq := time^2]
+  by_hand <- glm(tx_init ~ sex + N + L + P + time + time_sq, family = binomial(), data = data[!is.na(lag) & lag == 0])
+  expect_equal(unname(coef(fitted)), unname(coef(by_hand)), tolerance = 1e-4)
 })
 
 test_that("Column names containing the baseline or squared indicator mid-name are expanded", {

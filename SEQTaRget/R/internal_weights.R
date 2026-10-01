@@ -105,6 +105,9 @@ internal.weights <- function(DT, data, params, cache) {
     if (params@method != "ITT") {
       model.data <- weight
       if (!params@weight.preexpansion && !(params@excused || params@deviation.excused)) model.data <- model.data[followup > 0, ]
+      # A subject's first row has no previous treatment (its tx_lag is a fill with
+      # treat.level[[1]]), so it is not an observation of continuing treatment
+      if (params@weight.preexpansion) model.data <- model.data[model.data[, .I[-1L], by = eval(params@id)]$V1]
       
       # Fit models for each treatment level - combined loop to avoid redundant filtering
       for (i in seq_along(params@treat.level)) {
