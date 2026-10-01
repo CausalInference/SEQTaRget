@@ -121,15 +121,18 @@ test_that("Post-Expansion Excused Censoring", {
     options = SEQopts(
       weighted = TRUE, excused = TRUE,
       excused.cols = c("excusedZero", "excusedOne"),
-      weight.preexpansion = FALSE, weight.upper = 1)
+      weight.preexpansion = FALSE)
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -7.89204875360584, tx_init_bas1 = 0.245649985320103, 
-                   followup = 0.0373443362402412, followup_sq = -0.000223047568054156, 
-                   trial = 0.0586498977853606, trial_sq = 0.000539362161580214, 
-                   sex = 0.0845200664142512, N_bas = 0.00445311720239293, L_bas = -0.010283144035433, 
-                   P_bas = 0.317411946012023)
+  # Untruncated: a weight.upper = 1 cap here once hid weights of around 1e16
+  expect_lt(model@weight.statistics[[1]][[1]]$max, 5)
+
+  expected <- list(`(Intercept)` = -7.87737742699552, tx_init_bas1 = 0.241162255661399, 
+                   followup = 0.0367517482107477, followup_sq = -0.00021060873267298, 
+                   trial = 0.0588307386151614, trial_sq = 0.000535007679704278, 
+                   sex = 0.081381764074618, N_bas = 0.00462977704038335, L_bas = -0.0122483325379506, 
+                   P_bas = 0.316644528385847)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
