@@ -355,3 +355,15 @@ clean_models <- function(out, params) {
   if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
   out
 }
+
+#' Rows of an expanded table belonging to one subgroup
+#'
+#' Matches on the subgroup label built in \code{internal.model()}
+#' (\code{<subgroup>_<value>}), so it is indifferent to the column's type.
+#' Returns \code{DT} itself when no subgroup is in use.
+#'
+#' @keywords internal
+subgroup_rows <- function(DT, params, label) {
+  if (is.na(params@subgroup)) return(DT)
+  DT[paste0(params@subgroup, "_", DT[[params@subgroup]]) == label, ]
+}

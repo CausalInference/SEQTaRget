@@ -426,3 +426,22 @@ test_that("Bootstrap results are matched to subgroups by name when a resample mi
   expect_false(any(vapply(model@outcome.model$grp_c, is.null, logical(1))))
   expect_true(all(c("95% LCI", "95% UCI") %in% names(risk_data(model)$grp_c)))
 })
+
+test_that("Subgroup risks and hazard ratios are standardized over the subgroup's own members", {
+  skip_on_cran()
+  run <- function(data, ..., fixed = list("sex")) suppressWarnings(
+    SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), fixed,
+               method = "ITT", options = SEQopts(seed = 1636, ...), verbose = FALSE))
+  by_subgroup_km <- run(SEQdata, km.curves = TRUE, subgroup = "sex")
+  by_subgroup_hr <- run(SEQdata, hazard = TRUE, subgroup = "sex")
+
+  # Each subgroup must match an analysis of that subgroup's subjects alone
+  for (s in 0:1) {
+    label <- paste0("sex_", s)
+    alone <- SEQdata[sex == s]
+    expect_equal(by_subgroup_km@risk.data[[label]]$Risk,
+                 run(alone, km.curves = TRUE, fixed = list())@risk.data[[1]]$Risk)
+    expect_equal(unname(by_subgroup_hr@hazard[[label]][1]),
+                 unname(run(alone, hazard = TRUE, fixed = list())@hazard[[1]][1]))
+  }
+})

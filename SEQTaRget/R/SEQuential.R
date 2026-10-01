@@ -360,7 +360,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         if (params@verbose) {
           if (is.na(params@subgroup)) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
         }
-        survival <- internal.survival(params_sg, models)
+        survival <- internal.survival(params_sg, models, label)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
         risk[[label]] <- create.risk(survival$data, params_sg, survival$boot_risks)
@@ -374,7 +374,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
       models <- subgroup_results("model", label)
-      hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache)
+      hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache, label)
       outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }

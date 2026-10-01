@@ -4,7 +4,7 @@
 #' @importFrom stats setNames ave
 #'
 #' @keywords internal
-internal.survival <- function(params, outcome) {
+internal.survival <- function(params, outcome, label = NA) {
   SE <- NULL
   # Variable pre-definition ===================================
     . <- variable <- NULL
@@ -94,7 +94,8 @@ internal.survival <- function(params, outcome) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    baseDT_main <- params@DT[get("followup") == 0, ]
+    # A subgroup's model is standardized over that subgroup's own members
+    baseDT_main <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
     full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
     rm(baseDT_main)
     
@@ -103,7 +104,7 @@ internal.survival <- function(params, outcome) {
       lnID <- length(UIDs)
       
       # Pre-filter and key the data for efficient bootstrap resampling
-      baseDT <- params@DT[get("followup") == 0, ]
+      baseDT <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
       if (!identical(key(baseDT), params@id)) setkeyv(baseDT, params@id)
       
       # Helper for efficient keyed bootstrap sampling
@@ -118,7 +119,9 @@ internal.survival <- function(params, outcome) {
         # needed here (unlike the hazard bootstrap): handler() standardizes
         # row-wise with no by-ID grouping, so duplicated subjects keep their
         # multiplicity as duplicated rows.
-        RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+        # IDs are drawn from everyone, as in internal.analysis, so the resample
+        # matches the one the model was fit on; nomatch drops other subgroups
+        RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE, nomatch = NULL
                        ][, boot_idx := NULL]
         return(RMDT)
       }

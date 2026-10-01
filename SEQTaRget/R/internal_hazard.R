@@ -4,15 +4,17 @@
 #' @import data.table
 #' @importFrom survival finegray coxph Surv coxph.fit agreg.fit coxph.control
 
-internal.hazard <- function(model, params, cache) {
+internal.hazard <- function(model, params, cache, label = NA) {
   event <- firstEvent <- outcomeProb <- ce <- ceProb <- trial <- NULL
+  # A subgroup's model is applied to that subgroup's own members
+  DT <- subgroup_rows(params@DT, params, label)
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  kept <- names(params@DT)[!names(params@DT) %in% c(paste0("followup", c("", params@indicator.squared)),
+  kept <- names(DT)[!names(DT) %in% c(paste0("followup", c("", params@indicator.squared)),
                                                     paste0(params@treatment, c("", params@indicator.baseline)),
                                                     "period", params@outcome)]
   
   if (!is.na(params@compevent)) {
-    ce.data <- prepare.data_cached(params@DT, params, case = "surv", type = "compevent", model = NA, cache)
+    ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, cache)
     ce.model <- clean_fastglm(fit_glm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), params = params))
     rm(ce.data)
   }
@@ -84,7 +86,7 @@ internal.hazard <- function(model, params, cache) {
     hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring
   }
   set.seed(params@seed)
-  full <- handler(params@DT, params, model[[1]]$model, cache)
+  full <- handler(DT, params, model[[1]]$model, cache)
   if (is.na(full)) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
   bootstrap <- if (params@bootstrap) {
@@ -92,7 +94,7 @@ internal.hazard <- function(model, params, cache) {
     lnID <- length(UIDs)
 
     # Key the data for efficient bootstrap resampling
-    if (!identical(key(params@DT), params@id)) setkeyv(params@DT, params@id)
+    if (!identical(key(DT), params@id)) setkeyv(DT, params@id)
 
     # Unique-ID maker for bootstrap copies: without relabeling, the handler's
     # by-(id, trial) grouping collapses the identical copies of any subject
@@ -109,7 +111,8 @@ internal.hazard <- function(model, params, cache) {
       )
 
       # Single keyed join instead of N separate filters
-      RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+      # IDs are drawn from everyone, as in internal.analysis; nomatch drops other subgroups
+      RMDT <- DT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE, nomatch = NULL
                  ][, (params@id) := make_id(get(params@id), boot_idx)
                    ][, boot_idx := NULL]
       return(RMDT)
@@ -124,14 +127,14 @@ internal.hazard <- function(model, params, cache) {
       on.exit(setDTthreads(old_threads), add = TRUE)
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         if (is.null(model[[x + 1]])) return(NA_real_)
-        RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
+        RMDT <- bootstrap_hazard_sample(DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x + 1]]$model, cache)
       }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         if (is.null(model[[x + 1]])) return(NA_real_)
         set.seed(params@seed + x)
-        RMDT <- bootstrap_hazard_sample(params@DT, params, UIDs, lnID)
+        RMDT <- bootstrap_hazard_sample(DT, params, UIDs, lnID)
         handler(RMDT, params, model[[x + 1]]$model, cache)
       })
     }
