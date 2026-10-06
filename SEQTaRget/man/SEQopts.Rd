@@ -111,7 +111,7 @@ SEQopts(
 
 \item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is \code{FALSE}}
 
-\item{deviation.excused_cols}{Character list: excused columns for deviation switches}
+\item{deviation.excused_cols}{Character list: excused columns for deviation switches - should be the same length, and ordered the same as \code{treat.level}. The column in position i excuses deviations by people following \code{treat.level[[i]]}}
 
 \item{end_of_fup}{Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is \code{FALSE}. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}}
 

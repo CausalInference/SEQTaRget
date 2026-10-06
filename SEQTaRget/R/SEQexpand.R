@@ -133,10 +133,14 @@ SEQexpand <- function(params) {
           out[eval(parse(text = conditional)), switch := TRUE]
         }
         if (params@deviation.excused) {
-          # Excusing deviation conditions
+          # Excusing deviation conditions: deviation.excused_cols[[i]] excuses
+          # deviations by people following treat.level[[i]], the strategy the
+          # deviation conditions above are matched on
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@deviation.excused_cols[[i]])) {
-              out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
+              out[(switch) &
+                    get(paste0(params@treatment, params@indicator.baseline)) == params@treat.level[[i]],
+                  isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
             }
           }
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")

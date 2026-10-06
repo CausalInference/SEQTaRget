@@ -17,7 +17,7 @@
 #' @param deviation.col Character: column name for deviation
 #' @param deviation.conditions Character list: RHS evaluations of the same length as \code{treat.levels}
 #' @param deviation.excused Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is `FALSE`
-#' @param deviation.excused_cols Character list: excused columns for deviation switches
+#' @param deviation.excused_cols Character list: excused columns for deviation switches - should be the same length, and ordered the same as \code{treat.level}. The column in position i excuses deviations by people following \code{treat.level[[i]]}
 #' @param end_of_fup Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is `FALSE`. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}
 #' @param end_of_fup.time Numeric: the follow-up time `k` (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when \code{end_of_fup = TRUE}
 #' @param end_of_fup.type String: type of end-of-follow-up outcome, either `'binary'` (the default, giving the weighted proportion in each arm) or `'continuous'` (giving the weighted mean)
