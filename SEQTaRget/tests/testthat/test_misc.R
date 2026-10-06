@@ -431,6 +431,26 @@ test_that("Post-expansion excused-censoring weights use the probability of remai
   expect_equal(fit(c(1, 0), c("excusedOne", "excusedZero")), a)
 })
 
+test_that("Each excused column excuses switches away from its own treatment level", {
+  skip_on_cran()
+  censored <- function(excused.cols) {
+    opts <- if (all(is.na(excused.cols))) SEQopts(data.return = TRUE) else
+      SEQopts(excused = TRUE, excused.cols = excused.cols, data.return = TRUE)
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = opts))
+    SEQ_data(model)[, .(censored = sum(censored)), keyby = tx_init_bas]$censored
+  }
+  none <- censored(c(NA, NA))
+  # excusedZero excuses people on treatment 0 switching to 1, so only arm 0 loses censoring
+  zero <- censored(c("excusedZero", NA))
+  expect_lt(zero[1], none[1])
+  expect_equal(zero[2], none[2])
+  one <- censored(c(NA, "excusedOne"))
+  expect_equal(one[1], none[1])
+  expect_lt(one[2], none[2])
+})
+
 test_that("Bootstrap results are matched to subgroups by name when a resample misses a subgroup", {
   skip_on_cran()
   data <- data.table::copy(SEQdata)

@@ -105,9 +105,9 @@ test_that("Pre-Expansion Excused Censoring", {
   ))
   expect_s4_class(model, "SEQoutput")
 
-  expected <- list(`(Intercept)` = -5.0618303955656, tx_init_bas1 = 0.171017823034017, 
-                   followup = -0.0108113857288237, followup_sq = 0.0010269383069014, 
-                   trial = 0.0607902743813715, trial_sq = -0.000144738427593527)
+  expected <- list(`(Intercept)` = -4.78052286687528, tx_init_bas1 = 0.152631712818928, 
+                   followup = 0.0399295121826187, followup_sq = -0.000203257528643997, 
+                   trial = -0.00289443414838443, trial_sq = 0.00102330930430048)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)
@@ -128,11 +128,11 @@ test_that("Post-Expansion Excused Censoring", {
   # Untruncated: a weight.upper = 1 cap here once hid weights of around 1e16
   expect_lt(model@weight.statistics[[1]][[1]]$max, 5)
 
-  expected <- list(`(Intercept)` = -7.87737742699552, tx_init_bas1 = 0.241162255661399, 
-                   followup = 0.0367517482107477, followup_sq = -0.00021060873267298, 
-                   trial = 0.0588307386151614, trial_sq = 0.000535007679704278, 
-                   sex = 0.081381764074618, N_bas = 0.00462977704038335, L_bas = -0.0122483325379506, 
-                   P_bas = 0.316644528385847)
+  expected <- list(`(Intercept)` = -8.31196052606284, tx_init_bas1 = 0.182052159762364, 
+                   followup = 0.0342238697547925, followup_sq = -0.000137233831767321, 
+                   trial = 0.066462415631106, trial_sq = 0.000499927786902554, 
+                   sex = 0.150328280690542, N_bas = 0.00126188509605826, L_bas = 0.00288192143501586, 
+                   P_bas = 0.359067401840662)
 
   test <- as.list(coef(model@outcome.model[[1]][[1]]))
   expect_equal(test, expected, tolerance = 1e-2)

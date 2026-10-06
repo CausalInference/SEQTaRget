@@ -123,7 +123,7 @@ SEQopts(
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
-\item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
+\item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}. The column in position i excuses a switch away from \code{treat.level[[i]]}, i.e. by someone whose previous treatment was \code{treat.level[[i]]}; e.g. with \code{treat.level = c(0, 1)} and \code{excused.cols = c("excusedZero", "excusedOne")}, \code{excusedZero = 1} excuses someone on treatment 0 switching to treatment 1}
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 

@@ -152,11 +152,13 @@ SEQexpand <- function(params) {
           # Excused treatment lag switches
           out[, switch := (get(params@treatment) != lag)]
           
+          # excused.cols[[i]] excuses a switch away from treat.level[[i]], i.e.
+          # by someone whose previous treatment was treat.level[[i]], matching
+          # the weight models
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@excused.cols[[i]])) {
               out[(switch) & 
-                    get(params@treatment) != lag & 
-                    get(params@treatment) == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
+                    lag == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
             }
           }
           setorderv(out, c(params@id, "trial", "followup"))

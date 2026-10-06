@@ -86,8 +86,10 @@ options <- SEQopts(km.curves = TRUE,
                    weight.preexpansion = TRUE,
                    # tells SEQuential to run a dynamic intervention
                    excused = TRUE,                               
-                   # tells SEQuential to use columns excusedOne and 
-                   # excusedZero as excused conditions for treatment switches
+                   # tells SEQuential to use columns excusedZero and
+                   # excusedOne as excused conditions for treatment switches:
+                   # excusedZero excuses a switch from treatment 0 to 1,
+                   # excusedOne a switch from treatment 1 to 0
                    excused.cols = c("excusedZero", "excusedOne"), 
                    # tells SEQuential to expect treatment levels 0, 1
                    # (mapping to the same positions as the list in excused.cols)
