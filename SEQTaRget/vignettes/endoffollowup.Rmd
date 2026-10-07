@@ -74,7 +74,7 @@ end_of_fup(model)
 `end_of_fup()` returns, per subgroup, two tables: `estimates` gives the weighted
 proportion (or mean) in each arm with its bootstrap confidence interval, and an
 account of how much of the arm it rests on. `Trial-periods (Eligible)` is every
-trial-period that reached the follow-up time, and the next three partition it:
+trial-period that started early enough to reach the window, and the next three partition it:
 `(Analysed)` contribute to the estimate, `(Censored)` were measured at some point
 but not within the window, and `(No measurement)` were never measured at all - so
 the three sum back to the eligible total. `% Censored` gives the censored share of

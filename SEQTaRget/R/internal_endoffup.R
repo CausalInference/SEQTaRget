@@ -69,21 +69,10 @@ endoffup.measure <- function(DT, params) {
 #' @import data.table
 #' @keywords internal
 endoffup.estimate <- function(DT, params) {
-  weight <- eof.value <- followup <- n.eligible <- n.censored <- n.nomeasure <- in.window <- measured. <- NULL
+  weight <- eof.value <- n.eligible <- n.censored <- n.nomeasure <- in.window <- measured <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  k <- params@end_of_fup.time
-  w <- params@end_of_fup.window
-  measured <- endoffup.measure(DT, params)
-
-  # One row per trial-period, flagged as endoffup.counts() flags them so the two
-  # agree. Censored counts only those measured at some point but not within the
-  # window; those never measured at all are counted separately, so that the three
-  # counts partition the eligible total.
-  has_sub <- !is.na(params@subgroup) && params@subgroup %in% names(DT)
-  periods <- DT[, list(in.window = any(!is.na(get(params@outcome)) &
-                                         followup >= k - w & followup <= k + w),
-                       measured. = any(!is.na(get(params@outcome)))),
-                by = c(params@id, "trial", tx_bas, if (has_sub) params@subgroup)]
+  selected <- endoffup.measure(DT, params)
+  periods <- endoffup.periods(DT, params)
 
   arm_average <- function(dt, elig) {
     if (nrow(dt) == 0L) return(data.table())
@@ -94,17 +83,17 @@ endoffup.estimate <- function(DT, params) {
                      n.subjects = uniqueN(get(params@id))),
               by = c(tx_bas)]
     totals <- elig[, list(n.eligible = .N,
-                          n.censored = sum(measured. & !in.window),
-                          n.nomeasure = sum(!measured.)), by = c(tx_bas)]
+                          n.censored = sum(measured & !in.window),
+                          n.nomeasure = sum(!measured)), by = c(tx_bas)]
     out <- out[totals, on = tx_bas, nomatch = NULL]
     setorderv(out, tx_bas)
     out[]
   }
 
-  if (is.na(params@subgroup)) return(list(arm_average(measured, periods)))
+  if (is.na(params@subgroup)) return(list(arm_average(selected, periods)))
 
   groups <- sort(unique(DT[[params@subgroup]]))
-  out <- lapply(groups, function(g) arm_average(measured[get(params@subgroup) == g, ],
+  out <- lapply(groups, function(g) arm_average(selected[get(params@subgroup) == g, ],
                                                 periods[get(params@subgroup) == g, ]))
   names(out) <- paste0(params@subgroup, "_", groups)
   return(out)
@@ -267,19 +256,9 @@ create.endoffup <- function(full, boots, params) {
 #' @import data.table
 #' @keywords internal
 endoffup.counts <- function(DT, params, type) {
-  followup <- .category <- N <- at.k <- in.window <- measured <- NULL
+  .category <- N <- at.k <- in.window <- measured <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
-  k <- params@end_of_fup.time
-  w <- params@end_of_fup.window
-  by_cols <- c(params@id, "trial", tx_bas,
-               if (!is.na(params@subgroup) && params@subgroup %in% names(DT)) params@subgroup)
-
-  # One row per trial-period, flagging what it has available
-  flags <- DT[, list(at.k = any(!is.na(get(params@outcome)) & followup == k),
-                     in.window = any(!is.na(get(params@outcome)) &
-                                       followup >= k - w & followup <= k + w),
-                     measured = any(!is.na(get(params@outcome)))),
-              by = by_cols]
+  flags <- endoffup.periods(DT, params)
   flags[, .category := fifelse(at.k, "At k",
                         fifelse(in.window, "In window",
                          fifelse(measured, "Excluded (outside window)",
@@ -346,3 +325,27 @@ endoffup.summary <- function(DT, params) {
   names(out) <- paste0(params@subgroup, "_", groups)
   return(out)
 }
+
+#' One row per trial-period that can reach the end-of-follow-up window
+#'
+#' Flags what each trial-period has measured. Trial-periods starting too late to
+#' reach \code{k - window} before the data end cannot be measured in the window,
+#' so they are left out rather than counted as censored.
+#'
+#' @keywords internal
+endoffup.periods <- function(DT, params) {
+  followup <- period <- start <- NULL
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  k <- params@end_of_fup.time
+  w <- params@end_of_fup.window
+  last <- max(DT[["period"]])
+  by_cols <- c(params@id, "trial", tx_bas,
+               if (!is.na(params@subgroup) && params@subgroup %in% names(DT)) params@subgroup)
+  out <- DT[, list(start = min(period - followup),
+                   at.k = any(!is.na(get(params@outcome)) & followup == k),
+                   in.window = any(!is.na(get(params@outcome)) & followup >= k - w & followup <= k + w),
+                   measured = any(!is.na(get(params@outcome)))),
+            by = by_cols]
+  out[start + k - w <= last][, start := NULL][]
+}
+
