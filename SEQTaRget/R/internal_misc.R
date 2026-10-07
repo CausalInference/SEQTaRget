@@ -126,15 +126,8 @@ factorize <- function(data, params) {
   treat <- treat[treat %in% names(data)]
   if (length(treat) > 0) data[, (treat) := lapply(.SD, as.factor), .SDcols = treat]
 
-  # Categorical (non-numeric) fixed and time-varying covariates - and the
-  # baseline (_bas) counterparts of the latter - must get a stable factor
-  # encoding, with levels fixed from the full data, so that bootstrap resamples
-  # cannot realise different level sets and produce model matrices that differ
-  # in their columns between fit and prediction (which raises "newdata provided
-  # does not match fitted model"). Numeric covariates are left untouched so that
-  # continuous covariates such as age enter the models as a single term rather
-  # than one indicator per distinct value; integer-coded categories must be
-  # supplied as factor or character columns.
+  # Categorical covariates get factor levels fixed from the full data, so bootstrap resamples share
+  # the same model-matrix columns; numeric covariates stay numeric and enter as a single term
   tv <- unlist(params@time_varying)
   covs <- unique(c(unlist(params@fixed), tv, paste0(tv, params@indicator.baseline)))
   covs <- covs[covs %in% names(data)]
@@ -358,9 +351,7 @@ clean_models <- function(out, params) {
 
 #' Rows of an expanded table belonging to one subgroup
 #'
-#' Matches on the subgroup label built in \code{internal.model()}
-#' (\code{<subgroup>_<value>}), so it is indifferent to the column's type.
-#' Returns \code{DT} itself when no subgroup is in use.
+#' Matches the \code{<subgroup>_<value>} labels from \code{internal.model()}; returns \code{DT} when no subgroup is set.
 #'
 #' @keywords internal
 subgroup_rows <- function(DT, params, label) {

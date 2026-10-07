@@ -153,10 +153,8 @@ internal.weights <- function(DT, data, params, cache) {
               numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level, cache = cache),
               denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level, cache = cache))]
 
-            # The binary model predicts P(A = 1) and the multinomial model
-            # P(A = level); flip to the probability of the treatment actually
-            # received wherever it differs from the predicted one. This must
-            # not depend on the position of `level` in treat.level.
+            # Flip P(A = 1) or P(A = level) to the probability of the treatment actually received,
+            # independently of level's position in treat.level
             pred.level <- if (params@multinomial) level else 1
             out[tx_lag == level & get(params@treatment) != pred.level,
                 `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]

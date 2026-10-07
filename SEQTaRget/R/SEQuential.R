@@ -14,7 +14,7 @@
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
-#' @param fixed.cols List: column names for fixed columns. Numeric columns enter the models as they are, as a single term; character, logical and factor columns are treated as categorical. Supply an integer-coded categorical variable (e.g. region coded 1-5) as a factor or character column, otherwise it is modelled as a linear term
+#' @param fixed.cols List: column names for fixed columns. Numeric columns enter the models as a single term, so supply integer-coded categories (e.g. region 1-5) as factor or character columns
 #' @param method String: method of analysis to perform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
@@ -108,10 +108,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
   
-  # setDT() on the caller's data.frame would convert it to a data.table in
-  # place. as.list() gives a shallow copy - a new list sharing the column
-  # vectors - so only that is converted. Nothing below modifies a column in
-  # place before the pruning subset, which copies.
+  # setDT() on a shallow copy (as.list()) leaves the caller's data.frame untouched; nothing
+  # below modifies a column in place before the pruning subset, which copies
   if (!is.data.table(data)) data <- setDT(as.list(data))
   if (verbose) cat("\nFull dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   time.start <- Sys.time()
@@ -151,9 +149,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   # Parallel Setup ==================================
-  # Restore the caller's future plan on exit - on normal returns, the
-  # expand.only early return, and errors - which also shuts down the
-  # multisession workers
+  # Restore the caller's future plan on exit, including on error, which also stops the workers
   if (params@parallel) {
     old_plan <- plan("multisession", workers = params@ncores, gc = TRUE)
     on.exit(plan(old_plan), add = TRUE)
@@ -317,11 +313,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
 
-  # Per-subgroup results are lists named by subgroup. A bootstrap resample that
-  # drew no one from a subgroup has no entry for it, so match by name - by
-  # position every later subgroup would pick up its neighbour's result - and
-  # leave NULL in that resample's slot. Positions are kept because the survival
-  # and hazard bootstraps redraw each resample from its index.
+  # Match per-subgroup results by name: a resample with no one from a subgroup has no entry
+  # for it, so its slot is NULL. Positions are kept, as the survival/hazard bootstraps use them
   subgroup_results <- function(field, label) {
     out <- lapply(analytic, function(x) x[[field]][[label]])
     n_missing <- sum(vapply(out[-1], is.null, logical(1)))

@@ -7,8 +7,6 @@
 subgroup_rows(DT, params, label)
 }
 \description{
-Matches on the subgroup label built in \code{internal.model()}
-(\code{<subgroup>_<value>}), so it is indifferent to the column's type.
-Returns \code{DT} itself when no subgroup is in use.
+Matches the \code{<subgroup>_<value>} labels from \code{internal.model()}; returns \code{DT} when no subgroup is set.
 }
 \keyword{internal}

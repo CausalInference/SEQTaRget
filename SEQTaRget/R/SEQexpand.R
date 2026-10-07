@@ -133,9 +133,7 @@ SEQexpand <- function(params) {
           out[eval(parse(text = conditional)), switch := TRUE]
         }
         if (params@deviation.excused) {
-          # Excusing deviation conditions: deviation.excused_cols[[i]] excuses
-          # deviations by people following treat.level[[i]], the strategy the
-          # deviation conditions above are matched on
+          # deviation.excused_cols[[i]] excuses deviations by people following treat.level[[i]]
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@deviation.excused_cols[[i]])) {
               out[(switch) &
@@ -156,9 +154,7 @@ SEQexpand <- function(params) {
           # Excused treatment lag switches
           out[, switch := (get(params@treatment) != lag)]
           
-          # excused.cols[[i]] excuses a switch away from treat.level[[i]], i.e.
-          # by someone whose previous treatment was treat.level[[i]], matching
-          # the weight models
+          # excused.cols[[i]] excuses a switch away from treat.level[[i]], as in the weight models
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@excused.cols[[i]])) {
               out[(switch) & 

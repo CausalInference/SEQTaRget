@@ -115,12 +115,8 @@ internal.survival <- function(params, outcome, label = NA) {
           boot_idx = seq_len(n_sample)
         )
         
-        # Single keyed join instead of N separate filters. No copy relabeling is
-        # needed here (unlike the hazard bootstrap): handler() standardizes
-        # row-wise with no by-ID grouping, so duplicated subjects keep their
-        # multiplicity as duplicated rows.
-        # IDs are drawn from everyone, as in internal.analysis, so the resample
-        # matches the one the model was fit on; nomatch drops other subgroups
+        # IDs are drawn from everyone, as in internal.analysis(), so the resample matches the model's;
+        # nomatch drops other subgroups. No ID relabeling: handler() has no by-ID grouping
         RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE, nomatch = NULL
                        ][, boot_idx := NULL]
         return(RMDT)

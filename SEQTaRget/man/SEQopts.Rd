@@ -111,7 +111,7 @@ SEQopts(
 
 \item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is \code{FALSE}}
 
-\item{deviation.excused_cols}{Character list: excused columns for deviation switches - should be the same length, and ordered the same as \code{treat.level}. The column in position i excuses deviations by people following \code{treat.level[[i]]}}
+\item{deviation.excused_cols}{Character list: excused columns for deviation switches, one per \code{treat.level} in the same order; column i excuses deviations by people following \code{treat.level[[i]]}}
 
 \item{end_of_fup}{Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is \code{FALSE}. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}}
 
@@ -123,7 +123,7 @@ SEQopts(
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
-\item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}. The column in position i excuses a switch away from \code{treat.level[[i]]}, i.e. by someone whose previous treatment was \code{treat.level[[i]]}; e.g. with \code{treat.level = c(0, 1)} and \code{excused.cols = c("excusedZero", "excusedOne")}, \code{excusedZero = 1} excuses someone on treatment 0 switching to treatment 1}
+\item{excused.cols}{List: column names for treatment switch excuses, one per \code{treat.level} in the same order; column i excuses a switch away from \code{treat.level[[i]]} (e.g. \code{excusedZero = 1} excuses a switch from 0 to 1)}
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 

@@ -5,10 +5,8 @@ init_formula_cache <- function(params) {
   
   cache <- new.env(hash = TRUE, parent = emptyenv())
   
-  # Detect simple formulas: every term is a bare variable name, with an
-  # intercept and no offset. Anything else (interactions, I(), log(), ns(),
-  # -1, offset(), ...) must go through model.matrix(), since the fast path
-  # builds the matrix directly from the underlying columns.
+  # Simple formulas (bare variable names, an intercept, no offset) can skip model.matrix();
+  # anything else (interactions, I(), log(), ns(), -1, offset()) cannot
   is_simple_additive <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
     tt <- stats::terms(stats::as.formula(paste0("~", covs)))
