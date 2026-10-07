@@ -19,7 +19,7 @@
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
-#' @import data.table doRNG
+#' @import data.table
 #' @importFrom methods is
 #' @importFrom future plan
 #' @importFrom stats complete.cases

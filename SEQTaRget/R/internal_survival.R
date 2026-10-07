@@ -1,6 +1,6 @@
 #' Internal function for creating survival curves
 #'
-#' @import data.table future doFuture doRNG future.apply
+#' @import data.table future future.apply
 #' @importFrom stats setNames ave
 #'
 #' @keywords internal

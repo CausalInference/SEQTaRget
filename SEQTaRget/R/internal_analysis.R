@@ -107,7 +107,7 @@ bootstrap_id_relabeler <- function(UIDs, n_sample) {
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
-#' @import data.table future doFuture doRNG future.apply
+#' @import data.table future future.apply
 #' @keywords internal
 internal.analysis <- function(params) {
   formula_cache <- init_formula_cache(params)

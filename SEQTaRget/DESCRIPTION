@@ -46,8 +46,6 @@ Suggests:
 Imports:
     data.table,
     parglm,
-    doFuture,
-    doRNG,
     fastglm,
     future,
     future.apply,
