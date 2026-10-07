@@ -14,7 +14,7 @@ internal.model <- function(data, params, start = NULL) {
   }
 
   handler <- function(data, params, start = NULL) {
-    X <- model.matrix(as.formula(paste0("~", params@covariates)), data)
+    X <- design_matrix(as.formula(paste0("~", params@covariates)), data)
     y <- data[[params@outcome]]
 
     if(!params@weighted) {

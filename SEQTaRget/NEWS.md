@@ -1,5 +1,6 @@
 # SEQTaRget (development version)
 
+* Give an informative error when a model term is undefined for some rows (e.g. `log()` of a non-positive value), naming the term, instead of `NROW(y) == nrow(x) is not TRUE`. Such rows were silently dropped from the model matrix, despite `na.action = na.pass`, which `model.matrix()` ignores.
 * Fix the end-of-follow-up `Trial-periods (Eligible)` count including trial-periods that start too late to reach the window before the data end, which also inflated `Censored` and `% Censored`. Estimates are unchanged.
 * Fix `deviation.excused_cols` excusing deviations in every arm; column i now excuses only deviations by people following `treat.level[[i]]`. Deviation analyses are currently disabled, so no results change.
 * Fix the expansion reading `excused.cols` the opposite way to the weight models. Column i now excuses a switch away from `treat.level[[i]]` throughout (e.g. `excusedZero = 1` excuses a switch from 0 to 1), which changes every `excused = TRUE` analysis.
