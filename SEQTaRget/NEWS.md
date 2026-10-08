@@ -1,4 +1,4 @@
-# SEQTaRget (development version)
+# SEQTaRget v1.4.5
 
 * Drop the unused `doFuture` and `doRNG` dependencies.
 * Give an informative error when a model term is undefined for some rows (e.g. `log()` of a non-positive value), naming the term, instead of `NROW(y) == nrow(x) is not TRUE`. Such rows were silently dropped from the model matrix, despite `na.action = na.pass`, which `model.matrix()` ignores.
