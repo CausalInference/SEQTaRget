@@ -341,3 +341,151 @@ test_that("character time-varying covariates get a stable factor encoding", {
   # Numeric time-varying covariates must remain numeric (not turned into factors)
   expect_true(is.numeric(model@DT$N_bas))
 })
+
+test_that("Treatment weights do not depend on the order of treat.level", {
+  skip_on_cran()
+  fit <- function(treat.level) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE,
+                                                           weight.preexpansion = FALSE, data.return = TRUE)))
+    SEQ_data(model)[followup > 0, .(numerator = mean(numerator), denominator = mean(denominator)),
+                    keyby = .(tx_init_bas, stay = tx_init == tx_init_bas)]
+  }
+  a <- fit(c(0, 1))
+  expect_equal(fit(c(1, 0)), a)
+  expect_true(all(a[stay == TRUE, denominator] > 0.5))
+
+  # Pre-expansion: a subject's first row has no previous treatment and used to be
+  # fitted as if it followed treat.level[[1]], so the estimates moved with the order
+  coefs <- function(treat.level) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE,
+                                                           weight.preexpansion = TRUE)))
+    coef(model@outcome.model[[1]][[1]])
+  }
+  expect_equal(coefs(c(1, 0)), coefs(c(0, 1)))
+})
+
+test_that("Pre-expansion weight models leave out each subject's first row", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                       options = SEQopts(weighted = TRUE, weight.preexpansion = TRUE)))
+  fitted <- model@weight.statistics[[1]][[1]]$coef.denominator[[1]]
+
+  # The same model fitted by hand on rows that do have a previous treatment
+  data <- data.table::copy(SEQdata)[order(ID, time)][, lag := shift(tx_init), by = "ID"][, time_sq := time^2]
+  by_hand <- glm(tx_init ~ sex + N + L + P + time + time_sq, family = binomial(), data = data[!is.na(lag) & lag == 0])
+  expect_equal(unname(coef(fitted)), unname(coef(by_hand)), tolerance = 1e-4)
+})
+
+test_that("Column names containing the baseline or squared indicator mid-name are expanded", {
+  data <- data.table::copy(SEQdata)
+  set.seed(1)
+  data[, bmi_baseline := round(rnorm(1), 1), by = ID][, bmi_sqrt := sqrt(abs(N))]
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P", "bmi_sqrt"), list("sex", "bmi_baseline"),
+                                       method = "censoring", verbose = FALSE, options = SEQopts(weighted = TRUE)))
+  expect_true("bmi_baseline" %in% names(coef(model@outcome.model[[1]][[1]])))
+
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P", "bmi_sqrt"), list("sex", "bmi_baseline"),
+                                       method = "ITT", verbose = FALSE, options = SEQopts()))
+  expect_true(all(c("bmi_baseline", "bmi_sqrt_bas") %in% names(coef(model@outcome.model[[1]][[1]]))))
+})
+
+test_that("verbose = FALSE prints nothing when creating survival curves", {
+  for (subgroup in list(NA, "sex")) {
+    expect_output(suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                              list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                              options = SEQopts(km.curves = TRUE, subgroup = subgroup))), NA)
+  }
+})
+
+test_that("SEQuential does not convert or modify a data.frame supplied as data", {
+  df <- as.data.frame(SEQdata)
+  snapshot <- data.table::copy(df)
+  suppressWarnings(SEQuential(df, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex"),
+                              method = "ITT", verbose = FALSE, options = SEQopts()))
+  expect_false(is.data.table(df))
+  expect_identical(df, snapshot)
+})
+
+test_that("Post-expansion excused-censoring weights use the probability of remaining uncensored in every arm", {
+  skip_on_cran()
+  fit <- function(treat.level, excused.cols) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = SEQopts(treat.level = treat.level, weighted = TRUE, excused = TRUE,
+                                                           excused.cols = excused.cols, weight.preexpansion = FALSE,
+                                                           data.return = TRUE)))
+    SEQ_data(model)[followup > 0 & !is.na(outcome) & tx_init == tx_init_bas,
+                    .(numerator = mean(numerator, na.rm = TRUE), denominator = mean(denominator, na.rm = TRUE),
+                      max_weight = max(weight)), keyby = tx_init_bas]
+  }
+  a <- fit(c(0, 1), c("excusedZero", "excusedOne"))
+  expect_true(all(a$numerator > 0.5 & a$denominator > 0.5))
+  expect_true(all(a$max_weight < 10))
+  expect_equal(fit(c(1, 0), c("excusedOne", "excusedZero")), a)
+})
+
+test_that("Each excused column excuses switches away from its own treatment level", {
+  skip_on_cran()
+  censored <- function(excused.cols) {
+    opts <- if (all(is.na(excused.cols))) SEQopts(data.return = TRUE) else
+      SEQopts(excused = TRUE, excused.cols = excused.cols, data.return = TRUE)
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+                                         options = opts))
+    SEQ_data(model)[, .(censored = sum(censored)), keyby = tx_init_bas]$censored
+  }
+  none <- censored(c(NA, NA))
+  # excusedZero excuses people on treatment 0 switching to 1, so only arm 0 loses censoring
+  zero <- censored(c("excusedZero", NA))
+  expect_lt(zero[1], none[1])
+  expect_equal(zero[2], none[2])
+  one <- censored(c(NA, "excusedOne"))
+  expect_equal(one[1], none[1])
+  expect_lt(one[2], none[2])
+})
+
+test_that("Bootstrap results are matched to subgroups by name when a resample misses a subgroup", {
+  skip_on_cran()
+  data <- data.table::copy(SEQdata)
+  ids <- sort(unique(data$ID))
+  # Subgroup "b" has two subjects, so some resamples draw neither of them
+  data[, grp := ifelse(ID %in% ids[1:2], "b", ifelse(ID %% 2 == 0, "a", "c"))]
+  warnings <- character()
+  model <- withCallingHandlers(
+    SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), list("sex", "grp"),
+               method = "ITT", verbose = FALSE,
+               options = SEQopts(subgroup = "grp", bootstrap = TRUE, bootstrap.nboot = 10, seed = 1, km.curves = TRUE)),
+    warning = function(w) { warnings <<- c(warnings, conditionMessage(w)); invokeRestart("muffleWarning") })
+  expect_true(any(grepl("bootstrap resamples contain no one from subgroup grp_b", warnings)))
+  missing_b <- vapply(model@outcome.model$grp_b, is.null, logical(1))
+  expect_true(any(missing_b))
+  # The other subgroups have a model from every resample, including those that missed grp_b
+  expect_false(any(vapply(model@outcome.model$grp_c, is.null, logical(1))))
+  expect_true(all(c("95% LCI", "95% UCI") %in% names(risk_data(model)$grp_c)))
+})
+
+test_that("Subgroup risks and hazard ratios are standardized over the subgroup's own members", {
+  skip_on_cran()
+  run <- function(data, ..., fixed = list("sex")) suppressWarnings(
+    SEQuential(copy(data), "ID", "time", "eligible", "tx_init", "outcome", list("N", "L", "P"), fixed,
+               method = "ITT", options = SEQopts(seed = 1636, ...), verbose = FALSE))
+  by_subgroup_km <- run(SEQdata, km.curves = TRUE, subgroup = "sex")
+  by_subgroup_hr <- run(SEQdata, hazard = TRUE, subgroup = "sex")
+
+  # Each subgroup must match an analysis of that subgroup's subjects alone
+  for (s in 0:1) {
+    label <- paste0("sex_", s)
+    alone <- SEQdata[sex == s]
+    expect_equal(by_subgroup_km@risk.data[[label]]$Risk,
+                 run(alone, km.curves = TRUE, fixed = list())@risk.data[[1]]$Risk)
+    expect_equal(unname(by_subgroup_hr@hazard[[label]][1]),
+                 unname(run(alone, hazard = TRUE, fixed = list())@hazard[[1]][1]))
+  }
+})

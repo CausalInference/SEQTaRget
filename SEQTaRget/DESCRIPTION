@@ -1,7 +1,7 @@
 Package: SEQTaRget
 Type: Package
 Title: Sequential Trial Emulation
-Version: 1.4.4.9000
+Version: 1.4.5
 Authors@R: c(person(given = "Ryan",
                     family = "O'Dea",
                     role = c("aut", "cre"),
@@ -46,8 +46,6 @@ Suggests:
 Imports:
     data.table,
     parglm,
-    doFuture,
-    doRNG,
     fastglm,
     future,
     future.apply,

@@ -121,24 +121,18 @@ create.risk <- function(data, params, boot_risks = NULL) {
 }
 
 factorize <- function(data, params) {
-  # Fixed covariates and treatment columns are always treated as categorical.
-  encodes <- unlist(c(params@fixed, paste0(params@treatment, params@indicator.baseline),
-                      params@treatment))
-  coercion <- encodes[encodes %in% names(data)]
-  if (length(coercion) > 0) data[, (coercion) := lapply(.SD, as.factor), .SDcols = coercion]
+  # Treatment columns are always treated as categorical.
+  treat <- unlist(c(paste0(params@treatment, params@indicator.baseline), params@treatment))
+  treat <- treat[treat %in% names(data)]
+  if (length(treat) > 0) data[, (treat) := lapply(.SD, as.factor), .SDcols = treat]
 
-  # Categorical (character) time-varying covariates - and their baseline (_bas)
-  # counterparts - must also get a stable factor encoding, with levels fixed from
-  # the full data, so that bootstrap resamples cannot realise different level sets
-  # and produce model matrices that differ in their columns between fit and
-  # prediction (which raises "newdata provided does not match fitted model").
-  # Numeric time-varying covariates are left untouched so continuous covariates
-  # are not turned into factors.
+  # Categorical covariates get factor levels fixed from the full data, so bootstrap resamples share
+  # the same model-matrix columns; numeric covariates stay numeric and enter as a single term
   tv <- unlist(params@time_varying)
-  tv <- unique(c(tv, paste0(tv, params@indicator.baseline)))
-  tv <- tv[tv %in% names(data)]
-  tv_cat <- tv[vapply(tv, function(col) is.character(data[[col]]), logical(1))]
-  if (length(tv_cat) > 0) data[, (tv_cat) := lapply(.SD, as.factor), .SDcols = tv_cat]
+  covs <- unique(c(unlist(params@fixed), tv, paste0(tv, params@indicator.baseline)))
+  covs <- covs[covs %in% names(data)]
+  cat_cols <- covs[!vapply(covs, function(col) is.numeric(data[[col]]), logical(1))]
+  if (length(cat_cols) > 0) data[, (cat_cols) := lapply(.SD, as.factor), .SDcols = cat_cols]
 
   return(data)
 }
@@ -353,4 +347,14 @@ compevent.table <- function(params, type, filter = NA) {
 clean_models <- function(out, params) {
   if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
   out
+}
+
+#' Rows of an expanded table belonging to one subgroup
+#'
+#' Matches the \code{<subgroup>_<value>} labels from \code{internal.model()}; returns \code{DT} when no subgroup is set.
+#'
+#' @keywords internal
+subgroup_rows <- function(DT, params, label) {
+  if (is.na(params@subgroup)) return(DT)
+  DT[paste0(params@subgroup, "_", DT[[params@subgroup]]) == label, ]
 }

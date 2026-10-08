@@ -14,6 +14,7 @@ internal.weights <- function(DT, data, params, cache) {
     cense1 <- cense1.numerator <- cense1.denominator <- NULL
     followup <- NULL
     isExcused <- NULL
+    censored <- NULL
     visit <- visit.numerator <- visit.denominator <- NULL
 
     # Columns the weight machinery actually reads: ids/structure, the treatment
@@ -104,6 +105,9 @@ internal.weights <- function(DT, data, params, cache) {
     if (params@method != "ITT") {
       model.data <- weight
       if (!params@weight.preexpansion && !(params@excused || params@deviation.excused)) model.data <- model.data[followup > 0, ]
+      # A subject's first row has no previous treatment (its tx_lag is a fill with
+      # treat.level[[1]]), so it is not an observation of continuing treatment
+      if (params@weight.preexpansion) model.data <- model.data[model.data[, .I[-1L], by = eval(params@id)]$V1]
       
       # Fit models for each treatment level - combined loop to avoid redundant filtering
       for (i in seq_along(params@treat.level)) {
@@ -149,13 +153,11 @@ internal.weights <- function(DT, data, params, cache) {
               numerator = inline.pred(numerator_models[[i]], .SD, params, "numerator", multi = params@multinomial, target = level, cache = cache),
               denominator = inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = params@multinomial, target = level, cache = cache))]
 
-            if (i == 1) {
-              out[tx_lag == level & get(params@treatment) == params@treat.level[[i]],
-                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
-            } else {
-              out[tx_lag == level & get(params@treatment) != params@treat.level[[i]],
-                  `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
-            }
+            # Flip P(A = 1) or P(A = level) to the probability of the treatment actually received,
+            # independently of level's position in treat.level
+            pred.level <- if (params@multinomial) level else 1
+            out[tx_lag == level & get(params@treatment) != pred.level,
+                `:=` (numerator = 1 - numerator, denominator = 1 - denominator)]
           }
         }
       } else {
@@ -167,15 +169,16 @@ internal.weights <- function(DT, data, params, cache) {
           if (!is.na(col)) {
             out[tx_lag == level & get(col) != 1, 
                 denominator := inline.pred(denominator_models[[i]], .SD, params, "denominator", multi = multi, target = level, cache = cache)]
-            if (i == 1) {
-              out[tx_lag == level & 
-                    get(params@treatment) == params@treat.level[[i]] & 
-                    get(col) == 0, 
+            if (params@weight.preexpansion) {
+              # Treatment model, as in the non-excused case: flip to the
+              # probability of the treatment actually received
+              pred.level <- if (multi) level else 1
+              out[tx_lag == level & get(params@treatment) != pred.level & get(col) == 0,
                   denominator := 1 - denominator]
             } else {
-              out[tx_lag == level & 
-                    get(params@treatment) != params@treat.level[[i]] & 
-                    get(col) == 0, 
+              # Censoring model predicting P(censored): flip to the probability
+              # of remaining uncensored. Censored rows are reset to 1 downstream.
+              out[tx_lag == level & censored == 0 & get(col) == 0,
                   denominator := 1 - denominator]
             }
           }
@@ -194,7 +197,8 @@ internal.weights <- function(DT, data, params, cache) {
                   ]
             }
           }
-          out[get(params@treatment) == params@treat.level[[1]], numerator := 1 - numerator]
+          # As for the denominator, the censoring model predicts P(censored)
+          out[censored == 0, numerator := 1 - numerator]
         }
       }
     } else out <- weight

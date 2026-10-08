@@ -51,7 +51,7 @@ SEQestimate <- function(data, id.col, time.col, eligible.col, treatment.col, out
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
 
-  data <- copy(setDT(data))
+  data <- if (is.data.table(data)) copy(data) else as.data.table(data)
   setorderv(data, c(id.col, time.col))
   time.start <- Sys.time()
 

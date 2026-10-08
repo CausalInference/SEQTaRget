@@ -1,10 +1,10 @@
 #' Internal function for creating survival curves
 #'
-#' @import data.table future doFuture doRNG future.apply
+#' @import data.table future future.apply
 #' @importFrom stats setNames ave
 #'
 #' @keywords internal
-internal.survival <- function(params, outcome) {
+internal.survival <- function(params, outcome, label = NA) {
   SE <- NULL
   # Variable pre-definition ===================================
     . <- variable <- NULL
@@ -94,7 +94,8 @@ internal.survival <- function(params, outcome) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    baseDT_main <- params@DT[get("followup") == 0, ]
+    # A subgroup's model is standardized over that subgroup's own members
+    baseDT_main <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
     full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
     rm(baseDT_main)
     
@@ -103,7 +104,7 @@ internal.survival <- function(params, outcome) {
       lnID <- length(UIDs)
       
       # Pre-filter and key the data for efficient bootstrap resampling
-      baseDT <- params@DT[get("followup") == 0, ]
+      baseDT <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
       if (!identical(key(baseDT), params@id)) setkeyv(baseDT, params@id)
       
       # Helper for efficient keyed bootstrap sampling
@@ -114,11 +115,9 @@ internal.survival <- function(params, outcome) {
           boot_idx = seq_len(n_sample)
         )
         
-        # Single keyed join instead of N separate filters. No copy relabeling is
-        # needed here (unlike the hazard bootstrap): handler() standardizes
-        # row-wise with no by-ID grouping, so duplicated subjects keep their
-        # multiplicity as duplicated rows.
-        RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE
+        # IDs are drawn from everyone, as in internal.analysis(), so the resample matches the model's;
+        # nomatch drops other subgroups. No ID relabeling: handler() has no by-ID grouping
+        RMDT <- baseDT[id_lookup, on = setNames("orig_id", params@id), allow.cartesian = TRUE, nomatch = NULL
                        ][, boot_idx := NULL]
         return(RMDT)
       }
@@ -129,6 +128,7 @@ internal.survival <- function(params, outcome) {
         on.exit(setDTthreads(old_threads), add = TRUE)
 
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
+          if (is.null(outcome[[x]])) return(NULL)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
           rm(RMDT)
@@ -139,6 +139,7 @@ internal.survival <- function(params, outcome) {
           # outcome[[x]] was fit (in internal.analysis) on the resample drawn under
           # seed + (x - 1); reuse that seed so the standardization population here
           # is the same resample the model was trained on.
+          if (is.null(outcome[[x]])) return(NULL)
           set.seed(params@seed + x - 1L)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
           out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
@@ -147,6 +148,8 @@ internal.survival <- function(params, outcome) {
         })
       }
       rm(baseDT)
+      # Resamples with no outcome model for this subgroup (see SEQuential)
+      result <- Filter(Negate(is.null), result)
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
       ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       rm(result)
