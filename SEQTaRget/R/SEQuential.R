@@ -135,7 +135,11 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
 
   if (is.na(params@covariates)) params@covariates <- create.default.covariates(params)
   if (params@weighted && params@method != "ITT") {
-    if (all(is.na(params@numerator))) params@numerator <- create.default.weight.covariates(params, "numerator")
+    if (!params@weight.stabilized) {
+      # No numerator model is fit; "1" is for display only
+      if (!all(is.na(params@numerator))) warning("'numerator' is ignored when weight.stabilized = FALSE")
+      params@numerator <- "1"
+    } else if (all(is.na(params@numerator))) params@numerator <- create.default.weight.covariates(params, "numerator")
     if (all(is.na(params@denominator))) params@denominator <- create.default.weight.covariates(params, "denominator")
   }
   if (params@LTFU) {

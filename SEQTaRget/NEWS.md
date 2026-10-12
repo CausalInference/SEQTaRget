@@ -1,3 +1,7 @@
+# SEQTaRget (development version)
+
+* Add `weight.stabilized` to `SEQopts()` (default `TRUE`). `weight.stabilized = FALSE` gives unstabilized treatment weights: no numerator models are fit, so the weights are cumulative products of `1 / denominator`. LTFU and visit weights keep their numerators.
+
 # SEQTaRget v1.4.5
 
 * Drop the unused `doFuture` and `doRNG` dependencies.
