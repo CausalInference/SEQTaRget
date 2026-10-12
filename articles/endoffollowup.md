@@ -89,16 +89,16 @@ end_of_fup(model)
 #> $`1`$estimates
 #>      Type  Time      A Proportion Trial-periods (Eligible)
 #>    <char> <num> <fctr>      <num>                    <int>
-#> 1: binary    12      0 0.01986475                     2946
-#> 2: binary    12      1 0.02725648                     6257
+#> 1: binary    12      0 0.01986475                     2854
+#> 2: binary    12      1 0.02725648                     5953
 #>    Trial-periods (Analysed) Trial-periods (Censored)
 #>                       <int>                    <int>
-#> 1:                     2366                      580
-#> 2:                     4476                     1781
+#> 1:                     2366                      488
+#> 2:                     4476                     1477
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   19.68771      266 0.003081317 0.01382548
-#> 2:                              0   28.46412      236 0.001560669 0.02419762
+#> 1:                              0   17.09881      266 0.003081317 0.01382548
+#> 2:                              0   24.81102      236 0.001560669 0.02419762
 #>       95% UCI
 #>         <num>
 #> 1: 0.02590402
@@ -120,21 +120,22 @@ end_of_fup(model)
 returns, per subgroup, two tables: `estimates` gives the weighted
 proportion (or mean) in each arm with its bootstrap confidence interval,
 and an account of how much of the arm it rests on.
-`Trial-periods (Eligible)` is every trial-period that reached the
-follow-up time, and the next three partition it: `(Analysed)` contribute
-to the estimate, `(Censored)` were measured at some point but not within
-the window, and `(No measurement)` were never measured at all - so the
-three sum back to the eligible total. `% Censored` gives the censored
-share of that total. `Subjects` counts the distinct people behind the
-analysed trial-periods; one subject contributes several trial-periods
-and can be analysed in some and censored in others. `comparison` gives
-the pairwise between-arm contrast: the difference in proportions here,
-or the difference in means for a continuous outcome, with its standard
-error and confidence interval. For a binary outcome the ratio of
-proportions is reported alongside it, with an interval computed on the
-log scale and a `log(Ratio) SE` for inverse-variance pooling. Contrasts
-are paired by bootstrap iteration, so their intervals account for the
-correlation between arms.
+`Trial-periods (Eligible)` is every trial-period that started early
+enough to reach the window, and the next three partition it:
+`(Analysed)` contribute to the estimate, `(Censored)` were measured at
+some point but not within the window, and `(No measurement)` were never
+measured at all - so the three sum back to the eligible total.
+`% Censored` gives the censored share of that total. `Subjects` counts
+the distinct people behind the analysed trial-periods; one subject
+contributes several trial-periods and can be analysed in some and
+censored in others. `comparison` gives the pairwise between-arm
+contrast: the difference in proportions here, or the difference in means
+for a continuous outcome, with its standard error and confidence
+interval. For a binary outcome the ratio of proportions is reported
+alongside it, with an interval computed on the log scale and a
+`log(Ratio) SE` for inverse-variance pooling. Contrasts are paired by
+bootstrap iteration, so their intervals account for the correlation
+between arms.
 
 ## Missing measurements and the time window
 
@@ -196,16 +197,16 @@ windowed <- SEQuential(SEQdata, id.col = "ID",
 end_of_fup(windowed)[[1]]$estimates
 #>      Type  Time      A Proportion Trial-periods (Eligible)
 #>    <char> <num> <fctr>      <num>                    <int>
-#> 1: binary    12      0 0.07570353                     2946
-#> 2: binary    12      1 0.10247494                     6257
+#> 1: binary    12      0 0.07570353                     2894
+#> 2: binary    12      1 0.10247494                     6073
 #>    Trial-periods (Analysed) Trial-periods (Censored)
 #>                       <int>                    <int>
-#> 1:                     2523                      423
-#> 2:                     4889                     1368
+#> 1:                     2523                      371
+#> 2:                     4889                     1184
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   14.35845      274 0.011306853 0.05354250
-#> 2:                              0   21.86351      248 0.005941862 0.09082911
+#> 1:                              0   12.81963      274 0.011306853 0.05354250
+#> 2:                              0   19.49613      248 0.005941862 0.09082911
 #>       95% UCI
 #>         <num>
 #> 1: 0.09786455
@@ -262,8 +263,8 @@ diagnostics(windowed)$eof.nonunique
 #> Key: <tx_init_bas>
 #>    tx_init_bas Eligible  At k In window Excluded (outside window)
 #>         <fctr>    <int> <int>     <int>                     <int>
-#> 1:           0     2946  2366       157                       423
-#> 2:           1     6257  4476       413                      1368
+#> 1:           0     2894  2366       157                       371
+#> 2:           1     6073  4476       413                      1184
 #>    Excluded (no measurement)
 #>                        <int>
 #> 1:                         0
@@ -350,16 +351,16 @@ continuous <- SEQuential(data, id.col = "ID",
 end_of_fup(continuous)[[1]]$estimates
 #>          Type  Time      A     Mean Trial-periods (Eligible)
 #>        <char> <num> <fctr>    <num>                    <int>
-#> 1: continuous    12      0 21.68154                     2946
-#> 2: continuous    12      1 21.73905                     6257
+#> 1: continuous    12      0 21.68154                     2894
+#> 2: continuous    12      1 21.73905                     6073
 #>    Trial-periods (Analysed) Trial-periods (Censored)
 #>                       <int>                    <int>
-#> 1:                     2523                      423
-#> 2:                     4889                     1368
+#> 1:                     2523                      371
+#> 2:                     4889                     1184
 #>    Trial-periods (No measurement) % Censored Subjects        SE  95% LCI
 #>                             <int>      <num>    <int>     <num>    <num>
-#> 1:                              0   14.35845      274 0.1169507 21.45233
-#> 2:                              0   21.86351      248 0.1023680 21.53841
+#> 1:                              0   12.81963      274 0.1169507 21.45233
+#> 2:                              0   19.49613      248 0.1023680 21.53841
 #>     95% UCI
 #>       <num>
 #> 1: 21.91076
@@ -455,30 +456,30 @@ perprotocol <- SEQuential(SEQdata, id.col = "ID",
 end_of_fup(perprotocol)[[1]]$estimates
 #>      Type  Time      A Proportion Trial-periods (Eligible)
 #>    <char> <num> <fctr>      <num>                    <int>
-#> 1: binary    12      0 0.04506949                     2946
-#> 2: binary    12      1 0.08873317                     6257
+#> 1: binary    12      0 0.04328171                     2894
+#> 2: binary    12      1 0.08898389                     6073
 #>    Trial-periods (Analysed) Trial-periods (Censored)
 #>                       <int>                    <int>
-#> 1:                      502                     2444
-#> 2:                     3154                     3103
-#>    Trial-periods (No measurement) % Censored Subjects          SE      95% LCI
-#>                             <int>      <num>    <int>       <num>        <num>
-#> 1:                              0   82.95995       86 0.022835744 0.0003122527
-#> 2:                              0   49.59246      211 0.008721064 0.0716402018
+#> 1:                      502                     2392
+#> 2:                     3154                     2919
+#>    Trial-periods (No measurement) % Censored Subjects          SE     95% LCI
+#>                             <int>      <num>    <int>       <num>       <num>
+#> 1:                              0   82.65377       86 0.019127961 0.005791598
+#> 2:                              0   48.06521      211 0.008688277 0.071955179
 #>       95% UCI
 #>         <num>
-#> 1: 0.08982673
-#> 2: 0.10582614
+#> 1: 0.08077183
+#> 2: 0.10601260
 end_of_fup(perprotocol)[[1]]$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>       <num>              <num>              <num>
-#> 1:    12      0      1  0.04366368       -0.002914227        0.090241593
-#> 2:    12      1      0 -0.04366368       -0.090241593        0.002914227
+#> 1:    12      0      1  0.04570218         0.00512583         0.08627852
+#> 2:    12      1      0 -0.04570218        -0.08627852        -0.00512583
 #>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
 #>            <num>     <num>         <num>         <num>         <num>
-#> 1:    0.02376468 1.9688080     0.6334967      6.118746     0.5785458
-#> 2:    0.02376468 0.5079215     0.1634322      1.578540     0.5785458
+#> 1:     0.0207026 2.0559235     0.7538254      5.607162     0.5119072
+#> 2:     0.0207026 0.4863994     0.1783433      1.326567     0.5119072
 ```
 
 Subjects who deviate from their assigned strategy are artificially

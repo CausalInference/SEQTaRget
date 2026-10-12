@@ -153,17 +153,17 @@ risk_data(model)
 #> Index: <Followup>
 #>           Method Followup      A        Risk 95% LCI    95% UCI         SE
 #>           <char>    <num> <char>       <num>   <num>      <num>      <num>
-#> 1: dose-response       60      0 0.007847443       0 0.04436325 0.01863086
-#> 2: dose-response       60      1 0.018827788       0 0.04180403 0.01172279
+#> 1: dose-response       60      0 0.007952468       0 0.04501433 0.01890946
+#> 2: dose-response       60      1 0.018718195       0 0.04142307 0.01158433
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60 risk_0 risk_1  2.3992259 0.21645193  26.593825   1.227335
-#> 2:       60 risk_1 risk_0  0.4168011 0.03760271   4.619963   1.227335
+#> 1:       60 risk_0 risk_1  2.3537592 0.21044019  26.326637   1.231945
+#> 2:       60 risk_1 risk_0  0.4248523 0.03798434   4.751944   1.231945
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:      0.01098034 -0.01762636 0.03958705 0.01459553
-#> 2:     -0.01098034 -0.03958705 0.01762636 0.01459553
+#> 1:      0.01076573 -0.01819694 0.03972839 0.01477714
+#> 2:     -0.01076573 -0.03972839 0.01819694 0.01477714
 ```
 
 ## Dose-response with 5 bootstrap samples and competing events
@@ -366,33 +366,33 @@ risk_data(model)
 #> Index: <Followup>
 #>           Method Followup      A       Risk 95% LCI    95% UCI         SE
 #>           <char>    <num> <char>      <num>   <num>      <num>      <num>
-#> 1: dose-response       60      0 0.01125753       0 0.10799085 0.04935464
-#> 2: dose-response       60      1 0.01869016       0 0.06647973 0.02438288
+#> 1: dose-response       60      0 0.01063229       0 0.10408278 0.04767970
+#> 2: dose-response       60      1 0.02718814       0 0.07167468 0.02269763
 #> 
 #> $sex_1
 #> Index: <Followup>
-#>           Method Followup      A       Risk 95% LCI    95% UCI          SE
-#>           <char>    <num> <char>      <num>   <num>      <num>       <num>
-#> 1: dose-response       60      0 0.00659838       0 0.01436046 0.003960317
-#> 2: dose-response       60      1 0.01221464       0 0.03195559 0.010072100
+#>           Method Followup      A        Risk 95% LCI    95% UCI          SE
+#>           <char>    <num> <char>       <num>   <num>      <num>       <num>
+#> 1: dose-response       60      0 0.006494985       0 0.01409034 0.003875252
+#> 2: dose-response       60      1 0.005925412       0 0.02610814 0.010297499
 risk_comparison(model)
 #> $sex_0
 #>    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>       <num>      <num>      <num>
-#> 1:       60  inc_0  inc_1  1.6602358 0.005448632   505.8853    2.91809
-#> 2:       60  inc_1  inc_0  0.6023241 0.001976733   183.5323    2.91809
-#>    Risk Difference  RD 95% LCI RD 95% UCI    RD SE
-#>              <num>       <num>      <num>    <num>
-#> 1:     0.007432626 -0.07416459 0.08902984 0.041632
-#> 2:    -0.007432626 -0.08902984 0.07416459 0.041632
+#> 1:       60  inc_0  inc_1  2.5571299 0.006840718   955.8812   3.022376
+#> 2:       60  inc_1  inc_0  0.3910634 0.001046155   146.1835   3.022376
+#>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
+#>              <num>       <num>      <num>      <num>
+#> 1:      0.01655585 -0.06846066 0.10157237 0.04337657
+#> 2:     -0.01655585 -0.10157237 0.06846066 0.04337657
 #> 
 #> $sex_1
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60  inc_0  inc_1  1.8511568  0.2542675  13.477071   1.012865
-#> 2:       60  inc_1  inc_0  0.5402028  0.0742001   3.932866   1.012865
+#> 1:       60  inc_0  inc_1  0.9123056  0.1358191   6.128016  0.9717787
+#> 2:       60  inc_1  inc_0  1.0961239  0.1631850   7.362734  0.9717787
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:     0.005616256 -0.01876165 0.02999416 0.01243794
-#> 2:    -0.005616256 -0.02999416 0.01876165 0.01243794
+#> 1:   -0.0005695735 -0.02407448 0.02293534 0.01199252
+#> 2:    0.0005695735 -0.02293534 0.02407448 0.01199252
 ```

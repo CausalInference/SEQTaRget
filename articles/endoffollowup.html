@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.4.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -168,16 +168,16 @@ enrollment (not calendar time).</p>
 <span><span class="co">#&gt; $`1`$estimates</span></span>
 <span><span class="co">#&gt;      Type  Time      A Proportion Trial-periods (Eligible)</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;num&gt; &lt;fctr&gt;      &lt;num&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: binary    12      0 0.01986475                     2946</span></span>
-<span><span class="co">#&gt; 2: binary    12      1 0.02725648                     6257</span></span>
+<span><span class="co">#&gt; 1: binary    12      0 0.01986475                     2854</span></span>
+<span><span class="co">#&gt; 2: binary    12      1 0.02725648                     5953</span></span>
 <span><span class="co">#&gt;    Trial-periods (Analysed) Trial-periods (Censored)</span></span>
 <span><span class="co">#&gt;                       &lt;int&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:                     2366                      580</span></span>
-<span><span class="co">#&gt; 2:                     4476                     1781</span></span>
+<span><span class="co">#&gt; 1:                     2366                      488</span></span>
+<span><span class="co">#&gt; 2:                     4476                     1477</span></span>
 <span><span class="co">#&gt;    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI</span></span>
 <span><span class="co">#&gt;                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                              0   19.68771      266 0.003081317 0.01382548</span></span>
-<span><span class="co">#&gt; 2:                              0   28.46412      236 0.001560669 0.02419762</span></span>
+<span><span class="co">#&gt; 1:                              0   17.09881      266 0.003081317 0.01382548</span></span>
+<span><span class="co">#&gt; 2:                              0   24.81102      236 0.001560669 0.02419762</span></span>
 <span><span class="co">#&gt;       95% UCI</span></span>
 <span><span class="co">#&gt;         &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: 0.02590402</span></span>
@@ -197,8 +197,8 @@ enrollment (not calendar time).</p>
 <code>estimates</code> gives the weighted proportion (or mean) in each
 arm with its bootstrap confidence interval, and an account of how much
 of the arm it rests on. <code>Trial-periods (Eligible)</code> is every
-trial-period that reached the follow-up time, and the next three
-partition it: <code>(Analysed)</code> contribute to the estimate,
+trial-period that started early enough to reach the window, and the next
+three partition it: <code>(Analysed)</code> contribute to the estimate,
 <code>(Censored)</code> were measured at some point but not within the
 window, and <code>(No measurement)</code> were never measured at all -
 so the three sum back to the eligible total. <code>% Censored</code>
@@ -273,16 +273,16 @@ when a trial-period has no measurement at exactly <code>k</code>:</p>
 <span><span class="fu"><a href="../reference/end_of_fup.html">end_of_fup</a></span><span class="op">(</span><span class="va">windowed</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">estimates</span></span>
 <span><span class="co">#&gt;      Type  Time      A Proportion Trial-periods (Eligible)</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;num&gt; &lt;fctr&gt;      &lt;num&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: binary    12      0 0.07570353                     2946</span></span>
-<span><span class="co">#&gt; 2: binary    12      1 0.10247494                     6257</span></span>
+<span><span class="co">#&gt; 1: binary    12      0 0.07570353                     2894</span></span>
+<span><span class="co">#&gt; 2: binary    12      1 0.10247494                     6073</span></span>
 <span><span class="co">#&gt;    Trial-periods (Analysed) Trial-periods (Censored)</span></span>
 <span><span class="co">#&gt;                       &lt;int&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:                     2523                      423</span></span>
-<span><span class="co">#&gt; 2:                     4889                     1368</span></span>
+<span><span class="co">#&gt; 1:                     2523                      371</span></span>
+<span><span class="co">#&gt; 2:                     4889                     1184</span></span>
 <span><span class="co">#&gt;    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI</span></span>
 <span><span class="co">#&gt;                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                              0   14.35845      274 0.011306853 0.05354250</span></span>
-<span><span class="co">#&gt; 2:                              0   21.86351      248 0.005941862 0.09082911</span></span>
+<span><span class="co">#&gt; 1:                              0   12.81963      274 0.011306853 0.05354250</span></span>
+<span><span class="co">#&gt; 2:                              0   19.49613      248 0.005941862 0.09082911</span></span>
 <span><span class="co">#&gt;       95% UCI</span></span>
 <span><span class="co">#&gt;         &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: 0.09786455</span></span>
@@ -336,8 +336,8 @@ estimate rests on it using the accounting table below.</p>
 <span><span class="co">#&gt; Key: &lt;tx_init_bas&gt;</span></span>
 <span><span class="co">#&gt;    tx_init_bas Eligible  At k In window Excluded (outside window)</span></span>
 <span><span class="co">#&gt;         &lt;fctr&gt;    &lt;int&gt; &lt;int&gt;     &lt;int&gt;                     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:           0     2946  2366       157                       423</span></span>
-<span><span class="co">#&gt; 2:           1     6257  4476       413                      1368</span></span>
+<span><span class="co">#&gt; 1:           0     2894  2366       157                       371</span></span>
+<span><span class="co">#&gt; 2:           1     6073  4476       413                      1184</span></span>
 <span><span class="co">#&gt;    Excluded (no measurement)</span></span>
 <span><span class="co">#&gt;                        &lt;int&gt;</span></span>
 <span><span class="co">#&gt; 1:                         0</span></span>
@@ -428,16 +428,16 @@ since a continuous outcome need not be bounded away from zero.</p>
 <span><span class="fu"><a href="../reference/end_of_fup.html">end_of_fup</a></span><span class="op">(</span><span class="va">continuous</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">estimates</span></span>
 <span><span class="co">#&gt;          Type  Time      A     Mean Trial-periods (Eligible)</span></span>
 <span><span class="co">#&gt;        &lt;char&gt; &lt;num&gt; &lt;fctr&gt;    &lt;num&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: continuous    12      0 21.68154                     2946</span></span>
-<span><span class="co">#&gt; 2: continuous    12      1 21.73905                     6257</span></span>
+<span><span class="co">#&gt; 1: continuous    12      0 21.68154                     2894</span></span>
+<span><span class="co">#&gt; 2: continuous    12      1 21.73905                     6073</span></span>
 <span><span class="co">#&gt;    Trial-periods (Analysed) Trial-periods (Censored)</span></span>
 <span><span class="co">#&gt;                       &lt;int&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:                     2523                      423</span></span>
-<span><span class="co">#&gt; 2:                     4889                     1368</span></span>
+<span><span class="co">#&gt; 1:                     2523                      371</span></span>
+<span><span class="co">#&gt; 2:                     4889                     1184</span></span>
 <span><span class="co">#&gt;    Trial-periods (No measurement) % Censored Subjects        SE  95% LCI</span></span>
 <span><span class="co">#&gt;                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;     &lt;num&gt;    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                              0   14.35845      274 0.1169507 21.45233</span></span>
-<span><span class="co">#&gt; 2:                              0   21.86351      248 0.1023680 21.53841</span></span>
+<span><span class="co">#&gt; 1:                              0   12.81963      274 0.1169507 21.45233</span></span>
+<span><span class="co">#&gt; 2:                              0   19.49613      248 0.1023680 21.53841</span></span>
 <span><span class="co">#&gt;     95% UCI</span></span>
 <span><span class="co">#&gt;       &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1: 21.91076</span></span>
@@ -526,30 +526,30 @@ a per-protocol end-of-follow-up effect is the censoring method with
 <span><span class="fu"><a href="../reference/end_of_fup.html">end_of_fup</a></span><span class="op">(</span><span class="va">perprotocol</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">estimates</span></span>
 <span><span class="co">#&gt;      Type  Time      A Proportion Trial-periods (Eligible)</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;num&gt; &lt;fctr&gt;      &lt;num&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: binary    12      0 0.04506949                     2946</span></span>
-<span><span class="co">#&gt; 2: binary    12      1 0.08873317                     6257</span></span>
+<span><span class="co">#&gt; 1: binary    12      0 0.04328171                     2894</span></span>
+<span><span class="co">#&gt; 2: binary    12      1 0.08898389                     6073</span></span>
 <span><span class="co">#&gt;    Trial-periods (Analysed) Trial-periods (Censored)</span></span>
 <span><span class="co">#&gt;                       &lt;int&gt;                    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:                      502                     2444</span></span>
-<span><span class="co">#&gt; 2:                     3154                     3103</span></span>
-<span><span class="co">#&gt;    Trial-periods (No measurement) % Censored Subjects          SE      95% LCI</span></span>
-<span><span class="co">#&gt;                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;        &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:                              0   82.95995       86 0.022835744 0.0003122527</span></span>
-<span><span class="co">#&gt; 2:                              0   49.59246      211 0.008721064 0.0716402018</span></span>
+<span><span class="co">#&gt; 1:                      502                     2392</span></span>
+<span><span class="co">#&gt; 2:                     3154                     2919</span></span>
+<span><span class="co">#&gt;    Trial-periods (No measurement) % Censored Subjects          SE     95% LCI</span></span>
+<span><span class="co">#&gt;                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:                              0   82.65377       86 0.019127961 0.005791598</span></span>
+<span><span class="co">#&gt; 2:                              0   48.06521      211 0.008688277 0.071955179</span></span>
 <span><span class="co">#&gt;       95% UCI</span></span>
 <span><span class="co">#&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: 0.08982673</span></span>
-<span><span class="co">#&gt; 2: 0.10582614</span></span>
+<span><span class="co">#&gt; 1: 0.08077183</span></span>
+<span><span class="co">#&gt; 2: 0.10601260</span></span>
 <span><span class="fu"><a href="../reference/end_of_fup.html">end_of_fup</a></span><span class="op">(</span><span class="va">perprotocol</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">comparison</span></span>
 <span><span class="co">#&gt; Key: &lt;A_x, A_y&gt;</span></span>
 <span><span class="co">#&gt;     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI</span></span>
 <span><span class="co">#&gt;    &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;       &lt;num&gt;              &lt;num&gt;              &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    12      0      1  0.04366368       -0.002914227        0.090241593</span></span>
-<span><span class="co">#&gt; 2:    12      1      0 -0.04366368       -0.090241593        0.002914227</span></span>
+<span><span class="co">#&gt; 1:    12      0      1  0.04570218         0.00512583         0.08627852</span></span>
+<span><span class="co">#&gt; 2:    12      1      0 -0.04570218        -0.08627852        -0.00512583</span></span>
 <span><span class="co">#&gt;    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE</span></span>
 <span><span class="co">#&gt;            &lt;num&gt;     &lt;num&gt;         &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    0.02376468 1.9688080     0.6334967      6.118746     0.5785458</span></span>
-<span><span class="co">#&gt; 2:    0.02376468 0.5079215     0.1634322      1.578540     0.5785458</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:     0.0207026 2.0559235     0.7538254      5.607162     0.5119072</span></span>
+<span><span class="co">#&gt; 2:     0.0207026 0.4863994     0.1783433      1.326567     0.5119072</span></span></code></pre></div>
 <p>Subjects who deviate from their assigned strategy are artificially
 censored at the point of deviation, and their outcome is missing from
 then on. A trial-period that deviates before <code>k</code> therefore

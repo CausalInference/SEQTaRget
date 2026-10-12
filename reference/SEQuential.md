@@ -55,7 +55,9 @@ SEQuential(
 
 - fixed.cols:
 
-  List: column names for fixed columns
+  List: column names for fixed columns. Numeric columns enter the models
+  as a single term, so supply integer-coded categories (e.g. region 1-5)
+  as factor or character columns
 
 - method:
 
@@ -129,7 +131,7 @@ SEQuential(data, id.col = "ID",
 #> ITT model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.6 seconds :
+#> SEQuential process completed in 2.33 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas 
 #> Numerator covariates: NA 
@@ -146,7 +148,7 @@ SEQuential(data, id.col = "ID",
 #> followup_sq  -0.000146912 6.466141e-05
 #> trial         0.044566166 1.124702e-02
 #> trial_sq      0.000578777 1.001866e-04
-#> sex1          0.127172410 2.595630e-02
+#> sex           0.127172410 2.595630e-02
 #> N_bas         0.003290667 2.589182e-03
 #> L_bas        -0.013392420 1.428081e-02
 #> P_bas         0.200724099 5.956440e-02
@@ -225,7 +227,7 @@ SEQuential(data, id.col = "ID",
 #> censoring model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.28 seconds :
+#> SEQuential process completed in 1.47 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex 
 #> Numerator covariates: tx_init~sex 
@@ -236,48 +238,48 @@ SEQuential(data, id.col = "ID",
 #> Outcome Model ==================================================== 
 #> Coefficients and Weighting:
 #>                   Estimate   Std. Error
-#> (Intercept)  -4.9134317258 0.0925102561
-#> tx_init_bas1  0.5051368699 0.0741355065
-#> followup      0.0281212245 0.0058811408
-#> followup_sq   0.0001084173 0.0001476455
-#> trial        -0.0132858466 0.0057384370
-#> trial_sq      0.0011377569 0.0001049305
-#> sex1          0.0660151461 0.0422912172
+#> (Intercept)  -4.886835e+00 0.0914827580
+#> tx_init_bas1  4.708351e-01 0.0756490527
+#> followup      2.865559e-02 0.0058887029
+#> followup_sq   9.890846e-05 0.0001479880
+#> trial        -1.262619e-02 0.0057462709
+#> trial_sq      1.118919e-03 0.0001050635
+#> sex           7.314606e-02 0.0422165187
 #> 
 #> Weight Information ============================================= 
 #> Treatment Lag = 0 Treatment = 0 Model ====================================
 #> Numerator ========================== 
-#>                Estimate Std. Error
-#> (Intercept) -1.63699131 0.06159802
-#> sex1         0.03738753 0.08644011
+#>              Estimate Std. Error
+#> Intercept -1.53840214 0.06211620
+#> sex        0.03466459 0.08716895
 #> Denominator ========================== 
-#>                 Estimate  Std. Error
-#> (Intercept) -1.332290880 0.247265065
-#> N            0.009930812 0.008667517
-#> L           -0.011516315 0.038851934
-#> P           -0.056782905 0.026287074
-#> sex1         0.033299544 0.087312037
+#>               Estimate  Std. Error
+#> Intercept -1.732410744 0.255183822
+#> N          0.009190531 0.008734374
+#> L          0.015548158 0.039307426
+#> P          0.011425970 0.027582514
+#> sex        0.040326891 0.088066188
 #> Treatment Lag = 1 Treatment = 1 Model ====================================
 #> Numerator ========================== 
-#>               Estimate Std. Error
-#> (Intercept)  3.0276301 0.07259087
-#> sex1        -0.1467371 0.10125464
+#>             Estimate Std. Error
+#> Intercept  3.0276301 0.07259087
+#> sex       -0.1467371 0.10125464
 #> Denominator ========================== 
-#>                 Estimate Std. Error
-#> (Intercept)  2.654431030 0.29534161
-#> N            0.001573135 0.01033761
-#> L            0.050900387 0.03934269
-#> P            0.046316350 0.03824053
-#> sex1        -0.136773596 0.10169194
+#>               Estimate Std. Error
+#> Intercept  2.654431030 0.29534161
+#> N          0.001573135 0.01033761
+#> L          0.050900387 0.03934269
+#> P          0.046316350 0.03824053
+#> sex       -0.136773596 0.10169194
 #> Weights:
-#> Min:  0.7359596 
-#> Max:  1.823553 
-#> StDev:  0.06287385 
-#> P01:  0.8731989 
-#> P25:  0.984536 
-#> P50:  0.9995707 
-#> P75:  1.021913 
-#> P99:  1.257297 
+#> Min:  0.7768227 
+#> Max:  1.370254 
+#> StDev:  0.04145739 
+#> P01:  0.8984725 
+#> P25:  0.9867613 
+#> P50:  0.9995014 
+#> P75:  1.016062 
+#> P99:  1.146783 
 #> 
 #> 
 #> Diagnostic Tables ================================================== 
@@ -374,16 +376,16 @@ end_of_fup(eof)
 #> $`1`$estimates
 #>      Type  Time      A Proportion Trial-periods (Eligible)
 #>    <char> <num> <fctr>      <num>                    <int>
-#> 1: binary    12      0 0.07570353                     2946
-#> 2: binary    12      1 0.10247494                     6257
+#> 1: binary    12      0 0.07570353                     2894
+#> 2: binary    12      1 0.10247494                     6073
 #>    Trial-periods (Analysed) Trial-periods (Censored)
 #>                       <int>                    <int>
-#> 1:                     2523                      423
-#> 2:                     4889                     1368
+#> 1:                     2523                      371
+#> 2:                     4889                     1184
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   14.35845      274 0.007991871 0.06003975
-#> 2:                              0   21.86351      248 0.005724500 0.09125513
+#> 1:                              0   12.81963      274 0.007991871 0.06003975
+#> 2:                              0   19.49613      248 0.005724500 0.09125513
 #>       95% UCI
 #>         <num>
 #> 1: 0.09136731

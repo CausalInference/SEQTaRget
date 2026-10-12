@@ -38,7 +38,7 @@ here in greater detail:
 | `multinomial` | Whether to expect more than 2 treatment types | Logical | `FALSE` |
 | `ncores` | Number of cores to use in parallel multisession | Integer | `8L` |
 | `nthreads` | Number of threads to use for **data.table** manipulations | Integer | `16L` |
-| `parallel` | Whether the SEQuential process should be run in parallel | Logical | `TRUE` |
+| `parallel` | Whether the bootstrap resamples should be run in parallel (no effect unless `bootstrap = TRUE`); the previous `future` plan is restored on exit | Logical | `TRUE` |
 | `risk.times` | Follow-up times (in follow-up units) at which to report risk difference and risk ratio when `km.curves = TRUE`; each is snapped to the latest follow-up at or before it and the final time is always included (`NA` reports only the final time) | Numeric vector | `c(36, 120)` |
 | `seed` | Starting seed for random number generators | Integer | `1636` |
 | `selection.first_trial` | Selects only the first eligible trial in the expanded dataset | Logical | `TRUE` |
@@ -71,6 +71,8 @@ the case of a censoring variable like loss-to-followup.
 | `weight.lower` | Lower truncation for weight values | Numeric double | `0.0` |
 | `weight.p99` | Whether to truncate weights at the 1st and 99th percentiles | Logical | `TRUE` |
 | `weight.preexpansion` | Whether weighting should be done on pre-expanded data | Logical | `TRUE` |
+| `weight.spline` | Whether the default weight models should model time with a natural cubic spline rather than a quadratic | Logical | `TRUE` |
+| `weight.spline.df` | Degrees of freedom passed to [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when `weight.spline = TRUE` | Integer | `4L` |
 | `weight.upper` | Upper truncation for weight values | Numeric double | `10.0` |
 | `weighted` | Whether the analysis should be weighted | Logical | `TRUE` |
 

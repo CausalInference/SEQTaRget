@@ -71,6 +71,8 @@ SEQopts(
   weight.lag_condition = TRUE,
   weight.p99 = FALSE,
   weight.preexpansion = TRUE,
+  weight.spline = FALSE,
+  weight.spline.df = 4L,
   weight.upper = Inf,
   weighted = FALSE
 )
@@ -165,7 +167,9 @@ SEQopts(
 
 - deviation.excused_cols:
 
-  Character list: excused columns for deviation switches
+  Character list: excused columns for deviation switches, one per
+  `treat.level` in the same order; column i excuses deviations by people
+  following `treat.level[[i]]`
 
 - end_of_fup:
 
@@ -205,8 +209,10 @@ SEQopts(
 
 - excused.cols:
 
-  List: list of column names for treatment switch excuses - should be
-  the same length, and ordered the same as `treat.level`
+  List: column names for treatment switch excuses, one per `treat.level`
+  in the same order; column i excuses a switch away from
+  `treat.level[[i]]` (e.g. `excusedZero = 1` excuses a switch from 0 to
+  1)
 
 - expand.only:
 
@@ -322,7 +328,9 @@ SEQopts(
 - parallel:
 
   Logical: define if the SEQuential process is run in parallel, default
-  is `FALSE`
+  is `FALSE`. Only the bootstrap resamples run in parallel, so this has
+  no effect unless `bootstrap = TRUE`; the previous `future` plan is
+  restored on exit
 
 - parglm.control:
 
@@ -457,6 +465,33 @@ SEQopts(
 
   Logical: whether weighting should be done on pre-expanded data,
   default `TRUE`
+
+- weight.spline:
+
+  Logical: model time in the default weight models with a natural cubic
+  spline ([`splines::ns()`](https://rdrr.io/r/splines/ns.html)) instead
+  of a quadratic, default is `FALSE`. This makes the baseline hazard of
+  treatment (and of censoring, for the `cense` and `visit` models) a
+  flexible function of time rather than one that can only rise or
+  flatten off. The terms replaced are `trial`/`trial_sq` and
+  `followup`/`followup_sq` when `weight.preexpansion = FALSE`, and the
+  time column and its square when `weight.preexpansion = TRUE`. Ignored
+  for weight models whose formula is supplied through `numerator`,
+  `denominator`, `cense.numerator`, `cense.denominator`,
+  `visit.numerator` or `visit.denominator` - write `ns()` terms into
+  those formulas directly for finer control (e.g. a spline in `followup`
+  only). Knots of any `ns(x, df = N)` term are fixed from the full data
+  before fitting, so the basis is the same at fit and prediction time
+  and across bootstrap resamples
+
+- weight.spline.df:
+
+  Integer: degrees of freedom passed to
+  [`splines::ns()`](https://rdrr.io/r/splines/ns.html) when
+  `weight.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior
+  knots at quantiles of the term. Must be `>= 1`; `df = 1` is equivalent
+  to a linear term and is generally not what you want. Default is `4` (3
+  interior knots)
 
 - weight.upper:
 
