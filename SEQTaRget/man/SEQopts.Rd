@@ -159,7 +159,7 @@ SEQopts(
 
 \item{numerator}{String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})}
 
-\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
+\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}. Only the bootstrap resamples run in parallel, so this has no effect unless \code{bootstrap = TRUE}; the previous \code{future} plan is restored on exit}
 
 \item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
 
