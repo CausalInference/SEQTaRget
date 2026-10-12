@@ -14,15 +14,14 @@
 #' @param treatment.col String: column name of the treatment column
 #' @param outcome.col String: column name of the outcome column
 #' @param time_varying.cols List: column names for time varying columns
-#' @param fixed.cols List: column names for fixed columns
+#' @param fixed.cols List: column names for fixed columns. Numeric columns enter the models as a single term, so supply integer-coded categories (e.g. region 1-5) as factor or character columns
 #' @param method String: method of analysis to perform; should be one of `"ITT"`, `"dose-response"`, or `"censoring"`
 #' @param options List: optional list of parameters from [SEQopts()]
 #' @param verbose Logical: if TRUE, cats progress to console, default is `TRUE`
 #'
-#' @import data.table doRNG
+#' @import data.table
 #' @importFrom methods is
 #' @importFrom future plan
-#' @importFrom doFuture registerDoFuture
 #' @importFrom stats complete.cases
 #' 
 #' @returns An S4 object of class SEQoutput. If `options = SEQopts(expand.only = TRUE)`, returns the expanded `data.table` directly, with analysis steps skipped.
@@ -109,7 +108,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     stop(paste(missing.cols, collapse = ", "), " are missing from supplied data ")
   }
   
-  setDT(data)
+  # setDT() on a shallow copy (as.list()) leaves the caller's data.frame untouched; nothing
+  # below modifies a column in place before the pruning subset, which copies
+  if (!is.data.table(data)) data <- setDT(as.list(data))
   if (verbose) cat("\nFull dataset:", format(nrow(data), big.mark = ","), "observations,", ncol(data), "variables\n")
   time.start <- Sys.time()
 
@@ -148,10 +149,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   }
 
   # Parallel Setup ==================================
+  # Restore the caller's future plan on exit, including on error, which also stops the workers
   if (params@parallel) {
-    registerDoFuture()
-    registerDoRNG()
-    plan("multisession", workers = params@ncores, gc = TRUE)
+    old_plan <- plan("multisession", workers = params@ncores, gc = TRUE)
+    on.exit(plan(old_plan), add = TRUE)
   }
   
   # Data Checking ====================================
@@ -267,7 +268,6 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   # Early return if user only wants the expanded dataset =======
   if (params@expand.only) {
     if (params@verbose) cat("\nexpand.only = TRUE: returning expanded data.table and skipping analysis\n")
-    plan("sequential")
     return(params@DT)
   }
 
@@ -312,6 +312,21 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
   subgroups <- if (is.na(params@subgroup)) 1L else
     if (params@end_of_fup) names(analytic[[1]]$eof) else names(analytic[[1]]$model)
   n_subgroups <- length(subgroups)
+
+  # Match per-subgroup results by name: a resample with no one from a subgroup has no entry
+  # for it, so its slot is NULL. Positions are kept, as the survival/hazard bootstraps use them
+  subgroup_results <- function(field, label) {
+    out <- lapply(analytic, function(x) x[[field]][[label]])
+    n_missing <- sum(vapply(out[-1], is.null, logical(1)))
+    if (n_missing > 0) warning(n_missing, " of ", length(out) - 1L, " bootstrap resamples contain no one from subgroup ",
+                               label, " and are left out of its confidence intervals", call. = FALSE)
+    out
+  }
+  # With no usable resample for a subgroup, report it without a confidence interval
+  subgroup_params <- function(models) {
+    if (params@bootstrap && all(vapply(models[-1], is.null, logical(1)))) params@bootstrap <- FALSE
+    params
+  }
   survival.data <- survival.ce <- risk <- hazard <- outcome <- weights <- vector("list", n_subgroups)
   eof.data <- eof.comparison <- vector("list", n_subgroups)
   if (n_subgroups > 0) names(survival.data) <- names(survival.ce) <- names(risk) <- names(hazard) <- names(outcome) <- names(weights) <- names(eof.data) <- names(eof.comparison) <- subgroups
@@ -319,9 +334,8 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     if (params@verbose) cat("\nEstimating end-of-follow-up outcome at follow-up time", params@end_of_fup.time, "\n")
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      eof <- create.endoffup(full = analytic[[1]]$eof[[i]],
-                             boots = lapply(analytic[-1], function(x) x$eof[[i]]),
-                             params = params)
+      eofs <- subgroup_results("eof", label)
+      eof <- create.endoffup(full = eofs[[1]], boots = eofs[-1], params = params)
       eof.data[[label]] <- eof$eof.data
       eof.comparison[[label]] <- eof$eof.comparison
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
@@ -332,16 +346,19 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     # Survival Information =======================================
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      models <- lapply(analytic, function(x) x$model[[i]])
-        
+      models <- subgroup_results("model", label)
+      params_sg <- subgroup_params(models)
+
       if (params@km.curves) {
-        if (is.na(params@subgroup) && params@verbose) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
-        survival <- internal.survival(params, models)
+        if (params@verbose) {
+          if (is.na(params@subgroup)) cat("\nCreating Survival curves\n") else cat("\nCreating Survival Curves for", label, "\n")
+        }
+        survival <- internal.survival(params_sg, models, label)
         survival.data[[label]] <- survival$data
         survival.ce[[label]] <- survival$ce.model
-        risk[[label]] <- create.risk(survival$data, params, survival$boot_risks)
+        risk[[label]] <- create.risk(survival$data, params_sg, survival$boot_risks)
       }
-      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
+      outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
@@ -349,9 +366,9 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     formula_cache <- init_formula_cache(params)
     for (i in seq_along(subgroups)) {
       label <- subgroups[[i]]
-      models <- lapply(analytic, function(x) x$model[[i]])
-      hazard[[label]] <- internal.hazard(models, params, formula_cache)
-      outcome[[label]] <- lapply(models, function(x) clean_fastglm(x$model))
+      models <- subgroup_results("model", label)
+      hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache, label)
+      outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }
@@ -407,6 +424,5 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
                         eof.data, eof.comparison)
 
   if (params@verbose) cat("\nCompleted\n")
-  plan("sequential")
   return(out)
 }

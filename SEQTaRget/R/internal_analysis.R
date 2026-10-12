@@ -5,10 +5,14 @@ init_formula_cache <- function(params) {
   
   cache <- new.env(hash = TRUE, parent = emptyenv())
   
-  # Detect simple formulas (no interactions, no I(), no poly(), no factors)
+  # Simple formulas (bare variable names, an intercept, no offset) can skip model.matrix();
+  # anything else (interactions, I(), log(), ns(), -1, offset()) cannot
   is_simple_additive <- function(covs) {
     if (is.null(covs) || is.na(covs) || covs == "") return(FALSE)
-    !grepl(":|\\*|I\\(|poly\\(|factor\\(|as\\.factor|ns\\(|bs\\(|\\^", covs)
+    tt <- stats::terms(stats::as.formula(paste0("~", covs)))
+    identical(attr(tt, "term.labels"), all.vars(tt)) &&
+      attr(tt, "intercept") == 1L &&
+      is.null(attr(tt, "offset"))
   }
   
   # Helper to parse formula string and extract columns
@@ -103,7 +107,7 @@ bootstrap_id_relabeler <- function(UIDs, n_sample) {
 #' Internal analysis tool for handling parallelization/bootstrapping on multiple OS types
 #'
 #'
-#' @import data.table future doFuture doRNG future.apply
+#' @import data.table future future.apply
 #' @keywords internal
 internal.analysis <- function(params) {
   formula_cache <- init_formula_cache(params)

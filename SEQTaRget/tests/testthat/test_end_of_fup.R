@@ -444,3 +444,15 @@ test_that("A continuous outcome reports mean/SD of the analysed measurements", {
   # Binary outcomes keep their count tables and gain no summary
   expect_true(all(is.na(diagnostics(eof_run(end_of_fup = TRUE, end_of_fup.time = 12))$eof.summary)))
 })
+
+test_that("Trial-periods that start too late to reach the window are not counted as eligible", {
+  skip_on_cran()
+  k <- 12; w <- 3
+  model <- eof_run(end_of_fup = TRUE, end_of_fup.time = k, end_of_fup.window = w, data.return = TRUE)
+  starts <- model@DT[, .(start = min(period - followup)), by = .(ID, trial, tx_init_bas)]
+  reachable <- starts[start + k - w <= max(model@DT$period), .N, keyby = tx_init_bas]$N
+
+  est <- model@eof.data[[1]][order(A)]
+  expect_equal(est$`Trial-periods (Eligible)`, reachable)
+  expect_equal(diagnostics(model)$eof.nonunique[[1]]$Eligible, reachable)
+})

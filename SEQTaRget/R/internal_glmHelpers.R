@@ -9,6 +9,7 @@
 #' @importFrom stats binomial
 #' @keywords internal
 fit_glm <- function(X, y, family, weights = NULL, params, start = NULL) {
+  check_design(X)
   if (!is.null(start) && length(start) != ncol(X)) start <- NULL
   if (params@glm.package == "fastglm") {
     if (is.null(weights)) {
@@ -87,6 +88,7 @@ inline.pred <- function(model, newdata, params, type = NULL, case = "default", m
       factor_cols <- if (params@followup.class && is_outcome_pred && "followup" %in% cached$cols)
         list(followup = 0L:max(params@DT$followup, na.rm = TRUE)) else NULL
       X <- fast_model_matrix(cached$formula, newdata, cached$cols, is_simple = cached$is_simple, factor_cols = factor_cols)
+      check_design(X)
       pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
       return(pred)
     }
@@ -122,7 +124,8 @@ inline.pred <- function(model, newdata, params, type = NULL, case = "default", m
     fup_levels <- 0L:max(params@DT$followup, na.rm = TRUE)
     pred_data[, followup := factor(followup, levels = fup_levels)]
   }
-  X <- model.matrix(as.formula(paste0("~", covs)), data = pred_data)
+  X <- design_matrix(as.formula(paste0("~", covs)), pred_data)
+  check_design(X)
 
   pred <- if (!multi) predict_model(model, X, "response") else multinomial.predict(model, X, target)
   return(pred)
@@ -237,7 +240,7 @@ fast_model_matrix <- function(formula, data, cols, is_simple = FALSE, factor_col
   }
 
   # Standard path: setDF in-place on the temp subset, then model.matrix
-  X <- model.matrix(formula, data = setDF(subset_data), na.action = stats::na.pass)
+  X <- design_matrix(formula, setDF(subset_data))
   return(X)
 }
 
@@ -263,3 +266,28 @@ clean_fastglm <- function(model) {
   }
   strip(model)
 }
+
+#' Model matrix that keeps every row
+#'
+#' \code{model.matrix()} ignores \code{na.action} and drops rows where a term is
+#' \code{NA}, so the model frame is built explicitly to keep them for \code{check_design()}.
+#'
+#' @keywords internal
+design_matrix <- function(formula, data) {
+  model.matrix(formula, stats::model.frame(formula, data, na.action = stats::na.pass))
+}
+
+#' Stop, naming the terms, when a design matrix has missing or infinite values
+#'
+#' Covariates are checked complete on entry, so these come from a term such as
+#' \code{log(x)} or \code{sqrt(x)} being undefined for some rows.
+#'
+#' @keywords internal
+check_design <- function(X) {
+  bad <- colnames(X)[colSums(!is.finite(X)) > 0L]
+  if (length(bad) > 0L)
+    stop("Model term(s) ", paste(bad, collapse = ", "), " produced missing or infinite values, ",
+         "e.g. log() or sqrt() of a non-positive value; transform the variable so the term is defined for every row",
+         call. = FALSE)
+}
+

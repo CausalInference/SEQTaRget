@@ -35,13 +35,16 @@ SEQexpand <- function(params) {
                   params@time, paste0(params@time, params@indicator.squared), "tx_lag", "censored")
     vars <- vars[!is.na(vars)]
     vars <- vars[!vars %in% vars.nin]
-    vars.base <- vars[grep(params@indicator.baseline, vars)]
-    vars.sq <- vars[grep(params@indicator.squared, vars)]
+    # The indicators are suffixes: match them literally and only at the end of
+    # the name, so columns such as "bmi_baseline" or "bmi_sqrt" are left alone
+    strip_suffix <- function(x, suffix) substr(x, 1L, nchar(x) - nchar(suffix))
+    vars.base <- vars[endsWith(vars, params@indicator.baseline)]
+    vars.sq <- vars[endsWith(vars, params@indicator.squared)]
     vars.time <- c(vars[!vars %in% vars.base], unlist(params@excused.cols), unlist(params@deviation.excused_cols))
     vars.time <- vars.time[!is.na(vars.time)]
-    vars.base <- unique(gsub(params@indicator.baseline, "", vars.base))
+    vars.base <- unique(strip_suffix(vars.base, params@indicator.baseline))
     vars.base <- c(vars.base[!vars.base %in% params@time], params@eligible)
-    vars.sq <- unique(sub(params@indicator.squared, "", vars.sq))
+    vars.sq <- unique(strip_suffix(vars.sq, params@indicator.squared))
 
     data <- DT[, list(period = Map(seq, get(params@time), pmin(.N - 1, get(params@time) + params@followup.max))), by = eval(params@id),
                ][, trial := rowid(get(params@id)) - 1
@@ -130,10 +133,12 @@ SEQexpand <- function(params) {
           out[eval(parse(text = conditional)), switch := TRUE]
         }
         if (params@deviation.excused) {
-          # Excusing deviation conditions
+          # deviation.excused_cols[[i]] excuses deviations by people following treat.level[[i]]
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@deviation.excused_cols[[i]])) {
-              out[(switch), isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
+              out[(switch) &
+                    get(paste0(params@treatment, params@indicator.baseline)) == params@treat.level[[i]],
+                  isExcused := ifelse(get(params@deviation.excused_cols[[i]]) == 1, 1, 0)]
             }
           }
           out[!is.na(isExcused), excused_tmp := cumsum(isExcused), by = c(params@id, "trial")
@@ -149,11 +154,11 @@ SEQexpand <- function(params) {
           # Excused treatment lag switches
           out[, switch := (get(params@treatment) != lag)]
           
+          # excused.cols[[i]] excuses a switch away from treat.level[[i]], as in the weight models
           for (i in seq_along(params@treat.level)) {
             if (!is.na(params@excused.cols[[i]])) {
               out[(switch) & 
-                    get(params@treatment) != lag & 
-                    get(params@treatment) == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
+                    lag == params@treat.level[[i]], isExcused := ifelse(get(params@excused.cols[[i]]) == 1, 1, 0)]
             }
           }
           setorderv(out, c(params@id, "trial", "followup"))

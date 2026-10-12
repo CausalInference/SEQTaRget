@@ -77,3 +77,14 @@ test_that("SEQopts() rejects non-scalar formula arguments at the point they are 
   expect_s4_class(SEQopts(numerator = c("sex", "sex+N"), denominator = c("sex+L", "sex+N+L")), "SEQopts")
   expect_s4_class(SEQopts(covariates = "sex+N"), "SEQopts")
 })
+
+test_that("A term undefined for some rows is named in the error", {
+  run <- function(method, opts) suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                                            list("N", "L", "P"), list("sex"), method = method,
+                                                            options = opts, verbose = FALSE))
+  # N has non-positive values, so log(N) is NaN or -Inf on some rows
+  expect_error(run("censoring", SEQopts(weighted = TRUE, numerator = "sex", denominator = "log(N) + L + P + sex")),
+               "log\\(N\\) produced missing or infinite values")
+  expect_error(run("ITT", SEQopts(covariates = "tx_init_bas + followup + log(N_bas)")),
+               "log\\(N_bas\\) produced missing or infinite values")
+})

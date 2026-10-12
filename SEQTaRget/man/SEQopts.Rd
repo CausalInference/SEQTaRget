@@ -111,7 +111,7 @@ SEQopts(
 
 \item{deviation.excused}{Logical: whether deviations should be excused by \code{deviation.excused_cols}, default is \code{FALSE}}
 
-\item{deviation.excused_cols}{Character list: excused columns for deviation switches}
+\item{deviation.excused_cols}{Character list: excused columns for deviation switches, one per \code{treat.level} in the same order; column i excuses deviations by people following \code{treat.level[[i]]}}
 
 \item{end_of_fup}{Logical: estimate an end-of-follow-up outcome - one measured at a single follow-up time rather than as a time-to-event - instead of fitting a survival outcome model, default is \code{FALSE}. The estimate is the weighted average of the outcome within each baseline treatment arm, weighted by the period-trial-specific weight at the time the outcome is taken. Incompatible with \code{km.curves} and \code{hazard}}
 
@@ -123,7 +123,7 @@ SEQopts(
 
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
-\item{excused.cols}{List: list of column names for treatment switch excuses - should be the same length, and ordered the same as \code{treat.level}}
+\item{excused.cols}{List: column names for treatment switch excuses, one per \code{treat.level} in the same order; column i excuses a switch away from \code{treat.level[[i]]} (e.g. \code{excusedZero = 1} excuses a switch from 0 to 1)}
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
@@ -159,7 +159,7 @@ SEQopts(
 
 \item{numerator}{String or character vector: numerator covariates to the right hand side of a formula object. A single string fits the same model in every treatment arm. A vector with one formula per \code{treat.level} (in \code{treat.level} order) fits a separate numerator model, with its own covariates, in each arm; this is only supported for post-expansion weights (\code{weight.preexpansion = FALSE})}
 
-\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}}
+\item{parallel}{Logical: define if the SEQuential process is run in parallel, default is \code{FALSE}. Only the bootstrap resamples run in parallel, so this has no effect unless \code{bootstrap = TRUE}; the previous \code{future} plan is restored on exit}
 
 \item{parglm.control}{A control object from \code{\link[parglm:parglm.control]{parglm::parglm.control()}} to pass to \code{parglm::parglm.fit()}. Only used when \code{glm.package = "parglm"}. Defaults to \code{parglm::parglm.control(method = "FAST")}. If you encounter a \verb{chol(): decomposition failed} error (e.g. with near-singular model matrices on large datasets), pass \code{parglm.control = parglm::parglm.control(method = "LAPACK")} to use the more numerically stable QR decomposition instead, or switch to using the fastglm backend.}
 
