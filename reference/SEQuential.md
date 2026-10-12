@@ -131,7 +131,7 @@ SEQuential(data, id.col = "ID",
 #> ITT model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 2.33 seconds :
+#> SEQuential process completed in 1.46 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas 
 #> Numerator covariates: NA 
@@ -227,7 +227,7 @@ SEQuential(data, id.col = "ID",
 #> censoring model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.47 seconds :
+#> SEQuential process completed in 1.08 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex 
 #> Numerator covariates: tx_init~sex 
