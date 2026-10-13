@@ -47,11 +47,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.5-pre/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/CausalInference/SEQTaRget/blob/v1.4.5/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.4.5" id="seqtarget-v145">SEQTaRget v1.4.5<a class="anchor" aria-label="anchor" href="#seqtarget-v145"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.4.5" id="seqtarget-v145">SEQTaRget v1.4.5<a class="anchor" aria-label="anchor" href="#seqtarget-v145"></a></h2><p class="text-muted">CRAN release: 2026-10-12</p>
 <ul><li>Drop the unused <code>doFuture</code> and <code>doRNG</code> dependencies.</li>
 <li>Give an informative error when a model term is undefined for some rows (e.g. <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log()</a></code> of a non-positive value), naming the term, instead of <code>NROW(y) == nrow(x) is not TRUE</code>. Such rows were silently dropped from the model matrix, despite <code>na.action = na.pass</code>, which <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> ignores.</li>
 <li>Fix the end-of-follow-up <code>Trial-periods (Eligible)</code> count including trial-periods that start too late to reach the window before the data end, which also inflated <code>Censored</code> and <code>% Censored</code>. Estimates are unchanged.</li>

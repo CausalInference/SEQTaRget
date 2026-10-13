@@ -2,6 +2,8 @@
 
 ## SEQTaRget v1.4.5
 
+CRAN release: 2026-10-12
+
 - Drop the unused `doFuture` and `doRNG` dependencies.
 - Give an informative error when a model term is undefined for some rows
   (e.g. [`log()`](https://rdrr.io/r/base/Log.html) of a non-positive
