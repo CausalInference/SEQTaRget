@@ -53,8 +53,8 @@ data.table::setDTthreads(2)
 | `risk.times` | Follow-up times (in follow-up units) at which to report risk difference and risk ratio when `km.curves = TRUE`; each is snapped to the latest follow-up at or before it and the final time is always included (`NA` reports only the final time) | Numeric vector | `c(36, 120)` |
 | `seed` | Starting seed for random number generators | Integer | `1636` |
 | `selection.first_trial` | Selects only the first eligible trial in the expanded dataset | Logical | `TRUE` |
-| `selection.prob` | Subsample of total IDs to select | Numeric double [0, 1] | `0.8` |
-| `selection.random` | Whether to randomly select IDs with replacement to run analysis | Logical | `FALSE` |
+| `selection.prob` | Proportion of the trials starting on the first level of `treat.level` to keep when `selection.random = TRUE` | Numeric double (0, 1] | `0.8` |
+| `selection.random` | Whether to randomly subsample, without replacement, the trials starting on the first level of `treat.level` (e.g. the untreated), keeping all other trials | Logical | `FALSE` |
 | `subgroup` | Column name for subgroup analysis | Character | `"sex"` |
 | `survival.max` | Maximum value for Risk/Survival curves | Numeric double | `60` |
 | `trial.include` | Whether to include `trial` and `trial_squared` in outcome models | Logical | `TRUE` |

@@ -180,9 +180,9 @@ SEQopts(
 
 \item{selection.first_trial}{Logical: selects only the first eligible trial in the expanded dataset, default \code{FALSE}}
 
-\item{selection.prob}{Numeric: percent of total IDs to select for \code{selection.random}, should be bound [0, 1], default is \code{0.8}}
+\item{selection.prob}{Numeric: proportion of the trials starting on the first treatment level in \code{treat.level} to keep when \code{selection.random = TRUE}, should be in (0, 1], default is \code{0.8}}
 
-\item{selection.random}{Logical: randomly selects IDs with replacement to run analysis, default \code{FALSE}}
+\item{selection.random}{Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when \code{selection.first_trial = TRUE}, default \code{FALSE}}
 
 \item{subgroup}{Character: Column name to stratify outcome models on}
 

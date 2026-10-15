@@ -51,8 +51,8 @@
 #' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included; because the follow-up grid is zero-indexed (\code{followup} runs \code{0:survival.max}), this final time is \code{survival.max + 1}, so e.g. \code{survival.max = 120} reports a row at 121. Default `NA` reports only the final follow-up time.
 #' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
-#' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
-#' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
+#' @param selection.prob Numeric: proportion of the trials starting on the first treatment level in \code{treat.level} to keep when \code{selection.random = TRUE}, should be in (0, 1\], default is `0.8`
+#' @param selection.random Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when \code{selection.first_trial = TRUE}, default `FALSE`
 #' @param subgroup Character: Column name to stratify outcome models on
 #' @param survival.max Numeric: maximum time for survival curves, default is `Inf` (no maximum)
 #' @param treat.level List: treatment levels to compare, default is `c(0, 1)`
