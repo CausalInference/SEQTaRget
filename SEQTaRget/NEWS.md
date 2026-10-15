@@ -1,5 +1,6 @@
 # SEQTaRget (development version)
 
+* Correct the documentation of `selection.random` and `selection.prob`. It said `selection.random` selects IDs with replacement; it keeps all trials except those starting on the first level of `treat.level` (e.g. the untreated), and keeps a proportion `selection.prob` of those, sampled without replacement.
 * Add `weight.stabilized` to `SEQopts()` (default `TRUE`). `weight.stabilized = FALSE` gives unstabilized treatment weights: no numerator models are fit, so the weights are cumulative products of `1 / denominator`. LTFU and visit weights keep their numerators.
 
 # SEQTaRget v1.4.5
