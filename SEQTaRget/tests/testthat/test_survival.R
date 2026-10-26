@@ -118,9 +118,9 @@ test_that("risk.times reports RD/RR at requested follow-up times plus the final 
 
 test_that("risk.times default reports only the final follow-up time", {
   data <- data.table::copy(SEQdata)
-  model <- SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
-                      list("N", "L", "P"), list("sex"),
-                      method = "ITT", options = SEQopts(km.curves = TRUE), verbose = FALSE)
+  model <- suppressWarnings(SEQuential(data, "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"),
+                                       method = "ITT", options = SEQopts(km.curves = TRUE), verbose = FALSE))
   rc <- risk_comparison(model)
   final <- max(model@survival.data[[1]]$followup)
   expect_equal(unique(rc$Followup), final)
