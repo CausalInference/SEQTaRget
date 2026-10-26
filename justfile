@@ -12,3 +12,5 @@ dev:
 readme:
     Rscript -e "rmarkdown::render('README.Rmd', output_options = list(html_preview = FALSE))"
     cp README.md ../README.md
+test:
+    Rscript -e "devtools::test()"
