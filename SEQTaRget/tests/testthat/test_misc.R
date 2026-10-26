@@ -489,3 +489,19 @@ test_that("Subgroup risks and hazard ratios are standardized over the subgroup's
                  unname(run(alone, hazard = TRUE, fixed = list())@hazard[[1]][1]))
   }
 })
+
+test_that("Stored outcome and weight models keep no per-row vectors", {
+  # fastglm stores n as a vector with one entry per row of the model's data;
+  # every model kept per bootstrap iteration made memory grow with the expanded
+  # data times bootstrap.nboot
+  model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+    list("N", "L", "P"), list("sex"), method = "censoring", verbose = FALSE,
+    options = SEQopts(weighted = TRUE, bootstrap = TRUE, bootstrap.nboot = 2)
+  ))
+  ws <- model@weight.statistics[[1]]
+  stored <- c(model@outcome.model[[1]],
+              unlist(lapply(ws, function(w) c(w$coef.numerator, w$coef.denominator)), recursive = FALSE))
+  expect_length(stored, 3 * 5)
+  longest <- max(vapply(stored, function(m) max(lengths(unclass(m))), numeric(1)))
+  expect_lt(longest, 100)
+})
