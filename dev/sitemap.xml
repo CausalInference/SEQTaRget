@@ -28,6 +28,7 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/bake_spline_knots_one.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/bootstrap_id_relabeler.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/cached_cols.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/check_design.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/check_separation.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/clean_fastglm.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/clean_models.html</loc></url>
@@ -39,12 +40,14 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/create.endoffup.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/create.risk.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/denominator.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/design_matrix.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/diagnostics.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/dot-coef_table.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/end_of_fup.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/endoffup.counts.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/endoffup.estimate.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/endoffup.measure.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/endoffup.periods.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/endoffup.summary.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/fit_glm.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/followup.table.html</loc></url>
@@ -77,5 +80,6 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/risk_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/select_cached_level.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/show-SEQoutput-method.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/subgroup_rows.html</loc></url>
 </urlset>
 

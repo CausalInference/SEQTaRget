@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.4.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,7 @@
 
 
 <dt id="arg-fixed-cols">fixed.cols<a class="anchor" aria-label="anchor" href="#arg-fixed-cols"></a></dt>
-<dd><p>List: column names for fixed columns</p></dd>
+<dd><p>List: column names for fixed columns. Numeric columns enter the models as a single term, so supply integer-coded categories (e.g. region 1-5) as factor or character columns</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
@@ -174,7 +174,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> ITT model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.48 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.72 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: NA </span>
@@ -191,7 +191,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> followup_sq  -0.000146912 6.466141e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> trial         0.044566166 1.124702e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> trial_sq      0.000578777 1.001866e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1          0.127172410 2.595630e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex           0.127172410 2.595630e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> N_bas         0.003290667 2.589182e-03</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> L_bas        -0.013392420 1.428081e-02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> P_bas         0.200724099 5.956440e-02</span>
@@ -270,7 +270,7 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> censoring model created successfully</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Completed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.26 seconds :</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEQuential process completed in 1.1 seconds :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Initialized with:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator covariates: tx_init~sex </span>
@@ -281,48 +281,48 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> Outcome Model ==================================================== </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients and Weighting:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate   Std. Error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  -4.9134317258 0.0925102561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tx_init_bas1  0.5051368699 0.0741355065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> followup      0.0281212245 0.0058811408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> followup_sq   0.0001084173 0.0001476455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> trial        -0.0132858466 0.0057384370</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> trial_sq      0.0011377569 0.0001049305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1          0.0660151461 0.0422912172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  -4.886835e+00 0.0914827580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tx_init_bas1  4.708351e-01 0.0756490527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup      2.865559e-02 0.0058887029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> followup_sq   9.890846e-05 0.0001479880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial        -1.262619e-02 0.0057462709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> trial_sq      1.118919e-03 0.0001050635</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex           7.314606e-02 0.0422165187</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Weight Information ============================================= </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment Lag = 0 Treatment = 0 Model ====================================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator ========================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std. Error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.63699131 0.06159802</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1         0.03738753 0.08644011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept -1.53840214 0.06211620</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex        0.03466459 0.08716895</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Denominator ========================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate  Std. Error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept) -1.332290880 0.247265065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N            0.009930812 0.008667517</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> L           -0.011516315 0.038851934</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P           -0.056782905 0.026287074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1         0.033299544 0.087312037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate  Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept -1.732410744 0.255183822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N          0.009190531 0.008734374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> L          0.015548158 0.039307426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P          0.011425970 0.027582514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex        0.040326891 0.088066188</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Treatment Lag = 1 Treatment = 1 Model ====================================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Numerator ========================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std. Error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  3.0276301 0.07259087</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1        -0.1467371 0.10125464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept  3.0276301 0.07259087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex       -0.1467371 0.10125464</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Denominator ========================== </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 Estimate Std. Error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  2.654431030 0.29534161</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N            0.001573135 0.01033761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> L            0.050900387 0.03934269</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P            0.046316350 0.03824053</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sex1        -0.136773596 0.10169194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Estimate Std. Error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Intercept  2.654431030 0.29534161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N          0.001573135 0.01033761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> L          0.050900387 0.03934269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P          0.046316350 0.03824053</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sex       -0.136773596 0.10169194</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Weights:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Min:  0.7359596 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Max:  1.823553 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> StDev:  0.06287385 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P01:  0.8731989 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P25:  0.984536 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P50:  0.9995707 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P75:  1.021913 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> P99:  1.257297 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Min:  0.7768227 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Max:  1.370254 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> StDev:  0.04145739 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P01:  0.8984725 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P25:  0.9867613 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P50:  0.9995014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P75:  1.016062 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> P99:  1.146783 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostic Tables ================================================== </span>
@@ -419,16 +419,16 @@ and per-protocol effects, and can adjust for potential selection bias induced by
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`$estimates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Type  Time      A Proportion Trial-periods (Eligible)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;char&gt; &lt;num&gt; &lt;fctr&gt;      &lt;num&gt;                    &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: binary    12      0 0.07570353                     2946</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2: binary    12      1 0.10247494                     6257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: binary    12      0 0.07570353                     2894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: binary    12      1 0.10247494                     6073</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Trial-periods (Analysed) Trial-periods (Censored)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;int&gt;                    &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                     2523                      423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                     4889                     1368</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                     2523                      371</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                     4889                     1184</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;int&gt;      &lt;num&gt;    &lt;int&gt;       &lt;num&gt;      &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                              0   14.35845      274 0.007991871 0.06003975</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                              0   21.86351      248 0.005724500 0.09125513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                              0   12.81963      274 0.007991871 0.06003975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                              0   19.49613      248 0.005724500 0.09125513</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       95% UCI</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1: 0.09136731</span>

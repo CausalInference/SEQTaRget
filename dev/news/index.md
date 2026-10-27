@@ -2,6 +2,100 @@
 
 ## SEQTaRget (development version)
 
+- Fix memory use growing with `bootstrap.nboot`. The outcome and weight
+  models kept from every bootstrap iteration each held a vector with one
+  entry per row of the data they were fitted on (fastglm’s `n`), so a
+  weighted analysis kept about 14 bytes per expanded row per bootstrap
+  iteration until the end of the run, and returned them in
+  `outcome.model` and `weight.statistics`. These vectors are now
+  dropped. Estimates are unchanged. (thanks
+  [@ekawabata](https://github.com/ekawabata) for reporting)
+- Correct the documentation of `selection.random` and `selection.prob`.
+  It said `selection.random` selects IDs with replacement; it keeps all
+  trials except those starting on the first level of `treat.level`
+  (e.g. the untreated), and keeps a proportion `selection.prob` of
+  those, sampled without replacement.
+- Add `weight.stabilized` to
+  [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
+  (default `TRUE`). `weight.stabilized = FALSE` gives unstabilized
+  treatment weights: no numerator models are fit, so the weights are
+  cumulative products of `1 / denominator`. LTFU and visit weights keep
+  their numerators.
+
+## SEQTaRget v1.4.5
+
+CRAN release: 2026-10-12
+
+- Drop the unused `doFuture` and `doRNG` dependencies.
+- Give an informative error when a model term is undefined for some rows
+  (e.g. [`log()`](https://rdrr.io/r/base/Log.html) of a non-positive
+  value), naming the term, instead of `NROW(y) == nrow(x) is not TRUE`.
+  Such rows were silently dropped from the model matrix, despite
+  `na.action = na.pass`, which
+  [`model.matrix()`](https://rdrr.io/r/stats/model.matrix.html) ignores.
+- Fix the end-of-follow-up `Trial-periods (Eligible)` count including
+  trial-periods that start too late to reach the window before the data
+  end, which also inflated `Censored` and `% Censored`. Estimates are
+  unchanged.
+- Fix `deviation.excused_cols` excusing deviations in every arm; column
+  i now excuses only deviations by people following `treat.level[[i]]`.
+  Deviation analyses are currently disabled, so no results change.
+- Fix the expansion reading `excused.cols` the opposite way to the
+  weight models. Column i now excuses a switch away from
+  `treat.level[[i]]` throughout (e.g. `excusedZero = 1` excuses a switch
+  from 0 to 1), which changes every `excused = TRUE` analysis.
+- Run the post-expansion excused-censoring coefficient test without
+  `weight.upper = 1` truncation.
+- Leave each subject’s first row out of the pre-expansion treatment
+  weight models. It has no previous treatment, so it was fitted under
+  the first level of `treat.level`, making estimates depend on that
+  order. This shifts pre-expansion weighted estimates, most for excused
+  censoring.
+- Fix subgroup risks, survival curves and hazard ratios being
+  standardized over the whole population rather than the subgroup; each
+  subgroup’s results now equal an analysis of that subgroup alone.
+  Results without `subgroup` are unchanged.
+- Fix subgroup bootstrap results being matched by position rather than
+  by name, which mixed up subgroups when a resample missed one. Such
+  resamples are now left out of that subgroup’s confidence intervals,
+  with a warning.
+- Fix the excused-censoring weights, which depended on the order of
+  `treat.level` and, for post-expansion weights, were wrong by default
+  (only the first arm was converted to the probability of remaining
+  uncensored).
+- [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  now restores the caller’s `future` plan on exit, including on error,
+  rather than resetting it to `"sequential"`, and no longer registers a
+  global `foreach` backend.
+- Fix
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  converting a `data.frame` passed as `data` into a `data.table` in the
+  caller’s environment.
+- Fix
+  [`SEQuential()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQuential.md)
+  printing “Creating Survival Curves for 1” (or for each subgroup) with
+  `verbose = FALSE` when `km.curves = TRUE`.
+- Fix the expansion failing on column names containing `"_bas"` or
+  `"_sq"` other than at the end (e.g. `bmi_baseline`); the indicators
+  are now matched only as a suffix.
+- Fix the multinomial treatment model (`multinomial = TRUE`), which was
+  fit one-vs-rest but predicted with a softmax, biasing the weights; it
+  is now fit as baseline-category logits. This changes weighted
+  multinomial analyses with three or more treatment values.
+- Fix the treatment weights being inverted when `treat.level` is not
+  `c(0, 1)` or when `multinomial = TRUE`. Binary analyses with the
+  default `treat.level` are unchanged.
+- Fix transformed terms such as `log(x)` being replaced by the raw
+  variable in the weight models and some outcome predictions; only
+  formulas of bare variable names now take the fast model-matrix path.
+- Fix the default outcome model dropping every fixed covariate, not just
+  the subgroup variable, when `subgroup` is set. This changes subgroup
+  estimates that use the default outcome model.
+- Stop converting numeric `fixed.cols` to factors, so continuous
+  covariates such as age enter the models as a single term (a 0/1
+  covariate’s coefficient is now named e.g. `sex` rather than `sex1`).
+  **Integer-coded categorical fixed covariates (e.g. region coded 1-5)
+  must now be supplied as factor or character columns.**
 - Validate in
   [`SEQopts()`](https://causalinference.github.io/SEQTaRget/dev/reference/SEQopts.md)
   that `covariates`, `cense.numerator`, `cense.denominator`,

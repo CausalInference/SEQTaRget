@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.4.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -276,7 +276,9 @@ manipulations</td>
 </tr>
 <tr class="odd">
 <td><code>parallel</code></td>
-<td>Whether the SEQuential process should be run in parallel</td>
+<td>Whether the bootstrap resamples should be run in parallel (no effect
+unless <code>bootstrap = TRUE</code>); the previous <code>future</code>
+plan is restored on exit</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
@@ -303,13 +305,18 @@ always included (<code>NA</code> reports only the final time)</td>
 </tr>
 <tr class="odd">
 <td><code>selection.prob</code></td>
-<td>Subsample of total IDs to select</td>
-<td>Numeric double [0, 1]</td>
+<td>Proportion of the trials starting on the first level of
+<code>treat.level</code> to keep when
+<code>selection.random = TRUE</code>
+</td>
+<td>Numeric double (0, 1]</td>
 <td><code>0.8</code></td>
 </tr>
 <tr class="even">
 <td><code>selection.random</code></td>
-<td>Whether to randomly select IDs with replacement to run analysis</td>
+<td>Whether to randomly subsample, without replacement, the trials
+starting on the first level of <code>treat.level</code> (e.g. the
+untreated), keeping all other trials</td>
 <td>Logical</td>
 <td><code>FALSE</code></td>
 </tr>
@@ -450,13 +457,20 @@ are eligible for weight models</td>
 <td><code>TRUE</code></td>
 </tr>
 <tr class="even">
+<td><code>weight.stabilized</code></td>
+<td>Use stabilized IP weights; <code>FALSE</code> fits no numerator
+models, giving unstabilized treatment weights</td>
+<td>Logical</td>
+<td><code>TRUE</code></td>
+</tr>
+<tr class="odd">
 <td><code>weight.spline</code></td>
 <td>Whether the default weight models should model time with a natural
 cubic spline rather than a quadratic</td>
 <td>Logical</td>
 <td><code>TRUE</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>weight.spline.df</code></td>
 <td>Degrees of freedom passed to <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> when
 <code>weight.spline = TRUE</code>
@@ -464,13 +478,13 @@ cubic spline rather than a quadratic</td>
 <td>Integer</td>
 <td><code>4L</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>weight.upper</code></td>
 <td>Upper truncation for weight values</td>
 <td>Numeric double</td>
 <td><code>10.0</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>weighted</code></td>
 <td>Whether the analysis should be weighted</td>
 <td>Logical</td>

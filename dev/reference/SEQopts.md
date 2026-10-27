@@ -73,6 +73,7 @@ SEQopts(
   weight.preexpansion = TRUE,
   weight.spline = FALSE,
   weight.spline.df = 4L,
+  weight.stabilized = TRUE,
   weight.upper = Inf,
   weighted = FALSE
 )
@@ -167,7 +168,9 @@ SEQopts(
 
 - deviation.excused_cols:
 
-  Character list: excused columns for deviation switches
+  Character list: excused columns for deviation switches, one per
+  `treat.level` in the same order; column i excuses deviations by people
+  following `treat.level[[i]]`
 
 - end_of_fup:
 
@@ -207,8 +210,10 @@ SEQopts(
 
 - excused.cols:
 
-  List: list of column names for treatment switch excuses - should be
-  the same length, and ordered the same as `treat.level`
+  List: column names for treatment switch excuses, one per `treat.level`
+  in the same order; column i excuses a switch away from
+  `treat.level[[i]]` (e.g. `excusedZero = 1` excuses a switch from 0 to
+  1)
 
 - expand.only:
 
@@ -324,7 +329,9 @@ SEQopts(
 - parallel:
 
   Logical: define if the SEQuential process is run in parallel, default
-  is `FALSE`
+  is `FALSE`. Only the bootstrap resamples run in parallel, so this has
+  no effect unless `bootstrap = TRUE`; the previous `future` plan is
+  restored on exit
 
 - parglm.control:
 
@@ -388,13 +395,17 @@ SEQopts(
 
 - selection.prob:
 
-  Numeric: percent of total IDs to select for `selection.random`, should
-  be bound \[0, 1\], default is `0.8`
+  Numeric: proportion of the trials starting on the first treatment
+  level in `treat.level` to keep when `selection.random = TRUE`, should
+  be in (0, 1\], default is `0.8`
 
 - selection.random:
 
-  Logical: randomly selects IDs with replacement to run analysis,
-  default `FALSE`
+  Logical: randomly subsample the trials starting on the first treatment
+  level in `treat.level` (e.g. the untreated), keeping a proportion
+  `selection.prob` of them, sampled without replacement, and all other
+  trials. The sampled trials are not reweighted. Ignored when
+  `selection.first_trial = TRUE`, default `FALSE`
 
 - subgroup:
 
@@ -486,6 +497,13 @@ SEQopts(
   knots at quantiles of the term. Must be `>= 1`; `df = 1` is equivalent
   to a linear term and is generally not what you want. Default is `4` (3
   interior knots)
+
+- weight.stabilized:
+
+  Logical: use stabilized IP weights, default is `TRUE`. `FALSE` fits no
+  numerator models, so the treatment weights are cumulative products of
+  `1 / denominator` and any `numerator` is ignored; LTFU and visit
+  weights keep their numerators
 
 - weight.upper:
 

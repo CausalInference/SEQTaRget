@@ -78,13 +78,13 @@ risk_data(model)
 #> Index: <Followup>
 #>       Method Followup      A      Risk
 #>       <char>    <num> <char>     <num>
-#> 1: censoring       60      0 0.6596589
-#> 2: censoring       60      1 0.9243520
+#> 1: censoring       60      0 0.6723717
+#> 2: censoring       60      1 0.9243324
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio Risk Difference
 #>       <num> <fctr> <fctr>      <num>           <num>
-#> 1:       60 risk_0 risk_1  1.4012576       0.2646931
-#> 2:       60 risk_1 risk_0  0.7136447      -0.2646931
+#> 1:       60 risk_0 risk_1  1.3747342       0.2519607
+#> 2:       60 risk_1 risk_0  0.7274133      -0.2519607
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, no excused conditions (i.e. static interventions)
@@ -168,8 +168,8 @@ options <- SEQopts(km.curves = TRUE,
                    weight.preexpansion = TRUE,
                    # tells SEQuential to run a dynamic intervention
                    excused = TRUE,                               
-                   # tells SEQuential to use columns excusedOne and 
-                   # excusedZero as excused conditions for treatment switches
+                   # excusedZero excuses switches from treatment 0 to 1,
+                   # excusedOne switches from 1 to 0
                    excused.cols = c("excusedZero", "excusedOne"), 
                    # tells SEQuential to expect treatment levels 0, 1
                    # (mapping to the same positions as the list in excused.cols)
@@ -196,13 +196,13 @@ model <- SEQuential(data,
 #> 
 #> Expanded dataset (pre-censoring): 248,485 observations, 18 variables
 #> 
-#> Expanded dataset (post-censoring): 185,423 observations, 18 variables
-#>   entering outcome model (uncensored): 183,315
-#>   artificially censored (treatment switch): 2,108
+#> Expanded dataset (post-censoring): 188,475 observations, 18 variables
+#>   entering outcome model (uncensored): 186,259
+#>   artificially censored (treatment switch): 2,216
 #> 
 #> Expansion Successful
 #> 
-#> Final analysis dataset: 185,423 observations, 18 variables
+#> Final analysis dataset: 188,475 observations, 18 variables
 #> 
 #> Moving forward with censoring analysis
 #> 
@@ -224,13 +224,13 @@ risk_data(model)
 #> Index: <Followup>
 #>       Method Followup      A      Risk
 #>       <char>    <num> <char>     <num>
-#> 1: censoring       60      0 0.9647942
-#> 2: censoring       60      1 0.9627635
+#> 1: censoring       60      0 0.8730463
+#> 2: censoring       60      1 0.8855556
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio Risk Difference
 #>       <num> <fctr> <fctr>      <num>           <num>
-#> 1:       60 risk_0 risk_1  0.9978953    -0.002030621
-#> 2:       60 risk_1 risk_0  1.0021092     0.002030621
+#> 1:       60 risk_0 risk_1  1.0143283      0.01250924
+#> 2:       60 risk_1 risk_0  0.9858741     -0.01250924
 ```
 
 ## Per-protocol, censoring, a flexible baseline hazard in the weight models
@@ -410,13 +410,13 @@ model <- SEQuential(data,
 #> 
 #> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
 #> 
-#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
-#>   entering outcome model (uncensored): 183,315
-#>   artificially censored (treatment switch): 2,108
+#> Expanded dataset (post-censoring): 188,475 observations, 21 variables
+#>   entering outcome model (uncensored): 186,259
+#>   artificially censored (treatment switch): 2,216
 #> 
 #> Expansion Successful
 #> 
-#> Final analysis dataset: 185,423 observations, 21 variables
+#> Final analysis dataset: 188,475 observations, 21 variables
 #> 
 #> Moving forward with censoring analysis
 #> 
@@ -438,13 +438,13 @@ risk_data(model)
 #> Index: <Followup>
 #>       Method Followup      A      Risk
 #>       <char>    <num> <char>     <num>
-#> 1: censoring       60      0 0.6371076
-#> 2: censoring       60      1 0.9909442
+#> 1: censoring       60      0 0.8454007
+#> 2: censoring       60      1 0.8691113
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio Risk Difference
 #>       <num> <fctr> <fctr>      <num>           <num>
-#> 1:       60 risk_0 risk_1  1.5553797       0.3538366
-#> 2:       60 risk_1 risk_0  0.6429298      -0.3538366
+#> 1:       60 risk_0 risk_1  1.0280466      0.02371061
+#> 2:       60 risk_1 risk_0  0.9727186     -0.02371061
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and a competing event
@@ -486,13 +486,13 @@ model <- SEQuential(data,
 #> 
 #> Expanded dataset (pre-censoring): 1,119,229 observations, 22 variables
 #> 
-#> Expanded dataset (post-censoring): 810,880 observations, 22 variables
-#>   entering outcome model (uncensored): 803,021
-#>   artificially censored (treatment switch): 7,859
+#> Expanded dataset (post-censoring): 814,689 observations, 22 variables
+#>   entering outcome model (uncensored): 806,922
+#>   artificially censored (treatment switch): 7,767
 #> 
 #> Expansion Successful
 #> 
-#> Final analysis dataset: 810,880 observations, 22 variables
+#> Final analysis dataset: 814,689 observations, 22 variables
 #> 
 #> Moving forward with censoring analysis
 #> 
@@ -514,13 +514,13 @@ risk_data(model)
 #> Index: <Followup>
 #>       Method Followup      A       Risk
 #>       <char>    <num> <char>      <num>
-#> 1: censoring       60      0 0.02542994
-#> 2: censoring       60      1 0.01646542
+#> 1: censoring       60      0 0.01707101
+#> 2: censoring       60      1 0.02094034
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio Risk Difference
 #>       <num> <fctr> <fctr>      <num>           <num>
-#> 1:       60  inc_0  inc_1  0.6474815    -0.008964524
-#> 2:       60  inc_1  inc_0  1.5444456     0.008964524
+#> 1:       60  inc_0  inc_1  1.2266611     0.003869334
+#> 2:       60  inc_1  inc_0  0.8152211    -0.003869334
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio
@@ -557,18 +557,18 @@ model <- SEQuential(data,
 #> 
 #> Expanded dataset (pre-censoring): 248,485 observations, 21 variables
 #> 
-#> Expanded dataset (post-censoring): 185,423 observations, 21 variables
-#>   entering outcome model (uncensored): 183,315
-#>   artificially censored (treatment switch): 2,108
+#> Expanded dataset (post-censoring): 188,475 observations, 21 variables
+#>   entering outcome model (uncensored): 186,259
+#>   artificially censored (treatment switch): 2,216
 #> 
 #> Expansion Successful
 #> 
-#> Final analysis dataset: 185,423 observations, 21 variables
+#> Final analysis dataset: 188,475 observations, 21 variables
 #> 
 #> Moving forward with censoring analysis
 #> 
 #> Completed
 hazard_ratio(model)
 #> Hazard ratio          LCI          UCI 
-#>     3.009221           NA           NA
+#>     1.170182           NA           NA
 ```

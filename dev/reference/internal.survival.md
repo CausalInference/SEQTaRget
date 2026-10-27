@@ -5,5 +5,5 @@ Internal function for creating survival curves
 ## Usage
 
 ``` r
-internal.survival(params, outcome)
+internal.survival(params, outcome, label = NA)
 ```
