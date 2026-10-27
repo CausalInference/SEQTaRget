@@ -1,3 +1,9 @@
+# SEQTaRget (development version)
+
+* Fix memory use growing with `bootstrap.nboot`. The outcome and weight models kept from every bootstrap iteration each held a vector with one entry per row of the data they were fitted on (fastglm's `n`), so a weighted analysis kept about 14 bytes per expanded row per bootstrap iteration until the end of the run, and returned them in `outcome.model` and `weight.statistics`. These vectors are now dropped. Estimates are unchanged. (thanks @ekawabata for reporting)
+* Correct the documentation of `selection.random` and `selection.prob`. It said `selection.random` selects IDs with replacement; it keeps all trials except those starting on the first level of `treat.level` (e.g. the untreated), and keeps a proportion `selection.prob` of those, sampled without replacement.
+* Add `weight.stabilized` to `SEQopts()` (default `TRUE`). `weight.stabilized = FALSE` gives unstabilized treatment weights: no numerator models are fit, so the weights are cumulative products of `1 / denominator`. LTFU and visit weights keep their numerators.
+
 # SEQTaRget v1.4.5
 
 * Drop the unused `doFuture` and `doRNG` dependencies.

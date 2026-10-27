@@ -51,8 +51,8 @@
 #' @param risk.times Numeric vector: follow-up times (in the data's follow-up units) at which to report risk difference and risk ratio when \code{km.curves = TRUE}. Each requested time is snapped to the latest available follow-up at or before it. The final follow-up time is always included; because the follow-up grid is zero-indexed (\code{followup} runs \code{0:survival.max}), this final time is \code{survival.max + 1}, so e.g. \code{survival.max = 120} reports a row at 121. Default `NA` reports only the final follow-up time.
 #' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
-#' @param selection.prob Numeric: percent of total IDs to select for \code{selection.random}, should be bound \[0, 1\], default is `0.8`
-#' @param selection.random Logical: randomly selects IDs with replacement to run analysis, default `FALSE`
+#' @param selection.prob Numeric: proportion of the trials starting on the first treatment level in \code{treat.level} to keep when \code{selection.random = TRUE}, should be in (0, 1\], default is `0.8`
+#' @param selection.random Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when \code{selection.first_trial = TRUE}, default `FALSE`
 #' @param subgroup Character: Column name to stratify outcome models on
 #' @param survival.max Numeric: maximum time for survival curves, default is `Inf` (no maximum)
 #' @param treat.level List: treatment levels to compare, default is `c(0, 1)`
@@ -65,6 +65,7 @@
 #' @param weight.lag_condition Logical: whether weights should be conditioned on treatment lag value, default `TRUE`
 #' @param weight.p99 Logical: forces weight truncation at 1st and 99th percentile weights, will override provided \code{weight.upper} and \code{weight.lower}. The percentiles are taken from the untruncated weight distribution (as reported in \code{weight.statistics}), and as with \code{weight.lower}/\code{weight.upper} the truncation affects only the weights used to fit the outcome model.
 #' @param weight.preexpansion Logical: whether weighting should be done on pre-expanded data, default `TRUE`
+#' @param weight.stabilized Logical: use stabilized IP weights, default is `TRUE`. `FALSE` fits no numerator models, so the treatment weights are cumulative products of `1 / denominator` and any `numerator` is ignored; LTFU and visit weights keep their numerators
 #' @param weight.spline Logical: model time in the default weight models with a natural cubic spline (`splines::ns()`) instead of a quadratic, default is `FALSE`. This makes the baseline hazard of treatment (and of censoring, for the `cense` and `visit` models) a flexible function of time rather than one that can only rise or flatten off. The terms replaced are `trial`/`trial_sq` and `followup`/`followup_sq` when `weight.preexpansion = FALSE`, and the time column and its square when `weight.preexpansion = TRUE`. Ignored for weight models whose formula is supplied through \code{numerator}, \code{denominator}, \code{cense.numerator}, \code{cense.denominator}, \code{visit.numerator} or \code{visit.denominator} - write `ns()` terms into those formulas directly for finer control (e.g. a spline in `followup` only). Knots of any `ns(x, df = N)` term are fixed from the full data before fitting, so the basis is the same at fit and prediction time and across bootstrap resamples
 #' @param weight.spline.df Integer: degrees of freedom passed to `splines::ns()` when `weight.spline = TRUE`. With `df = k`, `ns()` places `k - 1` interior knots at quantiles of the term. Must be `>= 1`; `df = 1` is equivalent to a linear term and is generally not what you want. Default is `4` (3 interior knots)
 #' @param weight.upper Numeric: weights truncated at upper end at this weight, default is `Inf`. As with \code{weight.lower}, truncation affects only the weights used to fit the outcome model, not those reported in \code{weight.statistics} or the returned data.
@@ -90,7 +91,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     visit = NA, visit.denominator = NA, visit.numerator = NA,
                     weight.eligible_cols = c(),
                     weight.lower = 0, weight.lag_condition = TRUE, weight.p99 = FALSE, weight.preexpansion = TRUE,
-                    weight.spline = FALSE, weight.spline.df = 4L, weight.upper = Inf, weighted = FALSE) {
+                    weight.spline = FALSE, weight.spline.df = 4L, weight.stabilized = TRUE, weight.upper = Inf, weighted = FALSE) {
   # Standardization =============================================================
   parallel <- as.logical(parallel)
   nthreads <- as.integer(nthreads)
@@ -151,6 +152,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
   weighted <- as.logical(weighted)
   weight.preexpansion <- as.logical(weight.preexpansion)
+  weight.stabilized <- as.logical(weight.stabilized)
   weight.spline <- as.logical(weight.spline)
   weight.spline.df <- as.integer(weight.spline.df)
   if (length(weight.spline.df) != 1L || is.na(weight.spline.df) || weight.spline.df < 1L)
@@ -263,6 +265,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       weight.upper = weight.upper,
       weight.p99 = weight.p99,
       weight.preexpansion = weight.preexpansion,
+      weight.stabilized = weight.stabilized,
       weight.spline = weight.spline,
       weight.spline.df = weight.spline.df,
       excused = excused,

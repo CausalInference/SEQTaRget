@@ -258,6 +258,7 @@ clean_fastglm <- function(model) {
     m$weights <- NULL
     m$prior.weights <- NULL
     m$qr <- NULL
+    m$n <- NULL
     m
   }
   if (!is.null(model$models)) {
