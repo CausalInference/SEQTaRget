@@ -549,3 +549,35 @@ test_that("selection.random hazard ratios run with selection weights", {
                                        options = SEQopts(hazard = TRUE, selection.random = TRUE, selection.prob = 0.5, seed = 1)))
   expect_true(is.finite(hazard_ratio(model)[["Hazard ratio"]]))
 })
+
+test_that("Percentile CIs are rescaled for bootstrap.sample < 1, ratios on the log scale", {
+  # bootstrap.sample = 0.25 shrinks each draw's distance from the estimate by
+  # sqrt(0.25) = 0.5; with an affine map the percentiles shrink the same way
+  params <- parameter.setter(data.table(), data.table(), "ID", "time", "eligible", "outcome", "treatment",
+                             list(), list(), "ITT",
+                             SEQopts(bootstrap = TRUE, bootstrap.sample = 0.25, bootstrap.CI_method = "percentile",
+                                     end_of_fup = TRUE, end_of_fup.time = 5), FALSE)
+  shrink <- function(q, est) est + 0.5 * (q - est)
+  set.seed(1)
+  r0 <- runif(200, 0.2, 0.4)
+  r1 <- runif(200, 0.3, 0.6)
+  probs <- c(0.025, 0.975)
+
+  # Risk difference and ratio from create.risk()
+  data <- data.table(followup = 10, variable = c("risk_0", "risk_1"), value = c(0.3, 0.45), LCI = 0, UCI = 1)
+  boot <- data.table(variable = rep(c("risk_0", "risk_1"), each = 200), boot_idx = rep(1:200, 2),
+                     followup = 10, value = c(r0, r1))
+  rc <- SEQTaRget:::create.risk(data, params, boot)$risk.comparison[A_x == "risk_0"]
+  expect_equal(c(rc$`RD 95% LCI`, rc$`RD 95% UCI`), unname(shrink(quantile(r1 - r0, probs), 0.15)))
+  expect_equal(c(rc$`RR 95% LCI`, rc$`RR 95% UCI`), unname(exp(shrink(quantile(log(r1 / r0), probs), log(1.5)))))
+
+  # Per-arm estimates, difference and ratio from create.endoffup()
+  full <- data.table(treatment_bas = c(0, 1), estimate = c(0.3, 0.45))
+  boots <- lapply(1:200, function(i) data.table(treatment_bas = c(0, 1), estimate = c(r0[i], r1[i])))
+  eof <- SEQTaRget:::create.endoffup(full, boots, params)
+  est <- eof$eof.data
+  expect_equal(c(est$`95% LCI`[est$A == 0], est$`95% UCI`[est$A == 0]), unname(shrink(quantile(r0, probs), 0.3)))
+  cmp <- eof$eof.comparison[A_x == 0]
+  expect_equal(c(cmp$`Difference 95% LCI`, cmp$`Difference 95% UCI`), unname(shrink(quantile(r1 - r0, probs), 0.15)))
+  expect_equal(c(cmp$`Ratio 95% LCI`, cmp$`Ratio 95% UCI`), unname(exp(shrink(quantile(log(r1 / r0), probs), log(1.5)))))
+})
