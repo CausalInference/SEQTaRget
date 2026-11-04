@@ -165,16 +165,15 @@ create.endoffup <- function(full, boots, params) {
         r <- wide[[v2]] / wide[[v1]]
         log_r <- log(r[is.finite(r) & r > 0])
         if (is.finite(log(pairs$ratio[i]))) log_r <- rescale_boot(log_r, log(pairs$ratio[i]), params)
-        r_valid <- exp(log_r)
-        r_logse <- if (length(r_valid) > 1L) sd(log_r, na.rm = TRUE) else NA_real_
+        r_logse <- if (length(log_r) > 1L) sd(log_r, na.rm = TRUE) else NA_real_
         if (use_se) {
           list(d_se, pairs$diff_[i] - z * d_se, pairs$diff_[i] + z * d_se,
                r_logse, exp(log(pairs$ratio[i]) - z * r_logse), exp(log(pairs$ratio[i]) + z * r_logse))
         } else {
           list(d_se, quantile(d, alpha, na.rm = TRUE), quantile(d, 1 - alpha, na.rm = TRUE),
                r_logse,
-               if (length(r_valid) > 1L) quantile(r_valid, alpha, na.rm = TRUE) else NA_real_,
-               if (length(r_valid) > 1L) quantile(r_valid, 1 - alpha, na.rm = TRUE) else NA_real_)
+               if (length(log_r) > 1L) exp(quantile(log_r, alpha, na.rm = TRUE)) else NA_real_,
+               if (length(log_r) > 1L) exp(quantile(log_r, 1 - alpha, na.rm = TRUE)) else NA_real_)
         }
       })
       pull <- function(j) vapply(stat, function(x) as.numeric(x[[j]]), numeric(1))
