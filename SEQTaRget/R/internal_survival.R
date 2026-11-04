@@ -34,6 +34,10 @@ internal.survival <- function(params, outcome, label = NA) {
       pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", dose_sq_col)]
       base_DT <- DT[, pred_cols, with = FALSE]
       n_base <- nrow(base_DT)
+      # Standardize over the trials before selection.random: weight the kept
+      # trials by the inverse of their selection probability (NULL: unweighted)
+      sel_w <- selection_weight(base_DT[[tx_bas]], params)
+      wmean <- if (is.null(sel_w)) function(x, w) mean(x) else function(x, w) sum(x * w) / sum(w)
 
       out_list <- vector("list", length(params@treat.level))
       for (i in seq_along(params@treat.level)) {
@@ -48,6 +52,8 @@ internal.survival <- function(params, outcome, label = NA) {
         pred_all <- base_DT[rep(seq_len(n_base), each = n_fup)]
         pred_all[, `:=`(followup = rep(fup_seq, times = n_base),
                         row_id = rep(seq_len(n_base), each = n_fup))]
+        # In j below, `sel_w` is this column when weighted, else the NULL local
+        if (!is.null(sel_w)) pred_all[, sel_w := rep(sel_w, each = n_fup)]
         pred_all[, (fup_sq_col) := as.numeric(followup^2)]
         pred_all[, (tx_bas) := as.character(params@treat.level[[i]])]
 
@@ -64,10 +70,10 @@ internal.survival <- function(params, outcome, label = NA) {
           pred_all[, p_ce := inline.pred(ce.model, newdata = pred_all, params, case = "surv", cache = cache)]
           pred_all[, ce_accum := cumprod((1 - p_surv) * (1 - p_ce)), by = row_id]
           pred_all[, inc_accum := cumsum(p_surv * (1 - p_ce) * ce_accum), by = row_id]
-          result_dt <- pred_all[, list(surv_mean = mean(surv_accum), inc_mean = mean(inc_accum)), by = followup]
+          result_dt <- pred_all[, list(surv_mean = wmean(surv_accum, sel_w), inc_mean = wmean(inc_accum, sel_w)), by = followup]
           setnames(result_dt, c("surv_mean", "inc_mean"), c(surv, inc))
         } else {
-          result_dt <- pred_all[, list(surv_mean = mean(surv_accum)), by = followup]
+          result_dt <- pred_all[, list(surv_mean = wmean(surv_accum, sel_w)), by = followup]
           setnames(result_dt, "surv_mean", surv)
         }
         pred_all[, c("p_surv", "surv_accum") := NULL]  # Free intermediate columns before rm

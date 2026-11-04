@@ -522,3 +522,30 @@ test_that("rescale_boot() corrects the spread of an m-out-of-n bootstrap to the 
   # No-op for the standard bootstrap
   expect_identical(SEQTaRget:::rescale_boot(draws, mean(x), SEQopts(bootstrap.sample = 1)), draws)
 })
+
+test_that("selection.random standardizes the risks over all trials, not just the kept ones", {
+  skip_on_cran()
+  risk1 <- function(...) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                         options = SEQopts(km.curves = TRUE, ...)))
+    r <- risk_data(model)
+    r$Risk[r$A == "1"]
+  }
+  full <- risk1()
+  # Arm 1 keeps all its trials, so its risk varies little across selections
+  # (SD ~0.0015); unweighted standardization shifted it by ~0.011
+  selected <- mean(vapply(1:5, function(s) risk1(selection.random = TRUE, selection.prob = 0.3, seed = s), numeric(1)))
+  expect_lt(abs(selected - full), 0.004)
+
+  expect_null(SEQTaRget:::selection_weight(c(0, 1), parameter.setter(data.table(), data.table(), "ID", "time", "eligible",
+    "outcome", "treatment", list(), list(), "ITT", SEQopts(), FALSE)))
+})
+
+test_that("selection.random hazard ratios run with selection weights", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                       options = SEQopts(hazard = TRUE, selection.random = TRUE, selection.prob = 0.5, seed = 1)))
+  expect_true(is.finite(hazard_ratio(model)[["Hazard ratio"]]))
+})

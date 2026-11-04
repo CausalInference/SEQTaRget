@@ -370,6 +370,24 @@ clean_models <- function(out, params) {
   out
 }
 
+#' Inverse-probability weights for the trials kept by \code{selection.random}
+#'
+#' \code{selection.random} keeps a proportion \code{selection.prob} of the
+#' trials starting on the first level of \code{treat.level} and all other
+#' trials. Selection depends only on baseline treatment, which the outcome model
+#' conditions on, so the model needs no correction, but standardizing over the
+#' kept trials under-represents the first arm's covariate distribution. Each kept
+#' trial of that arm stands for \code{1 / selection.prob} trials.
+#'
+#' @param tx baseline treatment of each trial
+#' @param params SEQparams object
+#' @returns numeric weights, or \code{NULL} when no selection was made
+#' @keywords internal
+selection_weight <- function(tx, params) {
+  if (!params@selection.random || params@selection.first_trial) return(NULL)
+  fifelse(as.character(tx) == as.character(params@treat.level[[1]]), 1 / params@selection.prob, 1)
+}
+
 #' Rows of an expanded table belonging to one subgroup
 #'
 #' Matches the \code{<subgroup>_<value>} labels from \code{internal.model()}; returns \code{DT} when no subgroup is set.

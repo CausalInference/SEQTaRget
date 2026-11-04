@@ -20,8 +20,13 @@ internal.hazard <- function(model, params, cache, label = NA) {
   }
   
   handler <- function(data, params, model, cache) {
-    trials <- data[, kept, with = FALSE
-                   ][, .SD[1], by = c(params@id, "trial")
+    trials <- data[, kept, with = FALSE]
+    # Weight trials kept by selection.random by the inverse of their selection
+    # probability, taken from the observed baseline treatment before each trial
+    # is copied into every arm below
+    sel_w <- selection_weight(data[[tx_bas]], params)
+    if (!is.null(sel_w)) trials[, sel_w := sel_w]
+    trials <- trials[, .SD[1], by = c(params@id, "trial")
                      ][rep(seq_len(.N), each = params@followup.max + 1)
                        ][, "followup" := seq_len(.N) - 1L, by = c(params@id, "trial")
                          ][, paste0("followup", params@indicator.squared) := get("followup")^2]
@@ -71,7 +76,8 @@ internal.hazard <- function(model, params, cache, label = NA) {
       y <- Surv(as.double(hr.data[["fgstart"]]), as.double(hr.data[["fgstop"]]),
                 hr.data[["fgstatus"]])
       hr.res <- agreg.fit(x, y, strata = NULL, offset = NULL, init = 0,
-                          control = coxph.control(), weights = hr.data[["fgwt"]],
+                          control = coxph.control(),
+                          weights = if (is.null(sel_w)) hr.data[["fgwt"]] else hr.data[["fgwt"]] * hr.data[["sel_w"]],
                           method = "efron", rownames = NULL)
     } else {
       # Univariate Cox: build the one-column design matrix and call the C fitter
@@ -80,7 +86,7 @@ internal.hazard <- function(model, params, cache, label = NA) {
       x <- matrix(as.double(data[[tx_bas]]), ncol = 1L, dimnames = list(NULL, tx_bas))
       y <- Surv(as.double(data[["followup"]]), data[["event"]] == 1)
       hr.res <- coxph.fit(x, y, strata = NULL, offset = NULL, init = 0,
-                          control = coxph.control(), weights = NULL,
+                          control = coxph.control(), weights = if (is.null(sel_w)) NULL else data[["sel_w"]],
                           method = "efron", rownames = NULL)
     }
     hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring

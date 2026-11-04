@@ -182,7 +182,7 @@ SEQopts(
 
 \item{selection.prob}{Numeric: proportion of the trials starting on the first treatment level in \code{treat.level} to keep when \code{selection.random = TRUE}, should be in (0, 1], default is \code{0.8}}
 
-\item{selection.random}{Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when \code{selection.first_trial = TRUE}, default \code{FALSE}}
+\item{selection.random}{Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. This reduces computation. The models are fit on the kept trials unweighted - selection depends only on baseline treatment, which the outcome model conditions on - while the risks and hazard ratios are standardized with the kept trials of the first level weighted by \code{1 / selection.prob}, so they refer to all trials. Selection is made once, from \code{seed}; bootstrap confidence intervals, which resample subjects from the kept trials, include the variability it adds. Ignored when \code{selection.first_trial = TRUE}, default \code{FALSE}}
 
 \item{subgroup}{Character: Column name to stratify outcome models on}
 
