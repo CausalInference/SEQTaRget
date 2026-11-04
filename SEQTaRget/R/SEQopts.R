@@ -4,7 +4,7 @@
 #' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is `0.95` (95% CI)
 #' @param bootstrap.CI_method Character: selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`), default is `"se"`
 #' @param bootstrap.nboot Integer: number of bootstraps, default is `100`
-#' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should be in \[0, 1\], default is `0.8`
+#' @param bootstrap.sample Numeric: proportion of subjects drawn (with replacement) in each bootstrap resample, should be in (0, 1\], default is `0.8`. Values below `1` give an m-out-of-n bootstrap, which is faster on large data; the bootstrap estimates are rescaled by `sqrt(bootstrap.sample)` around the full-data estimate so that standard errors and confidence intervals refer to the full sample size
 #' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
 #' @param cense.denominator String: censoring denominator covariates to the right hand side of a formula object
 #' @param cense.eligible String: column name for indicator column defining which rows to use for censoring model

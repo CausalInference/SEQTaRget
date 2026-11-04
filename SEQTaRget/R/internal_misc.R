@@ -23,6 +23,27 @@ resolve_risk_times <- function(grid, risk.times) {
   sort(unique(c(snapped, final)))
 }
 
+#' Rescale bootstrap draws to the full sample size
+#'
+#' Each resample draws \code{bootstrap.sample * n} of the \code{n} subjects
+#' (an m-out-of-n bootstrap), so the spread of the draws reflects a sample of
+#' size \code{m}, not \code{n}: for a root-n consistent estimator their standard
+#' deviation is about \code{1 / sqrt(bootstrap.sample)} times too large.
+#' Shrinking each draw towards the full-data estimate by
+#' \code{sqrt(bootstrap.sample)} corrects this for both the standard error and
+#' the percentile interval, and keeps draws of a bounded quantity (a risk)
+#' within its bounds. No-op when \code{bootstrap.sample = 1}.
+#'
+#' @param draws numeric vector of bootstrap estimates
+#' @param estimate full-data estimate(s), recycled against \code{draws}
+#' @param params SEQparams object
+#' @returns numeric vector the same length as \code{draws}
+#' @keywords internal
+rescale_boot <- function(draws, estimate, params) {
+  if (params@bootstrap.sample >= 1) return(draws)
+  estimate + sqrt(params@bootstrap.sample) * (draws - estimate)
+}
+
 #' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
 #'
 #' @keywords internal

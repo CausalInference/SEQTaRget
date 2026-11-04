@@ -141,6 +141,7 @@ internal.hazard <- function(model, params, cache, label = NA) {
   }
   if (params@bootstrap) {
     bootstrap <- unlist(bootstrap)  # log hazard ratios from bootstrap samples
+    bootstrap <- rescale_boot(bootstrap, full, params)
     if (all(is.na(bootstrap))) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
     
     # Calculate CI on log scale, then exponentiate

@@ -82,7 +82,7 @@ SEQopts(
 
 \item{bootstrap.nboot}{Integer: number of bootstraps, default is \code{100}}
 
-\item{bootstrap.sample}{Numeric: percentage of data to use when bootstrapping, should be in [0, 1], default is \code{0.8}}
+\item{bootstrap.sample}{Numeric: proportion of subjects drawn (with replacement) in each bootstrap resample, should be in (0, 1], default is \code{0.8}. Values below \code{1} give an m-out-of-n bootstrap, which is faster on large data; the bootstrap estimates are rescaled by \code{sqrt(bootstrap.sample)} around the full-data estimate so that standard errors and confidence intervals refer to the full sample size}
 
 \item{bootstrap.CI}{Numeric: defines the confidence interval after bootstrapping, default is \code{0.95} (95\% CI)}
 

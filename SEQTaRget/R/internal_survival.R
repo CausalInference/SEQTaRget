@@ -10,6 +10,7 @@ internal.survival <- function(params, outcome, label = NA) {
     . <- variable <- NULL
     ce <- followup <- followup_sq <- se <- trial <- NULL
     row_id <- surv_accum <- ce_accum <- inc_accum <- p_surv <- p_ce <- NULL
+    value <- i.value <- NULL
     tx_bas <- paste0(params@treatment, params@indicator.baseline)
 
     # Initialize formula cache
@@ -159,6 +160,10 @@ internal.survival <- function(params, outcome, label = NA) {
         data[[i]][, boot_idx := i]
       }))
       rm(data)
+      # Rescale to the full sample size (m-out-of-n bootstrap). Every quantity
+      # derived below - SE, percentile CI, and the paired RD/RR in
+      # create.risk() - inherits the correction.
+      data_all[full$data, on = c("followup", "variable"), value := rescale_boot(value, i.value, params)]
       DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
 
       # Per-iteration risks at the requested follow-up times for paired RD/RR CI

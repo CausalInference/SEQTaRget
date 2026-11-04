@@ -505,3 +505,20 @@ test_that("Stored outcome and weight models keep no per-row vectors", {
   longest <- max(vapply(stored, function(m) max(lengths(unclass(m))), numeric(1)))
   expect_lt(longest, 100)
 })
+
+test_that("rescale_boot() corrects the spread of an m-out-of-n bootstrap to the full sample size", {
+  params <- SEQopts(bootstrap.sample = 0.5)
+  set.seed(1)
+  x <- rnorm(4000)
+  # Bootstrap the mean drawing half the sample each time: the raw draws are
+  # sqrt(2) times too spread out; the rescaled ones match the full-sample SE
+  draws <- replicate(2000, mean(sample(x, 2000, replace = TRUE)))
+  rescaled <- SEQTaRget:::rescale_boot(draws, mean(x), params)
+  expect_equal(sd(rescaled), sd(x) / sqrt(4000), tolerance = 0.05)
+  expect_equal(sd(rescaled), sd(draws) * sqrt(0.5))
+  # A bounded quantity stays within its bounds
+  expect_true(all(SEQTaRget:::rescale_boot(c(0, 1), 0.3, params) >= 0))
+  expect_true(all(SEQTaRget:::rescale_boot(c(0, 1), 0.3, params) <= 1))
+  # No-op for the standard bootstrap
+  expect_identical(SEQTaRget:::rescale_boot(draws, mean(x), SEQopts(bootstrap.sample = 1)), draws)
+})

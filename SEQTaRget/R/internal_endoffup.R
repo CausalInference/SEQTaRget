@@ -126,6 +126,9 @@ create.endoffup <- function(full, boots, params) {
   boots <- Filter(function(x) is.data.table(x) && nrow(x) > 0, boots)
   has_ci <- length(boots) > 1L
   boot_all <- if (has_ci) rbindlist(lapply(seq_along(boots), function(i) copy(boots[[i]])[, boot_idx := i])) else NULL
+  # Rescale to the full sample size (m-out-of-n bootstrap); the per-arm SE and
+  # CI and the between-arm contrasts below all inherit the correction
+  if (has_ci) boot_all[full, on = tx_bas, estimate := rescale_boot(estimate, i.estimate, params)]
 
   data <- copy(full)
   if (has_ci) {
