@@ -166,20 +166,22 @@ internal.survival <- function(params, outcome, label = NA) {
         data[[i]][, boot_idx := i]
       }))
       rm(data)
-      # Rescale to the full sample size (m-out-of-n bootstrap). Every quantity
-      # derived below - SE, percentile CI, and the paired RD/RR in
-      # create.risk() - inherits the correction.
-      data_all[full$data, on = c("followup", "variable"), value := rescale_boot(value, i.value, params)]
-      DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
 
       # Per-iteration risks at the requested follow-up times for paired RD/RR CI
       # computation in create.risk(). Snap requested times to the follow-up grid.
+      # Taken before the rescaling below: create.risk() rescales the RD and the
+      # log RR themselves.
       var_type <- if (any(grepl("^inc_", data_all[["variable"]]))) "^inc_" else "^risk_"
       report_times <- resolve_risk_times(full$data[["followup"]], params@risk.times)
       boot_risks <- data_all[variable %like% var_type
                              ][, variable := as.character(variable)
                                ][followup %in% report_times
                                  ][, .(variable, boot_idx, followup, value)]
+
+      # Rescale to the full sample size (m-out-of-n bootstrap) for the SE and
+      # percentile CI of each curve
+      data_all[full$data, on = c("followup", "variable"), value := rescale_boot(value, i.value, params)]
+      DT.se <- data_all[, list(SE = sd(value)), by = c("followup", "variable")]
 
       if (params@bootstrap.CI_method == "se") {
         z <- qnorm(1 - (1 - params@bootstrap.CI)/2)

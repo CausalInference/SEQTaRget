@@ -114,7 +114,7 @@ endoffup.estimate <- function(DT, params) {
 #' @import data.table
 #' @keywords internal
 create.endoffup <- function(full, boots, params) {
-  estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- NULL
+  estimate <- boot_idx <- V1 <- V2 <- i.estimate <- diff_ <- ratio <- est_adj <- NULL
   SE <- LCI <- UCI <- Time <- ratio_logse <- ratio_lci <- ratio_uci <- NULL
   n <- n.eligible <- n.censored <- n.nomeasure <- NULL
   tx_bas <- paste0(params@treatment, params@indicator.baseline)
@@ -126,19 +126,19 @@ create.endoffup <- function(full, boots, params) {
   boots <- Filter(function(x) is.data.table(x) && nrow(x) > 0, boots)
   has_ci <- length(boots) > 1L
   boot_all <- if (has_ci) rbindlist(lapply(seq_along(boots), function(i) copy(boots[[i]])[, boot_idx := i])) else NULL
-  # Rescale to the full sample size (m-out-of-n bootstrap); the per-arm SE and
-  # CI and the between-arm contrasts below all inherit the correction
-  if (has_ci) boot_all[full, on = tx_bas, estimate := rescale_boot(estimate, i.estimate, params)]
+  # Rescale to the full sample size (m-out-of-n bootstrap) for the per-arm SE
+  # and CI; the between-arm contrasts below are rescaled on their own scales
+  if (has_ci) boot_all[full, on = tx_bas, est_adj := rescale_boot(estimate, i.estimate, params)]
 
   data <- copy(full)
   if (has_ci) {
-    se <- boot_all[, list(SE = sd(estimate, na.rm = TRUE)), by = c(tx_bas)]
+    se <- boot_all[, list(SE = sd(est_adj, na.rm = TRUE)), by = c(tx_bas)]
     data <- data[se, on = tx_bas]
     if (use_se) {
       data[, `:=`(LCI = estimate - z * SE, UCI = estimate + z * SE)]
     } else {
-      q <- boot_all[, list(LCI = quantile(estimate, alpha, na.rm = TRUE),
-                           UCI = quantile(estimate, 1 - alpha, na.rm = TRUE)), by = c(tx_bas)]
+      q <- boot_all[, list(LCI = quantile(est_adj, alpha, na.rm = TRUE),
+                           UCI = quantile(est_adj, 1 - alpha, na.rm = TRUE)), by = c(tx_bas)]
       data <- data[q, on = tx_bas]
     }
     # Proportions are bounded, so clamp the binary interval to [0, 1]
@@ -158,12 +158,15 @@ create.endoffup <- function(full, boots, params) {
       stat <- lapply(seq_len(nrow(pairs)), function(i) {
         v1 <- as.character(pairs$V1[i]); v2 <- as.character(pairs$V2[i])
         if (!all(c(v1, v2) %in% names(wide))) return(blank)
-        d <- wide[[v2]] - wide[[v1]]
+        d <- rescale_boot(wide[[v2]] - wide[[v1]], pairs$diff_[i], params)
         d_se <- sd(d, na.rm = TRUE)
-        # Ratio summarised on the log scale (as in create.risk); non-positive draws dropped
+        # Ratio summarised (and rescaled) on the log scale, as in create.risk;
+        # non-positive draws dropped
         r <- wide[[v2]] / wide[[v1]]
-        r_valid <- r[is.finite(r) & r > 0]
-        r_logse <- if (length(r_valid) > 1L) sd(log(r_valid), na.rm = TRUE) else NA_real_
+        log_r <- log(r[is.finite(r) & r > 0])
+        if (is.finite(log(pairs$ratio[i]))) log_r <- rescale_boot(log_r, log(pairs$ratio[i]), params)
+        r_valid <- exp(log_r)
+        r_logse <- if (length(r_valid) > 1L) sd(log_r, na.rm = TRUE) else NA_real_
         if (use_se) {
           list(d_se, pairs$diff_[i] - z * d_se, pairs$diff_[i] + z * d_se,
                r_logse, exp(log(pairs$ratio[i]) - z * r_logse), exp(log(pairs$ratio[i]) + z * r_logse))
