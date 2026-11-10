@@ -505,3 +505,79 @@ test_that("Stored outcome and weight models keep no per-row vectors", {
   longest <- max(vapply(stored, function(m) max(lengths(unclass(m))), numeric(1)))
   expect_lt(longest, 100)
 })
+
+test_that("rescale_boot() corrects the spread of an m-out-of-n bootstrap to the full sample size", {
+  params <- SEQopts(bootstrap.sample = 0.5)
+  set.seed(1)
+  x <- rnorm(4000)
+  # Bootstrap the mean drawing half the sample each time: the raw draws are
+  # sqrt(2) times too spread out; the rescaled ones match the full-sample SE
+  draws <- replicate(2000, mean(sample(x, 2000, replace = TRUE)))
+  rescaled <- SEQTaRget:::rescale_boot(draws, mean(x), params)
+  expect_equal(sd(rescaled), sd(x) / sqrt(4000), tolerance = 0.05)
+  expect_equal(sd(rescaled), sd(draws) * sqrt(0.5))
+  # A bounded quantity stays within its bounds
+  expect_true(all(SEQTaRget:::rescale_boot(c(0, 1), 0.3, params) >= 0))
+  expect_true(all(SEQTaRget:::rescale_boot(c(0, 1), 0.3, params) <= 1))
+  # No-op for the standard bootstrap
+  expect_identical(SEQTaRget:::rescale_boot(draws, mean(x), SEQopts(bootstrap.sample = 1)), draws)
+})
+
+test_that("selection.random standardizes the risks over all trials, not just the kept ones", {
+  skip_on_cran()
+  risk1 <- function(...) {
+    model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                         list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                         options = SEQopts(km.curves = TRUE, ...)))
+    r <- risk_data(model)
+    r$Risk[r$A == "1"]
+  }
+  full <- risk1()
+  # Arm 1 keeps all its trials, so its risk varies little across selections
+  # (SD ~0.0015); unweighted standardization shifted it by ~0.011
+  selected <- mean(vapply(1:5, function(s) risk1(selection.random = TRUE, selection.prob = 0.3, seed = s), numeric(1)))
+  expect_lt(abs(selected - full), 0.004)
+
+  expect_null(SEQTaRget:::selection_weight(c(0, 1), parameter.setter(data.table(), data.table(), "ID", "time", "eligible",
+    "outcome", "treatment", list(), list(), "ITT", SEQopts(), FALSE)))
+})
+
+test_that("selection.random hazard ratios run with selection weights", {
+  skip_on_cran()
+  model <- suppressWarnings(SEQuential(data.table::copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                       list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                       options = SEQopts(hazard = TRUE, selection.random = TRUE, selection.prob = 0.5, seed = 1)))
+  expect_true(is.finite(hazard_ratio(model)[["Hazard ratio"]]))
+})
+
+test_that("Percentile CIs are rescaled for bootstrap.sample < 1, ratios on the log scale", {
+  # bootstrap.sample = 0.25 shrinks each draw's distance from the estimate by
+  # sqrt(0.25) = 0.5; with an affine map the percentiles shrink the same way
+  params <- parameter.setter(data.table(), data.table(), "ID", "time", "eligible", "outcome", "treatment",
+                             list(), list(), "ITT",
+                             SEQopts(bootstrap = TRUE, bootstrap.sample = 0.25, bootstrap.CI_method = "percentile",
+                                     end_of_fup = TRUE, end_of_fup.time = 5), FALSE)
+  shrink <- function(q, est) est + 0.5 * (q - est)
+  set.seed(1)
+  r0 <- runif(200, 0.2, 0.4)
+  r1 <- runif(200, 0.3, 0.6)
+  probs <- c(0.025, 0.975)
+
+  # Risk difference and ratio from create.risk()
+  data <- data.table(followup = 10, variable = c("risk_0", "risk_1"), value = c(0.3, 0.45), LCI = 0, UCI = 1)
+  boot <- data.table(variable = rep(c("risk_0", "risk_1"), each = 200), boot_idx = rep(1:200, 2),
+                     followup = 10, value = c(r0, r1))
+  rc <- SEQTaRget:::create.risk(data, params, boot)$risk.comparison[A_x == "risk_0"]
+  expect_equal(c(rc$`RD 95% LCI`, rc$`RD 95% UCI`), unname(shrink(quantile(r1 - r0, probs), 0.15)))
+  expect_equal(c(rc$`RR 95% LCI`, rc$`RR 95% UCI`), unname(exp(shrink(quantile(log(r1 / r0), probs), log(1.5)))))
+
+  # Per-arm estimates, difference and ratio from create.endoffup()
+  full <- data.table(treatment_bas = c(0, 1), estimate = c(0.3, 0.45))
+  boots <- lapply(1:200, function(i) data.table(treatment_bas = c(0, 1), estimate = c(r0[i], r1[i])))
+  eof <- SEQTaRget:::create.endoffup(full, boots, params)
+  est <- eof$eof.data
+  expect_equal(c(est$`95% LCI`[est$A == 0], est$`95% UCI`[est$A == 0]), unname(shrink(quantile(r0, probs), 0.3)))
+  cmp <- eof$eof.comparison[A_x == 0]
+  expect_equal(c(cmp$`Difference 95% LCI`, cmp$`Difference 95% UCI`), unname(shrink(quantile(r1 - r0, probs), 0.15)))
+  expect_equal(c(cmp$`Ratio 95% LCI`, cmp$`Ratio 95% UCI`), unname(exp(shrink(quantile(log(r1 / r0), probs), log(1.5)))))
+})

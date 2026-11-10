@@ -23,6 +23,27 @@ resolve_risk_times <- function(grid, risk.times) {
   sort(unique(c(snapped, final)))
 }
 
+#' Rescale bootstrap draws to the full sample size
+#'
+#' Each resample draws \code{bootstrap.sample * n} of the \code{n} subjects
+#' (an m-out-of-n bootstrap), so the spread of the draws reflects a sample of
+#' size \code{m}, not \code{n}: for a root-n consistent estimator their standard
+#' deviation is about \code{1 / sqrt(bootstrap.sample)} times too large.
+#' Shrinking each draw towards the full-data estimate by
+#' \code{sqrt(bootstrap.sample)} corrects this for both the standard error and
+#' the percentile interval, and keeps draws of a bounded quantity (a risk)
+#' within its bounds. No-op when \code{bootstrap.sample = 1}.
+#'
+#' @param draws numeric vector of bootstrap estimates
+#' @param estimate full-data estimate(s), recycled against \code{draws}
+#' @param params SEQparams object
+#' @returns numeric vector the same length as \code{draws}
+#' @keywords internal
+rescale_boot <- function(draws, estimate, params) {
+  if (params@bootstrap.sample >= 1) return(draws)
+  estimate + sqrt(params@bootstrap.sample) * (draws - estimate)
+}
+
 #' Internal function to pull Risk Ratio and Risk Difference from data when \code{km.curves = TRUE}
 #'
 #' @keywords internal
@@ -56,9 +77,12 @@ create.risk <- function(data, params, boot_risks = NULL) {
       rd_lci_vec <- rd_uci_vec <- rr_lci_vec <- rr_uci_vec <- numeric(nrow(out))
       for (k in seq_len(nrow(out))) {
         v1 <- as.character(out$V1[k]); v2 <- as.character(out$V2[k])
-        rd_i  <- boot_wide[[v2]] - boot_wide[[v1]]
+        # Rescale to the full sample size (m-out-of-n bootstrap): the RD on its
+        # own scale, the RR on the log scale
+        rd_i  <- rescale_boot(boot_wide[[v2]] - boot_wide[[v1]], out$rd[k], params)
         rr_i  <- boot_wide[[v2]] / boot_wide[[v1]]
-        valid_rr <- rr_i[rr_i > 0 & is.finite(rr_i)]
+        log_rr_i <- log(rr_i[rr_i > 0 & is.finite(rr_i)])
+        if (is.finite(log(out$rr[k]))) log_rr_i <- rescale_boot(log_rr_i, log(out$rr[k]), params)
 
         # Bootstrap standard errors, retained regardless of CI method: the risk
         # difference SE is on the natural scale, the risk ratio SE on the log
@@ -66,7 +90,7 @@ create.risk <- function(data, params, boot_risks = NULL) {
         # inverse-variance-weighted meta-analysis: combine log(`Risk Ratio`)
         # with `log(RR) SE`, then exponentiate).
         rd_se_vec[k]    <- sd(rd_i, na.rm = TRUE)
-        rr_logse_vec[k] <- sd(log(valid_rr), na.rm = TRUE)
+        rr_logse_vec[k] <- sd(log_rr_i, na.rm = TRUE)
 
         if (params@bootstrap.CI_method == "se") {
           log_rr <- log(out$rr[k])
@@ -77,8 +101,8 @@ create.risk <- function(data, params, boot_risks = NULL) {
         } else {
           rd_lci_vec[k] <- quantile(rd_i,      alpha,     na.rm = TRUE)
           rd_uci_vec[k] <- quantile(rd_i,      1 - alpha, na.rm = TRUE)
-          rr_lci_vec[k] <- quantile(valid_rr,  alpha,     na.rm = TRUE)
-          rr_uci_vec[k] <- quantile(valid_rr,  1 - alpha, na.rm = TRUE)
+          rr_lci_vec[k] <- exp(quantile(log_rr_i, alpha,     na.rm = TRUE))
+          rr_uci_vec[k] <- exp(quantile(log_rr_i, 1 - alpha, na.rm = TRUE))
         }
       }
       out[, `:=`(rd_lci = rd_lci_vec, rd_uci = rd_uci_vec, rd_se = rd_se_vec,
@@ -347,6 +371,24 @@ compevent.table <- function(params, type, filter = NA) {
 clean_models <- function(out, params) {
   if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
   out
+}
+
+#' Inverse-probability weights for the trials kept by \code{selection.random}
+#'
+#' \code{selection.random} keeps a proportion \code{selection.prob} of the
+#' trials starting on the first level of \code{treat.level} and all other
+#' trials. Selection depends only on baseline treatment, which the outcome model
+#' conditions on, so the model needs no correction, but standardizing over the
+#' kept trials under-represents the first arm's covariate distribution. Each kept
+#' trial of that arm stands for \code{1 / selection.prob} trials.
+#'
+#' @param tx baseline treatment of each trial
+#' @param params SEQparams object
+#' @returns numeric weights, or \code{NULL} when no selection was made
+#' @keywords internal
+selection_weight <- function(tx, params) {
+  if (!params@selection.random || params@selection.first_trial) return(NULL)
+  fifelse(as.character(tx) == as.character(params@treat.level[[1]]), 1 / params@selection.prob, 1)
 }
 
 #' Rows of an expanded table belonging to one subgroup

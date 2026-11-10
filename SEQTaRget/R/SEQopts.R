@@ -4,7 +4,7 @@
 #' @param bootstrap.CI Numeric: defines the confidence interval after bootstrapping, default is `0.95` (95% CI)
 #' @param bootstrap.CI_method Character: selects which way to calculate bootstraps confidence intervals (`"se"`, `"percentile"`), default is `"se"`
 #' @param bootstrap.nboot Integer: number of bootstraps, default is `100`
-#' @param bootstrap.sample Numeric: percentage of data to use when bootstrapping, should be in \[0, 1\], default is `0.8`
+#' @param bootstrap.sample Numeric: proportion of subjects drawn (with replacement) in each bootstrap resample, should be in (0, 1\], default is `0.8`. Values below `1` give an m-out-of-n bootstrap, which is faster on large data; the bootstrap estimates are rescaled by `sqrt(bootstrap.sample)` around the full-data estimate (ratios on the log scale) so that standard errors and confidence intervals refer to the full sample size
 #' @param cense String: column name for additional censoring variable, e.g. loss-to-follow-up
 #' @param cense.denominator String: censoring denominator covariates to the right hand side of a formula object
 #' @param cense.eligible String: column name for indicator column defining which rows to use for censoring model
@@ -52,7 +52,7 @@
 #' @param seed Integer: starting seed; the default `NULL` draws a single random integer when `SEQopts()` is called, so set this explicitly for reproducible bootstrap results
 #' @param selection.first_trial Logical: selects only the first eligible trial in the expanded dataset, default `FALSE`
 #' @param selection.prob Numeric: proportion of the trials starting on the first treatment level in \code{treat.level} to keep when \code{selection.random = TRUE}, should be in (0, 1\], default is `0.8`
-#' @param selection.random Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when \code{selection.first_trial = TRUE}, default `FALSE`
+#' @param selection.random Logical: randomly subsample the trials starting on the first treatment level in \code{treat.level} (e.g. the untreated), keeping a proportion \code{selection.prob} of them, sampled without replacement, and all other trials. This reduces computation. The models are fit on the kept trials unweighted - selection depends only on baseline treatment, which the outcome model conditions on - while the risks and hazard ratios are standardized with the kept trials of the first level weighted by `1 / selection.prob`, so they refer to all trials. Selection is made once, from `seed`; bootstrap confidence intervals, which resample subjects from the kept trials, include the variability it adds. Ignored when \code{selection.first_trial = TRUE}, default `FALSE`
 #' @param subgroup Character: Column name to stratify outcome models on
 #' @param survival.max Numeric: maximum time for survival curves, default is `Inf` (no maximum)
 #' @param treat.level List: treatment levels to compare, default is `c(0, 1)`
