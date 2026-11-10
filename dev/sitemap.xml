@@ -75,10 +75,12 @@
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/predict_model.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/prepare.data_cached.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/prepare.output.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/rescale_boot.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/resolve_risk_times.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/risk_comparison.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/risk_data.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/select_cached_level.html</loc></url>
+<url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/selection_weight.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/show-SEQoutput-method.html</loc></url>
 <url><loc>https://causalinference.github.io/SEQTaRget/dev/reference/subgroup_rows.html</loc></url>
 </urlset>

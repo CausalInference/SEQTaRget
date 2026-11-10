@@ -93,8 +93,12 @@ SEQopts(
 
 - bootstrap.sample:
 
-  Numeric: percentage of data to use when bootstrapping, should be in
-  \[0, 1\], default is `0.8`
+  Numeric: proportion of subjects drawn (with replacement) in each
+  bootstrap resample, should be in (0, 1\], default is `0.8`. Values
+  below `1` give an m-out-of-n bootstrap, which is faster on large data;
+  the bootstrap estimates are rescaled by `sqrt(bootstrap.sample)`
+  around the full-data estimate (ratios on the log scale) so that
+  standard errors and confidence intervals refer to the full sample size
 
 - bootstrap.CI:
 
@@ -404,8 +408,14 @@ SEQopts(
   Logical: randomly subsample the trials starting on the first treatment
   level in `treat.level` (e.g. the untreated), keeping a proportion
   `selection.prob` of them, sampled without replacement, and all other
-  trials. The sampled trials are not reweighted. Ignored when
-  `selection.first_trial = TRUE`, default `FALSE`
+  trials. This reduces computation. The models are fit on the kept
+  trials unweighted - selection depends only on baseline treatment,
+  which the outcome model conditions on - while the risks and hazard
+  ratios are standardized with the kept trials of the first level
+  weighted by `1 / selection.prob`, so they refer to all trials.
+  Selection is made once, from `seed`; bootstrap confidence intervals,
+  which resample subjects from the kept trials, include the variability
+  it adds. Ignored when `selection.first_trial = TRUE`, default `FALSE`
 
 - subgroup:
 

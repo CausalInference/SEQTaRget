@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -144,7 +144,7 @@
 
 
 <dt id="arg-bootstrap-sample">bootstrap.sample<a class="anchor" aria-label="anchor" href="#arg-bootstrap-sample"></a></dt>
-<dd><p>Numeric: percentage of data to use when bootstrapping, should be in [0, 1], default is <code>0.8</code></p></dd>
+<dd><p>Numeric: proportion of subjects drawn (with replacement) in each bootstrap resample, should be in (0, 1], default is <code>0.8</code>. Values below <code>1</code> give an m-out-of-n bootstrap, which is faster on large data; the bootstrap estimates are rescaled by <code>sqrt(bootstrap.sample)</code> around the full-data estimate (ratios on the log scale) so that standard errors and confidence intervals refer to the full sample size</p></dd>
 
 
 <dt id="arg-bootstrap-ci">bootstrap.CI<a class="anchor" aria-label="anchor" href="#arg-bootstrap-ci"></a></dt>
@@ -344,7 +344,7 @@
 
 
 <dt id="arg-selection-random">selection.random<a class="anchor" aria-label="anchor" href="#arg-selection-random"></a></dt>
-<dd><p>Logical: randomly subsample the trials starting on the first treatment level in <code>treat.level</code> (e.g. the untreated), keeping a proportion <code>selection.prob</code> of them, sampled without replacement, and all other trials. The sampled trials are not reweighted. Ignored when <code>selection.first_trial = TRUE</code>, default <code>FALSE</code></p></dd>
+<dd><p>Logical: randomly subsample the trials starting on the first treatment level in <code>treat.level</code> (e.g. the untreated), keeping a proportion <code>selection.prob</code> of them, sampled without replacement, and all other trials. This reduces computation. The models are fit on the kept trials unweighted - selection depends only on baseline treatment, which the outcome model conditions on - while the risks and hazard ratios are standardized with the kept trials of the first level weighted by <code>1 / selection.prob</code>, so they refer to all trials. Selection is made once, from <code>seed</code>; bootstrap confidence intervals, which resample subjects from the kept trials, include the variability it adds. Ignored when <code>selection.first_trial = TRUE</code>, default <code>FALSE</code></p></dd>
 
 
 <dt id="arg-subgroup">subgroup<a class="anchor" aria-label="anchor" href="#arg-subgroup"></a></dt>

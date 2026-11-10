@@ -105,319 +105,508 @@ handle obtaining your results.
 outcome(model)     # Returns a list of only the outcome models 
 #> $`1`
 #> $`1`[[1]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -6.8593155              0.2253094              0.0353817  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0001599              0.0447179              0.0005762  
-#>                   sex                  N_bas                  L_bas  
-#>             0.1270458              0.0032867             -0.0138509  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.2009289             -0.0017040  
+#>                         Estimate
+#> (Intercept)           -6.8593155
+#> tx_init_bas1           0.2253094
+#> followup               0.0353817
+#> followup_sq           -0.0001599
+#> trial                  0.0447179
+#> trial_sq               0.0005762
+#> sex                    0.1270458
+#> N_bas                  0.0032867
+#> L_bas                 -0.0138509
+#> P_bas                  0.2009289
+#> tx_init_bas1:followup -0.0017040
+#> 
+#> Convergence: converged (7 iterations)
 #> 
 #> $`1`[[2]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -7.5686664              0.0572035              0.0481829  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0002398              0.0694546              0.0002991  
-#>                   sex                  N_bas                  L_bas  
-#>             0.3623319              0.0012608              0.0078599  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.2267346             -0.0008032  
+#>                         Estimate
+#> (Intercept)           -7.5686664
+#> tx_init_bas1           0.0572035
+#> followup               0.0481829
+#> followup_sq           -0.0002398
+#> trial                  0.0694546
+#> trial_sq               0.0002991
+#> sex                    0.3623319
+#> N_bas                  0.0012608
+#> L_bas                  0.0078599
+#> P_bas                  0.2267346
+#> tx_init_bas1:followup -0.0008032
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[3]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -1.068e+01              2.771e-01              3.246e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -1.191e-04              1.086e-01              2.596e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.961e-01              4.332e-03             -1.251e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             5.994e-01             -1.063e-05  
+#>                         Estimate
+#> (Intercept)           -1.068e+01
+#> tx_init_bas1           2.771e-01
+#> followup               3.246e-02
+#> followup_sq           -1.191e-04
+#> trial                  1.086e-01
+#> trial_sq               2.596e-04
+#> sex                    1.961e-01
+#> N_bas                  4.332e-03
+#> L_bas                 -1.251e-02
+#> P_bas                  5.994e-01
+#> tx_init_bas1:followup -1.063e-05
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[4]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -0.9669277             -0.0847453              0.0222841  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0001863             -0.0594655              0.0011550  
-#>                   sex                  N_bas                  L_bas  
-#>             0.3406604              0.0067373              0.0408462  
-#>                 P_bas  tx_init_bas1:followup  
-#>            -0.3909486              0.0071088  
+#>                         Estimate
+#> (Intercept)           -0.9669277
+#> tx_init_bas1          -0.0847453
+#> followup               0.0222841
+#> followup_sq           -0.0001863
+#> trial                 -0.0594655
+#> trial_sq               0.0011550
+#> sex                    0.3406604
+#> N_bas                  0.0067373
+#> L_bas                  0.0408462
+#> P_bas                 -0.3909486
+#> tx_init_bas1:followup  0.0071088
+#> 
+#> Convergence: converged (4 iterations)
 #> 
 #> $`1`[[5]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -7.5351394              0.4268098              0.0373349  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0002502              0.0526084              0.0005318  
-#>                   sex                  N_bas                  L_bas  
-#>             0.5449350              0.0047661             -0.1495825  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.2469561             -0.0042417  
+#>                         Estimate
+#> (Intercept)           -7.5351394
+#> tx_init_bas1           0.4268098
+#> followup               0.0373349
+#> followup_sq           -0.0002502
+#> trial                  0.0526084
+#> trial_sq               0.0005318
+#> sex                    0.5449350
+#> N_bas                  0.0047661
+#> L_bas                 -0.1495825
+#> P_bas                  0.2469561
+#> tx_init_bas1:followup -0.0042417
+#> 
+#> Convergence: converged (4 iterations)
 #> 
 #> $`1`[[6]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -7.6406240             -0.1156940              0.0389073  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0002795              0.0742193              0.0004675  
-#>                   sex                  N_bas                  L_bas  
-#>             0.3281369              0.0083933             -0.1784712  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.2912902              0.0030521  
+#>                         Estimate
+#> (Intercept)           -7.6406240
+#> tx_init_bas1          -0.1156940
+#> followup               0.0389073
+#> followup_sq           -0.0002795
+#> trial                  0.0742193
+#> trial_sq               0.0004675
+#> sex                    0.3281369
+#> N_bas                  0.0083933
+#> L_bas                 -0.1784712
+#> P_bas                  0.2912902
+#> tx_init_bas1:followup  0.0030521
+#> 
+#> Convergence: converged (4 iterations)
 #> 
 #> $`1`[[7]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -9.0018102              0.3579004              0.0317738  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0001707              0.0776669              0.0004174  
-#>                   sex                  N_bas                  L_bas  
-#>             0.0955384              0.0056463             -0.0122759  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.4311688             -0.0042654  
+#>                         Estimate
+#> (Intercept)           -9.0018102
+#> tx_init_bas1           0.3579004
+#> followup               0.0317738
+#> followup_sq           -0.0001707
+#> trial                  0.0776669
+#> trial_sq               0.0004174
+#> sex                    0.0955384
+#> N_bas                  0.0056463
+#> L_bas                 -0.0122759
+#> P_bas                  0.4311688
+#> tx_init_bas1:followup -0.0042654
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[8]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>             -4.217360               0.224570               0.047272  
-#>           followup_sq                  trial               trial_sq  
-#>             -0.000149              -0.009824               0.001069  
-#>                   sex                  N_bas                  L_bas  
-#>              0.275748               0.004007               0.065621  
-#>                 P_bas  tx_init_bas1:followup  
-#>             -0.122678              -0.004013  
+#>                        Estimate
+#> (Intercept)           -4.217360
+#> tx_init_bas1           0.224571
+#> followup               0.047272
+#> followup_sq           -0.000149
+#> trial                 -0.009824
+#> trial_sq               0.001069
+#> sex                    0.275748
+#> N_bas                  0.004007
+#> L_bas                  0.065621
+#> P_bas                 -0.122678
+#> tx_init_bas1:followup -0.004013
+#> 
+#> Convergence: converged (4 iterations)
 #> 
 #> $`1`[[9]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -4.536e+00              1.509e-01              3.540e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -6.786e-05              1.980e-03              8.863e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.457e-01              7.400e-03             -3.109e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>            -6.592e-02             -4.370e-03  
+#>                         Estimate
+#> (Intercept)           -4.536e+00
+#> tx_init_bas1           1.509e-01
+#> followup               3.540e-02
+#> followup_sq           -6.786e-05
+#> trial                  1.980e-03
+#> trial_sq               8.863e-04
+#> sex                    1.457e-01
+#> N_bas                  7.400e-03
+#> L_bas                 -3.109e-02
+#> P_bas                 -6.592e-02
+#> tx_init_bas1:followup -4.370e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[10]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -7.123e+00              8.728e-02              3.766e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -9.976e-07              5.440e-02              6.127e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.821e-02              8.177e-05             -2.843e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             2.211e-01              4.661e-03  
+#>                         Estimate
+#> (Intercept)           -7.123e+00
+#> tx_init_bas1           8.728e-02
+#> followup               3.766e-02
+#> followup_sq           -9.976e-07
+#> trial                  5.440e-02
+#> trial_sq               6.127e-04
+#> sex                    1.821e-02
+#> N_bas                  8.177e-05
+#> L_bas                 -2.843e-02
+#> P_bas                  2.211e-01
+#> tx_init_bas1:followup  4.661e-03
+#> 
+#> Convergence: converged (4 iterations)
 #> 
 #> $`1`[[11]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -2.201e+00              8.844e-02              2.223e-02  
-#>           followup_sq                  trial               trial_sq  
-#>             8.478e-05             -4.554e-02              1.403e-03  
-#>                   sex                  N_bas                  L_bas  
-#>             9.105e-02              3.699e-03             -1.426e-01  
-#>                 P_bas  tx_init_bas1:followup  
-#>            -2.769e-01              8.158e-03  
+#>                         Estimate
+#> (Intercept)           -2.201e+00
+#> tx_init_bas1           8.844e-02
+#> followup               2.223e-02
+#> followup_sq            8.478e-05
+#> trial                 -4.554e-02
+#> trial_sq               1.403e-03
+#> sex                    9.105e-02
+#> N_bas                  3.699e-03
+#> L_bas                 -1.426e-01
+#> P_bas                 -2.769e-01
+#> tx_init_bas1:followup  8.158e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[12]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -8.099e+00              4.642e-02              2.612e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -2.194e-05              6.413e-02              6.372e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.690e-01              5.351e-03             -4.436e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             3.349e-01              7.994e-03  
+#>                         Estimate
+#> (Intercept)           -8.099e+00
+#> tx_init_bas1           4.642e-02
+#> followup               2.612e-02
+#> followup_sq           -2.194e-05
+#> trial                  6.413e-02
+#> trial_sq               6.372e-04
+#> sex                    1.690e-01
+#> N_bas                  5.351e-03
+#> L_bas                 -4.436e-02
+#> P_bas                  3.349e-01
+#> tx_init_bas1:followup  7.994e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[13]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -9.0555175              0.6478047              0.0542168  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0004703              0.0799784              0.0001404  
-#>                   sex                  N_bas                  L_bas  
-#>             0.2240107              0.0037200              0.0968174  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.3840352             -0.0119769  
+#>                         Estimate
+#> (Intercept)           -9.0555175
+#> tx_init_bas1           0.6478047
+#> followup               0.0542168
+#> followup_sq           -0.0004703
+#> trial                  0.0799784
+#> trial_sq               0.0001404
+#> sex                    0.2240107
+#> N_bas                  0.0037200
+#> L_bas                  0.0968174
+#> P_bas                  0.3840352
+#> tx_init_bas1:followup -0.0119769
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[14]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -1.046e+01              6.029e-01              5.089e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -3.486e-04              1.072e-01              1.740e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.096e-01              4.194e-03             -5.617e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             5.530e-01             -1.541e-02  
+#>                         Estimate
+#> (Intercept)           -1.046e+01
+#> tx_init_bas1           6.029e-01
+#> followup               5.089e-02
+#> followup_sq           -3.486e-04
+#> trial                  1.072e-01
+#> trial_sq               1.740e-04
+#> sex                    1.096e-01
+#> N_bas                  4.194e-03
+#> L_bas                 -5.617e-02
+#> P_bas                  5.530e-01
+#> tx_init_bas1:followup -1.541e-02
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[15]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -9.4339042              0.3195517              0.0446209  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0001962              0.0984771              0.0001429  
-#>                   sex                  N_bas                  L_bas  
-#>             0.0860115              0.0016125             -0.0215202  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.4390679             -0.0090178  
+#>                         Estimate
+#> (Intercept)           -9.4339042
+#> tx_init_bas1           0.3195517
+#> followup               0.0446209
+#> followup_sq           -0.0001962
+#> trial                  0.0984771
+#> trial_sq               0.0001429
+#> sex                    0.0860115
+#> N_bas                  0.0016125
+#> L_bas                 -0.0215202
+#> P_bas                  0.4390679
+#> tx_init_bas1:followup -0.0090178
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[16]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -2.5128968              0.2105845              0.0342825  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0002374             -0.0369591              0.0008865  
-#>                   sex                  N_bas                  L_bas  
-#>             0.1569439              0.0085729              0.1120179  
-#>                 P_bas  tx_init_bas1:followup  
-#>            -0.2619360             -0.0023137  
+#>                         Estimate
+#> (Intercept)           -2.5128968
+#> tx_init_bas1           0.2105845
+#> followup               0.0342825
+#> followup_sq           -0.0002374
+#> trial                 -0.0369591
+#> trial_sq               0.0008865
+#> sex                    0.1569439
+#> N_bas                  0.0085729
+#> L_bas                  0.1120179
+#> P_bas                 -0.2619360
+#> tx_init_bas1:followup -0.0023137
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[17]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -6.124e+00              7.368e-02              2.219e-02  
-#>           followup_sq                  trial               trial_sq  
-#>             3.226e-06              2.556e-02              6.103e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             2.588e-01              5.984e-03              1.137e-01  
-#>                 P_bas  tx_init_bas1:followup  
-#>             1.317e-01              6.115e-03  
+#>                         Estimate
+#> (Intercept)           -6.124e+00
+#> tx_init_bas1           7.368e-02
+#> followup               2.219e-02
+#> followup_sq            3.226e-06
+#> trial                  2.556e-02
+#> trial_sq               6.103e-04
+#> sex                    2.588e-01
+#> N_bas                  5.984e-03
+#> L_bas                  1.137e-01
+#> P_bas                  1.317e-01
+#> tx_init_bas1:followup  6.115e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[18]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -6.3051565              0.4621448              0.0446341  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0001721              0.0389188              0.0006612  
-#>                   sex                  N_bas                  L_bas  
-#>            -0.0825751              0.0035661             -0.1198744  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.1311997             -0.0090016  
+#>                         Estimate
+#> (Intercept)           -6.3051565
+#> tx_init_bas1           0.4621448
+#> followup               0.0446341
+#> followup_sq           -0.0001721
+#> trial                  0.0389188
+#> trial_sq               0.0006612
+#> sex                   -0.0825751
+#> N_bas                  0.0035661
+#> L_bas                 -0.1198744
+#> P_bas                  0.1311997
+#> tx_init_bas1:followup -0.0090016
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[19]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -8.471e+00              2.708e-01              4.048e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -8.973e-05              6.878e-02              4.768e-04  
-#>                   sex                  N_bas                  L_bas  
-#>             1.661e-01              2.092e-03              6.857e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             3.510e-01             -5.788e-03  
+#>                         Estimate
+#> (Intercept)           -8.471e+00
+#> tx_init_bas1           2.708e-01
+#> followup               4.048e-02
+#> followup_sq           -8.973e-05
+#> trial                  6.878e-02
+#> trial_sq               4.768e-04
+#> sex                    1.661e-01
+#> N_bas                  2.092e-03
+#> L_bas                  6.857e-02
+#> P_bas                  3.510e-01
+#> tx_init_bas1:followup -5.788e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[20]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -1.009e+01              1.894e-01              3.772e-02  
-#>           followup_sq                  trial               trial_sq  
-#>            -1.252e-04              1.117e-01             -6.498e-05  
-#>                   sex                  N_bas                  L_bas  
-#>             2.295e-01              2.054e-03              4.281e-02  
-#>                 P_bas  tx_init_bas1:followup  
-#>             5.282e-01             -2.651e-03  
+#>                         Estimate
+#> (Intercept)           -1.009e+01
+#> tx_init_bas1           1.894e-01
+#> followup               3.772e-02
+#> followup_sq           -1.252e-04
+#> trial                  1.117e-01
+#> trial_sq              -6.498e-05
+#> sex                    2.295e-01
+#> N_bas                  2.054e-03
+#> L_bas                  4.281e-02
+#> P_bas                  5.282e-01
+#> tx_init_bas1:followup -2.651e-03
+#> 
+#> Convergence: converged (3 iterations)
 #> 
 #> $`1`[[21]]
+#> Generalized linear model
 #> 
-#> Call:  fastglm.default(x = X, y = y, family = family, start = start, 
+#> Call:
+#> fastglm.default(x = X, y = y, family = family, start = start, 
 #>     method = params@fastglm.method)
+#> Family: quasibinomial (logit link)
 #> 
 #> Coefficients:
-#>           (Intercept)           tx_init_bas1               followup  
-#>            -8.9528151              0.3514119              0.0584130  
-#>           followup_sq                  trial               trial_sq  
-#>            -0.0005134              0.0986973             -0.0000760  
-#>                   sex                  N_bas                  L_bas  
-#>             0.2732790              0.0026618              0.0094163  
-#>                 P_bas  tx_init_bas1:followup  
-#>             0.3964909             -0.0164729
+#>                         Estimate
+#> (Intercept)           -8.9528151
+#> tx_init_bas1           0.3514119
+#> followup               0.0584130
+#> followup_sq           -0.0005134
+#> trial                  0.0986973
+#> trial_sq              -0.0000760
+#> sex                    0.2732790
+#> N_bas                  0.0026618
+#> L_bas                  0.0094163
+#> P_bas                  0.3964909
+#> tx_init_bas1:followup -0.0164729
+#> 
+#> Convergence: converged (4 iterations)
 km_curve(model)    # Prints the survival curve
 ```
 
@@ -430,15 +619,15 @@ risk_data(model)
 #> Index: <Followup>
 #>    Method Followup      A      Risk   95% LCI   95% UCI         SE
 #>    <char>    <num> <char>     <num>     <num>     <num>      <num>
-#> 1:    ITT       60      0 0.8372582 0.7663552 0.9081612 0.03617568
-#> 2:    ITT       60      1 0.8744359 0.8180477 0.9308241 0.02877002
+#> 1:    ITT       60      0 0.8372582 0.7738406 0.9006758 0.03235651
+#> 2:    ITT       60      1 0.8744359 0.8240007 0.9248710 0.02573269
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE
 #>       <num> <fctr> <fctr>      <num>      <num>      <num>      <num>
-#> 1:       60 risk_0 risk_1  1.0444041  0.9654981   1.129759 0.04008114
-#> 2:       60 risk_1 risk_0  0.9574838  0.8851448   1.035735 0.04008114
+#> 1:       60 risk_0 risk_1  1.0444041  0.9735388   1.120428 0.03584966
+#> 2:       60 risk_1 risk_0  0.9574838  0.8925163   1.027180 0.03584966
 #>    Risk Difference  RD 95% LCI RD 95% UCI      RD SE
 #>              <num>       <num>      <num>      <num>
-#> 1:      0.03717768 -0.02931187 0.10366723 0.03392386
-#> 2:     -0.03717768 -0.10366723 0.02931187 0.03392386
+#> 1:      0.03717768 -0.02229238 0.09664774 0.03034243
+#> 2:     -0.03717768 -0.09664774 0.02229238 0.03034243
 ```

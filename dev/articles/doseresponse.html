@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,8 +137,20 @@ to errors.</p>
 <span><span class="co">#&gt; Final analysis dataset: 248,485 observations, 15 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping with 80% of 300 subjects (240 subjects, ~198,788 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; dose-response model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -153,17 +165,17 @@ to errors.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;           Method Followup      A      Risk    95% LCI   95% UCI         SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;      &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.5282782 0.03851259 1.0000000 0.24988501</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.8949096 0.85228977 0.9375295 0.02174522</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.5282782 0.09021852 0.9663379 0.22350395</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.8949096 0.85678926 0.9330300 0.01944951</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.6940120  0.7612927   3.769479  0.4080876</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.5903146  0.2652887   1.313555  0.4080876</span></span>
-<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI     RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt;     &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       0.3666314 -0.1084919  0.8417547 0.2424143</span></span>
-<span><span class="co">#&gt; 2:      -0.3666314 -0.8417547  0.1084919 0.2424143</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.6940120  0.8283692   3.464248  0.3650047</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.5903146  0.2886629   1.207191  0.3650047</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI    RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;    &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       0.3666314 -0.05833181 0.79159462 0.216822</span></span>
+<span><span class="co">#&gt; 2:      -0.3666314 -0.79159462 0.05833181 0.216822</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-losses-to-followup">Dose-response with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -226,17 +238,17 @@ to errors.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI         SE</span></span>
 <span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.007952468       0 0.04501433 0.01890946</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.018718195       0 0.04142307 0.01158433</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0 0.007952468       0 0.04110160 0.01691313</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1 0.018718195       0 0.03902605 0.01036134</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  2.3537592 0.21044019  26.326637   1.231945</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.4248523 0.03798434   4.751944   1.231945</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  2.3537592 0.27154127  20.402727   1.101885</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.4248523 0.04901306   3.682681   1.101885</span></span>
 <span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
 <span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      0.01076573 -0.01819694 0.03972839 0.01477714</span></span>
-<span><span class="co">#&gt; 2:     -0.01076573 -0.03972839 0.01819694 0.01477714</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:      0.01076573 -0.01513927 0.03667072 0.01321708</span></span>
+<span><span class="co">#&gt; 2:     -0.01076573 -0.03667072 0.01513927 0.01321708</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-competing-events">Dose-response with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#dose-response-with-5-bootstrap-samples-and-competing-events"></a>
@@ -279,12 +291,48 @@ to errors.</p>
 <span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 16 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; dose-response model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
@@ -293,19 +341,19 @@ to errors.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.007586789       0 0.04126782 0.01718451</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.003641046       0 0.03315852 0.01506021</span></span>
+<span><span class="co">#&gt;           Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1    NA      NA      NA    NA</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.4799192 0.03776639   6.098608   1.297064</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  2.0836841 0.16397183  26.478569   1.297064</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    -0.003945743 -0.03928796 0.03139647 0.01803207</span></span>
-<span><span class="co">#&gt; 2:     0.003945743 -0.03139647 0.03928796 0.01803207</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-hazard-ratio-with-5-bootstrap-samples-and-competing-events">Dose-response hazard ratio with 5 bootstrap samples and competing
@@ -360,7 +408,7 @@ events<a class="anchor" aria-label="anchor" href="#dose-response-hazard-ratio-wi
 <span><span class="co"># retrieve hazard ratios</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
-<span><span class="co">#&gt;    1.0922586    0.9723626    1.2269383</span></span></code></pre></div>
+<span><span class="co">#&gt;    1.0922586    0.9843723    1.2119692</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="dose-response-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">Dose-response with 5 bootstrap samples and competing events in
@@ -405,14 +453,82 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 <span><span class="co">#&gt; Final analysis dataset: 1,119,229 observations, 16 variables</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Moving forward with dose-response analysis</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping with 80% of 1,000 subjects (800 subjects, ~895,383 observations per resample) 5 times</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; dose-response model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Creating Survival Curves for sex_0 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_0</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Creating Survival Curves for sex_1 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_1</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
@@ -426,37 +542,37 @@ subgroups defined by sex<a class="anchor" aria-label="anchor" href="#dose-respon
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.01063229       0 0.10408278 0.04767970</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.02718814       0 0.07167468 0.02269763</span></span>
+<span><span class="co">#&gt;           Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1    NA      NA      NA    NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;           Method Followup      A        Risk 95% LCI    95% UCI          SE</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt;       &lt;num&gt;   &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: dose-response       60      0 0.006494985       0 0.01409034 0.003875252</span></span>
-<span><span class="co">#&gt; 2: dose-response       60      1 0.005925412       0 0.02610814 0.010297499</span></span>
+<span><span class="co">#&gt;           Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: dose-response       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2: dose-response       60      1    NA      NA      NA    NA</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
-<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio  RR 95% LCI RR 95% UCI log(RR) SE</span></span>
-<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  2.5571299 0.006840718   955.8812   3.022376</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.3910634 0.001046155   146.1835   3.022376</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      0.01655585 -0.06846066 0.10157237 0.04337657</span></span>
-<span><span class="co">#&gt; 2:     -0.01655585 -0.10157237 0.06846066 0.04337657</span></span>
+<span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
+<span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9123056  0.1358191   6.128016  0.9717787</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0961239  0.1631850   7.362734  0.9717787</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:   -0.0005695735 -0.02407448 0.02293534 0.01199252</span></span>
-<span><span class="co">#&gt; 2:    0.0005695735 -0.02293534 0.02407448 0.01199252</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

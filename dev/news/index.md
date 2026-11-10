@@ -2,6 +2,40 @@
 
 ## SEQTaRget (development version)
 
+- Fix the risks and hazard ratios being biased with
+  `selection.random = TRUE`. Selection keeps a proportion
+  `selection.prob` of the trials starting on the first level of
+  `treat.level` and all other trials, but the risk curves and the
+  hazard-ratio simulation were then standardized over the kept trials
+  unweighted, so the population they refer to under-represented that
+  first arm. In `SEQdata` with `selection.prob = 0.3`, the ITT risks at
+  follow-up 60 averaged 0.849 and 0.885 over 20 seeds, against 0.837 and
+  0.874 without selection. The kept trials of the first level now carry
+  a weight of `1 / selection.prob` in the standardization and in the
+  hazard-ratio Cox fit (the averages over 20 seeds are now 0.837 and
+  0.874). The outcome and weight models are unchanged: selection depends
+  only on baseline treatment, which the outcome model conditions on.
+  End-of-follow-up estimates, which average within each arm, were
+  already unaffected. Bootstrap confidence intervals already included
+  the variability added by the selection, since resampling subjects from
+  the kept trials is equivalent to resampling and then selecting; the
+  `selection.random` documentation now says so.
+- Fix bootstrap standard errors and confidence intervals being too wide
+  whenever `bootstrap.sample < 1`, including the default of `0.8`. Each
+  resample draws `bootstrap.sample` times the number of subjects, and
+  the spread of estimates from a smaller sample is larger, by a factor
+  of about `1 / sqrt(bootstrap.sample)`, so the default intervals were
+  about 12% too wide and those with `bootstrap.sample = 0.5` about 41%
+  too wide. The bootstrap estimates are now rescaled by
+  `sqrt(bootstrap.sample)` around the full-data estimate before the
+  standard error or percentile interval is taken, for the risks, risk
+  differences, risk ratios, hazard ratios and end-of-follow-up
+  estimates; ratios are rescaled on the log scale, the scale their
+  standard errors and intervals are computed on. In `SEQdata` the ITT
+  risk difference SE at follow-up 60 (200 resamples) was 0.034 with
+  `bootstrap.sample = 0.5` against 0.024 with `bootstrap.sample = 1`; it
+  is now 0.024 with both. Results with `bootstrap.sample = 1` are
+  unchanged; point estimates are unaffected.
 - Fix memory use growing with `bootstrap.nboot`. The outcome and weight
   models kept from every bootstrap iteration each held a vector with one
   entry per row of the data they were fitted on (fastglm’s `n`), so a

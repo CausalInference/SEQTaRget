@@ -499,6 +499,10 @@ model <- SEQuential(data,
 #> censoring model created successfully
 #> 
 #> Creating Survival curves
+#> Warning: Cholesky factorization is singular or ill-conditioned; the model was
+#> fit with pivoted QR (method = 0) instead.
+#> Warning: prediction is not estimable for some rows of the rank-deficient design
+#> Warning: prediction is not estimable for some rows of the rank-deficient design
 #> 
 #> Completed
 
@@ -512,15 +516,15 @@ group.](censoring_files/figure-html/unnamed-chunk-8-1.png)
 
 risk_data(model)
 #> Index: <Followup>
-#>       Method Followup      A       Risk
-#>       <char>    <num> <char>      <num>
-#> 1: censoring       60      0 0.01707101
-#> 2: censoring       60      1 0.02094034
+#>       Method Followup      A  Risk
+#>       <char>    <num> <char> <num>
+#> 1: censoring       60      0    NA
+#> 2: censoring       60      1    NA
 risk_comparison(model)
 #>    Followup    A_x    A_y Risk Ratio Risk Difference
 #>       <num> <fctr> <fctr>      <num>           <num>
-#> 1:       60  inc_0  inc_1  1.2266611     0.003869334
-#> 2:       60  inc_1  inc_0  0.8152211    -0.003869334
+#> 1:       60  inc_0  inc_1         NA              NA
+#> 2:       60  inc_1  inc_0         NA              NA
 ```
 
 ## Per-protocol, censoring, weights in post-expanded data and no truncation, excused conditions for initiators and non-initiators (i.e. dynamic interventions) and hazard ratio

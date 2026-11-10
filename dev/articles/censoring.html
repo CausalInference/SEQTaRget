@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -563,6 +563,10 @@ truncation, excused conditions for initiators and non-initiators
 <span><span class="co">#&gt; censoring model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
@@ -571,15 +575,15 @@ truncation, excused conditions for initiators and non-initiators
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;       Method Followup      A       Risk</span></span>
-<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1: censoring       60      0 0.01707101</span></span>
-<span><span class="co">#&gt; 2: censoring       60      1 0.02094034</span></span>
+<span><span class="co">#&gt;       Method Followup      A  Risk</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: censoring       60      0    NA</span></span>
+<span><span class="co">#&gt; 2: censoring       60      1    NA</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio Risk Difference</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;           &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.2266611     0.003869334</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8152211    -0.003869334</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA              NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA              NA</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="per-protocol-censoring-weights-in-post-expanded-data-and-no-truncation-excused-conditions-for-initiators-and-non-initiators-i-e--dynamic-interventions-and-hazard-ratio">Per-protocol, censoring, weights in post-expanded data and no

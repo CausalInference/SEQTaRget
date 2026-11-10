@@ -97,23 +97,23 @@ end_of_fup(model)
 #> 2:                     4476                     1477
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   17.09881      266 0.003081317 0.01382548
-#> 2:                              0   24.81102      236 0.001560669 0.02419762
+#> 1:                              0   17.09881      266 0.002756013 0.01446306
+#> 2:                              0   24.81102      236 0.001395905 0.02452056
 #>       95% UCI
 #>         <num>
-#> 1: 0.02590402
-#> 2: 0.03031533
+#> 1: 0.02526644
+#> 2: 0.02999240
 #> 
 #> $`1`$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y   Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>        <num>              <num>              <num>
-#> 1:    12      0      1  0.007391728      -5.362035e-05       1.483708e-02
-#> 2:    12      1      0 -0.007391728      -1.483708e-02       5.362035e-05
+#> 1:    12      0      1  0.007391728        0.000732406        0.014051051
+#> 2:    12      1      0 -0.007391728       -0.014051051       -0.000732406
 #>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
 #>            <num>     <num>         <num>         <num>         <num>
-#> 1:   0.003798717 1.3721028     0.9653172      1.950308      0.179413
-#> 2:   0.003798717 0.7288084     0.5127395      1.035929      0.179413
+#> 1:   0.003397676 1.3721028     1.0018270     1.8792325     0.1604718
+#> 2:   0.003397676 0.7288084     0.5321321     0.9981763     0.1604718
 ```
 
 [`end_of_fup()`](https://causalinference.github.io/SEQTaRget/dev/reference/end_of_fup.md)
@@ -205,22 +205,22 @@ end_of_fup(windowed)[[1]]$estimates
 #> 2:                     4889                     1184
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   12.81963      274 0.011306853 0.05354250
-#> 2:                              0   19.49613      248 0.005941862 0.09082911
+#> 1:                              0   12.81963      274 0.010113156 0.05588211
+#> 2:                              0   19.49613      248 0.005314563 0.09205859
 #>       95% UCI
 #>         <num>
-#> 1: 0.09786455
-#> 2: 0.11412078
+#> 1: 0.09552495
+#> 2: 0.11289130
 end_of_fup(windowed)[[1]]$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>       <num>              <num>              <num>
-#> 1:    12      0      1  0.02677142        -0.00118542         0.05472825
-#> 2:    12      1      0 -0.02677142        -0.05472825         0.00118542
+#> 1:    12      0      1  0.02677142        0.001766062        0.051776771
+#> 2:    12      1      0 -0.02677142       -0.051776771       -0.001766062
 #>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
 #>            <num>     <num>         <num>         <num>         <num>
-#> 1:    0.01426395 1.3536350     0.9693496      1.890265     0.1703723
-#> 2:    0.01426395 0.7387516     0.5290263      1.031620     0.1703723
+#> 1:    0.01275807 1.3536350     1.0041318     1.8247880     0.1523856
+#> 2:    0.01275807 0.7387516     0.5480089     0.9958852     0.1523856
 ```
 
 `comparison` is where the treatment effect lives: `Difference` is the
@@ -357,24 +357,24 @@ end_of_fup(continuous)[[1]]$estimates
 #>                       <int>                    <int>
 #> 1:                     2523                      371
 #> 2:                     4889                     1184
-#>    Trial-periods (No measurement) % Censored Subjects        SE  95% LCI
-#>                             <int>      <num>    <int>     <num>    <num>
-#> 1:                              0   12.81963      274 0.1169507 21.45233
-#> 2:                              0   19.49613      248 0.1023680 21.53841
+#>    Trial-periods (No measurement) % Censored Subjects         SE  95% LCI
+#>                             <int>      <num>    <int>      <num>    <num>
+#> 1:                              0   12.81963      274 0.10460388 21.47652
+#> 2:                              0   19.49613      248 0.09156076 21.55960
 #>     95% UCI
 #>       <num>
-#> 1: 21.91076
-#> 2: 21.93969
+#> 1: 21.88656
+#> 2: 21.91851
 end_of_fup(continuous)[[1]]$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>       <num>              <num>              <num>
-#> 1:    12      0      1  0.05750665         -0.2283656          0.3433789
-#> 2:    12      1      0 -0.05750665         -0.3433789          0.2283656
+#> 1:    12      0      1  0.05750665         -0.1981852          0.3131985
+#> 2:    12      1      0 -0.05750665         -0.3131985          0.1981852
 #>    Difference SE
 #>            <num>
-#> 1:     0.1458559
-#> 2:     0.1458559
+#> 1:     0.1304574
+#> 2:     0.1304574
 ```
 
 Here `Difference` is the difference in means, and there is no `Ratio`
@@ -464,22 +464,22 @@ end_of_fup(perprotocol)[[1]]$estimates
 #> 2:                     3154                     2919
 #>    Trial-periods (No measurement) % Censored Subjects          SE     95% LCI
 #>                             <int>      <num>    <int>       <num>       <num>
-#> 1:                              0   82.65377       86 0.019127961 0.005791598
-#> 2:                              0   48.06521      211 0.008688277 0.071955179
+#> 1:                              0   82.65377       86 0.017108568 0.009749534
+#> 2:                              0   48.06521      211 0.007771031 0.073752948
 #>       95% UCI
 #>         <num>
-#> 1: 0.08077183
-#> 2: 0.10601260
+#> 1: 0.07681389
+#> 2: 0.10421483
 end_of_fup(perprotocol)[[1]]$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>       <num>              <num>              <num>
-#> 1:    12      0      1  0.04570218         0.00512583         0.08627852
-#> 2:    12      1      0 -0.04570218        -0.08627852        -0.00512583
+#> 1:    12      0      1  0.04570218        0.009409589        0.081994764
+#> 2:    12      1      0 -0.04570218       -0.081994764       -0.009409589
 #>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
 #>            <num>     <num>         <num>         <num>         <num>
-#> 1:     0.0207026 2.0559235     0.7538254      5.607162     0.5119072
-#> 2:     0.0207026 0.4863994     0.1783433      1.326567     0.5119072
+#> 1:    0.01851697 2.0559235     0.8380553      5.043607     0.4578637
+#> 2:    0.01851697 0.4863994     0.1982708      1.193239     0.4578637
 ```
 
 Subjects who deviate from their assigned strategy are artificially

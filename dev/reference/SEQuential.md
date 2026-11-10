@@ -131,7 +131,7 @@ SEQuential(data, id.col = "ID",
 #> ITT model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.72 seconds :
+#> SEQuential process completed in 2.31 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex+N_bas+L_bas+P_bas 
 #> Numerator covariates: NA 
@@ -147,7 +147,7 @@ SEQuential(data, id.col = "ID",
 #> followup      0.033715157 3.276751e-03
 #> followup_sq  -0.000146912 6.466141e-05
 #> trial         0.044566166 1.124702e-02
-#> trial_sq      0.000578777 1.001866e-04
+#> trial_sq      0.000578777 1.001865e-04
 #> sex           0.127172410 2.595630e-02
 #> N_bas         0.003290667 2.589182e-03
 #> L_bas        -0.013392420 1.428081e-02
@@ -227,7 +227,7 @@ SEQuential(data, id.col = "ID",
 #> censoring model created successfully
 #> 
 #> Completed
-#> SEQuential process completed in 1.1 seconds :
+#> SEQuential process completed in 2.17 seconds :
 #> Initialized with:
 #> Outcome covariates: outcome~tx_init_bas+followup+followup_sq+trial+trial_sq+sex 
 #> Numerator covariates: tx_init~sex 
@@ -238,13 +238,13 @@ SEQuential(data, id.col = "ID",
 #> Outcome Model ==================================================== 
 #> Coefficients and Weighting:
 #>                   Estimate   Std. Error
-#> (Intercept)  -4.886835e+00 0.0914827580
-#> tx_init_bas1  4.708351e-01 0.0756490527
-#> followup      2.865559e-02 0.0058887029
+#> (Intercept)  -4.886835e+00 0.0914828608
+#> tx_init_bas1  4.708351e-01 0.0756491504
+#> followup      2.865559e-02 0.0058887006
 #> followup_sq   9.890846e-05 0.0001479880
-#> trial        -1.262619e-02 0.0057462709
+#> trial        -1.262619e-02 0.0057462707
 #> trial_sq      1.118919e-03 0.0001050635
-#> sex           7.314606e-02 0.0422165187
+#> sex           7.314606e-02 0.0422165042
 #> 
 #> Weight Information ============================================= 
 #> Treatment Lag = 0 Treatment = 0 Model ====================================
@@ -254,23 +254,23 @@ SEQuential(data, id.col = "ID",
 #> sex        0.03466459 0.08716895
 #> Denominator ========================== 
 #>               Estimate  Std. Error
-#> Intercept -1.732410744 0.255183822
-#> N          0.009190531 0.008734374
+#> Intercept -1.732410744 0.255183817
+#> N          0.009190531 0.008734373
 #> L          0.015548158 0.039307426
 #> P          0.011425970 0.027582514
 #> sex        0.040326891 0.088066188
 #> Treatment Lag = 1 Treatment = 1 Model ====================================
 #> Numerator ========================== 
 #>             Estimate Std. Error
-#> Intercept  3.0276301 0.07259087
-#> sex       -0.1467371 0.10125464
+#> Intercept  3.0276301 0.07259314
+#> sex       -0.1467371 0.10125461
 #> Denominator ========================== 
 #>               Estimate Std. Error
-#> Intercept  2.654431030 0.29534161
-#> N          0.001573135 0.01033761
-#> L          0.050900387 0.03934269
-#> P          0.046316350 0.03824053
-#> sex       -0.136773596 0.10169194
+#> Intercept  2.654431030 0.29533594
+#> N          0.001573135 0.01033756
+#> L          0.050900387 0.03934347
+#> P          0.046316350 0.03823989
+#> sex       -0.136773596 0.10169169
 #> Weights:
 #> Min:  0.7768227 
 #> Max:  1.370254 
@@ -384,23 +384,23 @@ end_of_fup(eof)
 #> 2:                     4889                     1184
 #>    Trial-periods (No measurement) % Censored Subjects          SE    95% LCI
 #>                             <int>      <num>    <int>       <num>      <num>
-#> 1:                              0   12.81963      274 0.007991871 0.06003975
-#> 2:                              0   19.49613      248 0.005724500 0.09125513
+#> 1:                              0   12.81963      274 0.007148146 0.06169342
+#> 2:                              0   19.49613      248 0.005120149 0.09243964
 #>       95% UCI
 #>         <num>
-#> 1: 0.09136731
-#> 2: 0.11369476
+#> 1: 0.08971364
+#> 2: 0.11251025
 #> 
 #> $`1`$comparison
 #> Key: <A_x, A_y>
 #>     Time    A_x    A_y  Difference Difference 95% LCI Difference 95% UCI
 #>    <num> <fctr> <fctr>       <num>              <num>              <num>
-#> 1:    12      0      1  0.02677142        0.001615037        0.051927796
-#> 2:    12      1      0 -0.02677142       -0.051927796       -0.001615037
+#> 1:    12      0      1  0.02677142        0.004270866        0.049271966
+#> 2:    12      1      0 -0.02677142       -0.049271966       -0.004270866
 #>    Difference SE     Ratio Ratio 95% LCI Ratio 95% UCI log(Ratio) SE
 #>            <num>     <num>         <num>         <num>         <num>
-#> 1:    0.01283512 1.3536350     1.0163289     1.8028884     0.1462254
-#> 2:    0.01283512 0.7387516     0.5546655     0.9839334     0.1462254
+#> 1:    0.01148008 1.3536350     1.0475497     1.7491558      0.130788
+#> 2:    0.01148008 0.7387516     0.5717044     0.9546086      0.130788
 #> 
 #> 
 # }

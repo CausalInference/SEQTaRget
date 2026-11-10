@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SEQTaRget</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.5.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,19 +148,19 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI  95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;    &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7519414 0.922575 0.04352979</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8461448 0.902727 0.01443450</span></span>
+<span><span class="co">#&gt;    Method Followup      A      Risk   95% LCI   95% UCI         SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;     &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.8372582 0.7609485 0.9135679 0.03893423</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.8744359 0.8491316 0.8997402 0.01291061</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9648478   1.130520 0.04042492</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8845486   1.036433 0.04042492</span></span>
-<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      0.03717768 -0.0278918  0.1022472 0.03319932</span></span>
-<span><span class="co">#&gt; 2:     -0.03717768 -0.1022472  0.0278918 0.03319932</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.0444041  0.9729523   1.121103 0.03615714</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9574838  0.8919786   1.027800 0.03615714</span></span>
+<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      0.03717768 -0.02102223 0.09537759 0.02969438</span></span>
+<span><span class="co">#&gt; 2:     -0.03717768 -0.09537759 0.02102223 0.02969438</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-losses-to-followup">ITT with 5 bootstrap samples and losses-to-followup<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-losses-to-followup"></a>
@@ -223,17 +223,17 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
 <span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
 <span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.05562653 0.01626710</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.07255455 0.02367839</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0 0.02374360       0 0.05226056 0.01454974</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1 0.02614576       0 0.06765504 0.02117859</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.8154451   1.487013  0.1532658</span></span>
-<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.6724890   1.226324  0.1532658</span></span>
+<span><span class="co">#&gt; 1:       60 risk_0 risk_1  1.1011710  0.8417202   1.440595  0.1370851</span></span>
+<span><span class="co">#&gt; 2:       60 risk_1 risk_0  0.9081242  0.6941578   1.188043  0.1370851</span></span>
 <span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI       RD SE</span></span>
 <span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.002402164 -0.01469810 0.01950243 0.008724784</span></span>
-<span><span class="co">#&gt; 2:    -0.002402164 -0.01950243 0.01469810 0.008724784</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:     0.002402164 -0.01289278 0.01769710 0.007803684</span></span>
+<span><span class="co">#&gt; 2:    -0.002402164 -0.01769710 0.01289278 0.007803684</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events">ITT with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-samples-and-competing-events"></a>
@@ -282,6 +282,30 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Creating Survival curves</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
@@ -290,19 +314,19 @@ the library before getting in to some sample use cases.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.02185652       0 0.05072346 0.01472830</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.02381601       0 0.06530060 0.02116599</span></span>
+<span><span class="co">#&gt;    Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1    NA      NA      NA    NA</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.0896524  0.8076389   1.470140  0.1528084</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.9177239  0.6802073   1.238177  0.1528084</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI       RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.001959489 -0.01330796 0.01722693 0.007789656</span></span>
-<span><span class="co">#&gt; 2:    -0.001959489 -0.01722693 0.01330796 0.007789656</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events">ITT hazard ratio with 5 bootstrap samples and competing events<a class="anchor" aria-label="anchor" href="#itt-hazard-ratio-with-5-bootstrap-samples-and-competing-events"></a>
@@ -356,7 +380,7 @@ the library before getting in to some sample use cases.</p>
 <span><span class="co"># retrieve hazard ratios</span></span>
 <span><span class="fu"><a href="../reference/hazard_ratio.html">hazard_ratio</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hazard ratio          LCI          UCI </span></span>
-<span><span class="co">#&gt;    1.1241440    0.8026793    1.5743518</span></span></code></pre></div>
+<span><span class="co">#&gt;    1.1241440    0.8317355    1.5193527</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="itt-with-5-bootstrap-samples-and-competing-events-in-subgroups-defined-by-sex">ITT with 5 bootstrap samples and competing events in subgroups
@@ -406,9 +430,57 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ITT model created successfully</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Creating Survival Curves for sex_0 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_0</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Creating Survival Curves for sex_1 </span></span>
+<span><span class="co">#&gt; Creating Survival Curves for sex_1</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: Cholesky factorization is singular or ill-conditioned; the model was</span></span>
+<span><span class="co">#&gt; fit with pivoted QR (method = 0) instead.</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
+<span><span class="co">#&gt; Warning: prediction is not estimable for some rows of the rank-deficient design</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Completed</span></span>
 <span></span>
@@ -422,37 +494,37 @@ defined by sex<a class="anchor" aria-label="anchor" href="#itt-with-5-bootstrap-
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/risk_data.html">risk_data</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A       Risk 95% LCI    95% UCI         SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;   &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.03899522       0 0.09652552 0.02935273</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.04636067       0 0.13916636 0.04735071</span></span>
+<span><span class="co">#&gt;    Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1    NA      NA      NA    NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt; Index: &lt;Followup&gt;</span></span>
-<span><span class="co">#&gt;    Method Followup      A       Risk     95% LCI    95% UCI          SE</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt;      &lt;num&gt;       &lt;num&gt;      &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    ITT       60      0 0.01568018 0.004564467 0.02679590 0.005671387</span></span>
-<span><span class="co">#&gt; 2:    ITT       60      1 0.01459275 0.003737249 0.02544825 0.005538623</span></span>
+<span><span class="co">#&gt;    Method Followup      A  Risk 95% LCI 95% UCI    SE</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;    &lt;num&gt; &lt;char&gt; &lt;num&gt;   &lt;num&gt;   &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:    ITT       60      0    NA      NA      NA    NA</span></span>
+<span><span class="co">#&gt; 2:    ITT       60      1    NA      NA      NA    NA</span></span>
 <span><span class="fu"><a href="../reference/risk_comparison.html">risk_comparison</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sex_0</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  1.1888809  0.5300710   2.666507  0.4121284</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  0.8411272  0.3750225   1.886540  0.4121284</span></span>
-<span><span class="co">#&gt;    Risk Difference  RD 95% LCI RD 95% UCI      RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;       &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     0.007365452 -0.05355656 0.06828746 0.03108323</span></span>
-<span><span class="co">#&gt; 2:    -0.007365452 -0.06828746 0.05355656 0.03108323</span></span>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sex_1</span></span>
 <span><span class="co">#&gt;    Followup    A_x    A_y Risk Ratio RR 95% LCI RR 95% UCI log(RR) SE</span></span>
 <span><span class="co">#&gt;       &lt;num&gt; &lt;fctr&gt; &lt;fctr&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:       60  inc_0  inc_1  0.9306493  0.6191457   1.398876  0.2079333</span></span>
-<span><span class="co">#&gt; 2:       60  inc_1  inc_0  1.0745186  0.7148596   1.615129  0.2079333</span></span>
-<span><span class="co">#&gt;    Risk Difference   RD 95% LCI  RD 95% UCI       RD SE</span></span>
-<span><span class="co">#&gt;              &lt;num&gt;        &lt;num&gt;       &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:    -0.001087432 -0.008536249 0.006361386 0.003800487</span></span>
-<span><span class="co">#&gt; 2:     0.001087432 -0.006361386 0.008536249 0.003800487</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:       60  inc_0  inc_1         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt; 2:       60  inc_1  inc_0         NA         NA         NA         NA</span></span>
+<span><span class="co">#&gt;    Risk Difference RD 95% LCI RD 95% UCI RD SE</span></span>
+<span><span class="co">#&gt;              &lt;num&gt;      &lt;num&gt;      &lt;num&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:              NA         NA         NA    NA</span></span>
+<span><span class="co">#&gt; 2:              NA         NA         NA    NA</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
