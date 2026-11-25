@@ -58,7 +58,7 @@ multinomial.predict <- function(model, X, target = NULL) {
   levels <- model$levels
   X <- as.matrix(X)
   
-  coefs_matrix <- do.call(cbind, lapply(models, function(x) as.numeric(coef(x))))
+  coefs_matrix <- do.call(cbind, lapply(models, function(x) alias_to_zero(as.numeric(coef(x)))))
   pred <- X %*% coefs_matrix
   
   exppred <- exp(cbind(0, pred))

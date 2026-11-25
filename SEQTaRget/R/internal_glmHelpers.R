@@ -11,6 +11,8 @@
 fit_glm <- function(X, y, family, weights = NULL, params, start = NULL) {
   check_design(X)
   if (!is.null(start) && length(start) != ncol(X)) start <- NULL
+  # A warm start from a rank-deficient fit has NA for its aliased coefficients
+  if (!is.null(start)) start <- alias_to_zero(start)
   if (params@glm.package == "fastglm") {
     if (is.null(weights)) {
       fastglm(X, y, family = family, method = params@fastglm.method, start = start)
@@ -37,12 +39,21 @@ fit_glm <- function(X, y, family, weights = NULL, params, start = NULL) {
 #' @param type "response" or "link"
 #' @keywords internal
 predict_model <- function(model, X, type = "response") {
-  if (inherits(model, "fastglm")) {
-    predict(model, X, type)
-  } else {
-    eta <- drop(as.matrix(X) %*% coef(model))
-    if (type == "response") model$family$linkinv(eta) else eta
-  }
+  # Aliased coefficients drop out of the prediction, as in predict.glm(); fastglm's
+  # predict() instead returns NA wherever an aliased column is non-zero
+  eta <- drop(as.matrix(X) %*% alias_to_zero(coef(model)))
+  if (type == "response") model$family$linkinv(eta) else eta
+}
+
+#' Set aliased (NA) coefficients of a rank-deficient fit to zero
+#'
+#' fastglm >= 0.1.3 and parglm report the coefficients of aliased columns as
+#' \code{NA}; as a zero they drop out of predictions and warm starts
+#' @param coefs coefficient vector
+#' @keywords internal
+alias_to_zero <- function(coefs) {
+  coefs[is.na(coefs)] <- 0
+  coefs
 }
 
 #' Helper Function to inline predict a fastglm object

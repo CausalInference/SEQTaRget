@@ -275,6 +275,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     return(params@DT)
   }
 
+  # Each arm needs trials starting on its treatment to be compared
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  missing_arms <- setdiff(as.character(unlist(params@treat.level)), as.character(unique(params@DT[[tx_bas]])))
+  if (length(missing_arms) > 0L) {
+    stop("No trials in the expanded data start on treatment level(s) ", paste(missing_arms, collapse = ", "),
+         " of '", treatment.col, "', so the arms cannot be compared",
+         if (params@selection.first_trial) ". With 'selection.first_trial = TRUE' only each ID's first eligible trial is kept" else "")
+  }
+
   if (params@verbose) cat("\nMoving forward with", params@method, "analysis\n")
 
   # Bake fixed knots into every ns(x, df = N) term so the basis is identical at fit and prediction
