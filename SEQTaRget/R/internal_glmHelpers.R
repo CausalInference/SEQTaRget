@@ -222,7 +222,7 @@ prepare.data_cached <- function(weight, params, type, model, case, cache) {
     # ----- Case: surv -----
   } else if (case == "surv") {
     weight <- weight[!is.na(get(params@outcome))]
-    y <- if (type == "compevent") weight[[params@compevent]] else weight[[params@outcome]]
+    y <- weight[[params@outcome]]
   }
   
   # ----- Build design matrix -----

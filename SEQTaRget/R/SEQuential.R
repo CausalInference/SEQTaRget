@@ -368,10 +368,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         }
         survival <- internal.survival(params_sg, models, label)
         survival.data[[label]] <- survival$data
-        survival.ce[[label]] <- survival$ce.model
         risk[[label]] <- create.risk(survival$data, params_sg, survival$boot_risks)
       }
       outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
+      if (!is.na(params@compevent)) survival.ce[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$ce.model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
@@ -382,6 +382,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- subgroup_results("model", label)
       hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache, label)
       outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
+      if (!is.na(params@compevent)) survival.ce[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$ce.model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }

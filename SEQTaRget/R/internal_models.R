@@ -13,19 +13,24 @@ internal.model <- function(data, params, start = NULL) {
     data <- data[, "followup" := factor(get("followup"), levels = fup_levels)]
   }
 
+  # start holds the outcome and competing event models' coefficients
   handler <- function(data, params, start = NULL) {
     X <- design_matrix(as.formula(paste0("~", params@covariates)), data)
     y <- data[[params@outcome]]
 
     if(!params@weighted) {
-        model <- fit_glm(X, y, family = quasibinomial(), params = params, start = start)
         weight <- NULL
       } else {
         weight <- data[weight < params@weight.lower, weight := params@weight.lower
                        ][weight > params@weight.upper, weight := params@weight.upper][['weight']]
-        model <- fit_glm(X, y, family = quasibinomial(), weights = weight, params = params, start = start)
       }
-    return(list(model = model))
+    model <- fit_glm(X, y, family = quasibinomial(), weights = weight, params = params, start = start$outcome)
+    # The competing event model is fit on the outcome model's rows, covariates
+    # and weights, and enters the cumulative incidence and the hazard ratio
+    ce.model <- if (!is.na(params@compevent)) {
+      fit_glm(X, data[[params@compevent]], family = quasibinomial(), weights = weight, params = params, start = start$compevent)
+    }
+    return(list(model = model, ce.model = ce.model))
   }
 
   if (is.na(params@subgroup)) {

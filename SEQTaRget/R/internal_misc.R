@@ -369,7 +369,11 @@ compevent.table <- function(params, type, filter = NA) {
 #'
 #' @keywords internal
 clean_models <- function(out, params) {
-  if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) { sg$model <- clean_fastglm(sg$model); sg })
+  if (!params@end_of_fup) out$model <- lapply(out$model, function(sg) {
+    sg$model <- clean_fastglm(sg$model)
+    if (!is.null(sg$ce.model)) sg$ce.model <- clean_fastglm(sg$ce.model)
+    sg
+  })
   out
 }
 

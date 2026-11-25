@@ -13,13 +13,8 @@ internal.hazard <- function(model, params, cache, label = NA) {
                                                     paste0(params@treatment, c("", params@indicator.baseline)),
                                                     "period", params@outcome)]
   
-  if (!is.na(params@compevent)) {
-    ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, cache)
-    ce.model <- clean_fastglm(fit_glm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), params = params))
-    rm(ce.data)
-  }
-  
-  handler <- function(data, params, model, cache) {
+  # model and ce.model are the outcome and competing event models fit in internal.model()
+  handler <- function(data, params, model, ce.model, cache) {
     trials <- data[, kept, with = FALSE]
     # Weight trials kept by selection.random by the inverse of their selection
     # probability, taken from the observed baseline treatment before each trial
@@ -92,7 +87,7 @@ internal.hazard <- function(model, params, cache, label = NA) {
     hr.res$coefficients  # Return log hazard ratio for bootstrap monitoring
   }
   set.seed(params@seed)
-  full <- handler(DT, params, model[[1]]$model, cache)
+  full <- handler(DT, params, model[[1]]$model, model[[1]]$ce.model, cache)
   if (is.na(full)) return(c(`Hazard ratio` = NA_real_, LCI = NA_real_, UCI = NA_real_))
 
   bootstrap <- if (params@bootstrap) {
@@ -134,14 +129,14 @@ internal.hazard <- function(model, params, cache, label = NA) {
       out <- future_lapply(1:params@bootstrap.nboot, function(x) {
         if (is.null(model[[x + 1]])) return(NA_real_)
         RMDT <- bootstrap_hazard_sample(DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x + 1]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, model[[x + 1]]$ce.model, cache)
       }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
     } else {
       out <- lapply(1:params@bootstrap.nboot, function(x) {
         if (is.null(model[[x + 1]])) return(NA_real_)
         set.seed(params@seed + x)
         RMDT <- bootstrap_hazard_sample(DT, params, UIDs, lnID)
-        handler(RMDT, params, model[[x + 1]]$model, cache)
+        handler(RMDT, params, model[[x + 1]]$model, model[[x + 1]]$ce.model, cache)
       })
     }
   }
