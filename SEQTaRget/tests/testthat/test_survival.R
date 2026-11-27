@@ -136,3 +136,44 @@ test_that("risk.times errors when a requested time exceeds maximum follow-up", {
     "maximum follow-up"
   )
 })
+
+test_that("Competing-event CIF uses lagged event-free survival and full follow-up ce.model", {
+  # With zero competing events, CIF must equal 1 - survival identically at every follow-up time
+  data0 <- data.table::copy(SEQdata)
+  data0[, ce_zero := 0L]
+  m0 <- suppressWarnings(SEQuential(
+    data0, "ID", "time", "eligible", "tx_init", "outcome",
+    list("N", "L", "P"), list("sex"),
+    method = "ITT", options = SEQopts(km.curves = TRUE, compevent = "ce_zero"),
+    verbose = FALSE
+  ))
+  s0 <- m0@survival.data[[1]]
+  inc0 <- s0[variable == "inc_0"][order(followup)]$value
+  risk0 <- s0[variable == "risk_0"][order(followup)]$value
+  inc1 <- s0[variable == "inc_1"][order(followup)]$value
+  risk1 <- s0[variable == "risk_1"][order(followup)]$value
+  expect_false(anyNA(inc0))
+  expect_false(anyNA(inc1))
+  expect_equal(inc0, risk0, tolerance = 1e-10)
+  expect_equal(inc1, risk1, tolerance = 1e-10)
+
+  # With competing events across follow-up, ce.model must estimate followup terms (not NA)
+  # and cumulative incidence must stay finite and bounded by 1 - survival
+  data1 <- data.table::copy(SEQdata)
+  set.seed(42)
+  data1[, ce := as.integer(runif(.N) < 0.02)]
+  m1 <- suppressWarnings(SEQuential(
+    data1, "ID", "time", "eligible", "tx_init", "outcome",
+    list("N", "L", "P"), list("sex"),
+    method = "ITT", options = SEQopts(km.curves = TRUE, compevent = "ce"),
+    verbose = FALSE
+  ))
+  ce_coefs <- coef(m1@ce.model[[1]][[1]])
+  expect_false(anyNA(ce_coefs[c("followup", "followup_sq")]))
+  s1 <- m1@survival.data[[1]]
+  inc0_ce <- s1[variable == "inc_0"][order(followup)]$value
+  risk0_ce <- s1[variable == "risk_0"][order(followup)]$value
+  expect_false(anyNA(inc0_ce))
+  expect_true(all(inc0_ce >= 0 & inc0_ce <= risk0_ce + 1e-12))
+  expect_true(inc0_ce[length(inc0_ce)] < risk0_ce[length(risk0_ce)])
+})

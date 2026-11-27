@@ -32,7 +32,11 @@ internal.survival <- function(params, outcome, label = NA) {
       dose_sq_col <- paste0("dose", params@indicator.squared)
       pred_cols <- unique(c(cache$covariates$cols, tx_bas))
       pred_cols <- pred_cols[!pred_cols %in% c("followup", fup_sq_col, "dose", dose_sq_col)]
-      base_DT <- DT[, pred_cols, with = FALSE]
+      base_DT <- if (!is.na(params@compevent)) {
+        DT[get("followup") == 0, pred_cols, with = FALSE]
+      } else {
+        DT[, pred_cols, with = FALSE]
+      }
       n_base <- nrow(base_DT)
       # Standardize over the trials before selection.random: weight the kept
       # trials by the inverse of their selection probability (NULL: unweighted)
@@ -68,7 +72,7 @@ internal.survival <- function(params, outcome, label = NA) {
 
         if (!is.na(params@compevent)) {
           pred_all[, p_ce := inline.pred(ce.model, newdata = pred_all, params, case = "surv", cache = cache)]
-          pred_all[, ce_accum := cumprod((1 - p_surv) * (1 - p_ce)), by = row_id]
+          pred_all[, ce_accum := shift(cumprod((1 - p_surv) * (1 - p_ce)), fill = 1), by = row_id]
           pred_all[, inc_accum := cumsum(p_surv * (1 - p_ce) * ce_accum), by = row_id]
           result_dt <- pred_all[, list(surv_mean = wmean(surv_accum, sel_w), inc_mean = wmean(inc_accum, sel_w)), by = followup]
           setnames(result_dt, c("surv_mean", "inc_mean"), c(surv, inc))
@@ -101,8 +105,13 @@ internal.survival <- function(params, outcome, label = NA) {
       return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
     }
 
-    # A subgroup's model is standardized over that subgroup's own members
-    baseDT_main <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
+    # A subgroup's model is standardized over that subgroup's own members.
+    # Competing-event models need all follow-up rows to estimate followup terms.
+    baseDT_main <- if (is.na(params@compevent)) {
+      subgroup_rows(params@DT[get("followup") == 0, ], params, label)
+    } else {
+      subgroup_rows(params@DT, params, label)
+    }
     full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
     rm(baseDT_main)
     
@@ -111,7 +120,11 @@ internal.survival <- function(params, outcome, label = NA) {
       lnID <- length(UIDs)
       
       # Pre-filter and key the data for efficient bootstrap resampling
-      baseDT <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
+      baseDT <- if (is.na(params@compevent)) {
+        subgroup_rows(params@DT[get("followup") == 0, ], params, label)
+      } else {
+        subgroup_rows(params@DT, params, label)
+      }
       if (!identical(key(baseDT), params@id)) setkeyv(baseDT, params@id)
       
       # Helper for efficient keyed bootstrap sampling
