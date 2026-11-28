@@ -64,7 +64,9 @@ internal.survival <- function(params, outcome, label = NA) {
 
         if (!is.na(params@compevent)) {
           pred_all[, p_ce := inline.pred(ce.model, newdata = pred_all, params, case = "surv", cache = cache)]
-          pred_all[, ce_accum := cumprod((1 - p_surv) * (1 - p_ce)), by = row_id]
+          # An outcome in interval k needs the subject free of both events through
+          # interval k - 1, so the event-free survival is lagged by one interval
+          pred_all[, ce_accum := shift(cumprod((1 - p_surv) * (1 - p_ce)), fill = 1), by = row_id]
           pred_all[, inc_accum := cumsum(p_surv * (1 - p_ce) * ce_accum), by = row_id]
           result_dt <- pred_all[, list(surv_mean = wmean(surv_accum, sel_w), inc_mean = wmean(inc_accum, sel_w)), by = followup]
           setnames(result_dt, c("surv_mean", "inc_mean"), c(surv, inc))
