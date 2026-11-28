@@ -275,6 +275,15 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
     return(params@DT)
   }
 
+  # Each arm needs trials starting on its treatment to be compared
+  tx_bas <- paste0(params@treatment, params@indicator.baseline)
+  missing_arms <- setdiff(as.character(unlist(params@treat.level)), as.character(unique(params@DT[[tx_bas]])))
+  if (length(missing_arms) > 0L) {
+    stop("No trials in the expanded data start on treatment level(s) ", paste(missing_arms, collapse = ", "),
+         " of '", treatment.col, "', so the arms cannot be compared",
+         if (params@selection.first_trial) ". With 'selection.first_trial = TRUE' only each ID's first eligible trial is kept" else "")
+  }
+
   if (params@verbose) cat("\nMoving forward with", params@method, "analysis\n")
 
   # Bake fixed knots into every ns(x, df = N) term so the basis is identical at fit and prediction
@@ -359,10 +368,10 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
         }
         survival <- internal.survival(params_sg, models, label)
         survival.data[[label]] <- survival$data
-        survival.ce[[label]] <- survival$ce.model
         risk[[label]] <- create.risk(survival$data, params_sg, survival$boot_risks)
       }
       outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
+      if (!is.na(params@compevent)) survival.ce[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$ce.model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   } else {
@@ -373,6 +382,7 @@ SEQuential <- function(data, id.col, time.col, eligible.col, treatment.col, outc
       models <- subgroup_results("model", label)
       hazard[[label]] <- internal.hazard(models, subgroup_params(models), formula_cache, label)
       outcome[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$model))
+      if (!is.na(params@compevent)) survival.ce[[label]] <- lapply(models, function(x) if (is.null(x)) NULL else clean_fastglm(x$ce.model))
       weights[[label]] <- lapply(analytic, function(x) x$weighted_stats)
     }
   }

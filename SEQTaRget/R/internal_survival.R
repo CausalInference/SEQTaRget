@@ -16,17 +16,13 @@ internal.survival <- function(params, outcome, label = NA) {
     # Initialize formula cache
     formula_cache <- init_formula_cache(params)
 
-    handler <- function(DT, params, model, cache) {
+    # model and ce.model are the outcome and competing event models fit in internal.model()
+    handler <- function(DT, params, model, ce.model, cache) {
       DT <- DT[!is.na(get(params@outcome)), ]
       if (params@multinomial) {
         DT <- DT[get(params@treatment) %in% params@treat.level, ]
       }
-      if (!is.na(params@compevent)) {
-        ce.data <- prepare.data_cached(DT, params, case = "surv", type = "compevent", model = NA, cache)
-        ce.model <- clean_fastglm(fit_glm(ce.data$X, ce.data$y, family = quasibinomial(link = "logit"), params = params))
-        rm(ce.data)
-      }
-      
+
       # Only keep columns needed for prediction to minimize memory during replication
       fup_sq_col <- paste0("followup", params@indicator.squared)
       dose_sq_col <- paste0("dose", params@indicator.squared)
@@ -68,7 +64,9 @@ internal.survival <- function(params, outcome, label = NA) {
 
         if (!is.na(params@compevent)) {
           pred_all[, p_ce := inline.pred(ce.model, newdata = pred_all, params, case = "surv", cache = cache)]
-          pred_all[, ce_accum := cumprod((1 - p_surv) * (1 - p_ce)), by = row_id]
+          # An outcome in interval k needs the subject free of both events through
+          # interval k - 1, so the event-free survival is lagged by one interval
+          pred_all[, ce_accum := shift(cumprod((1 - p_surv) * (1 - p_ce)), fill = 1), by = row_id]
           pred_all[, inc_accum := cumsum(p_surv * (1 - p_ce) * ce_accum), by = row_id]
           result_dt <- pred_all[, list(surv_mean = wmean(surv_accum, sel_w), inc_mean = wmean(inc_accum, sel_w)), by = followup]
           setnames(result_dt, c("surv_mean", "inc_mean"), c(surv, inc))
@@ -98,12 +96,12 @@ internal.survival <- function(params, outcome, label = NA) {
       
       out <- melt(Reduce(function(x, y) merge(x, y, by = "followup"), out_list), id.vars = "followup")
       
-      return(list(data = out, ce.model = if (!is.na(params@compevent)) ce.model else NA))
+      return(list(data = out))
     }
 
     # A subgroup's model is standardized over that subgroup's own members
     baseDT_main <- subgroup_rows(params@DT[get("followup") == 0, ], params, label)
-    full <- handler(baseDT_main, params, outcome[[1]]$model, formula_cache)
+    full <- handler(baseDT_main, params, outcome[[1]]$model, outcome[[1]]$ce.model, formula_cache)
     rm(baseDT_main)
     
     if (params@bootstrap) {
@@ -137,7 +135,7 @@ internal.survival <- function(params, outcome, label = NA) {
         result <- future_lapply(2:(params@bootstrap.nboot + 1), function(x) {
           if (is.null(outcome[[x]])) return(NULL)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
-          out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
+          out <- handler(RMDT, params, outcome[[x]]$model, outcome[[x]]$ce.model, formula_cache)
           rm(RMDT)
           return(out)
         }, future.seed = if (length(params@seed) > 1) params@seed[1] else params@seed)
@@ -149,7 +147,7 @@ internal.survival <- function(params, outcome, label = NA) {
           if (is.null(outcome[[x]])) return(NULL)
           set.seed(params@seed + x - 1L)
           RMDT <- bootstrap_survival_sample(baseDT, params, UIDs, lnID)
-          out <- handler(RMDT, params, outcome[[x]]$model, formula_cache)
+          out <- handler(RMDT, params, outcome[[x]]$model, outcome[[x]]$ce.model, formula_cache)
           rm(RMDT)
           return(out)
         })
@@ -158,7 +156,6 @@ internal.survival <- function(params, outcome, label = NA) {
       # Resamples with no outcome model for this subgroup (see SEQuential)
       result <- Filter(Negate(is.null), result)
       data <- lapply(seq_along(result), function(x) result[[x]]$data)
-      ce.models <- lapply(seq_along(result), function(x) result[[x]]$ce.model)
       rm(result)
 
       # Bind all iterations once; reuse for SE, quantile, and paired RD/RR computation
@@ -201,7 +198,6 @@ internal.survival <- function(params, outcome, label = NA) {
       boot_risks <- NULL
     }
   out <- list(data = surv,
-              boot_risks = boot_risks,
-              ce.model = if (!is.na(params@compevent)) if (params@bootstrap) c(list(full$ce.model), ce.models) else list(full$ce.model) else list())
+              boot_risks = boot_risks)
   return(out)
 }

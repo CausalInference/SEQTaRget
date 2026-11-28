@@ -22,6 +22,7 @@
 #' @param end_of_fup.time Numeric: the follow-up time `k` (in follow-up periods since trial enrollment) at which the end-of-follow-up outcome is evaluated. Required when \code{end_of_fup = TRUE}
 #' @param end_of_fup.type String: type of end-of-follow-up outcome, either `'binary'` (the default, giving the weighted proportion in each arm) or `'continuous'` (giving the weighted mean)
 #' @param end_of_fup.window Numeric: half-width of the window used when a trial-period has no outcome measurement at exactly \code{end_of_fup.time}, default is `0` (no window). Those trial-periods fall back to the measurement nearest to `k` within `[k - window, k + window]` (ties, i.e. measurements equally far either side of `k`, are broken toward the later measurement, so that at least `k` of follow-up has elapsed); any with no measurement anywhere in the window are censored, i.e. excluded from the average
+#' @param expand.batch_size Integer: number of IDs expanded at a time. The expansion works one batch of IDs at a time and stacks the results, which gives the same expanded data while keeping the memory used by the expansion to that of one batch. `Inf` expands every ID at once. Default `NA` chooses batches of about one million expanded rows
 #' @param expand.only Logical: if `TRUE`, [SEQuential()] returns the expanded `data.table` immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is `FALSE`
 #' @param excused Logical: in the case of censoring, whether there is an excused condition, default is `FALSE`
 #' @param excused.cols List: column names for treatment switch excuses, one per \code{treat.level} in the same order; column i excuses a switch away from \code{treat.level[[i]]} (e.g. \code{excusedZero = 1} excuses a switch from 0 to 1)
@@ -79,7 +80,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
                     compevent = NA, covariates = NA, data.return = FALSE, denominator = NA,
                     deviation = FALSE, deviation.col = NA, deviation.conditions = c(NA, NA), deviation.excused = FALSE, deviation.excused_cols = c(NA, NA),
                     end_of_fup = FALSE, end_of_fup.time = NA, end_of_fup.type = "binary", end_of_fup.window = 0,
-                    excused = FALSE, excused.cols = c(NA, NA), expand.only = FALSE, fastglm.method = 2L,
+                    excused = FALSE, excused.cols = c(NA, NA), expand.batch_size = NA, expand.only = FALSE, fastglm.method = 2L,
                     followup.class = FALSE, followup.include = TRUE, followup.max = Inf, followup.min = 0, followup.spline = FALSE, followup.spline.df = 4L,
                     glm.package = "fastglm",
                     hazard = FALSE, indicator.baseline = "_bas", indicator.squared = "_sq",
@@ -212,6 +213,10 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
 
   if (selection.prob <= 0 || selection.prob > 1) stop("'selection.prob' must be in (0, 1]")
 
+  expand.batch_size <- as.numeric(expand.batch_size)
+  if (length(expand.batch_size) != 1L || (!is.na(expand.batch_size) && expand.batch_size < 1))
+    stop("'expand.batch_size' must be NA or a single number of IDs of at least 1")
+
   if (!is.infinite(weight.lower) && weight.lower < 0)
     stop("'weight.lower' must be non-negative: IPCW weights are ratios of probabilities and cannot be negative")
 
@@ -296,6 +301,7 @@ SEQopts <- function(bootstrap = FALSE, bootstrap.nboot = 100, bootstrap.sample =
       plot.type = plot.type,
       subgroup = subgroup,
       data.return = data.return,
+      expand.batch_size = expand.batch_size,
       expand.only = as.logical(expand.only),
       selection.first_trial = selection.first_trial,
       cense.denominator = cense.denominator,

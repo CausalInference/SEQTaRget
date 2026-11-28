@@ -281,7 +281,8 @@ internal.analysis <- function(params) {
       # Documented in the glm.package entry of ?SEQopts.
       params_boot@glm.package <- "fastglm"
       # end_of_fup fits no outcome model, so there is nothing to warm-start from
-      boot_start <- if (params@end_of_fup) NULL else lapply(full$model, function(sg) coef(sg$model))
+      boot_start <- if (params@end_of_fup) NULL else
+        lapply(full$model, function(sg) list(outcome = coef(sg$model), compevent = if (!is.null(sg$ce.model)) coef(sg$ce.model)))
       if (params@parallel) {
         old_threads <- getDTthreads()
         setDTthreads(1)

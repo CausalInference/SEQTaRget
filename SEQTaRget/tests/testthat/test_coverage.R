@@ -236,15 +236,21 @@ test_that("format_time handles seconds, minutes, and hours", {
 # ── SEQexpand.R: selection.first_trial ──────────────────────────────────────
 
 test_that("selection.first_trial restricts to first trial per subject", {
-  model <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+  dt <- suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
                       list("N", "L", "P"), list("sex"),
-                      method = "ITT",
-                      options = SEQopts(selection.first_trial = TRUE, data.return = TRUE,
-                                        covariates = "followup+followup_sq+sex+N_bas+L_bas+P_bas")))
-  dt <- SEQ_data(model)
+                      method = "ITT", verbose = FALSE,
+                      options = SEQopts(selection.first_trial = TRUE, expand.only = TRUE)))
   # Each subject should have exactly one trial value
   trials_per_id <- dt[, uniqueN(trial), by = "ID"]
   expect_true(all(trials_per_id$V1 == 1))
+})
+
+test_that("An arm with no trials gives an informative error", {
+  # In SEQdata every first eligible trial starts at time 0, untreated
+  expect_error(suppressWarnings(SEQuential(copy(SEQdata), "ID", "time", "eligible", "tx_init", "outcome",
+                                           list("N", "L", "P"), list("sex"), method = "ITT", verbose = FALSE,
+                                           options = SEQopts(selection.first_trial = TRUE))),
+               "No trials in the expanded data start on treatment level\\(s\\) 1 .*selection.first_trial")
 })
 
 # ── SEQexpand.R: selection.random ───────────────────────────────────────────

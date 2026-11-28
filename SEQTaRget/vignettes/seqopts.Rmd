@@ -37,6 +37,7 @@ data.table::setDTthreads(2)
 | `end_of_fup.time` | The follow-up time `k` at which the end-of-follow-up outcome is evaluated (required when `end_of_fup = TRUE`) | Numeric | `12` |
 | `end_of_fup.type` | Type of end-of-follow-up outcome: `"binary"` reports the weighted proportion per arm, `"continuous"` the weighted mean | Character | `"binary"` |
 | `end_of_fup.window` | Half-width of the window used when a trial-period has no measurement at exactly `end_of_fup.time`; it then falls back to the measurement nearest to `k` within `[k - window, k + window]` (ties broken toward the later one, so at least `k` of follow-up has elapsed), and is censored if there is none | Numeric | `3` |
+| `expand.batch_size` | Number of IDs expanded at a time; `NA` chooses batches of about one million expanded rows, `Inf` expands every ID at once | Numeric | `5000` |
 | `expand.only` | Return the expanded dataset and skip analysis | Logical | `TRUE` |
 | `followup.class` | Whether to expand followup values to an indicator matrix | Logical | `FALSE` |
 | `followup.include` | Whether to include `followup` and `followup_squared` in outcome models | Logical | `TRUE` |

@@ -29,6 +29,7 @@ SEQopts(
   end_of_fup.window = 0,
   excused = FALSE,
   excused.cols = c(NA, NA),
+  expand.batch_size = NA,
   expand.only = FALSE,
   fastglm.method = 2L,
   followup.class = FALSE,
@@ -125,6 +126,8 @@ SEQopts(
 \item{excused}{Logical: in the case of censoring, whether there is an excused condition, default is \code{FALSE}}
 
 \item{excused.cols}{List: column names for treatment switch excuses, one per \code{treat.level} in the same order; column i excuses a switch away from \code{treat.level[[i]]} (e.g. \code{excusedZero = 1} excuses a switch from 0 to 1)}
+
+\item{expand.batch_size}{Integer: number of IDs expanded at a time. The expansion works one batch of IDs at a time and stacks the results, which gives the same expanded data while keeping the memory used by the expansion to that of one batch. \code{Inf} expands every ID at once. Default \code{NA} chooses batches of about one million expanded rows}
 
 \item{expand.only}{Logical: if \code{TRUE}, \code{\link[=SEQuential]{SEQuential()}} returns the expanded \code{data.table} immediately after expansion and skips weighting, outcome modelling and survival/risk steps. Useful when you only need the expanded dataset (e.g. to inspect or store separately). Default is \code{FALSE}}
 
